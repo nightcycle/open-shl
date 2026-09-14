@@ -8,8 +8,8 @@ typescript = false
 style = "nested"
 strip_extension = true
 
-[inputs.Animation]
-path = "asset/animation/**"
-output_path = "Generated/Asset"
+[inputs.Image]
+path = "asset/image/**"
+output_path = "Generated"
 
 
