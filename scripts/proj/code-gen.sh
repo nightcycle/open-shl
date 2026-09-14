@@ -10,3 +10,5 @@ classes=("Frame" "CanvasGroup" "ImageButton" "TextButton" "ImageLabel" "TextLabe
 for class in "${classes[@]}"; do
 	lune run "scripts/util/generate-react-roblox-types.lune.luau" "Generated/React/Component/${class}.luau" "${class}"
 done
+
+pseudo-enum build

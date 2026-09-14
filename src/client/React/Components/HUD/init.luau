@@ -14,6 +14,7 @@ export type Properties = Frame.Properties & {}
 local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
+	local leftButtons = {}
 	return e(
 		Frame({
 			BackgroundTransparency = 1,

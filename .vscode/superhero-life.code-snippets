@@ -32,9 +32,9 @@
 		"scope": "luau"
 	},
 	"irequire gen": {
-		"prefix": "irequire server",
+		"prefix": "irequire gen",
 		"body": [
-			"local $1 = require(\"@game/Replicated/Generated/$2\")"
+			"local $1 = require(\"@game/ReplicatedStorage/Generated/$2\")"
 		],
 		"description": "Imports a generated module.",
 		"scope": "luau"

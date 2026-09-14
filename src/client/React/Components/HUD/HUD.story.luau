@@ -8,7 +8,7 @@ local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 -- Components
-local ParentComponent = require("./")
+local ParentComponent = require(".")
 -- Hooks
 -- Types
 -- Constants
@@ -24,9 +24,8 @@ return UILabs.CreateReactStory({
 }, function(props)
 	return e(ParentComponent, {
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundTransparency = 1,
 		Position = UDim2.fromScale(0.5, 0.5),
-		Size = UDim2.fromOffset(400, 300),
+		Size = UDim2.fromScale(1, 1),
 		SizeConstraint = Enum.SizeConstraint.RelativeXY,
 	})
 end)

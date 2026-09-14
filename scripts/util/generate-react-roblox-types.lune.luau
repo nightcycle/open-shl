@@ -66,8 +66,13 @@ local EXCLUDED_TYPES: { [string]: boolean } = {
 }
 
 local function luauType(datatype: unknown): string
-	local normalized = string.lower(tostring(datatype))
-	return TYPES[normalized] or if normalized:match("^enum") then "EnumItem" else "unknown"
+	local name = tostring(datatype)
+	local normalized = string.lower(name)
+	local enumName = name:gsub("[^%w_]+$", ""):match("([%w_]+)$")
+	if normalized:match("^enum") and enumName and enumName ~= "Enum" and enumName ~= "EnumItem" then
+		return `Enum.{enumName}`
+	end
+	return TYPES[normalized] or "unknown"
 end
 
 local function collectProperties(database: any, className: string, cache: { [string]: Properties }): Properties
@@ -127,11 +132,9 @@ do
 		table.insert(lines, `\t{name}: {properties[name]}?,`)
 	end
 	table.insert(lines, "}")
-	table.insert(lines, `export type  = (Properties) -> React.FC<Properties>`)
 	table.insert(lines, "")
 end
 
-table.insert(lines, "type PropertyMap = { [any]: unknown }")
 table.insert(lines, "")
 table.insert(lines, `local function append(defaults: Properties, props: Properties): Properties`)
 table.insert(lines, "\tlocal result = {}")
@@ -148,7 +151,7 @@ table.insert(lines, "")
 do
 	table.insert(lines, `return function(defaults: Properties): (Properties) -> React.ReactNode`)
 	table.insert(lines, `\treturn function(props: Properties): React.ReactNode`)
-	table.insert(lines, `\t\treturn e("", append(defaults, props) :: any)`)
+	table.insert(lines, `\t\treturn e("{className}", append(defaults, props) :: any, props["children" :: any])`)
 	table.insert(lines, "\tend")
 	table.insert(lines, "end")
 end

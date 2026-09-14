@@ -5,3 +5,15 @@ assign_static_strings = true
 
 [enums]
 Alignment = ["Good", "Neutral", "Evil"]
+MenuId = [
+	"Artifact",
+	"Build",
+	"Camera",
+	"Entry",
+	"Database",
+	"Shop",
+	"Music",
+	"Actions",
+	"Swap",
+]
+Side = ["Left", "Right"]
