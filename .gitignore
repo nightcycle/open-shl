@@ -1,0 +1,12 @@
+# file
+sourcemap.json
+
+# extensions
+*.project.json
+*.rbxl
+*.lock
+
+# directories
+Packages
+DevPackages
+Generated

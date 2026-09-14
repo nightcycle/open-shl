@@ -1,0 +1,7 @@
+build_path = "./Generated/PseudoEnum.luau"
+use_union_types_for_export = true
+use_union_types_for_parameters = true
+assign_static_strings = true
+
+[enums]
+Alignment = ["Good", "Neutral", "Evil"]

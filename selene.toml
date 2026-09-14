@@ -1,0 +1,3 @@
+std = "roblox+luau"
+exclude = ["**.story.luau"]
+[lints]

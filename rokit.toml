@@ -1,0 +1,13 @@
+[tools]
+wally = "UpliftGames/wally@0.3.2" # installs useful packages
+wally-package-types = "JohnnyMorganz/wally-package-types@1.6.2" # extracts type info from packages
+selene = "Kampfkarren/selene@0.30.0" # super quick code quality checks
+rojo = "rojo-rbx/rojo@7.7.0" # syncs with roblox + builds the rbxl
+stylua = "JohnnyMorganz/StyLua@2.4.1" # removes noise from code formatting
+pseudo-enum = "nightcycle/pseudo-enum@1.0.9" # a helpful enum tool
+rbxcloud = "sleitnick/rbxcloud@0.17.0" # wrapper for many roblox cloud APIs
+asphalt = "jackTabsCode/asphalt@2.0.2" # useful tool for cloud asset management
+lune = "lune-org/lune@0.10.5" # luau runtime environment with useful libs for roblox dev workflows
+luau-lsp = "JohnnyMorganz/luau-lsp@1.69.0" # slower but more thorough code quality checker
+moonwave = "evaera/moonwave@1.4.2" # generates documentation off of comments
+rocale-cli = "roblox/rocale-cli@0.1.3" # deploys

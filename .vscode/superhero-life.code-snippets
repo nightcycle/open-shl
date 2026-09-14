@@ -1,0 +1,216 @@
+{
+	"itype export": {
+		"prefix": "itype etype",
+		"body": [
+			"export type $name = $name.$name"
+		],
+		"description": "Unpacks and exports a type.",
+		"scope": "luau"
+	},
+	"itype private": {
+		"prefix": "itype ptype",
+		"body": [
+			"type $name = $name.$name"
+		],
+		"description": "Unpacks and a type.",
+		"scope": "luau"
+	},
+	"irequire package": {
+		"prefix": "irequire package",
+		"body": [
+			"local ${name} = require(\"@game/ReplicatedStorage/Packages/$name\")"
+		],
+		"description": "Imports a package module.",
+		"scope": "luau"
+	},
+	"irequire server": {
+		"prefix": "irequire server",
+		"body": [
+			"local $1 = require(\"@game/ServerScriptService/Server/$2\")"
+		],
+		"description": "Imports a server module.",
+		"scope": "luau"
+	},
+	"irequire gen": {
+		"prefix": "irequire server",
+		"body": [
+			"local $1 = require(\"@game/Replicated/Generated/$2\")"
+		],
+		"description": "Imports a generated module.",
+		"scope": "luau"
+	},
+	"irequire shared": {
+		"prefix": "irequire shared",
+		"body": [
+			"local $1 = require(\"@game/ReplicatedStorage/Shared/$2\")"
+		],
+		"description": "Imports a shared module.",
+		"scope": "luau"
+	},
+	"irequire client": {
+		"prefix": "irequire client",
+		"body": [
+			"local $1 = require(\"@game/StarterPlayer/StarterPlayerScripts/Client/$2\")"
+		],
+		"description": "Imports a client module.",
+		"scope": "luau"
+	},
+	"irequire dev-package": {
+		"prefix": "irequire dev-package",
+		"body": [
+			"local ${name} = require(\"@game/ReplicatedStorage/DevPackages/$name\")"
+		],
+		"description": "Imports a dev package module.",
+		"scope": "luau"
+	},
+	"itemplate header": {
+		"prefix": "itemplate header",
+		"body": [
+			"--!strict",
+			"-- Services",
+			"-- Packages",
+			"-- Modules",
+			"-- Types",
+			"-- Constants",
+			"-- Variables",
+			"-- References",
+			"-- Private Functions",
+			"-- Class",
+			"$0"
+		],
+		"description": "A basic template for a header.",
+		"scope": "luau"
+	},
+	"itemplate module": {
+		"prefix": "itemplate module",
+		"body": [
+			"--!strict",
+			"--!native",
+			"-- Services",
+			"-- Packages",
+			"-- Modules",
+			"-- Types",
+			"-- Constants",
+			"-- Variables",
+			"-- References",
+			"-- Private Functions",
+			"-- Class",
+			"local ${name} = {}",
+			"",
+			"",
+			"return ${name}"
+		],
+		"description": "A basic template for a file.",
+		"scope": "luau"
+	},
+	"itemplate types": {
+		"prefix": "itemplate types",
+		"body": [
+			"--!strict",
+			"--!native",
+			"-- Services",
+			"-- Packages",
+			"local Type = require(\"@game/ReplicatedStorage/Packages/Types\")",
+			"-- Modules",
+			"-- Components",
+			"-- Hooks",
+			"-- Types",
+			"local Types = {}",
+			"",
+			"",
+			"return Types"
+		],
+		"description": "A basic template for for a type def file.",
+		"scope": "luau"
+	},
+	"itemplate service": {
+		"prefix": "itemplate service",
+		"description": "creates a basic service",
+		"scope": "luau",
+		"body": [
+			"--!strict",
+			"-- Services",
+			"-- Packages",
+			"local ServiceLocker = require(\"@game/ReplicatedStorage/Packages/ServiceLocker\")",
+			"-- Modules",
+			"-- Types",
+			"type ${name}ServiceImpl = {",
+			"\t__index: ${name}ServiceImpl,",
+			"}",
+			"export type ${name}Service = typeof(setmetatable(",
+			"\t{} :: {",
+			"\t\tIsInitialized: true,",
+			"\t\t_Connections: { RBXScriptConnection },",
+			"\t\t_CleanUpCallbacks: { () -> () },",
+			"\t},",
+			"\t{} :: ${name}ServiceImpl",
+			"))",
+			"-- Constants",
+			"-- Variables",
+			"-- References",
+			"-- Private Functions",
+			"-- Class",
+			"local ${name}Service = {} :: ${name}ServiceImpl",
+			"${name}Service.__index = ${name}Service",
+			"",
+			"return ServiceLocker(function(): ${name}Service",
+			"\tlocal self = setmetatable({",
+			"\t\tIsInitialized = true :: true,",
+			"\t\t_CleanUpCallbacks = {},",
+			"\t\t_Connections = {},",
+			"\t}, ${name}Service)",
+			"\treturn self",
+			"end, function(self: ${name}Service)",
+			"\tfor i, v in self._Connections do",
+			"\t\tv:Disconnect()",
+			"\tend",
+			"\ttable.clear(self._CleanUpCallbacks)",
+			"\tfor i, v in self._CleanUpCallbacks do",
+			"\t\ttask.spawn(v)",
+			"\tend",
+			"\ttable.clear(self._CleanUpCallbacks)",
+			"\ttable.clear(self :: any)",
+			"end)",
+			""
+		]
+	},
+	"itemplate ui-labs": {
+		"prefix": "itemplate ui-labs",
+		"description": "creates a basic ui-labs script",
+		"scope": "luau",
+		"body": [
+			"--!strict",
+			"--!native",
+			"_G.__REACT_MICROPROFILER_LEVEL = 10",
+			"-- Services",
+			"-- Packages",
+			"local React = require(\"@game/ReplicatedStorage/Packages/React\")",
+			"local ReactRoblox = require(\"@game/ReplicatedStorage/Packages/ReactRoblox\")",
+			"local UILabs = require(\"@game/ReplicatedStorage/DevPackages/UILabs\")",
+			"-- Modules",
+			"-- Components",
+			"local ParentComponent = require(\"./\")",
+			"-- Hooks",
+			"-- Types",
+			"-- Constants",
+			"-- Variables",
+			"-- References",
+			"-- Private Functions",
+			"local e = React.createElement",
+			"-- Class",
+			"return UILabs.CreateReactStory({",
+			"\treact = React,",
+			"\treactRoblox = ReactRoblox,",
+			"\tcontrols = {},",
+			"}, function(props)",
+			"\treturn e(ParentComponent, {",
+			"\t\tAnchorPoint = Vector2.new(0.5, 0.5),",
+			"\t\tBackgroundTransparency = 1,",
+			"\t\tPosition = UDim2.fromScale(0.5, 0.5),",
+			"\t\tSize = UDim2.fromOffset(400, 300),",
+			"\t\tSizeConstraint = Enum.SizeConstraint.RelativeXY,",
+			"\t})",
+			"end)"
+		],
+	},
+}

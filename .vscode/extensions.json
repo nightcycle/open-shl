@@ -1,0 +1,9 @@
+{
+	"recommendations": [
+		"tamasfe.even-better-toml",
+		"johnnymorganz.luau-lsp",
+		"johnnymorganz.stylua",
+		"meezilla.json",
+		"pomdtr.secrets"
+	]
+}

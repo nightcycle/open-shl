@@ -1,0 +1,15 @@
+[creator]
+type = "group"
+id = 4181328
+
+[codegen]
+output_name = "Asset"
+typescript = false
+style = "nested"
+strip_extension = true
+
+[inputs.Animation]
+path = "asset/animation/**"
+output_path = "Generated/Asset"
+
+

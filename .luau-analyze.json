@@ -1,0 +1,5 @@
+{
+	"luau-lsp.require.mode": "relativeToFile",
+	"luau-lsp.diagnostics.strictDatamodelTypes": true,
+	"luau-lsp.types.robloxSecurityLevel": "LocalUserSecurity"
+}

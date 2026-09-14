@@ -1,0 +1,36 @@
+[package]
+name = "nightcycle/superhero-life"
+description = "A package!"
+version = "0.1.0"
+authors = ["CJ Oyer <coyer@nightcycle.us>"]
+realm = "shared"
+registry = "https://github.com/UpliftGames/wally-index"
+exclude = ["Packages", ".vscode"]
+private = true
+
+[dependencies]
+MsgPack="cipharius/msgpack-luau@0.3.0" # good for compression / serializing stuff
+Spring = "nightcycle/spring@1.0.0" # great for making scripted movement feel alive
+Signal = "sleitnick/signal@2.0.1" # handy for making custom events
+Type = "osyrisrblx/t@3.1.1" # lifesaver for detecting mistakes early + filtering client input
+TableUtil = "nightcycle/table-util@3.1.0" # handy array / map methods
+HashLib = "boatbomber/hashlib@1.0.0" # mostly used for getting deterministic ids via md5 hashing
+MaterialIcons = "nightcycle/material-icons-default-dp24-1x@^1.0" # handy for UI icons
+MaterialIconsHD = "nightcycle/material-icons-default-dp48-2x@^1.0" # handy for UI icons
+OutlinedMaterialIcons = "nightcycle/material-icons-outlined-dp24-1x@^1.0" # handy for UI icons
+OutlinedMaterialIconsHD = "nightcycle/material-icons-outlined-dp48-2x@^1.0" # handy for UI icons
+React = "jsdotlua/react@^17.2" # preferred framework for UI
+ReactRoblox = "jsdotlua/react-roblox@^17.2" # allows react to be bound to roblox instances
+Osiris = "nightcycle/osiris@0.1.9" # preferred debug menu tool (iris wrapper)
+Noise = "nightcycle/noise@1.0.0" # you know how `Random` is often more useful than `math.random`? This is that for `math.noise`
+Draw = "nightcycle/draw@1.0.6" # helps with debugging 3D space
+ConversionUtil = "nightcycle/conversion-util@1.0.0" # converts between many popular units
+PhysicsUtil = "nightcycle/physics-util@1.4.0" # some handy kinematic equation permutations
+SimpleError = "nightcycle/simple-error@^0.1" # lightweight error class
+Display = "nightcycle/display@^0.2.8" # great for lossy parsing of complex structures for the goal of logging
+SimpleTest = "nightcycle/simple-test@0.2.7" # useful for unit testing
+ReactErrorBoundary = "chriscerie/react-error-boundary@0.2.0" # don't let a single mistake brick your entire UI
+ServiceLocker = "nightcycle/service-locker@1.0.3" # preferred method for ensuring a singleton was initialized
+
+[dev-dependencies]
+UILabs = "pepeeltoro41/ui-labs@2.4.2" # helper methods for the amazing UI Labs plugin
