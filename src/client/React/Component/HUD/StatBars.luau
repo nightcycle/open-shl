@@ -4,6 +4,9 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 -- Components
+-- Contexts
+local CharacterEnergyContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Energy")
+local CharacterHealthContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Health")
 -- Types
 export type Properties = {}
 -- Constants
@@ -13,6 +16,9 @@ export type Properties = {}
 local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
+	local health = React.useContext(CharacterHealthContext)
+	local energy = React.useContext(CharacterEnergyContext)
+
 	return e(React.Fragment, {}, {
 		Energy = e("Frame", {
 			BackgroundColor3 = Color3.new(),
@@ -21,11 +27,11 @@ return function(props: Properties): React.ReactNode
 			Position = UDim2.new(0.35, 0, 0.01, 25),
 			Size = UDim2.new(0.3, 0, 0, 20),
 		}, {
-			EnergyBar = e("Frame", {
+			EnergyBar = energy > 0 and e("Frame", {
 				BackgroundColor3 = Color3.fromRGB(26, 167, 255),
 				BorderColor3 = Color3.fromRGB(27, 42, 53),
 				Position = UDim2.fromScale(0.01, 0.06),
-				Size = UDim2.fromScale(0.98, 0.88),
+				Size = UDim2.fromScale(0.98 * (energy / 100), 0.88),
 			}),
 
 			TextLabel = e("TextLabel", {
@@ -48,11 +54,11 @@ return function(props: Properties): React.ReactNode
 			Position = UDim2.fromScale(0.35, 0.01),
 			Size = UDim2.new(0.3, 0, 0, 20),
 		}, {
-			HealthBar = e("Frame", {
+			HealthBar = health > 0 and e("Frame", {
 				BackgroundColor3 = Color3.fromRGB(0, 170, 0),
 				BorderColor3 = Color3.fromRGB(27, 42, 53),
 				Position = UDim2.fromScale(0.01, 0.06),
-				Size = UDim2.fromScale(0.98, 0.88),
+				Size = UDim2.fromScale(0.98 * (health / 100), 0.88),
 			}),
 
 			TextLabel = e("TextLabel", {
@@ -67,7 +73,7 @@ return function(props: Properties): React.ReactNode
 				ZIndex = 2,
 			}),
 		}),
-		EnergyWarning = e("TextLabel", {
+		EnergyWarning = energy <= 0 and e("TextLabel", {
 			BackgroundTransparency = 1,
 			FontFace = Font.new("rbxasset://fonts/families/ComicNeueAngular.json"),
 			AnchorPoint = Vector2.new(0.5, 0),
