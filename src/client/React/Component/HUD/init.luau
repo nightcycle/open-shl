@@ -7,6 +7,7 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local ImageButton = require("@game/ReplicatedStorage/Generated/React/Component/ImageButton")
+local StatBars = require("@self/StatBars")
 local UIListLayout = require("@game/ReplicatedStorage/Generated/React/Component/UIListLayout")
 -- Types
 export type Properties = Frame.Properties & {
@@ -56,16 +57,18 @@ return function(props: Properties): React.ReactNode
 	end
 	return e(
 		Frame({
-			-- BackgroundTransparency = 1,
+			BackgroundTransparency = 1,
 			Active = false,
 		} :: Frame.Properties),
 		props,
 		{
+			Bars = e(StatBars, {}),
 			Left = e(
 				"Frame",
 				{
 					Size = UDim2.fromScale(0.08, 0.75 + 0.08 - 0.45),
 					Position = UDim2.fromScale(0.04, 0.45),
+					BackgroundTransparency = 1,
 					Active = false,
 				} :: Frame.Properties,
 				{
@@ -86,6 +89,7 @@ return function(props: Properties): React.ReactNode
 					AnchorPoint = Vector2.new(1, 0),
 					Size = UDim2.fromScale(0.08, 0.75 + 0.08 - 0.45),
 					Position = UDim2.fromScale(1 - 0.04, 0.45),
+					BackgroundTransparency = 1,
 					Active = false,
 				} :: Frame.Properties,
 				{
