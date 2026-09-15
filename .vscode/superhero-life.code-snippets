@@ -47,6 +47,22 @@
 		"description": "Imports a react component.",
 		"scope": "luau"
 	},
+	"irequire hook": {
+		"prefix": "irequire hook",
+		"body": [
+			"local ${name} = require(\"@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/${name}\")"
+		],
+		"description": "Imports a react hook.",
+		"scope": "luau"
+	},
+	"irequire context": {
+		"prefix": "irequire context",
+		"body": [
+			"local $1 = require(\"@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/$2\")"
+		],
+		"description": "Imports a react context.",
+		"scope": "luau"
+	},
 	"irequire gen-comp": {
 		"prefix": "irequire gen-comp",
 		"body": [
@@ -61,6 +77,14 @@
 			"local $1 = require(\"@game/ReplicatedStorage/Shared/$2\")"
 		],
 		"description": "Imports a shared module.",
+		"scope": "luau"
+	},
+	"irequire type": {
+		"prefix": "irequire type",
+		"body": [
+			"local ${name} = require(\"@game/ReplicatedStorage/Shared/Type/${name}\")"
+		],
+		"description": "Imports a shared types module.",
 		"scope": "luau"
 	},
 	"irequire client": {
@@ -119,6 +143,34 @@
 		"description": "A basic template for a file.",
 		"scope": "luau"
 	},
+	"itemplate component": {
+		"prefix": "itemplate component",
+		"body": [
+			"--!strict",
+			"--!native",
+			"-- Services",
+			"-- Packages",
+			"local React = require(\"@game/ReplicatedStorage/Packages/React\")",
+			"-- Modules",
+			"-- Components",
+			"local ${name} = require(\"@game/ReplicatedStorage/Generated/React/Component/${name}\")",
+			"-- Hooks",
+			"-- Contexts",
+			"-- Types",
+			"export type Properties = ${name}.Properties & {}",
+			"-- Constants",
+			"-- Variables",
+			"-- References",
+			"-- Private Functions",
+			"local e = React.createElement",
+			"-- Class",
+			"return function(props: Properties)",
+			"\treturn e(${name}({} :: ${name}.Properties), props, {})",
+			"end"
+		],
+		"description": "A basic template for a file.",
+		"scope": "luau"
+	},
 	"itemplate types": {
 		"prefix": "itemplate types",
 		"body": [
@@ -126,7 +178,7 @@
 			"--!native",
 			"-- Services",
 			"-- Packages",
-			"local Type = require(\"@game/ReplicatedStorage/Packages/Types\")",
+			"local Type = require(\"@game/ReplicatedStorage/Packages/Type\")",
 			"-- Modules",
 			"-- Components",
 			"-- Hooks",
