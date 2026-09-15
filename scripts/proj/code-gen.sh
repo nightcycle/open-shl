@@ -6,7 +6,7 @@ if [ ! -d "Generated" ]; then
 	mkdir "Generated"
 fi
 
-classes=("Frame" "CanvasGroup" "ImageButton" "TextButton" "ImageLabel" "TextLabel" "ScrollingFrame" "TextBox" "VideoFrame" "ViewportFrame")
+classes=("Frame" "CanvasGroup" "ImageButton" "TextButton" "ImageLabel" "TextLabel" "ScrollingFrame" "TextBox" "VideoFrame" "ViewportFrame" "UIListLayout" "UIPadding")
 for class in "${classes[@]}"; do
 	lune run "scripts/util/generate-react-roblox-types.lune.luau" "Generated/React/Component/${class}.luau" "${class}"
 done

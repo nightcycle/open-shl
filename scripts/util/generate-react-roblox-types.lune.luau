@@ -65,14 +65,18 @@ local EXCLUDED_TYPES: { [string]: boolean } = {
 	uniqueid = true,
 }
 
-local function luauType(datatype: unknown): string
+local PROPERTY_TYPES: { [string]: string } = {
+	Image = "string",
+}
+
+local function luauType(datatype: unknown): string?
 	local name = tostring(datatype)
 	local normalized = string.lower(name)
 	local enumName = name:gsub("[^%w_]+$", ""):match("([%w_]+)$")
 	if normalized:match("^enum") and enumName and enumName ~= "Enum" and enumName ~= "EnumItem" then
 		return `Enum.{enumName}`
 	end
-	return TYPES[normalized] or "unknown"
+	return TYPES[normalized]
 end
 
 local function collectProperties(database: any, className: string, cache: { [string]: Properties }): Properties
@@ -90,8 +94,14 @@ local function collectProperties(database: any, className: string, cache: { [str
 
 	for name, property in class.Properties do
 		local datatype = tostring(property.Datatype)
-		if tostring(property.Scriptability) == "ReadWrite" and not EXCLUDED_TYPES[string.lower(datatype)] then
-			properties[name] = luauType(property.Datatype)
+		local propertyType = PROPERTY_TYPES[name] or luauType(property.Datatype)
+		if
+			name:match("^[%a_][%w_]*$")
+			and propertyType
+			and tostring(property.Scriptability) == "ReadWrite"
+			and not EXCLUDED_TYPES[string.lower(datatype)]
+		then
+			properties[name] = propertyType
 		end
 	end
 
@@ -119,6 +129,7 @@ local lines = {
 	"",
 }
 
+local propertyNames: { string } = {}
 do
 	local properties = collectProperties(database, className, cache)
 	local names: { string } = {}
@@ -126,6 +137,7 @@ do
 		table.insert(names, name)
 	end
 	table.sort(names)
+	propertyNames = names
 
 	table.insert(lines, `export type Properties = \{`)
 	for _, name in names do
@@ -136,10 +148,18 @@ do
 end
 
 table.insert(lines, "")
+table.insert(lines, "local VALID_PROPERTIES: { [string]: boolean } = {")
+for _, name in propertyNames do
+	table.insert(lines, `\t{name} = true,`)
+end
+table.insert(lines, "}")
+table.insert(lines, "")
 table.insert(lines, `local function append(defaults: Properties, props: Properties): Properties`)
 table.insert(lines, "\tlocal result = {}")
 table.insert(lines, "\tfor name, value in props do")
-table.insert(lines, "\t\tresult[name] = value")
+table.insert(lines, "\t\tif VALID_PROPERTIES[name :: string] or type(name) ~= \"string\" then")
+table.insert(lines, "\t\t\tresult[name] = value")
+table.insert(lines, "\t\tend")
 table.insert(lines, "\tend")
 table.insert(lines, "\tfor name, value in defaults do")
 table.insert(lines, "\t\tresult[name] = value")

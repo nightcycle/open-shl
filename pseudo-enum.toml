@@ -9,11 +9,10 @@ MenuId = [
 	"Artifact",
 	"Build",
 	"Camera",
-	"Entry",
 	"Database",
 	"Shop",
 	"Music",
 	"Actions",
 	"Swap",
+	"Characters"
 ]
-Side = ["Left", "Right"]

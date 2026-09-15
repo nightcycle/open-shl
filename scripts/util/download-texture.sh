@@ -5,5 +5,5 @@ curl -L \
     -H "Accept: image/png,image/jpeg,image/*" \
     -b ".ROBLOSECURITY=${ROBLOSECURITY}" \
     --compressed \
-    -o "asset/texture/${1}.png" \
+    -o "asset/image/${1}.png" \
     "https://assetdelivery.roblox.com/v1/asset/?id=${1}"

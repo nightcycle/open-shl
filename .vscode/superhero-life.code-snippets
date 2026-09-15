@@ -39,6 +39,22 @@
 		"description": "Imports a generated module.",
 		"scope": "luau"
 	},
+	"irequire comp": {
+		"prefix": "irequire comp",
+		"body": [
+			"local ${name} = require(\"@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/${name}\")"
+		],
+		"description": "Imports a react component.",
+		"scope": "luau"
+	},
+	"irequire gen-comp": {
+		"prefix": "irequire gen-comp",
+		"body": [
+			"local ${name} = require(\"@game/ReplicatedStorage/Generated/React/Component/${name}\")"
+		],
+		"description": "Imports a generated react component.",
+		"scope": "luau"
+	},
 	"irequire shared": {
 		"prefix": "irequire shared",
 		"body": [
