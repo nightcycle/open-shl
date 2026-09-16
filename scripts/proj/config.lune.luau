@@ -38,22 +38,31 @@ do -- write in a do block now to make it easier to copy to other things later / 
 	end
 	appendService("ServerScriptService", function(node: rojo.ProjectNode)
 		node["Server"] = {
-			["$path"] = "src/server"
+			["$path"] = "src/server",
 		}
 	end)
 
 	appendService("ReplicatedStorage", function(node: rojo.ProjectNode)
 		node["Shared"] = {
-			["$path"] = "src/shared"
+			["$path"] = "src/shared",
 		}
 		node["Generated"] = {
-			["$path"] = "Generated"
+			["$path"] = "Generated",
 		}
 		node["Packages"] = {
-			["$path"] = "Packages"
+			["$path"] = "Packages",
 		}
 		node["DevPackages"] = {
-			["$path"] = "DevPackages"
+			["$path"] = "DevPackages",
+		}
+		node["lib"] = {
+			["$className"] = "Folder",
+			["base"] = {
+				["$path"] = "lib/base",
+			} :: rojo.ProjectNode,
+			["character"] = {
+				["$path"] = "lib/character",
+			} :: rojo.ProjectNode,
 		}
 	end)
 
@@ -61,14 +70,14 @@ do -- write in a do block now to make it easier to copy to other things later / 
 		node["StarterPlayerScripts"] = {
 			["$className"] = "StarterPlayerScripts",
 			["Client"] = {
-				["$path"] = "src/client"
-			} :: rojo.ProjectNode
+				["$path"] = "src/client",
+			} :: rojo.ProjectNode,
 		}
 	end)
 
 	appendService("Workspace", function(node: rojo.ProjectNode)
 		node["Map"] = {
-			["$path"] = `lib/map/{MAP}`
+			["$path"] = `lib/map/{MAP}`,
 		}
 	end)
 

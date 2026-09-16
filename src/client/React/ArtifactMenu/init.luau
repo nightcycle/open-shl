@@ -53,9 +53,9 @@ return function(props: Properties)
 						Rarity = "Common",
 						Items = {
 							"ABC",
-							"123"
-						}
-					}
+							"123",
+						},
+					},
 				},
 				OnClick = function(item)
 					print(`selected: "{item}"`)

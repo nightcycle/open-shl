@@ -13,8 +13,8 @@ wally install
 if [ ! -f "$SOURCEMAP" ]; then
 	sh "scripts/sourcemap.sh"
 fi
-set +e
+# set +e
 echo "extracting wally package types"
-wally-package-types "Packages" --sourcemap "$SOURCEMAP" >/dev/null 2>&1
-wally-package-types "DevPackages" --sourcemap "$SOURCEMAP" >/dev/null 2>&1
-set -e
+wally-package-types "Packages" --sourcemap "$SOURCEMAP" # >/dev/null 2>&1
+wally-package-types "DevPackages" --sourcemap "$SOURCEMAP" # >/dev/null 2>&1
+# set -e

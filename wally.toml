@@ -26,11 +26,11 @@ Noise = "nightcycle/noise@1.0.0" # you know how `Random` is often more useful th
 Draw = "nightcycle/draw@1.0.6" # helps with debugging 3D space
 ConversionUtil = "nightcycle/conversion-util@1.0.0" # converts between many popular units
 PhysicsUtil = "nightcycle/physics-util@1.4.0" # some handy kinematic equation permutations
-SimpleError = "nightcycle/simple-error@^0.1" # lightweight error class
 Display = "nightcycle/display@^0.2.8" # great for lossy parsing of complex structures for the goal of logging
 SimpleTest = "nightcycle/simple-test@0.2.7" # useful for unit testing
 ReactErrorBoundary = "chriscerie/react-error-boundary@0.2.0" # don't let a single mistake brick your entire UI
 ServiceLocker = "nightcycle/service-locker@1.0.3" # preferred method for ensuring a singleton was initialized
+TypeUnionLib = "nightcycle/type-union-lib@0.1.0" # some useful types and methods for handling unions in luau
 
 [dev-dependencies]
 UILabs = "pepeeltoro41/ui-labs@2.4.2" # helper methods for the amazing UI Labs plugin

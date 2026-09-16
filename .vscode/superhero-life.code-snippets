@@ -82,7 +82,7 @@
 	"irequire type": {
 		"prefix": "irequire type",
 		"body": [
-			"local ${name} = require(\"@game/ReplicatedStorage/Shared/Type/${name}\")"
+			"local ${name}Type = require(\"@game/ReplicatedStorage/Shared/Type/${name}\")"
 		],
 		"description": "Imports a shared types module.",
 		"scope": "luau"
