@@ -9,8 +9,9 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Types
 local Types = {}
 
+export type ItemCategory = "clothing" | "costume" | "cosmetics" | "body"
 export type ItemDefinitionIndex = {
-	Group: "clothing" | "costume" | "cosmetics" | "body",
+	Group: ItemCategory,
 	Category: string,
 	Item: string,
 }
@@ -27,12 +28,12 @@ export type TextureGroupDefinition = {
 	Materials: { Enum.Material } | true?,
 }
 
-Types.TextureGroupDefinition = {
+Types.TextureGroupDefinition = Type.strictInterface({
 	Key = Type.string,
 	Transparency = Type.optional(Type.union(Type.numberConstrained(0, 1), Type.NumberRange)),
-	Colors = Type.optional(Type.array(Type.Color3), Type.literal(true)),
-	Materials = Type.optional(Type.array(Type.enum(Enum.Material)), Type.literal(true)),
-}
+	Colors = Type.optional(Type.union(Type.array(Type.Color3), Type.literal(true))),
+	Materials = Type.optional(Type.union(Type.array(Type.enum(Enum.Material)), Type.literal(true))),
+})
 
 export type ItemDefinitionTag = "IsMask"
 Types.ItemDefinitionTag = Type.literal("IsMask")
