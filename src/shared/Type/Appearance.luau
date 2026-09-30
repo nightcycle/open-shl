@@ -36,9 +36,11 @@ Types.TextureGroupDefinition = Type.strictInterface({
 	Colors = Type.optional(Type.union(Type.array(Type.Color3), Type.literal(true))),
 	Materials = Type.optional(Type.union(Type.array(Type.enum(Enum.Material)), Type.literal(true))),
 })
+export type HiddenTag = "Hood" | "Mask" | "MouthCover" | "Hair"
+Types.HiddenTag = Type.literal("Hood", "Mask", "MouthCover", "Hair")
 
-export type ItemDefinitionTag = "IsMask"
-Types.ItemDefinitionTag = Type.literal("IsMask", "MultiWeld")
+export type ItemDefinitionTag = "IsMask" | HiddenTag
+Types.ItemDefinitionTag = Type.union(Type.literal("IsMask"), Types.HiddenTag)
 export type ItemDefinition = {
 	Id: string,
 	Name: string?,
@@ -61,9 +63,6 @@ export type Item = {
 Types.Item = Type.strictInterface({
 	DefinitionId = Type.string,
 })
-
-export type HiddenTag = "Hood" | "Mask" | "MouthCover" | "Hair"
-Types.HiddenTag = Type.literal("Hood", "Mask", "MouthCover", "Hair")
 
 export type Appearance = {
 	Items: { Item },

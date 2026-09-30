@@ -30,7 +30,9 @@
         1.4955198764801025
       ]
     },
-    "Tags": [],
+    "Tags": [
+      "MouthCover"
+    ],
     "TextureContent": {
       "Content": "None"
     },

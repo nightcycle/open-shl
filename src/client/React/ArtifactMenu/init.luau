@@ -14,6 +14,7 @@ local ItemList = require("@self/ItemList")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 export type ItemDefinition = AppearanceType.ItemDefinition
+export type HiddenTag = AppearanceType.HiddenTag
 export type ActionInfo =
 	{
 		Type: "Wear",
@@ -22,6 +23,11 @@ export type ActionInfo =
 	| {
 		Type: "Remove",
 		Item: ItemDefinition,
+	}
+	| {
+		Type: "SetTagVisibility",
+		Tag: HiddenTag,
+		IsVisible: boolean,
 	}
 	| {
 		Type: "Exit",
@@ -86,7 +92,9 @@ return function(props: Properties)
 					BorderColor3 = Color3.fromRGB(27, 42, 53),
 					Position = UDim2.fromScale(0.95, 0.5),
 					Size = UDim2.fromScale(0.3, 0.8),
-					SetVisibility = function(id: string, toVisibility: boolean) end,
+					SetVisibility = function(tag: HiddenTag, toVisibility: boolean)
+
+					end,
 				} :: ConfigurePanel.Properties
 			),
 			ItemList = e(

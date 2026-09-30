@@ -40,7 +40,9 @@
         2.2880055904388428
       ]
     },
-    "Tags": [],
+    "Tags": [
+      "Hair"
+    ],
     "TextureContent": {
       "Content": "None"
     }

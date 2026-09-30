@@ -8,6 +8,7 @@ local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definit
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
+local TextLabel = require("@game/ReplicatedStorage/Generated/React/Component/TextLabel")
 -- Hooks
 -- Contexts
 local CharacterAppearanceContext =
@@ -18,7 +19,7 @@ type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
 export type Properties = Frame.Properties & {
 	SelectedItemDefinition: ItemDefinition,
-	SetVisibility: (id: string, toVisibility: boolean) -> (),
+	SetVisibility: (tag: AppearanceType.HiddenTag, toVisibility: boolean) -> (),
 }
 -- Constants
 local LABEL_FONT = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
@@ -30,71 +31,59 @@ local RED_BUTTON_COLOR = Color3.fromRGB(151, 75, 75)
 -- References
 -- Private Functions
 local e = React.createElement
+function buttonGroup(props: {
+	HiddenTag: AppearanceType.HiddenTag,
+	Text: string?,
+	PositionY: UDim,
+	SetVisibility: (tag: AppearanceType.HiddenTag, toVisibility: boolean) -> (),
+})
+	local characterAppearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
+	local hasItem = React.useMemo(function(): boolean
+		for i, item in characterAppearance.Items do
+			local definition = ItemAppearanceDefinition.get(item.DefinitionId)
+			if definition.IsOk then
+				if table.find(definition.Value.Tags, props.HiddenTag) then
+					return true
+				end
+			else
+				warn(definition.Value)
+			end
+		end
+		return false
+	end, { characterAppearance.Items })
+
+	local isVisible = table.find(characterAppearance.HiddenTags, props.HiddenTag) == nil
+	return hasItem
+		and e(React.Fragment, {}, {
+			Label = e("TextLabel", {
+				BackgroundTransparency = 1,
+				FontFace = LABEL_FONT,
+				Position = UDim2.new(UDim.new(0, 0), props.PositionY),
+				Size = UDim2.fromScale(0.5, 0.08),
+				Text = props.Text or props.HiddenTag,
+				TextColor3 = Color3.new(1, 1, 1),
+				TextScaled = true,
+				TextXAlignment = Enum.TextXAlignment.Right,
+			}),
+
+			Button = e("TextButton", {
+				BackgroundColor3 = not isVisible and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR,
+				BorderColor3 = Color3.fromRGB(27, 42, 53),
+				BorderSizePixel = 0,
+				FontFace = BUTTON_FONT,
+				Position = UDim2.new(UDim.new(0.6, 0), props.PositionY),
+				Size = UDim2.fromScale(0.3, 0.08),
+				Text = not isVisible and "Off" or "On",
+				TextColor3 = Color3.new(1, 1, 1),
+				TextScaled = true,
+			}),
+		})
+end
 -- Class
 return function(props: Properties)
 	local itemIndexRes = React.useMemo(function()
 		return ItemAppearanceDefinition.getIndex(props.SelectedItemDefinition.Id)
 	end, { props.SelectedItemDefinition.Id })
-
-	local characterAppearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
-	local mask = React.useMemo(function(): Item?
-		for i, item in characterAppearance.Items do
-			local defIndexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
-			if defIndexRes.IsOk then
-				if defIndexRes.Value.Group == "costume" and defIndexRes.Value.Category == "masks" then
-					return item
-				end
-			else
-				warn(defIndexRes.Value)
-			end
-		end
-		return
-	end, { characterAppearance.Items })
-	local isMaskVisible = table.find(characterAppearance.HiddenTags, "Mask") == nil
-	local hood = React.useMemo(function(): Item?
-		for i, item in characterAppearance.Items do
-			local defIndexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
-			if defIndexRes.IsOk then
-				if defIndexRes.Value.Group == "costume" and defIndexRes.Value.Category == "hoods" then
-					return item
-				end
-			else
-				warn(defIndexRes.Value)
-			end
-		end
-		return
-	end, { characterAppearance.Items })
-	local isHoodVisible = table.find(characterAppearance.HiddenTags, "Hood") == nil
-
-	local hair = React.useMemo(function(): Item?
-		for i, item in characterAppearance.Items do
-			local defIndexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
-			if defIndexRes.IsOk then
-				if defIndexRes.Value.Group == "cosmetics" and defIndexRes.Value.Category == "hair" then
-					return item
-				end
-			else
-				warn(defIndexRes.Value)
-			end
-		end
-		return
-	end, { characterAppearance.Items })
-	local isHairVisible = table.find(characterAppearance.HiddenTags, "Hair") == nil
-
-	local mouthCover = React.useMemo(function(): Item?
-		for i, item in characterAppearance.Items do
-			local defIndexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
-			if defIndexRes.IsOk then
-				if defIndexRes.Value.Group == "costume" and defIndexRes.Value.Category == "mouth-covers" then
-					return item
-				end
-			else
-				warn(defIndexRes.Value)
-			end
-		end
-		return
-	end, { characterAppearance.Items })
-	local isMouthCoverVisible = table.find(characterAppearance.HiddenTags, "MouthCover") == nil
 
 	return e(
 		Frame({
@@ -134,100 +123,26 @@ return function(props: Properties)
 				TextScaled = true,
 			}),
 
-			Hood = hood and e(React.Fragment, {}, {
-				Label = e("TextLabel", {
-					BackgroundTransparency = 1,
-					FontFace = LABEL_FONT,
-					Position = UDim2.fromScale(0, 0.3),
-					Size = UDim2.fromScale(0.5, 0.08),
-					Text = "Hood",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-					TextXAlignment = Enum.TextXAlignment.Right,
+			VisibilityToggles = e(React.Fragment, {}, {
+				Mask = e(buttonGroup, {
+					HiddenTag = "Mask" :: AppearanceType.HiddenTag,
+					PositionY = UDim.new(0.2, 0),
+					SetVisibility = props.SetVisibility,
 				}),
-
-				Button = e("TextButton", {
-					BackgroundColor3 = not isHoodVisible and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR,
-					BorderColor3 = Color3.fromRGB(27, 42, 53),
-					BorderSizePixel = 0,
-					FontFace = BUTTON_FONT,
-					Position = UDim2.fromScale(0.6, 0.3),
-					Size = UDim2.fromScale(0.3, 0.08),
-					Text = not isHoodVisible and "Off" or "On",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
+				Hood = e(buttonGroup, {
+					HiddenTag = "Hood" :: AppearanceType.HiddenTag,
+					PositionY = UDim.new(0.3, 0),
+					SetVisibility = props.SetVisibility,
 				}),
-			}),
-			Mask = mask and e(React.Fragment, {}, {
-				Label = e("TextLabel", {
-					BackgroundTransparency = 1,
-					FontFace = LABEL_FONT,
-					Position = UDim2.fromScale(0, 0.2),
-					Size = UDim2.fromScale(0.5, 0.08),
-					Text = "Mask",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-					TextXAlignment = Enum.TextXAlignment.Right,
+				Hair = e(buttonGroup, {
+					HiddenTag = "Hair" :: AppearanceType.HiddenTag,
+					PositionY = UDim.new(0.4, 0),
+					SetVisibility = props.SetVisibility,
 				}),
-
-				Button = e("TextButton", {
-					BackgroundColor3 = not isMaskVisible and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR,
-					BorderColor3 = Color3.fromRGB(27, 42, 53),
-					BorderSizePixel = 0,
-					FontFace = BUTTON_FONT,
-					Position = UDim2.fromScale(0.6, 0.2),
-					Size = UDim2.fromScale(0.3, 0.08),
-					Text = not isMaskVisible and "Off" or "On",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-				}),
-			}),
-			MouthCover = mouthCover and e(React.Fragment, {}, {
-				Label = e("TextLabel", {
-					BackgroundTransparency = 1,
-					FontFace = LABEL_FONT,
-					Position = UDim2.fromScale(0, 0.5),
-					Size = UDim2.fromScale(0.5, 0.08),
-					Text = not isHoodVisible and "Off" or "Mouth Cover",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-					TextXAlignment = Enum.TextXAlignment.Right,
-				}),
-
-				Button = e("TextButton", {
-					BackgroundColor3 = not isMouthCoverVisible and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR,
-					BorderColor3 = Color3.fromRGB(27, 42, 53),
-					BorderSizePixel = 0,
-					FontFace = BUTTON_FONT,
-					Position = UDim2.fromScale(0.6, 0.5),
-					Size = UDim2.fromScale(0.3, 0.08),
-					Text = not isMouthCoverVisible and "Off" or "On",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-				}),
-			}),
-			Hair = hair and e(React.Fragment, {}, {
-				Button = e("TextButton", {
-					BackgroundColor3 = not isHairVisible and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR,
-					BorderColor3 = Color3.fromRGB(27, 42, 53),
-					BorderSizePixel = 0,
-					FontFace = BUTTON_FONT,
-					Position = UDim2.fromScale(0.6, 0.4),
-					Size = UDim2.fromScale(0.3, 0.08),
-					Text = not isHairVisible and "Off" or "On",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-				}),
-
-				Label = e("TextLabel", {
-					BackgroundTransparency = 1,
-					FontFace = LABEL_FONT,
-					Position = UDim2.fromScale(0, 0.4),
-					Size = UDim2.fromScale(0.5, 0.08),
-					Text = "Hair",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-					TextXAlignment = Enum.TextXAlignment.Right,
+				MouthCover = e(buttonGroup, {
+					HiddenTag = "MouthCover" :: AppearanceType.HiddenTag,
+					PositionY = UDim.new(0.5, 0),
+					SetVisibility = props.SetVisibility,
 				}),
 			}),
 
