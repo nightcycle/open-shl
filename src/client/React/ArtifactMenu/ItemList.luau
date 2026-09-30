@@ -61,7 +61,7 @@ return function(props: Properties)
 			out[`{rarityOrder}-{i}`] = e("TextButton", {
 				BackgroundColor3 = isSelected and Color3.new(1, 1, 1) or Color3.new(),
 				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BackgroundTransparency = isSelected and 0.2 or 0,
+				BackgroundTransparency = isSelected and 0.7 or 0,
 				BorderSizePixel = 0,
 				SizeConstraint = Enum.SizeConstraint.RelativeXX,
 				AutoButtonColor = true,
@@ -70,9 +70,8 @@ return function(props: Properties)
 				Size = UDim2.new(1, -15, 0.008 * 14, 0),
 				Text = name,
 				TextColor3 = isSelected and Color3.new() or Color3.new(1, 1, 1),
-				TextStrokeColor3 = not isSelected and Color3.new() or Color3.new(1, 1, 1),
 				TextScaled = true,
-				TextStrokeTransparency = 0,
+				TextStrokeTransparency = isSelected and 0 or 1,
 				[React.Event.Activated] = function()
 					props.OnClick(itemDef)
 				end,

@@ -63,11 +63,12 @@ function buttonGroup(props: {
 	end, { characterAppearance.Items :: any, props.SelectedItemDefinition })
 
 	local isVisible = table.find(characterAppearance.HiddenTags, props.HiddenTag) == nil
+	local buttonH, buttonS, buttonV = (not isVisible and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR):ToHSV()
 	return hasItem
-		and isWearing
 		and e(React.Fragment, {}, {
 			Label = e("TextLabel", {
 				BackgroundTransparency = 1,
+				TextTransparency = isWearing and 0 or 0.7,
 				FontFace = LABEL_FONT,
 				Position = UDim2.new(UDim.new(0, 0), props.PositionY),
 				Size = UDim2.fromScale(0.5, 0.08),
@@ -78,7 +79,9 @@ function buttonGroup(props: {
 			}),
 
 			Button = e("TextButton", {
-				BackgroundColor3 = not isVisible and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR,
+				BackgroundColor3 = Color3.fromHSV(buttonH, isWearing and buttonS or 0.2, buttonV),
+				BackgroundTransparency = isWearing and 0 or 0.7,
+				TextTransparency = isWearing and 0 or 0.7,
 				BorderColor3 = Color3.fromRGB(27, 42, 53),
 				BorderSizePixel = 0,
 				FontFace = BUTTON_FONT,
@@ -87,9 +90,10 @@ function buttonGroup(props: {
 				Text = not isVisible and "Off" or "On",
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
-				[React.Event.Activated] = function()
+				AutoButtonColor = isWearing,
+				[React.Event.Activated] = isWearing and function()
 					props.SetVisibility(props.HiddenTag, not isVisible)
-				end,
+				end or nil,
 			}),
 		})
 end
@@ -125,7 +129,7 @@ function wearButton(props: {
 			else
 				props.OnWear(props.SelectedItemDefinition)
 			end
-		end
+		end,
 	})
 end
 -- Class
