@@ -1,0 +1,77 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Size": {
+      "Vector3": [
+        0.5325119495391846,
+        0.5325119495391846,
+        0.5325119495391846
+      ]
+    },
+    "Attributes": {
+      "Attributes": {
+        "Rarity": {
+          "String": "Uncommon"
+        },
+        "Offset": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              0.0266571044921875,
+              0.05328369140625
+            ]
+          }
+        },
+        "AttachmentRoot": {
+          "String": "Head"
+        }
+      }
+    },
+    "Tags": []
+  },
+  "Children": [
+    {
+      "Name": "Mesh",
+      "ClassName": "SpecialMesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=36869983"
+          }
+        },
+        "MeshType": {
+          "Enum": 5
+        },
+        "Scale": {
+          "Vector3": [
+            1.011772632598877,
+            0.9585214853286743,
+            1.011772632598877
+          ]
+        },
+        "TextureContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=36869975"
+          }
+        }
+      }
+    }
+  ]
+}

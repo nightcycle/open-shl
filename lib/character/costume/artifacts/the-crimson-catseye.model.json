@@ -1,0 +1,94 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "RotVelocity": {
+      "Vector3": [
+        -1.3752289658413228E-21,
+        3.3907054193214923E-22,
+        -1.3755698547265741E-21
+      ]
+    },
+    "Size": {
+      "Vector3": [
+        0.5325119495391846,
+        0.5325119495391846,
+        0.5325119495391846
+      ]
+    },
+    "Velocity": {
+      "Vector3": [
+        3.92317321184924E-20,
+        0.006772338878363371,
+        3.3728942174051796E-20
+      ]
+    },
+    "shape": {
+      "Enum": 0
+    },
+    "Attributes": {
+      "Attributes": {
+        "Rarity": {
+          "String": "Rare"
+        },
+        "Offset": {
+          "CFrame": {
+            "orientation": [
+              [
+                0.3159278333187103,
+                0.9487832188606262,
+                0
+              ],
+              [
+                -0.9487832188606262,
+                0.3159278333187103,
+                -2.524354896707238E-29
+              ],
+              [
+                2.3950655644444767E-29,
+                -7.975139730441944E-30,
+                1
+              ]
+            ],
+            "position": [
+              -0.03353118896484375,
+              -0.0104217529296875,
+              0
+            ]
+          }
+        },
+        "AttachmentRoot": {
+          "String": "Head"
+        }
+      }
+    },
+    "Tags": []
+  },
+  "Children": [
+    {
+      "Name": "Mesh",
+      "ClassName": "SpecialMesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=1185246"
+          }
+        },
+        "MeshType": {
+          "Enum": 5
+        },
+        "Scale": {
+          "Vector3": [
+            3.5678300857543945,
+            3.5678300857543945,
+            3.5678300857543945
+          ]
+        },
+        "TextureContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=1193831"
+          }
+        }
+      }
+    }
+  ]
+}
