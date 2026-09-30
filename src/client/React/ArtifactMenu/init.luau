@@ -86,6 +86,7 @@ return function(props: Properties)
 					BorderColor3 = Color3.fromRGB(27, 42, 53),
 					Position = UDim2.fromScale(0.95, 0.5),
 					Size = UDim2.fromScale(0.3, 0.8),
+					SetVisibility = function(id: string, toVisibility: boolean) end,
 				} :: ConfigurePanel.Properties
 			),
 			ItemList = e(

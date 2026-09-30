@@ -13,4 +13,5 @@ export type Appearance = Appearance.Appearance
 -- Class
 return React.createContext({
 	Items = {},
+	HiddenTags = {},
 })

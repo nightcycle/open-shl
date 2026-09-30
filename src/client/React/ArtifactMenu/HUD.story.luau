@@ -15,6 +15,8 @@ local ParentComponent = require(".")
 local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
 -- Types
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+type Item = AppearanceType.Item
 -- Constants
 local ITEM_DEFINITIONS = ItemAppearanceDefinition.list()
 -- Variables
@@ -29,7 +31,14 @@ return UILabs.CreateReactStory({
 }, function(props)
 	local appearance = React.useMemo(function()
 		return {
-			Items = {},
+			Items = {
+				{
+					DefinitionId = "costume/hoods/hood"
+				}
+			},
+			HiddenTags = {
+				-- "Hood"
+			},
 		}
 	end, {})
 	local itemDefinitions = React.useMemo(function()

@@ -38,7 +38,7 @@ Types.TextureGroupDefinition = Type.strictInterface({
 })
 
 export type ItemDefinitionTag = "IsMask"
-Types.ItemDefinitionTag = Type.literal("IsMask")
+Types.ItemDefinitionTag = Type.literal("IsMask", "MultiWeld")
 export type ItemDefinition = {
 	Id: string,
 	Name: string?,
@@ -54,29 +54,25 @@ Types.ItemDefinition = Type.strictInterface({
 	Tags = Type.array(Types.ItemDefinitionTag),
 })
 
-
 export type Item = {
 	DefinitionId: string,
-	Attachment: {
-		Root: string,
-		Slots: { string }?,
-	},
 }
 
 Types.Item = Type.strictInterface({
 	DefinitionId = Type.string,
-	Attachment = Type.strictInterface({
-		Root = Type.string,
-		Slots = Type.optional(Type.array(Type.string)),
-	}),
 })
+
+export type HiddenTag = "Hood" | "Mask" | "MouthCover" | "Hair"
+Types.HiddenTag = Type.literal("Hood", "Mask", "MouthCover", "Hair")
 
 export type Appearance = {
 	Items: { Item },
+	HiddenTags: { HiddenTag },
 }
 
 Types.Appearance = Type.strictInterface({
 	Items = Type.array(Types.Item),
+	HiddenTags = Type.array(Types.HiddenTag),
 })
 
 return Types
