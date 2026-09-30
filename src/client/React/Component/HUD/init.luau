@@ -55,11 +55,11 @@ return function(props: Properties): React.ReactNode
 			} :: ImageButton.Properties
 		)
 	end
-	return e(
-		Frame({
+	return e(Frame(
+		{
 			BackgroundTransparency = 1,
 			Active = false,
-		} :: Frame.Properties),
+		},
 		props,
 		{
 			Bars = e(StatBars, {}),
@@ -105,5 +105,5 @@ return function(props: Properties): React.ReactNode
 				}
 			),
 		}
-	)
+	))
 end

@@ -79,14 +79,14 @@ return function(props: Properties)
 			})
 		end
 	end
-	return e(
-		ScrollingFrame({
+	return e(ScrollingFrame(
+		{
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.3,
 			BorderColor3 = Color3.fromRGB(27, 42, 53),
 			CanvasSize = UDim2.fromScale(0, categoryIndex * 0.015 + rowIndex * 0.06),
 			ScrollingDirection = Enum.ScrollingDirection.Y,
-		} :: ScrollingFrame.Properties),
+		},
 		props,
 		{
 			UIListLayout = e(
@@ -99,5 +99,5 @@ return function(props: Properties)
 			),
 			Rows = e(React.Fragment, {}, out),
 		}
-	)
+	))
 end

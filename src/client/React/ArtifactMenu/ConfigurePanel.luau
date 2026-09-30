@@ -8,7 +8,6 @@ local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definit
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
-local TextLabel = require("@game/ReplicatedStorage/Generated/React/Component/TextLabel")
 -- Hooks
 -- Contexts
 local CharacterAppearanceContext =
@@ -20,6 +19,8 @@ type ItemDefinition = AppearanceType.ItemDefinition
 export type Properties = Frame.Properties & {
 	SelectedItemDefinition: ItemDefinition,
 	SetVisibility: (tag: AppearanceType.HiddenTag, toVisibility: boolean) -> (),
+	OnWear: (itemDef: ItemDefinition) -> (),
+	OnRemove: (itemDef: ItemDefinition) -> (),
 }
 -- Constants
 local LABEL_FONT = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
@@ -76,6 +77,9 @@ function buttonGroup(props: {
 				Text = not isVisible and "Off" or "On",
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
+				[React.Event.Activated] = function()
+					props.SetVisibility(props.HiddenTag, not isVisible)
+				end,
 			}),
 		})
 end
@@ -85,14 +89,13 @@ return function(props: Properties)
 		return ItemAppearanceDefinition.getIndex(props.SelectedItemDefinition.Id)
 	end, { props.SelectedItemDefinition.Id })
 
-	return e(
-		Frame({
+	return e(Frame(
+		{
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.3,
-		} :: Frame.Properties),
+		},
 		props,
 		{
-
 			Title = e("TextLabel", {
 				BackgroundTransparency = 1,
 				FontFace = Font.new(
@@ -159,5 +162,5 @@ return function(props: Properties)
 				TextScaled = true,
 			}),
 		}
-	)
+	))
 end

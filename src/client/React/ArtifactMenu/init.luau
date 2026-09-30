@@ -17,12 +17,12 @@ export type ItemDefinition = AppearanceType.ItemDefinition
 export type HiddenTag = AppearanceType.HiddenTag
 export type ActionInfo =
 	{
-		Type: "Wear",
-		Item: ItemDefinition,
+		Type: "AddItem",
+		ItemDefinition: ItemDefinition,
 	}
 	| {
-		Type: "Remove",
-		Item: ItemDefinition,
+		Type: "RemoveItem",
+		ItemDefinition: ItemDefinition,
 	}
 	| {
 		Type: "SetTagVisibility",
@@ -78,10 +78,10 @@ return function(props: Properties)
 		return out
 	end, { props.ItemDefinitions })
 
-	return e(
-		Frame({
+	return e(Frame(
+		{
 			BackgroundTransparency = 1,
-		}),
+		},
 		props,
 		{
 			ConfigurePanel = selectedItem and e(
@@ -93,7 +93,23 @@ return function(props: Properties)
 					Position = UDim2.fromScale(0.95, 0.5),
 					Size = UDim2.fromScale(0.3, 0.8),
 					SetVisibility = function(tag: HiddenTag, toVisibility: boolean)
-
+						props.OnAction({
+							Type = "SetTagVisibility",
+							Tag = tag,
+							IsVisible = toVisibility,
+						})
+					end,
+					OnRemove = function(itemDef: ItemDefinition)
+						props.OnAction({
+							Type = "RemoveItem",
+							ItemDefinition = itemDef,
+						})
+					end,
+					OnWear = function(itemDef: ItemDefinition)
+						props.OnAction({
+							Type = "AddItem",
+							ItemDefinition = itemDef,
+						})
 					end,
 				} :: ConfigurePanel.Properties
 			),
@@ -173,5 +189,5 @@ return function(props: Properties)
 				}),
 			}),
 		}
-	)
+	))
 end

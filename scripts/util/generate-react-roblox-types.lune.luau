@@ -125,7 +125,6 @@ local cache: { [string]: Properties } = {}
 local lines = {
 	"--!strict",
 	'local React = require("@game/ReplicatedStorage/Packages/React")',
-	"local e = React.createElement",
 	"",
 }
 
@@ -157,7 +156,7 @@ table.insert(lines, "")
 table.insert(lines, `local function append(defaults: Properties, props: Properties): Properties`)
 table.insert(lines, "\tlocal result = {}")
 table.insert(lines, "\tfor name, value in props do")
-table.insert(lines, "\t\tif VALID_PROPERTIES[name :: string] or type(name) ~= \"string\" then")
+table.insert(lines, '\t\tif VALID_PROPERTIES[name :: string] or type(name) ~= "string" then')
 table.insert(lines, "\t\t\tresult[name] = value")
 table.insert(lines, "\t\tend")
 table.insert(lines, "\tend")
@@ -169,10 +168,11 @@ table.insert(lines, "end")
 table.insert(lines, "")
 
 do
-	table.insert(lines, `return function(defaults: Properties): (Properties) -> React.ReactNode`)
-	table.insert(lines, `\treturn function(props: Properties): React.ReactNode`)
-	table.insert(lines, `\t\treturn e("{className}", append(defaults, props) :: any, props["children" :: any])`)
-	table.insert(lines, "\tend")
+	table.insert(
+		lines,
+		`return function(defaults: Properties, props: Properties, children: React.ReactNode?): ("{className}", Properties, React.ReactNode?)`
+	)
+	table.insert(lines, `\treturn "{className}", append(defaults, props), children`)
 	table.insert(lines, "end")
 end
 
