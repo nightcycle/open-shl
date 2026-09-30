@@ -16,7 +16,7 @@ local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
 -- Types
 -- Constants
-local ITEM_DEFINITIONS = ItemAppearanceDefinition.listItemDefinitions()
+local ITEM_DEFINITIONS = ItemAppearanceDefinition.list()
 -- Variables
 -- References
 -- Private Functions
@@ -35,7 +35,7 @@ return UILabs.CreateReactStory({
 	local itemDefinitions = React.useMemo(function()
 		local out = {}
 		for i, v in ITEM_DEFINITIONS do
-			local index = ItemAppearanceDefinition.getItemDefinitionIndexFromId(v.Id)
+			local index = ItemAppearanceDefinition.getIndex(v.Id)
 			if not index.IsOk then
 				continue
 			end

@@ -18,13 +18,15 @@ export type ItemDefinition = AppearanceType.ItemDefinition
 local ID_DELIMITER = "/"
 -- Variables
 local DefinitionIndexCache: { [string]: ItemDefinitionIndex? } = {}
+local TemplateCache: { [string]: Instance? } = {}
+local DefinitionCache: { [string]: Result<ItemDefinition, string>? } = {}
 -- References
 local CharacterLibrary = IndexUtil.waitForPath("game/ReplicatedStorage/lib/character")
 -- Private Functions
 -- Class
 local Module = {}
 
-Module.getItemDefinitionIndexFromId = function(id: string): Result<ItemDefinitionIndex, string>
+Module.getIndex = function(id: string): Result<ItemDefinitionIndex, string>
 	do
 		local cachedValue = DefinitionIndexCache[id]
 		if cachedValue then
@@ -54,19 +56,35 @@ Module.getItemDefinitionIndexFromId = function(id: string): Result<ItemDefinitio
 	end
 end
 
-Module.getIdFromItemDefinitionIndex = function(definitionIndex: ItemDefinitionIndex): string
+Module.getIdFromIndex = function(definitionIndex: ItemDefinitionIndex): string
 	return table.concat({ definitionIndex.Group, definitionIndex.Category, definitionIndex.Key }, ID_DELIMITER)
 end
 
-Module.getItemTemplate = function(id: string): Result<Instance, string>
+Module.getTemplate = function(id: string): Result<Instance, string>
+	do
+		local cachedValue = TemplateCache[id]
+		if cachedValue then
+			return Result.ok(cachedValue)
+		end
+	end
 	local keys = id:split(ID_DELIMITER)
-	return IndexUtil.tryFirstLocalPath(CharacterLibrary, table.concat(keys, "/"))
+	local templateRes = IndexUtil.tryFirstLocalPath(CharacterLibrary, table.concat(keys, "/"))
+	if templateRes.IsOk then
+		TemplateCache[id] = templateRes.Value
+	end
+	return templateRes
 end
 
-Module.getItemDefinition = function(id: string): Result<ItemDefinition, string>
-	local itemDefRes = Module.getItemTemplate(id)
+Module.get = function(id: string): Result<ItemDefinition, string>
+	local itemDefRes = Module.getTemplate(id)
 	if itemDefRes.IsErr then
-		return Result.err(`getItemDefinition "{id}" failed: {itemDefRes.Value}`)
+		return Result.err(`get "{id}" failed: {itemDefRes.Value}`)
+	end
+	do
+		local cachedValue = DefinitionCache[id]
+		if cachedValue then
+			return cachedValue
+		end
 	end
 
 	local itemDefinition: ItemDefinition = {
@@ -80,13 +98,17 @@ Module.getItemDefinition = function(id: string): Result<ItemDefinition, string>
 	do
 		local success, msg = AppearanceType.ItemDefinition(itemDefinition)
 		if not success then
-			return Result.err(`getItemDefinition "{id}" failed type validation: {msg}`)
+			local e = Result.err(`get "{id}" failed type validation: {msg}`)
+			DefinitionCache[id] = e
+			return e
 		end
 	end
-	return Result.ok(itemDefinition)
+	local out = Result.ok(itemDefinition)
+	DefinitionCache[id] = out
+	return out
 end
 
-Module.listItemDefinitions = function(): { ItemDefinition }
+Module.list = function(): { ItemDefinition }
 	local out = {}
 	for _, groupFolder in CharacterLibrary:GetChildren() do
 		for _, categoryFolder in groupFolder:GetChildren() do
@@ -97,8 +119,8 @@ Module.listItemDefinitions = function(): { ItemDefinition }
 					Key = item.Name,
 				}
 				table.freeze(defIndex)
-				local id = Module.getIdFromItemDefinitionIndex(defIndex)
-				local itemDefRes = Module.getItemDefinition(id)
+				local id = Module.getIdFromIndex(defIndex)
+				local itemDefRes = Module.get(id)
 				if itemDefRes.IsOk then
 					table.insert(out, itemDefRes.Value)
 				else

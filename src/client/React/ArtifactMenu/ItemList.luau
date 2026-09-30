@@ -47,7 +47,7 @@ return function(props: Properties)
 			TextScaled = true,
 		})
 		for i, itemDef in rarityEntry.ItemDefinitions do
-			local itemDefIndex = ItemAppearanceDefinition.getItemDefinitionIndexFromId(itemDef.Id)
+			local itemDefIndex = ItemAppearanceDefinition.getIndex(itemDef.Id)
 			local name = itemDef.Name or itemDefIndex.IsOk and itemDefIndex.Value.Key or nil
 			if name == nil then
 				continue
