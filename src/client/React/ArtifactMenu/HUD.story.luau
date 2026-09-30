@@ -33,8 +33,11 @@ return UILabs.CreateReactStory({
 		return {
 			Items = {
 				{
-					DefinitionId = "costume/hoods/hood"
-				}
+					DefinitionId = "costume/hoods/hood",
+				},
+				{
+					DefinitionId = "costume/artifacts/bluesteel-fedora",
+				},
 			},
 			HiddenTags = {
 				-- "Hood"

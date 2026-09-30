@@ -33,6 +33,7 @@ local RED_BUTTON_COLOR = Color3.fromRGB(151, 75, 75)
 -- Private Functions
 local e = React.createElement
 function buttonGroup(props: {
+	SelectedItemDefinition: ItemDefinition,
 	HiddenTag: AppearanceType.HiddenTag,
 	Text: string?,
 	PositionY: UDim,
@@ -51,10 +52,19 @@ function buttonGroup(props: {
 			end
 		end
 		return false
-	end, { characterAppearance.Items })
+	end, { characterAppearance.Items :: any, props.HiddenTag })
+	local isWearing = React.useMemo(function(): boolean
+		for i, item in characterAppearance.Items do
+			if item.DefinitionId == props.SelectedItemDefinition.Id then
+				return true
+			end
+		end
+		return false
+	end, { characterAppearance.Items :: any, props.SelectedItemDefinition })
 
 	local isVisible = table.find(characterAppearance.HiddenTags, props.HiddenTag) == nil
 	return hasItem
+		and isWearing
 		and e(React.Fragment, {}, {
 			Label = e("TextLabel", {
 				BackgroundTransparency = 1,
@@ -82,6 +92,41 @@ function buttonGroup(props: {
 				end,
 			}),
 		})
+end
+function wearButton(props: {
+	SelectedItemDefinition: ItemDefinition,
+	OnWear: (itemDef: ItemDefinition) -> (),
+	OnRemove: (itemDef: ItemDefinition) -> (),
+})
+	local characterAppearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
+	local isWearing = React.useMemo(function(): boolean
+		for i, item in characterAppearance.Items do
+			if item.DefinitionId == props.SelectedItemDefinition.Id then
+				return true
+			end
+		end
+		return false
+	end, { characterAppearance.Items :: any, props.SelectedItemDefinition })
+
+	return e("TextButton", {
+		AnchorPoint = Vector2.new(0.5, 0),
+		BackgroundColor3 = isWearing and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR,
+		BorderColor3 = Color3.fromRGB(27, 42, 53),
+		BorderSizePixel = 0,
+		FontFace = BUTTON_FONT,
+		Position = UDim2.fromScale(0.5, 0.85),
+		Size = UDim2.fromScale(0.5, 0.12),
+		Text = isWearing and "Remove" or "Wear",
+		TextColor3 = Color3.new(1, 1, 1),
+		TextScaled = true,
+		[React.Event.Activated] = function()
+			if isWearing then
+				props.OnRemove(props.SelectedItemDefinition)
+			else
+				props.OnWear(props.SelectedItemDefinition)
+			end
+		end
+	})
 end
 -- Class
 return function(props: Properties)
@@ -131,35 +176,32 @@ return function(props: Properties)
 					HiddenTag = "Mask" :: AppearanceType.HiddenTag,
 					PositionY = UDim.new(0.2, 0),
 					SetVisibility = props.SetVisibility,
+					SelectedItemDefinition = props.SelectedItemDefinition,
 				}),
 				Hood = e(buttonGroup, {
 					HiddenTag = "Hood" :: AppearanceType.HiddenTag,
 					PositionY = UDim.new(0.3, 0),
 					SetVisibility = props.SetVisibility,
+					SelectedItemDefinition = props.SelectedItemDefinition,
 				}),
 				Hair = e(buttonGroup, {
 					HiddenTag = "Hair" :: AppearanceType.HiddenTag,
 					PositionY = UDim.new(0.4, 0),
 					SetVisibility = props.SetVisibility,
+					SelectedItemDefinition = props.SelectedItemDefinition,
 				}),
 				MouthCover = e(buttonGroup, {
 					HiddenTag = "MouthCover" :: AppearanceType.HiddenTag,
 					PositionY = UDim.new(0.5, 0),
 					SetVisibility = props.SetVisibility,
+					SelectedItemDefinition = props.SelectedItemDefinition,
 				}),
 			}),
 
-			Wear = e("TextButton", {
-				AnchorPoint = Vector2.new(0.5, 0),
-				BackgroundColor3 = Color3.fromRGB(0, 170, 0),
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				FontFace = BUTTON_FONT,
-				Position = UDim2.fromScale(0.5, 0.85),
-				Size = UDim2.fromScale(0.5, 0.12),
-				Text = "Wear",
-				TextColor3 = Color3.new(1, 1, 1),
-				TextScaled = true,
+			Wear = e(wearButton, {
+				SelectedItemDefinition = props.SelectedItemDefinition,
+				OnWear = props.OnWear,
+				OnRemove = props.OnRemove,
 			}),
 		}
 	))
