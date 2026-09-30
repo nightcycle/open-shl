@@ -90,6 +90,8 @@ function buttonGroup(props: {
 				Text = not isVisible and "Off" or "On",
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
+				Active = isWearing,
+				Selectable = isWearing,
 				AutoButtonColor = isWearing,
 				[React.Event.Activated] = isWearing and function()
 					props.SetVisibility(props.HiddenTag, not isVisible)
