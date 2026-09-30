@@ -11,36 +11,7 @@
     "Attributes": {
       "Attributes": {
         "Rarity": {
-          "String": "Very Common"
-        },
-        "Offset": {
-          "CFrame": {
-            "orientation": [
-              [
-                1,
-                0,
-                0
-              ],
-              [
-                0,
-                1,
-                0
-              ],
-              [
-                0,
-                0,
-                1
-              ]
-            ],
-            "position": [
-              0,
-              -0.6123504638671875,
-              0.053253173828125
-            ]
-          }
-        },
-        "AttachmentRoot": {
-          "String": "Head"
+          "String": "VeryCommon"
         }
       }
     },
@@ -77,6 +48,38 @@
             0.18000000715255737,
             0.18000000715255737
           ]
+        }
+      }
+    },
+    {
+      "Name": "Head",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              -0.6123504638671875,
+              0.053253173828125
+            ]
+          }
         }
       }
     }

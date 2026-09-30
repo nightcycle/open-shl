@@ -13,35 +13,6 @@
         "Rarity": {
           "String": "Legendary"
         },
-        "Offset": {
-          "CFrame": {
-            "orientation": [
-              [
-                1,
-                0,
-                0
-              ],
-              [
-                0,
-                1,
-                0
-              ],
-              [
-                0,
-                0,
-                1
-              ]
-            ],
-            "position": [
-              0.045013427734375,
-              -0.027984619140625,
-              -0.677459716796875
-            ]
-          }
-        },
-        "AttachmentRoot": {
-          "String": "UpperTorso"
-        },
         "NoCape": {
           "Bool": true
         }
@@ -72,6 +43,38 @@
         "TextureContent": {
           "Content": {
             "Uri": "http://www.roblox.com/asset/?id=106676672 "
+          }
+        }
+      }
+    },
+    {
+      "Name": "UpperTorso",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0.045013427734375,
+              -0.027984619140625,
+              -0.677459716796875
+            ]
           }
         }
       }

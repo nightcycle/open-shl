@@ -12,35 +12,6 @@
       "Attributes": {
         "Rarity": {
           "String": "Uncommon"
-        },
-        "Offset": {
-          "CFrame": {
-            "orientation": [
-              [
-                1,
-                0,
-                0
-              ],
-              [
-                0,
-                1,
-                0
-              ],
-              [
-                0,
-                0,
-                1
-              ]
-            ],
-            "position": [
-              0,
-              0.0266571044921875,
-              0.05328369140625
-            ]
-          }
-        },
-        "AttachmentRoot": {
-          "String": "Head"
         }
       }
     },
@@ -69,6 +40,38 @@
         "TextureContent": {
           "Content": {
             "Uri": "http://www.roblox.com/asset/?id=36869975"
+          }
+        }
+      }
+    },
+    {
+      "Name": "Head",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              0.0266571044921875,
+              0.05328369140625
+            ]
           }
         }
       }
