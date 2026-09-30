@@ -12,6 +12,9 @@
       "Attributes": {
         "Rarity": {
           "String": "Common"
+        },
+        "Name": {
+          "String": "Future Phantom"
         }
       }
     },

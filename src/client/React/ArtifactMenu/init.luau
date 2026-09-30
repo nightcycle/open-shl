@@ -4,7 +4,6 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
-local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local ConfigurePanel = require("@self/ConfigurePanel")
@@ -36,28 +35,24 @@ local e = React.createElement
 -- Class
 return function(props: Properties)
 	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
-		local rarityGroups: { [PseudoEnum.Rarity]: { string } } = {}
+		local rarityGroups: { [PseudoEnum.Rarity]: { ItemDefinition } } = {}
 		for i, itemDef in props.ItemDefinitions do
 			if itemDef.Rarity then
-				local defIndexRes = ItemAppearanceDefinition.getItemDefinitionIndexFromId(itemDef.Id)
-				if defIndexRes.IsOk then
-					local group = rarityGroups[itemDef.Rarity] or {}
-					rarityGroups[itemDef.Rarity] = group
-					table.insert(group, defIndexRes.Value.Key)
-				else
-					warn(defIndexRes.Value)
-				end
+				local group = rarityGroups[itemDef.Rarity] or {}
+				rarityGroups[itemDef.Rarity] = group
+
+				table.insert(group, itemDef)
 			else
 				warn(`no rarity for "{itemDef.Id}"`)
 			end
 		end
-		local out = {}
-		for rarity, keys in rarityGroups do
+		local out: { ItemList.RarityItemGroup } = {}
+		for rarity, defs in rarityGroups do
 			table.insert(
 				out,
 				table.freeze({
-					Rarity = rarity,
-					Keys = table.freeze(keys),
+					Rarity = rarity :: PseudoEnum.Rarity,
+					ItemDefinitions = table.freeze(defs),
 				})
 			)
 		end

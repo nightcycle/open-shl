@@ -79,6 +79,22 @@
 		"description": "Imports a shared module.",
 		"scope": "luau"
 	},
+	"irequire def": {
+		"prefix": "irequire def",
+		"body": [
+			"local $1Definition = require(\"@game/ReplicatedStorage/Shared/Definition/$2\")"
+		],
+		"description": "Imports a definition module.",
+		"scope": "luau"
+	},
+	"irequire pseudo": {
+		"prefix": "irequire pseudo",
+		"body": [
+			"local PseudoEnum = require(\"@game/ReplicatedStorage/Generated/PseudoEnum\")"
+		],
+		"description": "Imports the pseudo-enum module.",
+		"scope": "luau"
+	},
 	"irequire type": {
 		"prefix": "irequire type",
 		"body": [

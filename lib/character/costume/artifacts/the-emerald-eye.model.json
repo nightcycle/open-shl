@@ -15,6 +15,9 @@
       "Attributes": {
         "Rarity": {
           "String": "Uncommon"
+        },
+        "Name": {
+          "String": "The Emerald Eye"
         }
       }
     },

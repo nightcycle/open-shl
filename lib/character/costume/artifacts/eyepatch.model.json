@@ -12,6 +12,9 @@
       "Attributes": {
         "Rarity": {
           "String": "VeryCommon"
+        },
+        "Name": {
+          "String": "Eyepatch"
         }
       }
     },

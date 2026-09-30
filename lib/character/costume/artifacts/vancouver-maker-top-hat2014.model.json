@@ -12,6 +12,9 @@
       "Attributes": {
         "Rarity": {
           "String": "VeryCommon"
+        },
+        "Name": {
+          "String": "Vancouver Maker Top Hat 2014"
         }
       }
     },

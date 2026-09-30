@@ -12,6 +12,9 @@
       "Attributes": {
         "Rarity": {
           "String": "Rare"
+        },
+        "Name": {
+          "String": "Archduke of the Federation"
         }
       }
     },

@@ -15,6 +15,9 @@
       "Attributes": {
         "Rarity": {
           "String": "Common"
+        },
+        "Name": {
+          "String": "Asimov Outlaw"
         }
       }
     },

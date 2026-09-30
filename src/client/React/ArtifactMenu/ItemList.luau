@@ -4,15 +4,19 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local ScrollingFrame = require("@game/ReplicatedStorage/Generated/React/Component/ScrollingFrame")
 local UIListLayout = require("@game/ReplicatedStorage/Generated/React/Component/UIListLayout")
 -- Hooks
 -- Contexts
 -- Types
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+export type ItemDefinition = AppearanceType.ItemDefinition
 export type RarityItemGroup = {
-	Rarity: string,
-	Keys: { string },
+	Rarity: PseudoEnum.Rarity,
+	ItemDefinitions: { ItemDefinition },
 }
 export type Properties = ScrollingFrame.Properties & {
 	ItemGroups: { RarityItemGroup },
@@ -42,7 +46,12 @@ return function(props: Properties)
 			TextColor3 = Color3.fromRGB(255, 213, 0),
 			TextScaled = true,
 		})
-		for i, key in rarityEntry.Keys do
+		for i, itemDef in rarityEntry.ItemDefinitions do
+			local itemDefIndex = ItemAppearanceDefinition.getItemDefinitionIndexFromId(itemDef.Id)
+			local name = itemDef.Name or itemDefIndex.IsOk and itemDefIndex.Value.Key or nil
+			if name == nil then
+				continue
+			end
 			rowIndex += 1
 			out[`{rarityOrder}-{i}`] = e("TextButton", {
 				BackgroundColor3 = Color3.new(),
@@ -51,12 +60,12 @@ return function(props: Properties)
 				LayoutOrder = rowIndex,
 				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
 				Size = UDim2.new(1, -15, 0.008, 0),
-				Text = key,
+				Text = name,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeTransparency = 0,
 				[React.Event.Activated] = function()
-					props.OnClick(key)
+					props.OnClick(itemDef.Id)
 				end,
 			})
 		end

@@ -12,6 +12,9 @@
       "Attributes": {
         "Rarity": {
           "String": "Legendary"
+        },
+        "Name": {
+          "String": "Bluesteel Crown"
         }
       }
     },

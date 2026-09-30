@@ -15,6 +15,9 @@
         },
         "NoCape": {
           "Bool": true
+        },
+        "Name": {
+          "String": "Katana Swordpack"
         }
       }
     },

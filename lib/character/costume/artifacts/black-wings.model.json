@@ -15,6 +15,9 @@
         },
         "NoCape": {
           "Bool": false
+        },
+        "Name": {
+          "String": "Black Wings"
         }
       }
     },

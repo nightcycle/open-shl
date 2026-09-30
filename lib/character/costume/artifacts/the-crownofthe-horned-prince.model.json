@@ -12,6 +12,9 @@
       "Attributes": {
         "Rarity": {
           "String": "VeryCommon"
+        },
+        "Name": {
+          "String": "The Crown of the Horned Prince"
         }
       }
     },

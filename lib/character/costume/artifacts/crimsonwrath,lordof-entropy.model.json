@@ -12,6 +12,9 @@
       "Attributes": {
         "Rarity": {
           "String": "Common"
+        },
+        "Name": {
+          "String": "Crimsonwrath, Lord of Entropy"
         }
       }
     },

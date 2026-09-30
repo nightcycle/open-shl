@@ -29,6 +29,9 @@
       "Attributes": {
         "Rarity": {
           "String": "Rare"
+        },
+        "Name": {
+          "String": "The Crimson Catseye"
         }
       }
     },
