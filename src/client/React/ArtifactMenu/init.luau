@@ -66,7 +66,7 @@ return function(props: Properties)
 		table.sort(out, function(a: ItemList.RarityItemGroup, b: ItemList.RarityItemGroup)
 			local aValue = PseudoEnum.getValueFromEnumItem("Rarity", (a.Rarity or "VeryCommon") :: PseudoEnum.Rarity)
 			local bValue = PseudoEnum.getValueFromEnumItem("Rarity", (b.Rarity or "VeryCommon") :: PseudoEnum.Rarity)
-			return aValue > bValue
+			return aValue < bValue
 		end)
 		table.freeze(out)
 		return out

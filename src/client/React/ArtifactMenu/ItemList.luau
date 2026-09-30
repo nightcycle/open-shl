@@ -32,17 +32,20 @@ local e = React.createElement
 return function(props: Properties)
 	local out: { [string]: React.ReactNode } = {}
 	local rowIndex = 0
+	local categoryIndex = 0
 	for rarityOrder, rarityEntry in props.ItemGroups do
 		rowIndex += 1
+		categoryIndex += 1
 		out[`{rarityOrder}`] = e("TextLabel", {
 			BackgroundTransparency = 1,
+			SizeConstraint = Enum.SizeConstraint.RelativeXX,
 			FontFace = Font.new(
 				"rbxasset://fonts/families/SourceSansPro.json",
 				Enum.FontWeight.Bold,
 				Enum.FontStyle.Normal
 			),
-			Size = UDim2.new(1, -15, 0.0095, 0),
-			Text = rarityEntry.Rarity,
+			Size = UDim2.new(1, -15, 0.0095 * 14, 0),
+			Text = rarityEntry.Rarity == PseudoEnum.Rarity.VeryCommon and "Very Common" or rarityEntry.Rarity,
 			LayoutOrder = rowIndex,
 			TextColor3 = Color3.fromRGB(255, 213, 0),
 			TextScaled = true,
@@ -60,10 +63,11 @@ return function(props: Properties)
 				BorderColor3 = Color3.fromRGB(27, 42, 53),
 				BackgroundTransparency = isSelected and 0.2 or 0,
 				BorderSizePixel = 0,
+				SizeConstraint = Enum.SizeConstraint.RelativeXX,
 				AutoButtonColor = true,
 				LayoutOrder = rowIndex,
 				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-				Size = UDim2.new(1, -15, 0.008, 0),
+				Size = UDim2.new(1, -15, 0.008 * 14, 0),
 				Text = name,
 				TextColor3 = isSelected and Color3.new() or Color3.new(1, 1, 1),
 				TextStrokeColor3 = not isSelected and Color3.new() or Color3.new(1, 1, 1),
@@ -80,7 +84,7 @@ return function(props: Properties)
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.3,
 			BorderColor3 = Color3.fromRGB(27, 42, 53),
-			CanvasSize = UDim2.fromScale(0, 7.5),
+			CanvasSize = UDim2.fromScale(0, categoryIndex * 0.015 + rowIndex * 0.06),
 			ScrollingDirection = Enum.ScrollingDirection.Y,
 		} :: ScrollingFrame.Properties),
 		props,
