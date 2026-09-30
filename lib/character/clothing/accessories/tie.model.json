@@ -1,0 +1,163 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Tie"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "lower-torso",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.06666667014360428,
+            0.06666667014360428,
+            0.06666667014360428
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.28120699524879456,
+            1.475904941558838,
+            0.12452740222215652
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=28463033"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.38999998569488525,
+            1.8470399379730225,
+            0.12999999523162842
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "LowerTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.020477294921875,
+                  -0.884185791015625,
+                  0.49847412109375
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "upper-torso",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.06666667014360428,
+            0.06666667014360428,
+            0.06666667014360428
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.28120699524879456,
+            1.475904941558838,
+            0.12452740222215652
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=28463033"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.38999998569488525,
+            1.8470399379730225,
+            0.12999999523162842
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "UpperTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.000274658203125,
+                  0.15643310546875,
+                  0.49979400634765625
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

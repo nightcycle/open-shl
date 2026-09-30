@@ -1,0 +1,57 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Id": {
+          "String": "clothing/pants/short-shorts/right-upper-leg/root"
+        }
+      }
+    },
+    "Size": {
+      "Vector3": [
+        1.0402865409851074,
+        1.5977153778076172,
+        1.040966272354126
+      ]
+    },
+    "Tags": [],
+    "Transparency": {
+      "Float32": 1
+    }
+  },
+  "Children": [
+    {
+      "Name": "RightUpperLeg",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

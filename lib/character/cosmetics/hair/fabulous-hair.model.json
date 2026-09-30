@@ -1,0 +1,97 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Fabulous Hair"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "head",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Costume": {
+              "Bool": false
+            }
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.5792200565338135,
+            2.5331249237060547,
+            2.760004997253418
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=36870078"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.6423888206481934,
+            2.3224501609802246,
+            2.2880055904388428
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "Head",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    -3.20372151918491E-07
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    3.20372151918491E-07,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.0001735687255859375,
+                  -0.74151611328125,
+                  -0.14620590209960938
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

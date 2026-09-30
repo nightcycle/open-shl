@@ -1,0 +1,13 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "clothing/jackets/closed-zipper-jacket/right-upper-arm/root"
+        }
+      }
+    },
+    "Tags": []
+  }
+}

@@ -1,0 +1,348 @@
+{
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "clothing/jackets/open-zipper-jacket/upper-torso/root"
+        }
+      }
+    },
+    "Tags": []
+  },
+  "Children": [
+    {
+      "Name": "root",
+      "ClassName": "Part",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "clothing/jackets/open-zipper-jacket/upper-torso/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2.08030366897583,
+            1.664970874786377,
+            1.0405582189559937
+          ]
+        },
+        "Tags": [],
+        "Transparency": {
+          "Float32": 1
+        }
+      },
+      "Children": [
+        {
+          "Name": "UpperTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "part",
+      "ClassName": "Part",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.770965576171875,
+              -0.045135498046875,
+              -0.00473785400390625
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.1960002183914185,
+            1.8719998598098755,
+            0.6759998798370361
+          ]
+        }
+      }
+    },
+    {
+      "Name": "part-2",
+      "ClassName": "Part",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.789031982421875,
+              -0.045135498046875,
+              -0.00473785400390625
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.1960002183914185,
+            1.871999740600586,
+            0.6759998798370361
+          ]
+        }
+      }
+    },
+    {
+      "Name": "part-3",
+      "ClassName": "Part",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.009002685546875,
+              -0.045135498046875,
+              0.48926544189453125
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.20799998939037323,
+            1.8719998598098755,
+            0.8839999437332153
+          ]
+        }
+      }
+    },
+    {
+      "Name": "no-color",
+      "ClassName": "Part",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.432952880859375,
+              -0.071136474609375,
+              -0.5507278442382812
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6235294342041016,
+            0.6313725709915161,
+            0.6745098233222961
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.20799998939037323,
+            1.6119999885559082,
+            0.20799998939037323
+          ]
+        }
+      },
+      "Children": [
+        {
+          "Name": "mesh",
+          "ClassName": "BlockMesh",
+          "Properties": {
+            "Scale": {
+              "Vector3": [
+                0.699999988079071,
+                1,
+                0.125
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "no-color-2",
+      "ClassName": "Part",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.45111083984375,
+              -0.071136474609375,
+              -0.5507278442382812
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6235294342041016,
+            0.6313725709915161,
+            0.6745098233222961
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.20799998939037323,
+            1.6119999885559082,
+            0.20799998939037323
+          ]
+        }
+      },
+      "Children": [
+        {
+          "Name": "mesh",
+          "ClassName": "BlockMesh",
+          "Properties": {
+            "Scale": {
+              "Vector3": [
+                0.699999988079071,
+                1,
+                0.125
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

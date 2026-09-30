@@ -1,0 +1,567 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Tall Socks"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "left-foot",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.000631332397461,
+            0.3354072570800781,
+            1.0002033710479736
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset?id=467982673"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.091999888420105,
+            0.40039998292922974,
+            1.091999888420105
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "LeftFoot",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "left-lower-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/socks/tall-socks/left-lower-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/socks/tall-socks/left-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.040286898612976,
+                1.5492311716079712,
+                1.0403417348861694
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "LeftLowerLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "MeshPart",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.00537109375,
+                  -0.583099365234375,
+                  0.0001373291015625
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.000631332397461,
+                0.3354072570800781,
+                1.0002033710479736
+              ]
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset?id=467982673"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                0.40039998292922974,
+                1.091999888420105
+              ]
+            },
+            "TextureContent": {
+              "Content": "None"
+            }
+          }
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "MeshPart",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.00537109375,
+                  -0.375213623046875,
+                  0.0001373291015625
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.000631332397461,
+                0.3354072570800781,
+                1.0002033710479736
+              ]
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset?id=467982673"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                0.40039998292922974,
+                1.091999888420105
+              ]
+            },
+            "TextureContent": {
+              "Content": "None"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-foot",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.000631332397461,
+            0.3354073762893677,
+            1.0002033710479736
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset?id=467982681"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.0921039581298828,
+            0.40039998292922974,
+            1.091999888420105
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "RightFoot",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.000274658203125,
+                  -0.00030517578125,
+                  0.000244140625
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-lower-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/socks/tall-socks/right-lower-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/socks/tall-socks/right-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.040286898612976,
+                1.5492311716079712,
+                1.0403416156768799
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "RightLowerLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "MeshPart",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.00518798828125,
+                  -0.582794189453125,
+                  -0.0001068115234375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.000631332397461,
+                0.3354073762893677,
+                1.0002033710479736
+              ]
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset?id=467982681"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0921039581298828,
+                0.40039998292922974,
+                1.091999888420105
+              ]
+            },
+            "TextureContent": {
+              "Content": "None"
+            }
+          }
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "MeshPart",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.00518798828125,
+                  -0.3748779296875,
+                  -0.0001068115234375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.000631332397461,
+                0.3354073762893677,
+                1.0002033710479736
+              ]
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset?id=467982681"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0921039581298828,
+                0.40039998292922974,
+                1.091999888420105
+              ]
+            },
+            "TextureContent": {
+              "Content": "None"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Princeton Hair"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "head",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Costume": {
+              "Bool": false
+            }
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.2397700548171997,
+            1.1044349670410156,
+            1.4263750314712524
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=12259117"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.4141607284545898,
+            1.148612380027771,
+            1.483430027961731
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "Head",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    -3.20372151918491E-07
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    3.20372151918491E-07,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.0002288818359375,
+                  -0.398345947265625,
+                  -0.032886505126953125
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

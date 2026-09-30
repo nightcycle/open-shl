@@ -1,0 +1,1001 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Cargo Shorts"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "left-lower-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/pants/cargo-shorts/left-lower-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/pants/cargo-shorts/left-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.040286898612976,
+                1.5492311716079712,
+                1.0403417348861694
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "LeftLowerLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.00836181640625,
+                  0.04132080078125,
+                  -0.0042724609375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                0.5199999213218689,
+                1.091999888420105
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0083770751953125,
+                  0.32733154296875,
+                  -0.0042724609375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "CylinderMesh",
+              "Properties": {}
+            }
+          ]
+        },
+        {
+          "Name": "part-3",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.4763641357421875,
+                  0.11932373046875,
+                  -0.0042724609375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.1959999799728394,
+                0.4679999351501465,
+                0.2599999010562897
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "left-upper-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/pants/cargo-shorts/left-upper-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/pants/cargo-shorts/left-upper-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0402865409851074,
+                1.5977153778076172,
+                1.040966272354126
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "LeftUpperLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.00836181640625,
+                  -0.249237060546875,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "CylinderMesh",
+              "Properties": {}
+            }
+          ]
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.00836181640625,
+                  0.010772705078125,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                0.5719999074935913,
+                1.091999888420105
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-3",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.00836181640625,
+                  0.270751953125,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "CylinderMesh",
+              "Properties": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "lower-torso",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0,
+            0.125490203499794,
+            0.3764705955982208
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.0920000076293945,
+            0.312000036239624,
+            2.131999969482422
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "LowerTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.00341796875,
+                  0.096527099609375,
+                  -0.0090789794921875
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-lower-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/pants/cargo-shorts/right-lower-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/pants/cargo-shorts/right-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.040286898612976,
+                1.5492311716079712,
+                1.0403416156768799
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "RightLowerLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0103912353515625,
+                  0.32733154296875,
+                  -0.0042724609375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "CylinderMesh",
+              "Properties": {}
+            }
+          ]
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0103912353515625,
+                  0.04132080078125,
+                  -0.0042724609375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                0.5199999213218689,
+                1.091999888420105
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-3",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.457611083984375,
+                  0.11932373046875,
+                  -0.0042724609375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.1959999799728394,
+                0.4679999351501465,
+                0.2599999010562897
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-upper-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/pants/cargo-shorts/right-upper-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/pants/cargo-shorts/right-upper-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0402865409851074,
+                1.5977153778076172,
+                1.040966272354126
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "RightUpperLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0103912353515625,
+                  -0.249237060546875,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "CylinderMesh",
+              "Properties": {}
+            }
+          ]
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0103912353515625,
+                  0.010772705078125,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                0.5719999074935913,
+                1.091999888420105
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-3",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0103912353515625,
+                  0.270751953125,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "CylinderMesh",
+              "Properties": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

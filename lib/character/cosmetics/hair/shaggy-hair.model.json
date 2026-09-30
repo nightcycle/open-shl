@@ -1,0 +1,97 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Shaggy Hair"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "head",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Costume": {
+              "Bool": false
+            }
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.4976201057434082,
+            1.2072200775146484,
+            1.531364917755127
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=19999424"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.7491004467010498,
+            1.4099364280700684,
+            1.7885117530822754
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "Head",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    -3.20372151918491E-07
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    3.20372151918491E-07,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.10956573486328125,
+                  -0.109161376953125,
+                  -0.098419189453125
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

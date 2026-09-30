@@ -1,0 +1,97 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Spiked Hair"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "head",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Costume": {
+              "Bool": false
+            }
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            2.501840114593506,
+            2.327359914779663,
+            3.059689998626709
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=319337852"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.561914086341858,
+            1.380454182624817,
+            1.6220784187316895
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "Head",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    -3.20372151918491E-07
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    3.20372151918491E-07,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.00045013427734375,
+                  -0.384857177734375,
+                  -0.0026702880859375
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

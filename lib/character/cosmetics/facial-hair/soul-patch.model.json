@@ -1,0 +1,97 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Soul Patch"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "head",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.2183999866247177,
+            0.4367999732494354,
+            0.2183999866247177
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "mesh",
+          "ClassName": "SpecialMesh",
+          "Properties": {
+            "MeshContent": {
+              "Content": "None"
+            },
+            "MeshType": {
+              "Enum": 3
+            },
+            "Scale": {
+              "Vector3": [
+                1,
+                0.8999999761581421,
+                1.100000023841858
+              ]
+            },
+            "TextureContent": {
+              "Content": "None"
+            }
+          }
+        },
+        {
+          "Name": "Head",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.5458526611328125,
+                  0.404022216796875,
+                  9.1552734375E-05
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

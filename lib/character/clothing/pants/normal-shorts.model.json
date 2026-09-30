@@ -1,0 +1,579 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Normal Shorts"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "left-lower-leg",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.6235294342041016,
+            0.6313725709915161,
+            0.6745098233222961
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.0002758502960205,
+            1.4896453619003296,
+            1.0003286600112915
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset?id=467982675"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.040286898612976,
+            1.5492311716079712,
+            1.0403417348861694
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "LeftLowerLeg",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "left-upper-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/pants/normal-shorts/left-upper-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/pants/normal-shorts/left-upper-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0402865409851074,
+                1.5977153778076172,
+                1.040966272354126
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "LeftUpperLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.00836181640625,
+                  0.010772705078125,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                0.5719999074935913,
+                1.091999888420105
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.008391380310058594,
+                  0.270751953125,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "CylinderMesh",
+              "Properties": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "lower-torso",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0,
+            0.125490203499794,
+            0.3764705955982208
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.0920000076293945,
+            0.312000036239624,
+            2.131999969482422
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "LowerTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.00341796875,
+                  0.096527099609375,
+                  -0.009079933166503906
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-lower-leg",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.6235294342041016,
+            0.6313725709915161,
+            0.6745098233222961
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.0002758502960205,
+            1.4896453619003296,
+            1.000328540802002
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset?id=467982684"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.040286898612976,
+            1.5492311716079712,
+            1.0403416156768799
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "RightLowerLeg",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-upper-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/pants/normal-shorts/right-upper-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/pants/normal-shorts/right-upper-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0402865409851074,
+                1.5977153778076172,
+                1.040966272354126
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "RightUpperLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.010419845581054688,
+                  0.010772705078125,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                0.5719999074935913,
+                1.091999888420105
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.010419845581054688,
+                  0.270751953125,
+                  -0.0039825439453125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.0920000076293945,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "CylinderMesh",
+              "Properties": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

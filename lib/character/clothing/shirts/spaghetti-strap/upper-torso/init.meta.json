@@ -1,0 +1,13 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "clothing/shirts/spaghetti-strap/upper-torso/root"
+        }
+      }
+    },
+    "Tags": []
+  }
+}

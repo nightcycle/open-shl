@@ -1,0 +1,57 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Id": {
+          "String": "clothing/jackets/half-closed-jacket/left-lower-arm/root"
+        }
+      }
+    },
+    "Size": {
+      "Vector3": [
+        1.0402876138687134,
+        1.3162989616394043,
+        1.0402607917785645
+      ]
+    },
+    "Tags": [],
+    "Transparency": {
+      "Float32": 1
+    }
+  },
+  "Children": [
+    {
+      "Name": "LeftLowerArm",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Color": {
+      "Color3": [
+        0.06666667014360428,
+        0.06666667014360428,
+        0.06666667014360428
+      ]
+    },
+    "Size": {
+      "Vector3": [
+        0.22047999501228333,
+        0.27559998631477356,
+        0.22047999501228333
+      ]
+    },
+    "Tags": [],
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Fedora"
+        }
+      }
+    }
+  },
+  "Children": [
+    {
+      "Name": "mesh",
+      "ClassName": "SpecialMesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=1285237"
+          }
+        },
+        "MeshType": {
+          "Enum": 5
+        },
+        "Scale": {
+          "Vector3": [
+            1.1023999452590942,
+            1.1023999452590942,
+            1.1023999452590942
+          ]
+        },
+        "TextureContent": {
+          "Content": "None"
+        }
+      }
+    },
+    {
+      "Name": "Head",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              -0.633880615234375,
+              0.05512237548828125
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

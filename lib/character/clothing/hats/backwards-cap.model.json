@@ -1,0 +1,85 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Color": {
+      "Color3": [
+        0.06666667014360428,
+        0.06666667014360428,
+        0.06666667014360428
+      ]
+    },
+    "Size": {
+      "Vector3": [
+        0.3307199776172638,
+        0.22047999501228333,
+        0.22047999501228333
+      ]
+    },
+    "Tags": [],
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Backwards Cap"
+        }
+      }
+    }
+  },
+  "Children": [
+    {
+      "Name": "mesh",
+      "ClassName": "SpecialMesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=16190466"
+          }
+        },
+        "MeshType": {
+          "Enum": 5
+        },
+        "Scale": {
+          "Vector3": [
+            1.1023999452590942,
+            1.1023999452590942,
+            1.1023999452590942
+          ]
+        },
+        "TextureContent": {
+          "Content": "None"
+        }
+      }
+    },
+    {
+      "Name": "Head",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -1,
+                0,
+                0
+              ],
+              [
+                0,
+                0.9659258723258972,
+                0.25881898403167725
+              ],
+              [
+                0,
+                0.25881898403167725,
+                -0.9659258723258972
+              ]
+            ],
+            "position": [
+              7.62939453125E-06,
+              -0.4934196472167969,
+              -0.0751495361328125
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

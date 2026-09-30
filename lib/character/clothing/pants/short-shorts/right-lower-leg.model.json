@@ -1,0 +1,72 @@
+{
+  "ClassName": "MeshPart",
+  "Properties": {
+    "Color": {
+      "Color3": [
+        0.6235294342041016,
+        0.6313725709915161,
+        0.6745098233222961
+      ]
+    },
+    "InitialSize": {
+      "Vector3": [
+        1.0002758502960205,
+        1.4896453619003296,
+        1.000328540802002
+      ]
+    },
+    "MeshContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset?id=467982684"
+      }
+    },
+    "RenderFidelity": {
+      "Enum": 1
+    },
+    "Size": {
+      "Vector3": [
+        1.040286898612976,
+        1.5492311716079712,
+        1.0403416156768799
+      ]
+    },
+    "Tags": [],
+    "TextureContent": {
+      "Content": "None"
+    }
+  },
+  "Children": [
+    {
+      "Name": "RightLowerLeg",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

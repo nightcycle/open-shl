@@ -1,0 +1,13 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "clothing/jackets/half-closed-zipper-jacket/left-lower-arm/root"
+        }
+      }
+    },
+    "Tags": []
+  }
+}

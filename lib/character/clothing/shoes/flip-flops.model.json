@@ -1,0 +1,685 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Flip Flops"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "left-foot",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/shoes/flip-flops/left-foot/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/shoes/flip-flops/left-foot/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.040656566619873,
+                0.34882354736328125,
+                1.0402114391326904
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "LeftFoot",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0137939453125,
+                  -0.1224365234375,
+                  -0.03041839599609375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.1440000534057617,
+                0.20799998939037323,
+                1.091999888420105
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0137939453125,
+                  -0.0184326171875,
+                  -0.4984130859375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.20799998939037323,
+                0.20799998939037323,
+                0.20799998939037323
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-3",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.455810546875,
+                  -0.0184326171875,
+                  0.17760467529296875
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.20799998939037323,
+                0.20799998939037323,
+                0.20799998939037323
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-4",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.428192138671875,
+                  -0.0184326171875,
+                  0.17760467529296875
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.20799998939037323,
+                0.20799998939037323,
+                0.20799998939037323
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-5",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.01385498046875,
+                  0.0595703125,
+                  -0.26441192626953125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.6759999990463257,
+                0.20799998939037323,
+                1.0920000076293945
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "BlockMesh",
+              "Properties": {
+                "Scale": {
+                  "Vector3": [
+                    1.100000023841858,
+                    0.25,
+                    1.0499999523162842
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "right-foot",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "clothing/shoes/flip-flops/right-foot/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "clothing/shoes/flip-flops/right-foot/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.040656566619873,
+                0.3488236665725708,
+                1.0402114391326904
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "RightFoot",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.004974365234375,
+                  -0.1224365234375,
+                  -0.03041839599609375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.1440000534057617,
+                0.20799998939037323,
+                1.091999888420105
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.004974365234375,
+                  -0.0184326171875,
+                  -0.4984130859375
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.20799998939037323,
+                0.20799998939037323,
+                0.20799998939037323
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-3",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.446990966796875,
+                  -0.0184326171875,
+                  0.17760467529296875
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.20799998939037323,
+                0.20799998939037323,
+                0.20799998939037323
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-4",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.43701171875,
+                  -0.0184326171875,
+                  0.17760467529296875
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.20799998939037323,
+                0.20799998939037323,
+                0.20799998939037323
+              ]
+            }
+          }
+        },
+        {
+          "Name": "part-5",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.004974365234375,
+                  0.0595703125,
+                  -0.26441192626953125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.33725491166114807,
+                0.25882354378700256,
+                0.21176470816135406
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.6759999990463257,
+                0.20799998939037323,
+                1.0920000076293945
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "BlockMesh",
+              "Properties": {
+                "Scale": {
+                  "Vector3": [
+                    1.100000023841858,
+                    0.25,
+                    1.0499999523162842
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "className": "Folder",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Tank Top"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  }
+}

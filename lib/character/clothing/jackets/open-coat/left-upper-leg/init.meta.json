@@ -1,0 +1,13 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "clothing/jackets/open-coat/left-upper-leg/root"
+        }
+      }
+    },
+    "Tags": []
+  }
+}

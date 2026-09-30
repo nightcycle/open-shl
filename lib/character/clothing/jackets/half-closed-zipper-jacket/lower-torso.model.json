@@ -1,0 +1,235 @@
+{
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "clothing/jackets/half-closed-zipper-jacket/lower-torso/root"
+        }
+      }
+    },
+    "Tags": []
+  },
+  "Children": [
+    {
+      "Name": "root",
+      "ClassName": "Part",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "clothing/jackets/half-closed-zipper-jacket/lower-torso/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2.0801830291748047,
+            0.4160391092300415,
+            1.0402209758758545
+          ]
+        },
+        "Tags": [],
+        "Transparency": {
+          "Float32": 1
+        }
+      },
+      "Children": [
+        {
+          "Name": "LowerTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "part",
+      "ClassName": "Part",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.009098052978515625,
+              0.11151123046875,
+              -0.0554046630859375
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.092000126838684,
+            0.41599997878074646,
+            2.235999822616577
+          ]
+        }
+      }
+    },
+    {
+      "Name": "part-2",
+      "ClassName": "Part",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.009002685546875,
+              0.11151123046875,
+              0.4906005859375
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.20799998939037323,
+            0.4159998893737793,
+            2.2360000610351562
+          ]
+        }
+      }
+    },
+    {
+      "Name": "no-color",
+      "ClassName": "Part",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.00897216796875,
+              0.1114501953125,
+              -0.5494308471679688
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6235294342041016,
+            0.6313725709915161,
+            0.6745098233222961
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.20799998939037323,
+            0.4160001277923584,
+            0.20799998939037323
+          ]
+        }
+      },
+      "Children": [
+        {
+          "Name": "mesh",
+          "ClassName": "BlockMesh",
+          "Properties": {
+            "Scale": {
+              "Vector3": [
+                0.699999988079071,
+                1,
+                0.25
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

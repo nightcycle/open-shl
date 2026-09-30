@@ -1,0 +1,57 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Id": {
+          "String": "clothing/shirts/normal-shirt/left-upper-arm/root"
+        }
+      }
+    },
+    "Size": {
+      "Vector3": [
+        1.0402873754501343,
+        1.4513615369796753,
+        1.0402607917785645
+      ]
+    },
+    "Tags": [],
+    "Transparency": {
+      "Float32": 1
+    }
+  },
+  "Children": [
+    {
+      "Name": "LeftUpperArm",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Mustache"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "head",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "cosmetics/facial-hair/mustache/head/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "cosmetics/facial-hair/mustache/head/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.2183999866247177,
+                0.2183999866247177,
+                0.2183999866247177
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "Head",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -0.17100998759269714,
+                    0.9698463678359985,
+                    -0.17364805936813354
+                  ],
+                  [
+                    -0.9848078489303589,
+                    -0.1736479550600052,
+                    6.55481983358186E-07
+                  ],
+                  [
+                    -0.030152997002005577,
+                    0.1710100620985031,
+                    0.9848078489303589
+                  ]
+                ],
+                "position": [
+                  0.10382843017578125,
+                  -0.092681884765625,
+                  -0.5513148307800293
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.2183999866247177,
+                0.4367999732494354,
+                0.2183999866247177
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "SpecialMesh",
+              "Properties": {
+                "MeshContent": {
+                  "Content": "None"
+                },
+                "MeshType": {
+                  "Enum": 3
+                },
+                "TextureContent": {
+                  "Content": "None"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0.17100998759269714,
+                    0.9698463678359985,
+                    0.17364805936813354
+                  ],
+                  [
+                    -0.9848078489303589,
+                    0.1736479550600052,
+                    6.55481983358186E-07
+                  ],
+                  [
+                    -0.030152997002005577,
+                    -0.1710100620985031,
+                    0.9848078489303589
+                  ]
+                ],
+                "position": [
+                  -0.11455535888671875,
+                  -0.092681884765625,
+                  -0.5513148307800293
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.2183999866247177,
+                0.4367999732494354,
+                0.2183999866247177
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "SpecialMesh",
+              "Properties": {
+                "MeshContent": {
+                  "Content": "None"
+                },
+                "MeshType": {
+                  "Enum": 3
+                },
+                "TextureContent": {
+                  "Content": "None"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

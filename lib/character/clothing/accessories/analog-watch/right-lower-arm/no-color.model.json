@@ -1,0 +1,93 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          0.42645263671875,
+          -0.564544677734375,
+          0.00012969970703125
+        ]
+      }
+    },
+    "Color": {
+      "Color3": [
+        0.9725490212440491,
+        0.9725490212440491,
+        0.9725490212440491
+      ]
+    },
+    "Material": {
+      "Enum": 272
+    },
+    "Size": {
+      "Vector3": [
+        0.20799998939037323,
+        0.20799998939037323,
+        0.20799998939037323
+      ]
+    }
+  },
+  "Children": [
+    {
+      "Name": "mesh",
+      "ClassName": "CylinderMesh",
+      "Properties": {
+        "Scale": {
+          "Vector3": [
+            0.8999999761581421,
+            1,
+            0.8999999761581421
+          ]
+        }
+      }
+    },
+    {
+      "Name": "decal",
+      "ClassName": "Decal",
+      "Properties": {
+        "EmissiveMaskContent": {
+          "Content": "None"
+        },
+        "EmissiveStrength": {
+          "Float32": 1
+        },
+        "EmissiveTint": {
+          "Color3": [
+            1,
+            1,
+            1
+          ]
+        },
+        "Face": {
+          "Enum": 1
+        },
+        "TextureContent": {
+          "Content": {
+            "Uri": "rbxassetid://131875203"
+          }
+        },
+        "Transparency": {
+          "Float32": 0.5
+        }
+      }
+    }
+  ]
+}

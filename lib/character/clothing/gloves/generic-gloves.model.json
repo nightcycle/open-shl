@@ -1,0 +1,163 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Generic Gloves"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "left-hand",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.38823530077934265,
+            0.37254902720451355,
+            0.3843137323856354
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.9992990493774414,
+            0.33525583148002625,
+            1.0002974271774292
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset?id=467982655"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.091999888420105,
+            0.40039998292922974,
+            1.091999888420105
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "LeftHand",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.000152587890625,
+                  -0.0001220703125,
+                  0.0004730224609375
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-hand",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.38823530077934265,
+            0.37254902720451355,
+            0.3843137323856354
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.9992990493774414,
+            0.33525577187538147,
+            1.0002974271774292
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset?id=467982662"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.091999888420105,
+            0.40039998292922974,
+            1.091999888420105
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "RightHand",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.0001220703125,
+                  -0.0001220703125,
+                  0.0004730224609375
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
