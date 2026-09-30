@@ -32,6 +32,10 @@ export type ActionInfo =
 	| {
 		Type: "Exit",
 	}
+	| {
+		Type: "RotateCharacter",
+		Direction: "Left" | "Right",
+	}
 
 export type Properties = Frame.Properties & {
 	ItemDefinitions: { ItemDefinition },
@@ -130,7 +134,7 @@ return function(props: Properties)
 					end,
 				} :: ItemList.Properties
 			),
-			BackButton = e("TextButton", {
+			Exit = e("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 1),
 				BackgroundColor3 = Color3.new(),
 				BackgroundTransparency = 0.3,
@@ -149,7 +153,7 @@ return function(props: Properties)
 				end,
 			}),
 
-			TurnChar = e("Frame", {
+			TurnCharacter = e("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundTransparency = 1,
 				Position = UDim2.fromScale(0.5, 0.5),
@@ -170,6 +174,12 @@ return function(props: Properties)
 					TextColor3 = Color3.new(1, 1, 1),
 					TextScaled = true,
 					TextStrokeColor3 = Color3.new(1, 1, 1),
+					[React.Event.Activated] = function()
+						props.OnAction({
+							Type = "RotateCharacter",
+							Direction = "Right",
+						})
+					end,
 				}),
 
 				Left = e("TextButton", {
@@ -186,6 +196,12 @@ return function(props: Properties)
 					TextColor3 = Color3.new(1, 1, 1),
 					TextScaled = true,
 					TextStrokeColor3 = Color3.new(1, 1, 1),
+					[React.Event.Activated] = function()
+						props.OnAction({
+							Type = "RotateCharacter",
+							Direction = "Left",
+						})
+					end,
 				}),
 			}),
 		}
