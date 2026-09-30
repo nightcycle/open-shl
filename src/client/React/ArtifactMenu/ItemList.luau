@@ -19,8 +19,9 @@ export type RarityItemGroup = {
 	ItemDefinitions: { ItemDefinition },
 }
 export type Properties = ScrollingFrame.Properties & {
+	SelectedItemDefinition: ItemDefinition?,
 	ItemGroups: { RarityItemGroup },
-	OnClick: (string) -> (),
+	OnClick: (ItemDefinition) -> (),
 }
 -- Constants
 -- Variables
@@ -53,19 +54,23 @@ return function(props: Properties)
 				continue
 			end
 			rowIndex += 1
+			local isSelected = props.SelectedItemDefinition and props.SelectedItemDefinition.Id == itemDef.Id or false
 			out[`{rarityOrder}-{i}`] = e("TextButton", {
-				BackgroundColor3 = Color3.new(),
+				BackgroundColor3 = isSelected and Color3.new(1, 1, 1) or Color3.new(),
 				BorderColor3 = Color3.fromRGB(27, 42, 53),
+				BackgroundTransparency = isSelected and 0.2 or 0,
 				BorderSizePixel = 0,
+				AutoButtonColor = true,
 				LayoutOrder = rowIndex,
 				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
 				Size = UDim2.new(1, -15, 0.008, 0),
 				Text = name,
-				TextColor3 = Color3.new(1, 1, 1),
+				TextColor3 = isSelected and Color3.new() or Color3.new(1, 1, 1),
+				TextStrokeColor3 = not isSelected and Color3.new() or Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeTransparency = 0,
 				[React.Event.Activated] = function()
-					props.OnClick(itemDef.Id)
+					props.OnClick(itemDef)
 				end,
 			})
 		end

@@ -4,12 +4,17 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 -- Hooks
 -- Contexts
 -- Types
-export type Properties = Frame.Properties & {}
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+type ItemDefinition = AppearanceType.ItemDefinition
+export type Properties = Frame.Properties & {
+	SelectedItemDefinition: ItemDefinition,
+}
 -- Constants
 -- Variables
 -- References
@@ -17,6 +22,9 @@ export type Properties = Frame.Properties & {}
 local e = React.createElement
 -- Class
 return function(props: Properties)
+	local itemIndexRes = React.useMemo(function()
+		return ItemAppearanceDefinition.getIndex(props.SelectedItemDefinition.Id)
+	end, { props.SelectedItemDefinition.Id })
 	return e(
 		Frame({
 			BackgroundColor3 = Color3.new(),
@@ -33,12 +41,14 @@ return function(props: Properties)
 					Enum.FontStyle.Normal
 				),
 				Size = UDim2.fromScale(1, 0.1),
-				Text = "Hat Name",
+				Text = props.SelectedItemDefinition and props.SelectedItemDefinition.Name
+					or itemIndexRes and itemIndexRes.IsOk and itemIndexRes.Value.Key
+					or "...",
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 			}),
 
-			Tier = e("TextLabel", {
+			Tier = props.SelectedItemDefinition.Rarity and e("TextLabel", {
 				BackgroundTransparency = 1,
 				FontFace = Font.new(
 					"rbxasset://fonts/families/SourceSansPro.json",
@@ -47,7 +57,7 @@ return function(props: Properties)
 				),
 				Position = UDim2.fromScale(0, 0.1),
 				Size = UDim2.fromScale(1, 0.05),
-				Text = "Legendary",
+				Text = props.SelectedItemDefinition.Rarity,
 				TextColor3 = Color3.fromRGB(255, 213, 0),
 				TextScaled = true,
 			}),

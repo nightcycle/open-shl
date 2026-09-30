@@ -16,7 +16,11 @@ local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 export type ItemDefinition = AppearanceType.ItemDefinition
 export type ActionInfo =
 	{
-		Type: "OnUpdate",
+		Type: "Wear",
+		Item: ItemDefinition,
+	}
+	| {
+		Type: "Remove",
 		Item: ItemDefinition,
 	}
 	| {
@@ -34,6 +38,8 @@ export type Properties = Frame.Properties & {
 local e = React.createElement
 -- Class
 return function(props: Properties)
+	local selectedItem: ItemDefinition?, setSelectedItem: (ItemDefinition?) -> () =
+		React.useState(nil :: ItemDefinition?)
 	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
 		local rarityGroups: { [PseudoEnum.Rarity]: { ItemDefinition } } = {}
 		for i, itemDef in props.ItemDefinitions do
@@ -72,21 +78,33 @@ return function(props: Properties)
 		}),
 		props,
 		{
-			ConfigurePanel = e(ConfigurePanel, {
-				AnchorPoint = Vector2.new(1, 0.5),
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				Position = UDim2.fromScale(0.95, 0.5),
-				Size = UDim2.fromScale(0.3, 0.8),
-			}),
-			ItemList = e(ItemList, {
-				AnchorPoint = Vector2.new(0, 0.5),
-				Position = UDim2.fromScale(0.05, 0.5),
-				Size = UDim2.fromScale(0.3, 0.8),
-				ItemGroups = groups,
-				OnClick = function(item)
-					print(`selected: "{item}"`)
-				end,
-			}, {}),
+			ConfigurePanel = selectedItem and e(
+				ConfigurePanel,
+				{
+					SelectedItemDefinition = selectedItem,
+					AnchorPoint = Vector2.new(1, 0.5),
+					BorderColor3 = Color3.fromRGB(27, 42, 53),
+					Position = UDim2.fromScale(0.95, 0.5),
+					Size = UDim2.fromScale(0.3, 0.8),
+				} :: ConfigurePanel.Properties
+			),
+			ItemList = e(
+				ItemList,
+				{
+					SelectedItemDefinition = selectedItem,
+					AnchorPoint = Vector2.new(0, 0.5),
+					Position = UDim2.fromScale(0.05, 0.5),
+					Size = UDim2.fromScale(0.3, 0.8),
+					ItemGroups = groups,
+					OnClick = function(item: ItemDefinition)
+						if item == selectedItem then
+							setSelectedItem(nil)
+						else
+							setSelectedItem(item)
+						end
+					end,
+				} :: ItemList.Properties
+			),
 			BackButton = e("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 1),
 				BackgroundColor3 = Color3.new(),
@@ -99,6 +117,11 @@ return function(props: Properties)
 				Text = "Exit",
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
+				[React.Event.Activated] = function()
+					props.OnAction({
+						Type = "Exit",
+					})
+				end,
 			}),
 
 			TurnChar = e("Frame", {
