@@ -3,38 +3,11 @@
 -- Packages
 -- Modules
 -- Types
-type StrictPropertyValue =
-	{
-		Color3: { number },
-	}
-	| {
-		Bool: boolean,
-	}
-	| {
-		Float32: number,
-	}
-	| {
-		String: string,
-	}
-	| {
-		Vector3: { number },
-	}
-	| {
-		Vector2: { number },
-	}
-	| {
-		CFrame: {
-			position: { number },
-			orientation: { number },
-		},
-	}
-	| {
-		UDim: { number },
-	}
-	| {
-		UDim2: { number },
-	}
-type PropertyValue = boolean | number | { number } | string | StrictPropertyValue
+export type JSONValue = boolean | number | string | { JSONValue } | { [string]: JSONValue }
+-- Explicit Rojo values are tagged objects whose payload may contain nested
+-- arrays/objects (CFrames, sequences, fonts, attributes, etc.). No userdata.
+export type StrictPropertyValue = { [string]: JSONValue }
+export type PropertyValue = JSONValue
 export type NodeProperties = {
 	[string]: PropertyValue,
 	Attributes: {
@@ -72,7 +45,7 @@ export type ModelNode = {
 export type ModelJSON = {
 	ClassName: string,
 	Properties: NodeProperties?,
-	Children: { ModelNode },
+	Children: { ModelNode }?,
 }
 -- Constants
 -- Variables

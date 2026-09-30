@@ -1,0 +1,44 @@
+{
+  "ClassName": "SpecialMesh",
+  "Properties": {
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "MeshContent": {
+      "Content": "None"
+    },
+    "MeshType": {
+      "Enum": 0
+    },
+    "Offset": {
+      "Vector3": [
+        0,
+        0,
+        0
+      ]
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "Scale": {
+      "Vector3": [
+        1.25,
+        1.25,
+        1.25
+      ]
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    },
+    "TextureContent": {
+      "Content": "None"
+    },
+    "VertexColor": {
+      "Vector3": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}

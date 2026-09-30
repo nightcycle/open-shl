@@ -1,0 +1,48 @@
+{
+  "ClassName": "SpecialMesh",
+  "Properties": {
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "MeshContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=79396918"
+      }
+    },
+    "MeshType": {
+      "Enum": 5
+    },
+    "Offset": {
+      "Vector3": [
+        0,
+        0,
+        0
+      ]
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "Scale": {
+      "Vector3": [
+        0.7188911437988281,
+        0.7188911437988281,
+        0.7188911437988281
+      ]
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    },
+    "TextureContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=286165638"
+      }
+    },
+    "VertexColor": {
+      "Vector3": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}
