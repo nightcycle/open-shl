@@ -4,21 +4,23 @@
 -- Packages
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 -- Hooks
 -- Types
 local Types = {}
 
-export type ItemCategory = "clothing" | "costume" | "cosmetics" | "body"
+export type ItemGroup = "clothing" | "costume" | "cosmetics" | "body"
+Types.ItemGroup = Type.literal("clothing", "costume", "cosmetics", "body")
 export type ItemDefinitionIndex = {
-	Group: ItemCategory,
+	Group: ItemGroup,
 	Category: string,
-	Item: string,
+	Key: string,
 }
 Types.ItemDefinitionIndex = Type.strictInterface({
-	Group = Type.literal("clothing", "costume", "cosmetics", "body"),
+	Group = Types.ItemGroup,
 	Category = Type.string,
-	Item = Type.string,
+	Key = Type.string,
 })
 
 export type TextureGroupDefinition = {
@@ -39,14 +41,17 @@ export type ItemDefinitionTag = "IsMask"
 Types.ItemDefinitionTag = Type.literal("IsMask")
 export type ItemDefinition = {
 	Id: string,
+	Rarity: PseudoEnum.RarityType?,
 	TextureGroups: { TextureGroupDefinition },
 	Tags: { ItemDefinitionTag },
 }
 Types.ItemDefinition = Type.strictInterface({
 	Id = Type.string,
+	Rarity = Type.optional(Type.literal(table.unpack(PseudoEnum.getEnumItems("RarityType")))),
 	TextureGroups = Type.array(Types.TextureGroupDefinition),
 	Tags = Type.array(Types.ItemDefinitionTag),
 })
+
 
 export type Item = {
 	DefinitionId: string,

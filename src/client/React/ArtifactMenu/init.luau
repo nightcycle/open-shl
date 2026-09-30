@@ -4,6 +4,8 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local ConfigurePanel = require("@self/ConfigurePanel")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
@@ -11,18 +13,19 @@ local ItemList = require("@self/ItemList")
 -- Hooks
 -- Contexts
 -- Types
-local Appearance = require("@game/ReplicatedStorage/Shared/Type/Appearance")
-export type Item = Appearance.Item
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+export type ItemDefinition = AppearanceType.ItemDefinition
 export type ActionInfo =
 	{
 		Type: "OnUpdate",
-		Item: Item,
+		Item: ItemDefinition,
 	}
 	| {
 		Type: "Exit",
 	}
 
 export type Properties = Frame.Properties & {
+	ItemDefinitions: { ItemDefinition },
 	OnAction: (ActionInfo) -> (),
 }
 -- Constants
@@ -32,6 +35,36 @@ export type Properties = Frame.Properties & {
 local e = React.createElement
 -- Class
 return function(props: Properties)
+	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
+		local rarityGroups: { [PseudoEnum.RarityType]: { string } } = {}
+		for i, itemDef in props.ItemDefinitions do
+			if itemDef.Rarity then
+				local defIndexRes = ItemAppearanceDefinition.getItemDefinitionIndexFromId(itemDef.Id)
+				if defIndexRes.IsOk then
+					local group = rarityGroups[itemDef.Rarity] or {}
+					rarityGroups[itemDef.Rarity] = group
+					table.insert(group, defIndexRes.Value.Key)
+				else
+					warn(defIndexRes.Value)
+				end
+			else
+				warn(`no rarity for "{itemDef.Id}"`)
+			end
+		end
+		local out = {}
+		for rarity, keys in rarityGroups do
+			table.insert(
+				out,
+				table.freeze({
+					Rarity = rarity,
+					Keys = table.freeze(keys),
+				})
+			)
+		end
+		table.freeze(out)
+		return out
+	end, { props.ItemDefinitions })
+
 	return e(
 		Frame({
 			BackgroundTransparency = 1,
@@ -48,15 +81,7 @@ return function(props: Properties)
 				AnchorPoint = Vector2.new(0, 0.5),
 				Position = UDim2.fromScale(0.05, 0.5),
 				Size = UDim2.fromScale(0.3, 0.8),
-				Rows = {
-					{
-						Rarity = "Common",
-						Items = {
-							"ABC",
-							"123",
-						},
-					},
-				},
+				ItemGroups = groups,
 				OnClick = function(item)
 					print(`selected: "{item}"`)
 				end,

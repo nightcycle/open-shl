@@ -10,13 +10,12 @@ local UIListLayout = require("@game/ReplicatedStorage/Generated/React/Component/
 -- Hooks
 -- Contexts
 -- Types
+export type RarityItemGroup = {
+	Rarity: string,
+	Keys: { string },
+}
 export type Properties = ScrollingFrame.Properties & {
-	Rows: {
-		{
-			Rarity: string,
-			Items: { string },
-		}
-	},
+	ItemGroups: { RarityItemGroup },
 	OnClick: (string) -> (),
 }
 -- Constants
@@ -28,7 +27,7 @@ local e = React.createElement
 return function(props: Properties)
 	local out: { [string]: React.ReactNode } = {}
 	local rowIndex = 0
-	for rarityOrder, rarityEntry in props.Rows do
+	for rarityOrder, rarityEntry in props.ItemGroups do
 		rowIndex += 1
 		out[`{rarityOrder}`] = e("TextLabel", {
 			BackgroundTransparency = 1,
@@ -43,7 +42,7 @@ return function(props: Properties)
 			TextColor3 = Color3.fromRGB(255, 213, 0),
 			TextScaled = true,
 		})
-		for i, item in rarityEntry.Items do
+		for i, key in rarityEntry.Keys do
 			rowIndex += 1
 			out[`{rarityOrder}-{i}`] = e("TextButton", {
 				BackgroundColor3 = Color3.new(),
@@ -52,12 +51,12 @@ return function(props: Properties)
 				LayoutOrder = rowIndex,
 				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
 				Size = UDim2.new(1, -15, 0.008, 0),
-				Text = item,
+				Text = key,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeTransparency = 0,
 				[React.Event.Activated] = function()
-					props.OnClick(item)
+					props.OnClick(key)
 				end,
 			})
 		end

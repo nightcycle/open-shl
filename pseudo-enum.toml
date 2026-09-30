@@ -14,5 +14,6 @@ MenuId = [
 	"Music",
 	"Actions",
 	"Swap",
-	"Characters"
+	"Characters",
 ]
+RarityType = ["VeryCommon", "Common", "Uncommon", "Rare", "Legendary"]

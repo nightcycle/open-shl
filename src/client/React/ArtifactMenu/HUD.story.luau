@@ -34,6 +34,7 @@ return UILabs.CreateReactStory({
 		value = appearance,
 	}, {
 		Menu = e(ParentComponent, {
+			ItemDefinitions = {},
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 			Size = UDim2.fromScale(0.5, 0.5),
