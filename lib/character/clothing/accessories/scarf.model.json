@@ -1,90 +1,79 @@
 {
-  "ClassName": "Folder",
+  "ClassName": "MeshPart",
   "Properties": {
+    "Color": {
+      "Color3": [
+        0.06666667014360428,
+        0.06666667014360428,
+        0.06666667014360428
+      ]
+    },
+    "InitialSize": {
+      "Vector3": [
+        1.6904350519180298,
+        2.260890007019043,
+        1.7382500171661377
+      ]
+    },
+    "MeshContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=99856331"
+      }
+    },
+    "RenderFidelity": {
+      "Enum": 1
+    },
+    "Size": {
+      "Vector3": [
+        1.7580523490905762,
+        1.9353258609771729,
+        1.4437801837921143
+      ]
+    },
+    "Tags": [],
+    "TextureContent": {
+      "Content": "None"
+    },
     "Attributes": {
       "Attributes": {
         "Name": {
           "String": "Scarf"
         }
       }
-    },
-    "Tags": [
-      "MultiWeld"
-    ]
+    }
   },
   "Children": [
     {
-      "Name": "upper-torso",
-      "ClassName": "MeshPart",
+      "Name": "UpperTorso",
+      "ClassName": "Attachment",
       "Properties": {
-        "Color": {
-          "Color3": [
-            0.06666667014360428,
-            0.06666667014360428,
-            0.06666667014360428
-          ]
-        },
-        "InitialSize": {
-          "Vector3": [
-            1.6904350519180298,
-            2.260890007019043,
-            1.7382500171661377
-          ]
-        },
-        "MeshContent": {
-          "Content": {
-            "Uri": "http://www.roblox.com/asset/?id=99856331"
-          }
-        },
-        "RenderFidelity": {
-          "Enum": 1
-        },
-        "Size": {
-          "Vector3": [
-            1.7580523490905762,
-            1.9353258609771729,
-            1.4437801837921143
-          ]
-        },
-        "Tags": [],
-        "TextureContent": {
-          "Content": "None"
-        }
-      },
-      "Children": [
-        {
-          "Name": "UpperTorso",
-          "ClassName": "Attachment",
-          "Properties": {
-            "CFrame": {
-              "CFrame": {
-                "orientation": [
-                  [
-                    1,
-                    -0.0,
-                    -4.371139183945161E-08
-                  ],
-                  [
-                    1.5255053886775727E-09,
-                    0.9993908405303955,
-                    0.03489949554204941
-                  ],
-                  [
-                    4.368476069771532E-08,
-                    -0.03489949554204941,
-                    0.9993908405303955
-                  ]
-                ],
-                "position": [
-                  -0.00028228759765625,
-                  -0.46221923828125,
-                  0.17604446411132812
-                ]
-              }
-            }
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                -0.0,
+                -4.371139183945161E-08
+              ],
+              [
+                1.5255053886775727E-09,
+                0.9993908405303955,
+                0.03489949554204941
+              ],
+              [
+                4.368476069771532E-08,
+                -0.03489949554204941,
+                0.9993908405303955
+              ]
+            ],
+            "position": [
+              -0.00028228759765625,
+              -0.46221923828125,
+              0.17604446411132812
+            ]
           }
         }
-      ]
+      }
     }
   ]
 }

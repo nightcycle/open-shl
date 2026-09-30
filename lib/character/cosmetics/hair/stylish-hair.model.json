@@ -1,97 +1,82 @@
 {
-  "ClassName": "Folder",
+  "ClassName": "MeshPart",
   "Properties": {
     "Attributes": {
       "Attributes": {
+        "Costume": {
+          "Bool": false
+        },
         "Name": {
           "String": "Stylish Hair"
         }
       }
     },
-    "Tags": [
-      "MultiWeld"
-    ]
+    "Color": {
+      "Color3": [
+        0.9725490212440491,
+        0.9725490212440491,
+        0.9725490212440491
+      ]
+    },
+    "InitialSize": {
+      "Vector3": [
+        1.5362299680709839,
+        1.201188564300537,
+        1.4329450130462646
+      ]
+    },
+    "MeshContent": {
+      "Content": {
+        "Uri": "http://roblox.com/asset/?id=82348216"
+      }
+    },
+    "RenderFidelity": {
+      "Enum": 1
+    },
+    "Size": {
+      "Vector3": [
+        1.760642409324646,
+        1.3766582012176514,
+        1.642269492149353
+      ]
+    },
+    "Tags": [],
+    "TextureContent": {
+      "Content": "None"
+    }
   },
   "Children": [
     {
-      "Name": "head",
-      "ClassName": "MeshPart",
+      "Name": "Head",
+      "ClassName": "Attachment",
       "Properties": {
-        "Attributes": {
-          "Attributes": {
-            "Costume": {
-              "Bool": false
-            }
-          }
-        },
-        "Color": {
-          "Color3": [
-            0.9725490212440491,
-            0.9725490212440491,
-            0.9725490212440491
-          ]
-        },
-        "InitialSize": {
-          "Vector3": [
-            1.5362299680709839,
-            1.201188564300537,
-            1.4329450130462646
-          ]
-        },
-        "MeshContent": {
-          "Content": {
-            "Uri": "http://roblox.com/asset/?id=82348216"
-          }
-        },
-        "RenderFidelity": {
-          "Enum": 1
-        },
-        "Size": {
-          "Vector3": [
-            1.760642409324646,
-            1.3766582012176514,
-            1.642269492149353
-          ]
-        },
-        "Tags": [],
-        "TextureContent": {
-          "Content": "None"
-        }
-      },
-      "Children": [
-        {
-          "Name": "Head",
-          "ClassName": "Attachment",
-          "Properties": {
-            "CFrame": {
-              "CFrame": {
-                "orientation": [
-                  [
-                    1,
-                    0,
-                    -3.20372151918491E-07
-                  ],
-                  [
-                    0,
-                    1,
-                    0
-                  ],
-                  [
-                    3.20372151918491E-07,
-                    0,
-                    1
-                  ]
-                ],
-                "position": [
-                  3.814697265625E-05,
-                  -0.43682861328125,
-                  0.01080322265625
-                ]
-              }
-            }
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                -3.20372151918491E-07
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                3.20372151918491E-07,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              3.814697265625E-05,
+              -0.43682861328125,
+              0.01080322265625
+            ]
           }
         }
-      ]
+      }
     }
   ]
 }

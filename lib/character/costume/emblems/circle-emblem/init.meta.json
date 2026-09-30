@@ -1,15 +1,16 @@
 {
-  "className": "Folder",
+  "className": "Model",
   "properties": {
     "Attributes": {
       "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "costume/emblems/circle-emblem/upper-torso/root"
+        },
         "Name": {
           "String": "Circle Emblem"
         }
       }
     },
-    "Tags": [
-      "MultiWeld"
-    ]
+    "Tags": []
   }
 }

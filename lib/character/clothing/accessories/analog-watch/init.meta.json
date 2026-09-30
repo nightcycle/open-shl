@@ -1,15 +1,16 @@
 {
-  "className": "Folder",
+  "className": "Model",
   "properties": {
     "Attributes": {
       "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "clothing/accessories/analog-watch/right-lower-arm/root"
+        },
         "Name": {
           "String": "Analog Watch"
         }
       }
     },
-    "Tags": [
-      "MultiWeld"
-    ]
+    "Tags": []
   }
 }

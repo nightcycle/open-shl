@@ -1,90 +1,79 @@
 {
-  "ClassName": "Folder",
+  "ClassName": "MeshPart",
   "Properties": {
+    "Color": {
+      "Color3": [
+        0.9725490212440491,
+        0.9725490212440491,
+        0.9725490212440491
+      ]
+    },
+    "InitialSize": {
+      "Vector3": [
+        2.4484200477600098,
+        1.6836800575256348,
+        1.4769500494003296
+      ]
+    },
+    "MeshContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=157959108"
+      }
+    },
+    "RenderFidelity": {
+      "Enum": 1
+    },
+    "Size": {
+      "Vector3": [
+        1.36967933177948,
+        0.9224799871444702,
+        0.7040799856185913
+      ]
+    },
+    "Tags": [],
+    "TextureContent": {
+      "Content": "None"
+    },
     "Attributes": {
       "Attributes": {
         "Name": {
           "String": "Beard"
         }
       }
-    },
-    "Tags": [
-      "MultiWeld"
-    ]
+    }
   },
   "Children": [
     {
-      "Name": "head",
-      "ClassName": "MeshPart",
+      "Name": "Head",
+      "ClassName": "Attachment",
       "Properties": {
-        "Color": {
-          "Color3": [
-            0.9725490212440491,
-            0.9725490212440491,
-            0.9725490212440491
-          ]
-        },
-        "InitialSize": {
-          "Vector3": [
-            2.4484200477600098,
-            1.6836800575256348,
-            1.4769500494003296
-          ]
-        },
-        "MeshContent": {
-          "Content": {
-            "Uri": "http://www.roblox.com/asset/?id=157959108"
-          }
-        },
-        "RenderFidelity": {
-          "Enum": 1
-        },
-        "Size": {
-          "Vector3": [
-            1.36967933177948,
-            0.9224799871444702,
-            0.7040799856185913
-          ]
-        },
-        "Tags": [],
-        "TextureContent": {
-          "Content": "None"
-        }
-      },
-      "Children": [
-        {
-          "Name": "Head",
-          "ClassName": "Attachment",
-          "Properties": {
-            "CFrame": {
-              "CFrame": {
-                "orientation": [
-                  [
-                    1,
-                    0,
-                    0
-                  ],
-                  [
-                    0,
-                    1,
-                    0
-                  ],
-                  [
-                    0,
-                    0,
-                    1
-                  ]
-                ],
-                "position": [
-                  -0.00030517578125,
-                  0.23809814453125,
-                  0.35320281982421875
-                ]
-              }
-            }
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.00030517578125,
+              0.23809814453125,
+              0.35320281982421875
+            ]
           }
         }
-      ]
+      }
     }
   ]
 }

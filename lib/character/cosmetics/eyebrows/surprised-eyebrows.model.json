@@ -1,115 +1,104 @@
 {
-  "ClassName": "Folder",
+  "ClassName": "Part",
   "Properties": {
+    "Color": {
+      "Color3": [
+        0.6235294342041016,
+        0.6313725709915161,
+        0.6745098233222961
+      ]
+    },
+    "Size": {
+      "Vector3": [
+        1.0399999618530273,
+        1.0399999618530273,
+        1.0399999618530273
+      ]
+    },
+    "Tags": [],
     "Attributes": {
       "Attributes": {
         "Name": {
           "String": "Surprised Eyebrows"
         }
       }
-    },
-    "Tags": [
-      "MultiWeld"
-    ]
+    }
   },
   "Children": [
     {
-      "Name": "head",
-      "ClassName": "Part",
+      "Name": "mesh",
+      "ClassName": "SpecialMesh",
       "Properties": {
-        "Color": {
-          "Color3": [
-            0.6235294342041016,
-            0.6313725709915161,
-            0.6745098233222961
-          ]
+        "MeshContent": {
+          "Content": "None"
         },
-        "Size": {
+        "Scale": {
           "Vector3": [
-            1.0399999618530273,
-            1.0399999618530273,
-            1.0399999618530273
+            1.2999999523162842,
+            1.2999999523162842,
+            1.2999999523162842
           ]
         },
-        "Tags": []
-      },
-      "Children": [
-        {
-          "Name": "mesh",
-          "ClassName": "SpecialMesh",
-          "Properties": {
-            "MeshContent": {
-              "Content": "None"
-            },
-            "Scale": {
-              "Vector3": [
-                1.2999999523162842,
-                1.2999999523162842,
-                1.2999999523162842
-              ]
-            },
-            "TextureContent": {
-              "Content": "None"
-            }
-          }
+        "TextureContent": {
+          "Content": "None"
+        }
+      }
+    },
+    {
+      "Name": "decal",
+      "ClassName": "Decal",
+      "Properties": {
+        "EmissiveMaskContent": {
+          "Content": "None"
         },
-        {
-          "Name": "decal",
-          "ClassName": "Decal",
-          "Properties": {
-            "EmissiveMaskContent": {
-              "Content": "None"
-            },
-            "EmissiveStrength": {
-              "Float32": 1
-            },
-            "EmissiveTint": {
-              "Color3": [
-                1,
-                1,
-                1
-              ]
-            },
-            "TextureContent": {
-              "Content": {
-                "Uri": "rbxgameasset://Images/Surprised_Eyebrows"
-              }
-            }
-          }
+        "EmissiveStrength": {
+          "Float32": 1
         },
-        {
-          "Name": "Head",
-          "ClassName": "Attachment",
-          "Properties": {
-            "CFrame": {
-              "CFrame": {
-                "orientation": [
-                  [
-                    1,
-                    0,
-                    0
-                  ],
-                  [
-                    0,
-                    1,
-                    0
-                  ],
-                  [
-                    0,
-                    0,
-                    1
-                  ]
-                ],
-                "position": [
-                  0,
-                  0,
-                  0
-                ]
-              }
-            }
+        "EmissiveTint": {
+          "Color3": [
+            1,
+            1,
+            1
+          ]
+        },
+        "TextureContent": {
+          "Content": {
+            "Uri": "rbxgameasset://Images/Surprised_Eyebrows"
           }
         }
-      ]
+      }
+    },
+    {
+      "Name": "Head",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
     }
   ]
 }

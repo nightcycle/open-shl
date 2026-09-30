@@ -1,96 +1,85 @@
 {
-  "ClassName": "Folder",
+  "ClassName": "Part",
   "Properties": {
+    "Color": {
+      "Color3": [
+        0.10588235408067703,
+        0.16470588743686676,
+        0.2078431397676468
+      ]
+    },
+    "Size": {
+      "Vector3": [
+        0.22047999501228333,
+        0.22047999501228333,
+        0.22047999501228333
+      ]
+    },
+    "Tags": [],
     "Attributes": {
       "Attributes": {
         "Name": {
           "String": "Super Sunglasses"
         }
       }
-    },
-    "Tags": [
-      "MultiWeld"
-    ]
+    }
   },
   "Children": [
     {
-      "Name": "head",
-      "ClassName": "Part",
+      "Name": "mesh",
+      "ClassName": "SpecialMesh",
       "Properties": {
-        "Color": {
-          "Color3": [
-            0.10588235408067703,
-            0.16470588743686676,
-            0.2078431397676468
-          ]
-        },
-        "Size": {
-          "Vector3": [
-            0.22047999501228333,
-            0.22047999501228333,
-            0.22047999501228333
-          ]
-        },
-        "Tags": []
-      },
-      "Children": [
-        {
-          "Name": "mesh",
-          "ClassName": "SpecialMesh",
-          "Properties": {
-            "MeshContent": {
-              "Content": {
-                "Uri": "http://www.roblox.com/asset/?id=51177557"
-              }
-            },
-            "MeshType": {
-              "Enum": 5
-            },
-            "Scale": {
-              "Vector3": [
-                1.1023999452590942,
-                1.1023999452590942,
-                1.1023999452590942
-              ]
-            },
-            "TextureContent": {
-              "Content": "None"
-            }
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=51177557"
           }
         },
-        {
-          "Name": "Head",
-          "ClassName": "Attachment",
-          "Properties": {
-            "CFrame": {
-              "CFrame": {
-                "orientation": [
-                  [
-                    1.0000001192092896,
-                    1.5307826117805234E-07,
-                    2.682207878024201E-07
-                  ],
-                  [
-                    -2.125989055912214E-07,
-                    1,
-                    -4.281259252821544E-14
-                  ],
-                  [
-                    -2.6822073095900123E-07,
-                    -4.095181527219438E-09,
-                    0.9999997019767761
-                  ]
-                ],
-                "position": [
-                  7.62939453125E-06,
-                  -0.110260009765625,
-                  0.1653575897216797
-                ]
-              }
-            }
+        "MeshType": {
+          "Enum": 5
+        },
+        "Scale": {
+          "Vector3": [
+            1.1023999452590942,
+            1.1023999452590942,
+            1.1023999452590942
+          ]
+        },
+        "TextureContent": {
+          "Content": "None"
+        }
+      }
+    },
+    {
+      "Name": "Head",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1.0000001192092896,
+                1.5307826117805234E-07,
+                2.682207878024201E-07
+              ],
+              [
+                -2.125989055912214E-07,
+                1,
+                -4.281259252821544E-14
+              ],
+              [
+                -2.6822073095900123E-07,
+                -4.095181527219438E-09,
+                0.9999997019767761
+              ]
+            ],
+            "position": [
+              7.62939453125E-06,
+              -0.110260009765625,
+              0.1653575897216797
+            ]
           }
         }
-      ]
+      }
     }
   ]
 }

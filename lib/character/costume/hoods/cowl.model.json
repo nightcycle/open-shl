@@ -1,100 +1,89 @@
 {
-  "ClassName": "Folder",
+  "ClassName": "MeshPart",
   "Properties": {
+    "Color": {
+      "Color3": [
+        0,
+        0.125490203499794,
+        0.3764705955982208
+      ]
+    },
+    "CustomPhysicalProperties": {
+      "PhysicalProperties": {
+        "acousticAbsorption": 1,
+        "density": 0.699999988079071,
+        "elasticity": 0.5,
+        "elasticityWeight": 1,
+        "friction": 0.30000001192092896,
+        "frictionWeight": 1
+      }
+    },
+    "InitialSize": {
+      "Vector3": [
+        2.1191000938415527,
+        2.3612000942230225,
+        1.7341500520706177
+      ]
+    },
+    "MeshContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=85855767"
+      }
+    },
+    "RenderFidelity": {
+      "Enum": 1
+    },
+    "Size": {
+      "Vector3": [
+        2.97544002532959,
+        2.971280097961426,
+        2.181920051574707
+      ]
+    },
+    "Tags": [],
+    "TextureContent": {
+      "Content": "None"
+    },
     "Attributes": {
       "Attributes": {
         "Name": {
           "String": "Cowl"
         }
       }
-    },
-    "Tags": [
-      "MultiWeld"
-    ]
+    }
   },
   "Children": [
     {
-      "Name": "head",
-      "ClassName": "MeshPart",
+      "Name": "Head",
+      "ClassName": "Attachment",
       "Properties": {
-        "Color": {
-          "Color3": [
-            0,
-            0.125490203499794,
-            0.3764705955982208
-          ]
-        },
-        "CustomPhysicalProperties": {
-          "PhysicalProperties": {
-            "acousticAbsorption": 1,
-            "density": 0.699999988079071,
-            "elasticity": 0.5,
-            "elasticityWeight": 1,
-            "friction": 0.30000001192092896,
-            "frictionWeight": 1
-          }
-        },
-        "InitialSize": {
-          "Vector3": [
-            2.1191000938415527,
-            2.3612000942230225,
-            1.7341500520706177
-          ]
-        },
-        "MeshContent": {
-          "Content": {
-            "Uri": "http://www.roblox.com/asset/?id=85855767"
-          }
-        },
-        "RenderFidelity": {
-          "Enum": 1
-        },
-        "Size": {
-          "Vector3": [
-            2.97544002532959,
-            2.971280097961426,
-            2.181920051574707
-          ]
-        },
-        "Tags": [],
-        "TextureContent": {
-          "Content": "None"
-        }
-      },
-      "Children": [
-        {
-          "Name": "Head",
-          "ClassName": "Attachment",
-          "Properties": {
-            "CFrame": {
-              "CFrame": {
-                "orientation": [
-                  [
-                    1,
-                    0,
-                    0
-                  ],
-                  [
-                    0,
-                    1,
-                    0
-                  ],
-                  [
-                    0,
-                    0,
-                    1
-                  ]
-                ],
-                "position": [
-                  -0.027008056640625,
-                  0.36407470703125,
-                  -0.04144287109375
-                ]
-              }
-            }
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.027008056640625,
+              0.36407470703125,
+              -0.04144287109375
+            ]
           }
         }
-      ]
+      }
     }
   ]
 }

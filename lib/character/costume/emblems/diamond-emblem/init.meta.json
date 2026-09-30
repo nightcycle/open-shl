@@ -1,15 +1,16 @@
 {
-  "className": "Folder",
+  "className": "Model",
   "properties": {
     "Attributes": {
       "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "costume/emblems/diamond-emblem/upper-torso/root"
+        },
         "Name": {
           "String": "Diamond Emblem"
         }
       }
     },
-    "Tags": [
-      "MultiWeld"
-    ]
+    "Tags": []
   }
 }

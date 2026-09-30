@@ -1,15 +1,16 @@
 {
-  "className": "Folder",
+  "className": "Model",
   "properties": {
     "Attributes": {
       "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "costume/masks/head-mask/head/root"
+        },
         "Name": {
           "String": "Head Mask"
         }
       }
     },
-    "Tags": [
-      "MultiWeld"
-    ]
+    "Tags": []
   }
 }

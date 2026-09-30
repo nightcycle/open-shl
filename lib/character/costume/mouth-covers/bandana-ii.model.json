@@ -1,90 +1,79 @@
 {
-  "ClassName": "Folder",
+  "ClassName": "MeshPart",
   "Properties": {
+    "Color": {
+      "Color3": [
+        0.8352941274642944,
+        0.45098039507865906,
+        0.239215686917305
+      ]
+    },
+    "InitialSize": {
+      "Vector3": [
+        1.276900053024292,
+        1.1674025058746338,
+        1.4079999923706055
+      ]
+    },
+    "MeshContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=20637493"
+      }
+    },
+    "RenderFidelity": {
+      "Enum": 1
+    },
+    "Size": {
+      "Vector3": [
+        1.4319759607315063,
+        1.214098572731018,
+        1.5163198709487915
+      ]
+    },
+    "Tags": [],
+    "TextureContent": {
+      "Content": "None"
+    },
     "Attributes": {
       "Attributes": {
         "Name": {
           "String": "Bandana II"
         }
       }
-    },
-    "Tags": [
-      "MultiWeld"
-    ]
+    }
   },
   "Children": [
     {
-      "Name": "head",
-      "ClassName": "MeshPart",
+      "Name": "Head",
+      "ClassName": "Attachment",
       "Properties": {
-        "Color": {
-          "Color3": [
-            0.8352941274642944,
-            0.45098039507865906,
-            0.239215686917305
-          ]
-        },
-        "InitialSize": {
-          "Vector3": [
-            1.276900053024292,
-            1.1674025058746338,
-            1.4079999923706055
-          ]
-        },
-        "MeshContent": {
-          "Content": {
-            "Uri": "http://www.roblox.com/asset/?id=20637493"
-          }
-        },
-        "RenderFidelity": {
-          "Enum": 1
-        },
-        "Size": {
-          "Vector3": [
-            1.4319759607315063,
-            1.214098572731018,
-            1.5163198709487915
-          ]
-        },
-        "Tags": [],
-        "TextureContent": {
-          "Content": "None"
-        }
-      },
-      "Children": [
-        {
-          "Name": "Head",
-          "ClassName": "Attachment",
-          "Properties": {
-            "CFrame": {
-              "CFrame": {
-                "orientation": [
-                  [
-                    1,
-                    0,
-                    0
-                  ],
-                  [
-                    0,
-                    1,
-                    0
-                  ],
-                  [
-                    0,
-                    0,
-                    1
-                  ]
-                ],
-                "position": [
-                  6.103515625E-05,
-                  0.36407470703125,
-                  -0.025839805603027344
-                ]
-              }
-            }
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              6.103515625E-05,
+              0.36407470703125,
+              -0.025839805603027344
+            ]
           }
         }
-      ]
+      }
     }
   ]
 }
