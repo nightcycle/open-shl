@@ -36,7 +36,7 @@ local e = React.createElement
 -- Class
 return function(props: Properties)
 	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
-		local rarityGroups: { [PseudoEnum.RarityType]: { string } } = {}
+		local rarityGroups: { [PseudoEnum.Rarity]: { string } } = {}
 		for i, itemDef in props.ItemDefinitions do
 			if itemDef.Rarity then
 				local defIndexRes = ItemAppearanceDefinition.getItemDefinitionIndexFromId(itemDef.Id)
@@ -61,6 +61,12 @@ return function(props: Properties)
 				})
 			)
 		end
+
+		table.sort(out, function(a: ItemList.RarityItemGroup, b: ItemList.RarityItemGroup)
+			local aValue = PseudoEnum.getValueFromEnumItem("Rarity", (a.Rarity or "VeryCommon") :: PseudoEnum.Rarity)
+			local bValue = PseudoEnum.getValueFromEnumItem("Rarity", (b.Rarity or "VeryCommon") :: PseudoEnum.Rarity)
+			return aValue > bValue
+		end)
 		table.freeze(out)
 		return out
 	end, { props.ItemDefinitions })

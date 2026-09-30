@@ -41,13 +41,13 @@ export type ItemDefinitionTag = "IsMask"
 Types.ItemDefinitionTag = Type.literal("IsMask")
 export type ItemDefinition = {
 	Id: string,
-	Rarity: PseudoEnum.RarityType?,
+	Rarity: PseudoEnum.Rarity?,
 	TextureGroups: { TextureGroupDefinition },
 	Tags: { ItemDefinitionTag },
 }
 Types.ItemDefinition = Type.strictInterface({
 	Id = Type.string,
-	Rarity = Type.optional(Type.literal(table.unpack(PseudoEnum.getEnumItems("RarityType")))),
+	Rarity = Type.optional(Type.literal(table.unpack(PseudoEnum.getEnumItems("Rarity")))),
 	TextureGroups = Type.array(Types.TextureGroupDefinition),
 	Tags = Type.array(Types.ItemDefinitionTag),
 })

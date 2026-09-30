@@ -39,7 +39,7 @@ return UILabs.CreateReactStory({
 			if not index.IsOk then
 				continue
 			end
-			if not v.Rarity or index.Value.Category ~= "Artifacts" then
+			if not v.Rarity or index.Value.Category ~= "artifacts" then
 				continue
 			end
 			table.insert(out, v)

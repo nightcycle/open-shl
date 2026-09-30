@@ -71,7 +71,7 @@ Module.getItemDefinition = function(id: string): Result<ItemDefinition, string>
 
 	local itemDefinition: ItemDefinition = {
 		Id = id,
-		Rarity = itemDefRes.Value:GetAttribute("Rarity") :: PseudoEnum.RarityType?,
+		Rarity = itemDefRes.Value:GetAttribute("Rarity") :: PseudoEnum.Rarity?,
 		Tags = itemDefRes.Value:GetTags(),
 		TextureGroups = {},
 	}

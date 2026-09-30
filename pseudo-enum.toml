@@ -16,4 +16,4 @@ MenuId = [
 	"Swap",
 	"Characters",
 ]
-RarityType = ["VeryCommon", "Common", "Uncommon", "Rare", "Legendary"]
+Rarity = ["VeryCommon", "Common", "Uncommon", "Rare", "Legendary"]
