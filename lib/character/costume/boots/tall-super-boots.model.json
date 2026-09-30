@@ -1,0 +1,565 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Tall Super Boots"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "left-foot",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0,
+            0.125490203499794,
+            0.3764705955982208
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.092000126838684,
+            0.36400002241134644,
+            1.091999888420105
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "mesh",
+          "ClassName": "BlockMesh",
+          "Properties": {
+            "Offset": {
+              "Vector3": [
+                0,
+                0.02500000037252903,
+                0
+              ]
+            },
+            "Scale": {
+              "Vector3": [
+                1.100000023841858,
+                1.149999976158142,
+                1.0499999523162842
+              ]
+            }
+          }
+        },
+        {
+          "Name": "LeftFoot",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.004409313201904297,
+                  0.044403076171875,
+                  -0.0137786865234375
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "left-lower-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "costume/boots/tall-super-boots/left-lower-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "costume/boots/tall-super-boots/left-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.040286898612976,
+                1.5492311716079712,
+                1.0403417348861694
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "LeftLowerLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0084228515625,
+                  -0.306915283203125,
+                  -0.00428009033203125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.092000126838684,
+                0.9359999895095825,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "BlockMesh",
+              "Properties": {}
+            }
+          ]
+        },
+        {
+          "Name": "wedge",
+          "ClassName": "WedgePart",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    -1,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0084228515625,
+                  -0.87890625,
+                  -0.00428009033203125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                1.091999888420105,
+                0.20799998939037323
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "SpecialMesh",
+              "Properties": {
+                "MeshContent": {
+                  "Content": "None"
+                },
+                "MeshType": {
+                  "Enum": 2
+                },
+                "TextureContent": {
+                  "Content": "None"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "right-foot",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0,
+            0.125490203499794,
+            0.3764705955982208
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.092000126838684,
+            0.36400002241134644,
+            1.091999888420105
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "mesh",
+          "ClassName": "BlockMesh",
+          "Properties": {
+            "Offset": {
+              "Vector3": [
+                0,
+                0.02500000037252903,
+                0
+              ]
+            },
+            "Scale": {
+              "Vector3": [
+                1.100000023841858,
+                1.149999976158142,
+                1.0499999523162842
+              ]
+            }
+          }
+        },
+        {
+          "Name": "RightFoot",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.004409313201904297,
+                  0.044403076171875,
+                  -0.0050048828125
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-lower-leg",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "costume/boots/tall-super-boots/right-lower-leg/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "costume/boots/tall-super-boots/right-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.040286898612976,
+                1.5492311716079712,
+                1.0403416156768799
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "RightLowerLeg",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.010406494140625,
+                  -0.306915283203125,
+                  -0.00428009033203125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.092000126838684,
+                0.9359999895095825,
+                1.091999888420105
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "BlockMesh",
+              "Properties": {}
+            }
+          ]
+        },
+        {
+          "Name": "wedge",
+          "ClassName": "WedgePart",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    -1,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.01043701171875,
+                  -0.87890625,
+                  -0.00428009033203125
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.125490203499794,
+                0.3764705955982208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                1.091999888420105,
+                0.20799998939037323
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "SpecialMesh",
+              "Properties": {
+                "MeshContent": {
+                  "Content": "None"
+                },
+                "MeshType": {
+                  "Enum": 2
+                },
+                "TextureContent": {
+                  "Content": "None"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

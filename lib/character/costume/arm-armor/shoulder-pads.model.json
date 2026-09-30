@@ -1,0 +1,395 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Shoulder Pads"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "left-upper-arm",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "costume/arm-armor/shoulder-pads/left-upper-arm/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "costume/arm-armor/shoulder-pads/left-upper-arm/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0402873754501343,
+                1.4513615369796753,
+                1.0402607917785645
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "LeftUpperArm",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    -1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.014434814453125,
+                  0.3555908203125,
+                  0.0016026496887207031
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.7058823704719543,
+                0.8235294222831726,
+                0.8941176533699036
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                0.36400002241134644,
+                1.1439998149871826
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "SpecialMesh",
+              "Properties": {
+                "MeshContent": {
+                  "Content": "None"
+                },
+                "MeshType": {
+                  "Enum": 2
+                },
+                "TextureContent": {
+                  "Content": "None"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    -1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.014434814453125,
+                  0.667572021484375,
+                  0.0016026496887207031
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.7058823704719543,
+                0.8235294222831726,
+                0.8941176533699036
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                0.25999999046325684,
+                1.1439998149871826
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-upper-arm",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "costume/arm-armor/shoulder-pads/right-upper-arm/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "costume/arm-armor/shoulder-pads/right-upper-arm/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0402873754501343,
+                1.4513615369796753,
+                1.0402607917785645
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "RightUpperArm",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    -1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.03314208984375,
+                  0.3555908203125,
+                  0.0016026496887207031
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.7058823704719543,
+                0.8235294222831726,
+                0.8941176533699036
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                0.36400002241134644,
+                1.1439998149871826
+              ]
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "SpecialMesh",
+              "Properties": {
+                "MeshContent": {
+                  "Content": "None"
+                },
+                "MeshType": {
+                  "Enum": 2
+                },
+                "TextureContent": {
+                  "Content": "None"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "part-2",
+          "ClassName": "Part",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    -1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.03314208984375,
+                  0.667572021484375,
+                  0.0016026496887207031
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.7058823704719543,
+                0.8235294222831726,
+                0.8941176533699036
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                0.25999999046325684,
+                1.1439998149871826
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

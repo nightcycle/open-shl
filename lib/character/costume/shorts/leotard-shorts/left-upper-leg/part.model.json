@@ -1,0 +1,65 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            -1,
+            0
+          ],
+          [
+            1,
+            0,
+            0
+          ]
+        ],
+        "position": [
+          -0.00836181640625,
+          0.166778564453125,
+          -0.003981590270996094
+        ]
+      }
+    },
+    "Color": {
+      "Color3": [
+        0,
+        0.125490203499794,
+        0.3764705955982208
+      ]
+    },
+    "Material": {
+      "Enum": 272
+    },
+    "Size": {
+      "Vector3": [
+        1.0920000076293945,
+        0.25999993085861206,
+        1.091999888420105
+      ]
+    }
+  },
+  "Children": [
+    {
+      "Name": "mesh",
+      "ClassName": "SpecialMesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": "None"
+        },
+        "MeshType": {
+          "Enum": 2
+        },
+        "TextureContent": {
+          "Content": "None"
+        }
+      }
+    }
+  ]
+}

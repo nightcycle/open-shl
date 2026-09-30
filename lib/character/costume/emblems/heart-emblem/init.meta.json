@@ -1,91 +1,15 @@
 {
-  "className": "Model",
+  "className": "Folder",
   "properties": {
-    "Capabilities": {
-      "SecurityCapabilities": 0
-    },
-    "LevelOfDetail": {
-      "Enum": 0
-    },
-    "ModelMeshCFrame": {
-      "CFrame": {
-        "orientation": [
-          [
-            1,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            0
-          ],
-          [
-            0,
-            0,
-            1
-          ]
-        ],
-        "position": [
-          0,
-          0,
-          0
-        ]
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Heart Emblem"
+        }
       }
     },
-    "ModelMeshData": {
-      "SharedString": ""
-    },
-    "ModelMeshSize": {
-      "Vector3": [
-        0,
-        0,
-        0
-      ]
-    },
-    "ModelStreamingMode": {
-      "Enum": 0
-    },
-    "NeedsPivotMigration": {
-      "Bool": false
-    },
-    "Sandboxed": {
-      "Bool": false
-    },
-    "Scale": {
-      "Float32": 1
-    },
-    "SlimHash": {
-      "SharedString": ""
-    },
-    "SourceAssetId": {
-      "Int64": -1
-    },
-    "WorldPivotData": {
-      "OptionalCFrame": {
-        "orientation": [
-          [
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            1,
-            0
-          ],
-          [
-            -1,
-            0,
-            0
-          ]
-        ],
-        "position": [
-          -6.534846305847168,
-          65.342041015625,
-          119.36084747314453
-        ]
-      }
-    }
+    "Tags": [
+      "MultiWeld"
+    ]
   }
 }

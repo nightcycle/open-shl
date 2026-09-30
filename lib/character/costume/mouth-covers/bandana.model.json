@@ -1,0 +1,90 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Bandana"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "head",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.8352941274642944,
+            0.45098039507865906,
+            0.239215686917305
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.2932000160217285,
+            1.1289499998092651,
+            1.3115500211715698
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=74220237"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.4299999475479126,
+            1.1741598844528198,
+            1.4955198764801025
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "Head",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  4.57763671875E-05,
+                  0.41607666015625,
+                  0.05216217041015625
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

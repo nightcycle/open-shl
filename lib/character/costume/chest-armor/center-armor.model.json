@@ -1,0 +1,133 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Center Armor"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "lower-torso",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.7058823704719543,
+            0.8235294222831726,
+            0.8941176533699036
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.091999888420105,
+            0.5199999809265137,
+            0.7279999852180481
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "LowerTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.0030965805053710938,
+                  -0.007354736328125,
+                  -1.52587890625E-05
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "upper-torso",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.7058823704719543,
+            0.8235294222831726,
+            0.8941176533699036
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1.091999888420105,
+            1.715999960899353,
+            0.7279999852180481
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "UpperTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.0052032470703125,
+                  0.008331298828125,
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Mini Cape"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "upper-torso",
+      "ClassName": "MeshPart",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.5921568870544434,
+            0,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            2.378340005874634,
+            2.1961300373077393,
+            0.7880889773368835
+          ]
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=114046169"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            2.59063982963562,
+            1.9291999340057373,
+            1.06496000289917
+          ]
+        },
+        "Tags": [],
+        "TextureContent": {
+          "Content": "None"
+        }
+      },
+      "Children": [
+        {
+          "Name": "UpperTorso",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0.9998705387115479,
+                    -0.01608899235725403,
+                    0
+                  ],
+                  [
+                    0.016027770936489105,
+                    0.9960657954216003,
+                    -0.08715599030256271
+                  ],
+                  [
+                    0.001402252004481852,
+                    0.08714470267295837,
+                    0.9961947798728943
+                  ]
+                ],
+                "position": [
+                  0.0118865966796875,
+                  -0.07562255859375,
+                  -0.4298661947250366
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

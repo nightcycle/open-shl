@@ -1,0 +1,13 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "costume/emblems/shield-emblem/upper-torso/root"
+        }
+      }
+    },
+    "Tags": []
+  }
+}

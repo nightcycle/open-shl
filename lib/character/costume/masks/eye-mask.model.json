@@ -1,0 +1,321 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Eye Mask"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "head",
+      "ClassName": "Model",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "costume/masks/eye-mask/head/root"
+            }
+          }
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "root",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "costume/masks/eye-mask/head/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.091999888420105,
+                1.091999888420105,
+                1.091999888420105
+              ]
+            },
+            "Tags": [],
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "Head",
+              "ClassName": "Attachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0,
+                      0,
+                      0
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "eyes",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "EyeTrans": {
+                  "Float64": 1
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0.32647010684013367,
+                    0.8816621899604797,
+                    -0.340718537569046
+                  ],
+                  [
+                    -0.9410533308982849,
+                    0.33694231510162354,
+                    -0.02980899065732956
+                  ],
+                  [
+                    0.08852102607488632,
+                    0.3303660452365875,
+                    0.9396926760673523
+                  ]
+                ],
+                "position": [
+                  0.1911163330078125,
+                  0.245697021484375,
+                  -0.5186996459960938
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.3822000026702881,
+                0.27299997210502625,
+                0.27299997210502625
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "SpecialMesh",
+              "Properties": {
+                "MeshContent": {
+                  "Content": "None"
+                },
+                "MeshType": {
+                  "Enum": 3
+                },
+                "Scale": {
+                  "Vector3": [
+                    0.8500000238418579,
+                    2,
+                    0.8500000238418579
+                  ]
+                },
+                "TextureContent": {
+                  "Content": "None"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "eyes-2",
+          "ClassName": "Part",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "EyeTrans": {
+                  "Float64": 1
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0.32647010684013367,
+                    -0.8816621899604797,
+                    0.340718537569046
+                  ],
+                  [
+                    0.9410533308982849,
+                    0.33694231510162354,
+                    -0.02980899065732956
+                  ],
+                  [
+                    -0.08852102607488632,
+                    0.3303660452365875,
+                    0.9396926760673523
+                  ]
+                ],
+                "position": [
+                  -0.1910858154296875,
+                  0.245697021484375,
+                  -0.5186996459960938
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.3822000026702881,
+                0.27299997210502625,
+                0.27299997210502625
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          },
+          "Children": [
+            {
+              "Name": "mesh",
+              "ClassName": "SpecialMesh",
+              "Properties": {
+                "MeshContent": {
+                  "Content": "None"
+                },
+                "MeshType": {
+                  "Enum": 3
+                },
+                "Scale": {
+                  "Vector3": [
+                    0.8500000238418579,
+                    2,
+                    0.8500000238418579
+                  ]
+                },
+                "TextureContent": {
+                  "Content": "None"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "mesh-part",
+          "ClassName": "MeshPart",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.000244140625,
+                  0.24560546875,
+                  -0.5244898796081543
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.062745101749897,
+                0.16470588743686676,
+                0.8627451062202454
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.940060019493103,
+                0.3508709967136383,
+                0.240338996052742
+              ]
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=13189386"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.1294399499893188,
+                0.4211999773979187,
+                0.28808000683784485
+              ]
+            },
+            "TextureContent": {
+              "Content": "None"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

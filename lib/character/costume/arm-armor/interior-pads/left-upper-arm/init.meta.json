@@ -1,0 +1,13 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "costume/arm-armor/interior-pads/left-upper-arm/root"
+        }
+      }
+    },
+    "Tags": []
+  }
+}

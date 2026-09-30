@@ -1,0 +1,133 @@
+{
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Knee Pads"
+        }
+      }
+    },
+    "Tags": [
+      "MultiWeld"
+    ]
+  },
+  "Children": [
+    {
+      "Name": "left-upper-leg",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.7058823704719543,
+            0.8235294222831726,
+            0.8941176533699036
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.5719999670982361,
+            0.36399999260902405,
+            0.7279999852180481
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "LeftUpperLeg",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    -1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.29172515869140625,
+                  -0.33349609375,
+                  0.00518798828125
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Name": "right-upper-leg",
+      "ClassName": "Part",
+      "Properties": {
+        "Color": {
+          "Color3": [
+            0.7058823704719543,
+            0.8235294222831726,
+            0.8941176533699036
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.5719999670982361,
+            0.36399999260902405,
+            0.7279999852180481
+          ]
+        },
+        "Tags": []
+      },
+      "Children": [
+        {
+          "Name": "RightUpperLeg",
+          "ClassName": "Attachment",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    -1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.29172515869140625,
+                  -0.33349609375,
+                  -0.023956298828125
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
