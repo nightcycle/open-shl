@@ -63,6 +63,9 @@ do -- write in a do block now to make it easier to copy to other things later / 
 			["character"] = {
 				["$path"] = "lib/character",
 			} :: rojo.ProjectNode,
+			["scene"] = {
+				["$path"] = "lib/scene",
+			} :: rojo.ProjectNode,
 		}
 	end)
 
