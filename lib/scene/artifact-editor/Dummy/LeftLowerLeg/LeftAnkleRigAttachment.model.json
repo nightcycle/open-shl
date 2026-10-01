@@ -1,0 +1,43 @@
+{
+  "ClassName": "Attachment",
+  "Properties": {
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          -1.7881393432617188e-7,
+          -0.749997615814209,
+          6.293405476753833e-7
+        ]
+      }
+    },
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    },
+    "Visible": {
+      "Bool": false
+    }
+  }
+}

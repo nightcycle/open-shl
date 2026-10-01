@@ -1,0 +1,85 @@
+{
+  "ClassName": "Motor6D",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_Part0": {
+          "String": "unpack-68ce2eb2807fb6aa-59"
+        },
+        "Rojo_Target_Part1": {
+          "String": "unpack-68ce2eb2807fb6aa-56"
+        }
+      }
+    },
+    "C0": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          -0.0,
+          -0.7500004768371582,
+          0.00009827462054090574
+        ]
+      }
+    },
+    "C1": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          -0.0,
+          0.04999971389770508,
+          0.00009845343447523192
+        ]
+      }
+    },
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "DesiredAngle": {
+      "Float32": 0
+    },
+    "Enabled": {
+      "Bool": true
+    },
+    "MaxVelocity": {
+      "Float32": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    }
+  }
+}

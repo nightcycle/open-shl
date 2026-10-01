@@ -1,0 +1,26 @@
+{
+  "className": "Script",
+  "properties": {
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "Disabled": {
+      "Bool": false
+    },
+    "LinkedSource": {
+      "ContentId": ""
+    },
+    "RunContext": {
+      "Enum": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "Source": {
+      "String": "local chosen = \"Animation1\"\n\nfunction play_anim(model)\n\tlocal controller = nil \n\tif model:FindFirstChild(\"AnimationController\") then\n\t\tcontroller = model:WaitForChild(\"AnimationController\")\n\telse\n\t\tcontroller = Instance.new(\"AnimationController\")\n\t\tcontroller.Parent = model\n\tend\n\tlocal animation = script:WaitForChild(chosen)\n\t\n\tlocal animtrack = controller:LoadAnimation(animation)\n\t--print(\"fak\")\n\tanimtrack:Play()\nend\n\nwhile true do\n\n\tplay_anim(script.Parent:WaitForChild(\"Super\"))\n\n\twait(4)\nend\n"
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    }
+  }
+}

@@ -50,6 +50,10 @@ local SPECIAL_PROPERTIES: { [string]: boolean } = {
 	Tags = true,
 	UniqueId = true,
 	HistoryId = true,
+	IconTint = true,
+	EmissiveMaskContent = true,
+	EmissiveStrength = true,
+	EmissiveTint = true,
 }
 local PROPERTY_ALIASES: { [string]: Property } = {}
 

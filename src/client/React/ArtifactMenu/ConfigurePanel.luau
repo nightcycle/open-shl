@@ -77,7 +77,6 @@ function buttonGroup(props: {
 				TextScaled = true,
 				TextXAlignment = Enum.TextXAlignment.Right,
 			}),
-
 			Button = e("TextButton", {
 				BackgroundColor3 = Color3.fromHSV(buttonH, isWearing and buttonS or 0.2, buttonV),
 				BackgroundTransparency = isWearing and 0 or 0.7,

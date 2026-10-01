@@ -1,0 +1,91 @@
+{
+  "className": "Model",
+  "properties": {
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "LevelOfDetail": {
+      "Enum": 0
+    },
+    "ModelMeshCFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "ModelMeshData": {
+      "SharedString": ""
+    },
+    "ModelMeshSize": {
+      "Vector3": [
+        0,
+        0,
+        0
+      ]
+    },
+    "ModelStreamingMode": {
+      "Enum": 0
+    },
+    "NeedsPivotMigration": {
+      "Bool": false
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "Scale": {
+      "Float32": 1
+    },
+    "SlimHash": {
+      "SharedString": ""
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    },
+    "WorldPivotData": {
+      "OptionalCFrame": {
+        "orientation": [
+          [
+            1.0000015497207642,
+            -3.818422555923462e-8,
+            3.3676624298095703e-6
+          ],
+          [
+            -3.818422555923462e-8,
+            1.000002384185791,
+            7.916241884231567e-8
+          ],
+          [
+            3.248453140258789e-6,
+            8.475035429000854e-8,
+            1.0000017881393433
+          ]
+        ],
+        "position": [
+          -285.9994201660156,
+          -59.03483581542969,
+          36863.18359375
+        ]
+      }
+    }
+  }
+}

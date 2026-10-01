@@ -1,0 +1,230 @@
+{
+  "className": "Part",
+  "properties": {
+    "Anchored": {
+      "Bool": true
+    },
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Id": {
+          "String": "unpack-b66787839c55c9f1-71"
+        }
+      }
+    },
+    "AudioCanCollide": {
+      "Bool": true
+    },
+    "BackParamA": {
+      "Float32": -0.5
+    },
+    "BackParamB": {
+      "Float32": 0.5
+    },
+    "BackSurface": {
+      "Enum": 0
+    },
+    "BackSurfaceInput": {
+      "Enum": 0
+    },
+    "BottomParamA": {
+      "Float32": -0.5
+    },
+    "BottomParamB": {
+      "Float32": 0.5
+    },
+    "BottomSurface": {
+      "Enum": 4
+    },
+    "BottomSurfaceInput": {
+      "Enum": 0
+    },
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            -1,
+            1.0329778206141782e-6,
+            0.00008374216122319922
+          ],
+          [
+            1.0289338661095826e-6,
+            1,
+            2.2155788883537753e-6
+          ],
+          [
+            -0.00008374216122319922,
+            2.2156652903504437e-6,
+            -1
+          ]
+        ],
+        "position": [
+          -321.563232421875,
+          -59.40904998779297,
+          36886.828125
+        ]
+      }
+    },
+    "CanCollide": {
+      "Bool": true
+    },
+    "CanQuery": {
+      "Bool": true
+    },
+    "CanTouch": {
+      "Bool": true
+    },
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "CastShadow": {
+      "Bool": true
+    },
+    "CollisionGroup": {
+      "String": "Default"
+    },
+    "CollisionGroupId": {
+      "Int32": 0
+    },
+    "Color": {
+      "Color3": [
+        0.6392157077789307,
+        0.6352941393852234,
+        0.6470588445663452
+      ]
+    },
+    "CustomPhysicalProperties": {
+      "PhysicalProperties": "Default"
+    },
+    "EnableFluidForces": {
+      "Bool": true
+    },
+    "FrontParamA": {
+      "Float32": -0.5
+    },
+    "FrontParamB": {
+      "Float32": 0.5
+    },
+    "FrontSurface": {
+      "Enum": 0
+    },
+    "FrontSurfaceInput": {
+      "Enum": 0
+    },
+    "LeftParamA": {
+      "Float32": -0.5
+    },
+    "LeftParamB": {
+      "Float32": 0.5
+    },
+    "LeftSurface": {
+      "Enum": 0
+    },
+    "LeftSurfaceInput": {
+      "Enum": 0
+    },
+    "Locked": {
+      "Bool": false
+    },
+    "Massless": {
+      "Bool": false
+    },
+    "Material": {
+      "Enum": 256
+    },
+    "MaterialVariant": {
+      "String": ""
+    },
+    "PivotOffset": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "Reflectance": {
+      "Float32": 0
+    },
+    "RightParamA": {
+      "Float32": -0.5
+    },
+    "RightParamB": {
+      "Float32": 0.5
+    },
+    "RightSurface": {
+      "Enum": 0
+    },
+    "RightSurfaceInput": {
+      "Enum": 0
+    },
+    "RootPriority": {
+      "Int32": 0
+    },
+    "RotVelocity": {
+      "Vector3": [
+        0,
+        0,
+        0
+      ]
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "Size": {
+      "Vector3": [
+        2,
+        2,
+        1
+      ]
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    },
+    "TopParamA": {
+      "Float32": -0.5
+    },
+    "TopParamB": {
+      "Float32": 0.5
+    },
+    "TopSurface": {
+      "Enum": 3
+    },
+    "TopSurfaceInput": {
+      "Enum": 0
+    },
+    "Transparency": {
+      "Float32": 1
+    },
+    "Velocity": {
+      "Vector3": [
+        0,
+        0,
+        0
+      ]
+    },
+    "formFactorRaw": {
+      "Enum": 1
+    },
+    "shape": {
+      "Enum": 1
+    }
+  }
+}

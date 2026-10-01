@@ -1,0 +1,26 @@
+{
+  "ClassName": "Script",
+  "Properties": {
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "Disabled": {
+      "Bool": true
+    },
+    "LinkedSource": {
+      "ContentId": ""
+    },
+    "RunContext": {
+      "Enum": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "Source": {
+      "String": "local red = Color3.fromRGB(255,0,0)\r\nlocal blue = Color3.fromRGB(0,0,255)\r\n\r\nlocal wt = 2\r\nwhile true do\r\n\twait(wt)\r\n\tscript.Parent.Color = red\r\n\twait(wt)\r\n\tscript.Parent.Color = blue\r\nend"
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    }
+  }
+}

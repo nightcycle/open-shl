@@ -1,0 +1,14 @@
+{
+  "className": "Folder",
+  "properties": {
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    }
+  }
+}

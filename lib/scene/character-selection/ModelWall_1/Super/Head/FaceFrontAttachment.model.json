@@ -1,0 +1,43 @@
+{
+  "ClassName": "Attachment",
+  "Properties": {
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            1.6054103969908413e-16,
+            -1.2143253855459598e-15
+          ],
+          [
+            -1.6054103969908413e-16,
+            1,
+            6.938893903907228e-17
+          ],
+          [
+            1.2143253855459598e-15,
+            -6.938893903907228e-17,
+            1
+          ]
+        ],
+        "position": [
+          1.7134880181401968e-9,
+          0.00005054473876953125,
+          -0.5933791995048523
+        ]
+      }
+    },
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    },
+    "Visible": {
+      "Bool": false
+    }
+  }
+}

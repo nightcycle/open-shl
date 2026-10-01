@@ -1,0 +1,64 @@
+{
+  "ClassName": "Sound",
+  "Properties": {
+    "AcousticSimulationEnabled": {
+      "Bool": true
+    },
+    "AudioContent": {
+      "Content": {
+        "Uri": "rbxasset://sounds/action_footsteps_plastic.mp3"
+      }
+    },
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "LoopRegion": {
+      "NumberRange": [
+        0,
+        60000
+      ]
+    },
+    "Looped": {
+      "Bool": true
+    },
+    "PlayOnRemove": {
+      "Bool": false
+    },
+    "PlaybackRegion": {
+      "NumberRange": [
+        0,
+        60000
+      ]
+    },
+    "PlaybackRegionsEnabled": {
+      "Bool": false
+    },
+    "PlaybackSpeed": {
+      "Float32": 1
+    },
+    "Playing": {
+      "Bool": false
+    },
+    "RollOffMaxDistance": {
+      "Float32": 150
+    },
+    "RollOffMinDistance": {
+      "Float32": 5
+    },
+    "RollOffMode": {
+      "Enum": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    },
+    "TimePosition": {
+      "Float64": 0
+    },
+    "Volume": {
+      "Float32": 0.6499999761581421
+    }
+  }
+}

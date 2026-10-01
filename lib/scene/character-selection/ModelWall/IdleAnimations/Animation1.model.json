@@ -1,0 +1,19 @@
+{
+  "ClassName": "Animation",
+  "Properties": {
+    "AnimationContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=507766388"
+      }
+    },
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    }
+  }
+}

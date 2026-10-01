@@ -1,0 +1,17 @@
+{
+  "ClassName": "StringValue",
+  "Properties": {
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    },
+    "Value": {
+      "String": "SecretIdentity"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "ClassName": "SurfaceLight",
+  "Properties": {
+    "Angle": {
+      "Float32": 90
+    },
+    "Brightness": {
+      "Float32": 0.5
+    },
+    "Capabilities": {
+      "SecurityCapabilities": 0
+    },
+    "Color": {
+      "Color3": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Enabled": {
+      "Bool": true
+    },
+    "Face": {
+      "Enum": 4
+    },
+    "Range": {
+      "Float32": 16
+    },
+    "Sandboxed": {
+      "Bool": false
+    },
+    "Shadows": {
+      "Bool": false
+    },
+    "SourceAssetId": {
+      "Int64": -1
+    }
+  }
+}
