@@ -1,6 +1,7 @@
 --!strict
 -- Services
 -- Packages
+local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local Locker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 -- Modules
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
@@ -13,6 +14,9 @@ type ArtifactSceneImpl = {
 export type ArtifactScene = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
+		_Instance: Folder,
+		_CameraMount: BasePart,
+		_Rig: Model,
 		_Rotation: number,
 		_Appearance: AppearanceType.Appearance?,
 		_Character: Model?,
@@ -24,6 +28,7 @@ export type ArtifactScene = typeof(setmetatable(
 -- Constants
 -- Variables
 -- References
+local SceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/artifact-editor") :: Folder
 -- Private Functions
 -- Class
 local ArtifactScene = {} :: ArtifactSceneImpl
@@ -36,9 +41,23 @@ function ArtifactScene:Load(appearance: AppearanceType.Appearance): () -> ()
 end
 
 return Locker(function(): ArtifactScene
+	local inst = SceneTemplate:Clone()
 	local self = setmetatable({
 		IsInitialized = true :: true,
 		_Rotation = 0,
+		_CameraMount = IndexUtil.waitForMatch(inst, function(desc: Instance): BasePart?
+			if desc:IsA("BasePart") and desc.Name == "Cam" then
+				return desc
+			end
+			return nil
+		end, nil, true, true),
+		_Rig = IndexUtil.waitForMatch(inst, function(desc: Instance): Model?
+			if desc:IsA("Model") and desc.Name == "Dummy" then
+				return desc
+			end
+			return nil
+		end, nil, true, true),
+		_Instance = inst,
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, ArtifactScene)
