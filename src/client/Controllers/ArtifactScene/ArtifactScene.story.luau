@@ -70,7 +70,6 @@ return UILabs.CreateReactStory({
 			if ArtifactScene._Rig.IsToDo then
 				ArtifactScene._Rig = Future.poll(ArtifactScene._Rig)
 			end
-
 		end)
 		return function()
 			setController(nil)

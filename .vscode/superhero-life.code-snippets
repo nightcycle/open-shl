@@ -39,6 +39,22 @@
 		"description": "Imports a generated module.",
 		"scope": "luau"
 	},
+	"irequire builder": {
+		"prefix": "irequire builder",
+		"body": [
+			"local ${name}Builder = require(\"@game/ReplicatedStorage/Shared/Builder/${name}\")"
+		],
+		"description": "Imports a builder.",
+		"scope": "luau"
+	},
+	"irequire util": {
+		"prefix": "irequire util",
+		"body": [
+			"local ${name}Util = require(\"@game/ReplicatedStorage/Shared/Util/${name}\")"
+		],
+		"description": "Imports a util.",
+		"scope": "luau"
+	},
 	"irequire comp": {
 		"prefix": "irequire comp",
 		"body": [
