@@ -9,7 +9,9 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local ConfigurePanel = require("@self/ConfigurePanel")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local ItemList = require("@self/ItemList")
+local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component/ViewportFrame")
 -- Hooks
+local useArtifactScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useArtifactScene")
 -- Contexts
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
@@ -48,6 +50,8 @@ export type Properties = Frame.Properties & {
 local e = React.createElement
 -- Class
 return function(props: Properties)
+	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
+
 	local selectedItem: ItemDefinition?, setSelectedItem: (ItemDefinition?) -> () =
 		React.useState(nil :: ItemDefinition?)
 	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
@@ -81,6 +85,30 @@ return function(props: Properties)
 		table.freeze(out)
 		return out
 	end, { props.ItemDefinitions })
+	local artifactScene, refreshScene = useArtifactScene()
+	React.useEffect(function()
+		local viewport = viewportRef.current
+		if not viewport or not artifactScene then
+			return function() end
+		end
+		local camera = Instance.new("Camera")
+		local worldModel = Instance.new("WorldModel")
+		local cleanUp: () -> () = function() end
+		task.spawn(function()
+			assert(artifactScene.IsAlive, `bad scene`)
+			artifactScene.Instance.Parent = worldModel
+			worldModel.Parent = viewport
+			viewport.CurrentCamera = camera
+			camera.CFrame = artifactScene.CameraMount.CFrame
+			camera.Parent = viewport
+		end)
+		return function()
+			cleanUp()
+			worldModel:Destroy()
+			camera:Destroy()
+			refreshScene()
+		end
+	end, { viewportRef.current :: any })
 
 	return e(Frame(
 		{
@@ -88,6 +116,14 @@ return function(props: Properties)
 		},
 		props,
 		{
+			ViewportFrame = e(
+				"ViewportFrame",
+				{
+					BackgroundTransparency = 1,
+					ref = viewportRef,
+					Size = UDim2.fromScale(1, 1),
+				} :: ViewportFrame.Properties
+			),
 			ConfigurePanel = selectedItem and e(
 				ConfigurePanel,
 				{

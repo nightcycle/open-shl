@@ -29,6 +29,7 @@ return UILabs.CreateReactStory({
 	reactRoblox = ReactRoblox,
 	controls = {},
 }, function(props)
+
 	local appearance = React.useMemo(function()
 		return {
 			Items = {
@@ -62,6 +63,7 @@ return UILabs.CreateReactStory({
 	return e(CharacterAppearanceContext.Provider, {
 		value = appearance,
 	}, {
+
 		Menu = e(ParentComponent, {
 			ItemDefinitions = itemDefinitions,
 			AnchorPoint = Vector2.new(0.5, 0.5),
