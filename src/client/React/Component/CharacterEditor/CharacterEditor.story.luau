@@ -8,6 +8,7 @@ local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 -- Components
 local ParentComponent = require(".")
 -- Hooks
@@ -23,6 +24,7 @@ local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
 -- Constants
+local ITEM_DEFINITIONS = ItemAppearanceDefinition.list()
 -- Variables
 -- References
 -- Private Functions
@@ -58,7 +60,21 @@ return UILabs.CreateReactStory({
 		end
 		return app
 	end, { baseAppearance :: any, selectedItemDef })
-
+	local itemDefinitions = React.useMemo(function()
+		local out = {}
+		for i, v in ITEM_DEFINITIONS do
+			local index = ItemAppearanceDefinition.getIndex(v.Id)
+			if not index.IsOk then
+				continue
+			end
+			if not v.Rarity or index.Value.Category ~= "artifacts" then
+				continue
+			end
+			table.insert(out, v)
+		end
+		table.freeze(out)
+		return out
+	end, {})
 	return e(CharacterAppearanceContext.Provider, {
 		value = appearance,
 	}, {
@@ -69,6 +85,7 @@ return UILabs.CreateReactStory({
 				value = selectedItemDef,
 			}, {
 				Menu = e(ParentComponent, {
+					ItemDefinitions = itemDefinitions,
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					Position = UDim2.fromScale(0.5, 0.5),
 					Size = UDim2.fromScale(1, 1),

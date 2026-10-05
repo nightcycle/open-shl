@@ -4,6 +4,7 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local ConfigurePanel = require("@self/ConfigurePanel")
@@ -41,7 +42,6 @@ export type ActionInfo =
 	}
 
 export type Properties = Frame.Properties & {
-	ItemDefinitions: { ItemDefinition },
 	OnAction: (ActionInfo) -> (),
 }
 -- Constants
@@ -52,9 +52,25 @@ local e = React.createElement
 -- Class
 return function(props: Properties)
 	local selectedItemDef: ItemDefinition? = React.useContext(ItemDefSelection)
+	local itemDefinitions = React.useMemo(function()
+		local out = {}
+
+		for i, v in ItemAppearanceDefinition.list() do
+			local index = ItemAppearanceDefinition.getIndex(v.Id)
+			if not index.IsOk then
+				continue
+			end
+			if not v.Rarity or index.Value.Category ~= "artifacts" then
+				continue
+			end
+			table.insert(out, v)
+		end
+		table.freeze(out)
+		return out
+	end, {})
 	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
 		local rarityGroups: { [PseudoEnum.Rarity]: { ItemDefinition } } = {}
-		for i, itemDef in props.ItemDefinitions do
+		for i, itemDef in itemDefinitions do
 			if itemDef.Rarity then
 				local group = rarityGroups[itemDef.Rarity] or {}
 				rarityGroups[itemDef.Rarity] = group
@@ -82,7 +98,7 @@ return function(props: Properties)
 		end)
 		table.freeze(out)
 		return out
-	end, { props.ItemDefinitions })
+	end, { itemDefinitions })
 
 	return e(Frame(
 		{

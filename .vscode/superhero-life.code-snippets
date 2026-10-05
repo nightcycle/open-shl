@@ -205,7 +205,7 @@
 			"local e = React.createElement",
 			"-- Class",
 			"return function(props: Properties)",
-			"\treturn e(${name}({} :: ${name}.Properties), props, {})",
+			"\treturn e(${name}({} :: ${name}.Properties, props, {}))",
 			"end"
 		],
 		"description": "A basic template for a file.",
