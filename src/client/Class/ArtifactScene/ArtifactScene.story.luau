@@ -7,12 +7,12 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
-local ArtifactScene = require(".")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component/ViewportFrame")
 local Future = TypeUnionLib.Future
 -- Components
 -- Hooks
+local useArtifactScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useArtifactScene")
 -- Contexts
 local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
@@ -31,49 +31,28 @@ return UILabs.CreateReactStory({
 	controls = {},
 }, function(props)
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
-	local appearance = React.useMemo(function()
-		return {
-			Items = {
-				{
-					DefinitionId = "costume/hoods/hood",
-				},
-				{
-					DefinitionId = "costume/artifacts/bluesteel-fedora",
-				},
-			},
-			HiddenTags = {},
-		}
-	end, {})
-
+	local artifactScene, refreshScene = useArtifactScene()
 	React.useEffect(function()
 		local viewport = viewportRef.current
-		if not viewport then
+		if not viewport or not artifactScene then
 			return function() end
 		end
-
 		local camera = Instance.new("Camera")
 		local worldModel = Instance.new("WorldModel")
-		local newController: ArtifactScene.ArtifactScene
 		local cleanUp: () -> () = function() end
 		task.spawn(function()
-			newController = ArtifactScene.new()
-			assert(newController.IsAlive, `bad scene`)
-			newController.Instance.Parent = worldModel
+			assert(artifactScene.IsAlive, `bad scene`)
+			artifactScene.Instance.Parent = worldModel
 			worldModel.Parent = viewport
 			viewport.CurrentCamera = camera
-			camera.CFrame = newController.CameraMount.CFrame
+			camera.CFrame = artifactScene.CameraMount.CFrame
 			camera.Parent = viewport
-			if newController.Rig.IsToDo then
-				newController.Rig = Future.poll(newController.Rig)
-			end
 		end)
 		return function()
 			cleanUp()
-			if newController.IsAlive then
-				newController:Destroy()
-			end
 			worldModel:Destroy()
 			camera:Destroy()
+			refreshScene()
 		end
 	end, { viewportRef.current :: any })
 
