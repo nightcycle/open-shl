@@ -14,9 +14,12 @@ local ParentComponent = require(".")
 -- Contexts
 local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
+local ItemDefSelection =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Selection/AppearanceItemDefinition")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 type Item = AppearanceType.Item
+type ItemDefinition = AppearanceType.ItemDefinition
 -- Constants
 local ITEM_DEFINITIONS = ItemAppearanceDefinition.list()
 -- Variables
@@ -30,10 +33,16 @@ return UILabs.CreateReactStory({
 	controls = {},
 }, function(props)
 	local appliedArtifact: Item?, setAppliedArtifact: (Item?) -> () = React.useState(nil :: Item?)
+	local selectedItemDef: ItemDefinition?, setSelectedItemDef: (ItemDefinition?) -> () =
+		React.useState(nil :: ItemDefinition?)
 
 	local appearance = React.useMemo(function()
 		local items = {}
-		if appliedArtifact then
+		if selectedItemDef then
+			table.insert(items, {
+				DefinitionId = selectedItemDef.Id,
+			})
+		elseif appliedArtifact then
 			table.insert(items, appliedArtifact)
 		end
 		return {
@@ -42,7 +51,7 @@ return UILabs.CreateReactStory({
 				-- "Hood"
 			},
 		}
-	end, { appliedArtifact })
+	end, { appliedArtifact :: any, selectedItemDef })
 	local itemDefinitions = React.useMemo(function()
 		local out = {}
 		for i, v in ITEM_DEFINITIONS do
@@ -61,22 +70,27 @@ return UILabs.CreateReactStory({
 	return e(CharacterAppearanceContext.Provider, {
 		value = appearance,
 	}, {
-
-		Menu = e(ParentComponent, {
-			ItemDefinitions = itemDefinitions,
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromScale(1, 1),
-			OnAction = function(action: ParentComponent.ActionInfo)
-				if action.Type == "AddItem" then
-					setAppliedArtifact({
-						DefinitionId = action.ItemDefinition.Id,
-					})
-				elseif action.Type == "RemoveItem" then
-					setAppliedArtifact(nil)
-				end
-			end,
-			SizeConstraint = Enum.SizeConstraint.RelativeXY,
+		ItemDefSelection = e(ItemDefSelection.Provider, {
+			value = selectedItemDef,
+		}, {
+			Menu = e(ParentComponent, {
+				ItemDefinitions = itemDefinitions,
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+				Size = UDim2.fromScale(1, 1),
+				OnAction = function(action: ParentComponent.ActionInfo)
+					if action.Type == "AddItem" then
+						setAppliedArtifact({
+							DefinitionId = action.ItemDefinition.Id,
+						})
+					elseif action.Type == "RemoveItem" then
+						setAppliedArtifact(nil)
+					elseif action.Type == "SelectItem" then
+						setSelectedItemDef(action.ItemDefinition)
+					end
+				end,
+				SizeConstraint = Enum.SizeConstraint.RelativeXY,
+			}),
 		}),
 	})
 end)

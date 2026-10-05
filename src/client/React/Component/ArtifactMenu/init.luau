@@ -12,12 +12,18 @@ local ItemList = require("@self/ItemList")
 local Scene = require("@self/Scene")
 -- Hooks
 -- Contexts
+local ItemDefSelection =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Selection/AppearanceItemDefinition")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 export type ItemDefinition = AppearanceType.ItemDefinition
 export type HiddenTag = AppearanceType.HiddenTag
 export type ActionInfo =
 	{
+		Type: "SelectItem",
+		ItemDefinition: ItemDefinition?,
+	}
+	| {
 		Type: "AddItem",
 		ItemDefinition: ItemDefinition,
 	}
@@ -45,8 +51,7 @@ export type Properties = Frame.Properties & {
 local e = React.createElement
 -- Class
 return function(props: Properties)
-	local selectedItem: ItemDefinition?, setSelectedItem: (ItemDefinition?) -> () =
-		React.useState(nil :: ItemDefinition?)
+	local selectedItemDef: ItemDefinition? = React.useContext(ItemDefSelection)
 	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
 		local rarityGroups: { [PseudoEnum.Rarity]: { ItemDefinition } } = {}
 		for i, itemDef in props.ItemDefinitions do
@@ -86,10 +91,10 @@ return function(props: Properties)
 		props,
 		{
 			Scene = e(Scene, {}),
-			ConfigurePanel = selectedItem and e(
+			ConfigurePanel = selectedItemDef and e(
 				ConfigurePanel,
 				{
-					SelectedItemDefinition = selectedItem,
+					SelectedItemDefinition = selectedItemDef,
 					AnchorPoint = Vector2.new(1, 0.5),
 					BorderColor3 = Color3.fromRGB(27, 42, 53),
 					Position = UDim2.fromScale(0.95, 0.5),
@@ -118,16 +123,21 @@ return function(props: Properties)
 			ItemList = e(
 				ItemList,
 				{
-					SelectedItemDefinition = selectedItem,
+					SelectedItemDefinition = selectedItemDef,
 					AnchorPoint = Vector2.new(0, 0.5),
 					Position = UDim2.fromScale(0.05, 0.5),
 					Size = UDim2.fromScale(0.3, 0.8),
 					ItemGroups = groups,
-					OnClick = function(item: ItemDefinition)
-						if item == selectedItem then
-							setSelectedItem(nil)
+					OnClick = function(itemDef: ItemDefinition)
+						if itemDef == selectedItemDef then
+							props.OnAction({
+								Type = "SelectItem",
+							})
 						else
-							setSelectedItem(item)
+							props.OnAction({
+								Type = "SelectItem",
+								ItemDefinition = itemDef,
+							})
 						end
 					end,
 				} :: ItemList.Properties
