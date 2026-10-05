@@ -16,7 +16,7 @@ type EquippedEmote = {
 	Slot: number,
 }
 export type AnimationGroup = "Climb" | "Fall" | "Idle" | "Jump" | "Mood" | "Run" | "Swim" | "Walk"
-export type TextureGroup = "Pants" | "Shirt" | "GraphicTShirt" | "Face"
+export type TextureGroup = "Pants" | "Shirt" | "GraphicTShirt"
 type BoolGroup = "StaticFacialAnimation" | "UseAvatarSettings"
 export type ScaleGroup = "BodyType" | "Depth" | "Head" | "Height" | "Proportion" | "Width"
 type HumanoidConfigEntry =
@@ -40,10 +40,6 @@ type HumanoidConfigEntry =
 		AssetId: number,
 	}
 	| {
-		Type: "Face",
-		AssetId: number,
-	}
-	| {
 		Type: "Texture",
 		Group: TextureGroup,
 		AssetId: number,
@@ -64,21 +60,22 @@ type HumanoidConfigEntry =
 		Group: ScaleGroup,
 		Value: number,
 	}
+
+export type AssetIdOrUrl = string | number
 export type Builder = {
-	addEmote: (self: Builder, name: string, assetId: number, isEquipped: boolean?) -> Builder,
+	addEmote: (self: Builder, name: string, assetId: AssetIdOrUrl, isEquipped: boolean?) -> Builder,
 	addBodyColor: (self: Builder, color: Color3, bodyPart: Enum.BodyPart?) -> Builder,
-	addBodyPart: (self: Builder, assetId: number, bodyPart: Enum.BodyPart) -> Builder,
-	addFace: (self: Builder, assetId: number) -> Builder,
-	addAnimation: (self: Builder, assetId: number, group: AnimationGroup) -> Builder,
+	addBodyPart: (self: Builder, assetId: AssetIdOrUrl, bodyPart: Enum.BodyPart) -> Builder,
+	addAnimation: (self: Builder, assetId: AssetIdOrUrl, group: AnimationGroup) -> Builder,
 	addAccessory: (
 		self: Builder,
-		assetId: number,
+		assetId: AssetIdOrUrl,
 		group: Enum.AccessoryType,
 		isLayered: boolean?,
 		order: number?,
 		puffiness: number?
 	) -> Builder,
-	addTexture: (self: Builder, assetId: number, group: TextureGroup) -> Builder,
+	addTexture: (self: Builder, assetId: AssetIdOrUrl, group: TextureGroup) -> Builder,
 	setStaticFacialAnimation: (self: Builder, value: boolean) -> Builder,
 	setUseAvatarSettings: (self: Builder, value: boolean) -> Builder,
 	addScale: (self: Builder, value: number, group: ScaleGroup) -> Builder,
@@ -107,6 +104,16 @@ local function filter<V>(entries: { V }, fn: (V) -> boolean): { V }
 		end
 	end
 	return out
+end
+function getAssetId(assetId: AssetIdOrUrl): number
+	if type(assetId) == "number" then
+		return assetId
+	else
+		local numStr = string.match(assetId, "%d+")
+		local num = tonumber(numStr)
+		assert(num, `no assetId found from url "{assetId}"`)
+		return num
+	end
 end
 
 local function toHumanoidDescription(entries: { HumanoidConfigEntry }): HumanoidDescription
@@ -143,8 +150,6 @@ local function toHumanoidDescription(entries: { HumanoidConfigEntry }): Humanoid
 			elseif entry.Group == Enum.BodyPart.RightLeg then
 				desc.RightLeg = entry.AssetId
 			end
-		elseif entry.Type == "Face" then
-			desc.Face = entry.AssetId
 		elseif entry.Type == "Animation" then
 			if entry.Group == "Climb" then
 				desc.ClimbAnimation = entry.AssetId
@@ -227,7 +232,8 @@ local function builder(
 	TableUtil.deepFreeze(priorEntries)
 
 	local out: Builder = {
-		addEmote = function(_self: Builder, name: string, assetId: number, isEquipped: boolean?): Builder
+		addEmote = function(_self: Builder, name: string, assetIdOrUrl: AssetIdOrUrl, isEquipped: boolean?): Builder
+			local assetId = getAssetId(assetIdOrUrl)
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				local slots: { number } = {}
 				local occupiedSlots: { [number]: boolean } = {}
@@ -287,7 +293,8 @@ local function builder(
 				return entries
 			end)
 		end,
-		addBodyPart = function(_self: Builder, assetId: number, bodyPart: Enum.BodyPart): Builder
+		addBodyPart = function(_self: Builder, assetIdOrUrl: AssetIdOrUrl, bodyPart: Enum.BodyPart): Builder
+			local assetId = getAssetId(assetIdOrUrl)
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
 					return entry.Type ~= "BodyPart" or entry.Group ~= bodyPart
@@ -296,16 +303,8 @@ local function builder(
 				return entries
 			end)
 		end,
-		addFace = function(_self: Builder, assetId: number): Builder
-			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
-				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
-					return entry.Type ~= "Face"
-				end)
-				table.insert(entries, { Type = "Face", AssetId = assetId })
-				return entries
-			end)
-		end,
-		addAnimation = function(_self: Builder, assetId: number, group: AnimationGroup): Builder
+		addAnimation = function(_self: Builder, assetIdOrUrl: AssetIdOrUrl, group: AnimationGroup): Builder
+			local assetId = getAssetId(assetIdOrUrl)
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
 					return entry.Type ~= "Animation" or entry.Group ~= group
@@ -316,12 +315,13 @@ local function builder(
 		end,
 		addAccessory = function(
 			_self: Builder,
-			assetId: number,
+			assetIdOrUrl: AssetIdOrUrl,
 			group: Enum.AccessoryType,
 			isLayered: boolean?,
 			order: number?,
 			puffiness: number?
 		): Builder
+			local assetId = getAssetId(assetIdOrUrl)
 			assert(group ~= Enum.AccessoryType.Unknown, "An accessory must have a known AccessoryType")
 			assert(isLayered or RIGID_ACCESSORY_TYPES[group], "This AccessoryType requires a layered accessory")
 			assert(isLayered or (order == nil and puffiness == nil), "Rigid accessories cannot have layer settings")
@@ -340,7 +340,8 @@ local function builder(
 				return entries
 			end)
 		end,
-		addTexture = function(_self: Builder, assetId: number, group: TextureGroup): Builder
+		addTexture = function(_self: Builder, assetIdOrUrl: AssetIdOrUrl, group: TextureGroup): Builder
+			local assetId = getAssetId(assetIdOrUrl)
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
 					return entry.Type ~= "Texture" or entry.Group ~= group
@@ -386,7 +387,7 @@ end
 -- Class
 return {
 	fromDescription = function(desc: HumanoidDescription): Builder
-		local entries: { HumanoidConfigEntry } = { { Type = "Face", AssetId = desc.Face } }
+		local entries: { HumanoidConfigEntry } = {}
 		local bodyColors: { [Enum.BodyPart]: Color3 } = {
 			[Enum.BodyPart.Head] = desc.HeadColor,
 			[Enum.BodyPart.Torso] = desc.TorsoColor,

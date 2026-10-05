@@ -9,6 +9,7 @@ local Future = TypeUnionLib.Future
 -- Modules
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 local HumanoidDescriptionBuilder = require("@game/ReplicatedStorage/Shared/Builder/HumanoidDescription")
+local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Types
 type Future<V, Progress...> = TypeUnionLib.Future<V, Progress...>
 type ArtifactSceneImpl = {
