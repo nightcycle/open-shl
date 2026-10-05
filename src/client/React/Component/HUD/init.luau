@@ -68,6 +68,7 @@ return function(props: Properties): React.ReactNode
 				{
 					Size = UDim2.fromScale(0.08, 0.75 + 0.08 - 0.45),
 					Position = UDim2.fromScale(0.04, 0.45),
+					SizeConstraint = Enum.SizeConstraint.RelativeYY,
 					BackgroundTransparency = 1,
 					Active = false,
 				} :: Frame.Properties,
@@ -89,6 +90,7 @@ return function(props: Properties): React.ReactNode
 					AnchorPoint = Vector2.new(1, 0),
 					Size = UDim2.fromScale(0.08, 0.75 + 0.08 - 0.45),
 					Position = UDim2.fromScale(1 - 0.04, 0.45),
+					SizeConstraint = Enum.SizeConstraint.RelativeYY,
 					BackgroundTransparency = 1,
 					Active = false,
 				} :: Frame.Properties,

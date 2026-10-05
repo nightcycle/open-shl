@@ -38,28 +38,34 @@ return UILabs.CreateReactStory({
 		EnergyProvider = e(CharacterEnergyContext.Provider, {
 			value = props.controls.Energy,
 		}, {
-			ArtifactMenu = currentMenuId == PseudoEnum.MenuId.Artifact and e(
-				ArtifactMenu,
-				{
+			Screen = e("Frame", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+				Size = UDim2.fromScale(0.75, 0.75),
+			}, {
+				ArtifactMenu = currentMenuId == PseudoEnum.MenuId.Artifact and e(
+					ArtifactMenu,
+					{
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						Position = UDim2.fromScale(0.5, 0.5),
+						Size = UDim2.fromScale(1, 1),
+						ItemDefinitions = {},
+						OnAction = function(action: ArtifactMenu.ActionInfo)
+							if action.Type == "Exit" then
+								setCurrentMenuId(nil)
+							end
+						end,
+					} :: ArtifactMenu.Properties
+				),
+				HUD = currentMenuId == nil and e(ParentComponent, {
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					Position = UDim2.fromScale(0.5, 0.5),
 					Size = UDim2.fromScale(1, 1),
-					ItemDefinitions = {},
-					OnAction = function(action: ArtifactMenu.ActionInfo)
-						if action.Type == "Exit" then
-							setCurrentMenuId(nil)
-						end
+					OnClick = function(menuId: PseudoEnum.MenuId)
+						setCurrentMenuId(menuId)
 					end,
-				} :: ArtifactMenu.Properties
-			),
-			HUD = currentMenuId == nil and e(ParentComponent, {
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(0.5, 0.5),
-				Size = UDim2.fromScale(0.5, 0.5),
-				OnClick = function(menuId: PseudoEnum.MenuId)
-					setCurrentMenuId(menuId)
-				end,
-				SizeConstraint = Enum.SizeConstraint.RelativeXY,
+					SizeConstraint = Enum.SizeConstraint.RelativeXY,
+				}),
 			}),
 		}),
 	})
