@@ -31,7 +31,6 @@ return UILabs.CreateReactStory({
 	controls = {},
 }, function(props)
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
-	local controller: ArtifactScene.ArtifactScene?, setController = React.useState(nil :: ArtifactScene.ArtifactScene?)
 	local appearance = React.useMemo(function()
 		return {
 			Items = {
@@ -54,26 +53,25 @@ return UILabs.CreateReactStory({
 
 		local camera = Instance.new("Camera")
 		local worldModel = Instance.new("WorldModel")
-
+		local newController: ArtifactScene.ArtifactScene
 		local cleanUp: () -> () = function() end
 		task.spawn(function()
-			if ArtifactScene.IsInitialized == false then
-				cleanUp = ArtifactScene.init()
-				setController(controller)
-			end
-			assert(ArtifactScene.IsInitialized, `bad scene`)
-			ArtifactScene._Instance.Parent = worldModel
+			newController = ArtifactScene.new()
+			assert(newController.IsAlive, `bad scene`)
+			newController.Instance.Parent = worldModel
 			worldModel.Parent = viewport
 			viewport.CurrentCamera = camera
-			camera.CFrame = ArtifactScene._CameraMount.CFrame
+			camera.CFrame = newController.CameraMount.CFrame
 			camera.Parent = viewport
-			if ArtifactScene._Rig.IsToDo then
-				ArtifactScene._Rig = Future.poll(ArtifactScene._Rig)
+			if newController.Rig.IsToDo then
+				newController.Rig = Future.poll(newController.Rig)
 			end
 		end)
 		return function()
-			setController(nil)
 			cleanUp()
+			if newController.IsAlive then
+				newController:Destroy()
+			end
 			worldModel:Destroy()
 			camera:Destroy()
 		end
