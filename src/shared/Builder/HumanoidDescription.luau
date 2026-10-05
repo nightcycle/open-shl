@@ -16,7 +16,7 @@ type EquippedEmote = {
 	Slot: number,
 }
 export type AnimationGroup = "Climb" | "Fall" | "Idle" | "Jump" | "Mood" | "Run" | "Swim" | "Walk"
-export type ClothingGroup = "Pants" | "Shirt" | "GraphicTShirt"
+export type TextureGroup = "Pants" | "Shirt" | "GraphicTShirt" | "Face"
 type BoolGroup = "StaticFacialAnimation" | "UseAvatarSettings"
 export type ScaleGroup = "BodyType" | "Depth" | "Head" | "Height" | "Proportion" | "Width"
 type HumanoidConfigEntry =
@@ -44,8 +44,8 @@ type HumanoidConfigEntry =
 		AssetId: number,
 	}
 	| {
-		Type: "Clothing",
-		Group: ClothingGroup,
+		Type: "Texture",
+		Group: TextureGroup,
 		AssetId: number,
 	}
 	| {
@@ -78,7 +78,7 @@ export type Builder = {
 		order: number?,
 		puffiness: number?
 	) -> Builder,
-	addClothing: (self: Builder, assetId: number, group: ClothingGroup) -> Builder,
+	addTexture: (self: Builder, assetId: number, group: TextureGroup) -> Builder,
 	setStaticFacialAnimation: (self: Builder, value: boolean) -> Builder,
 	setUseAvatarSettings: (self: Builder, value: boolean) -> Builder,
 	addScale: (self: Builder, value: number, group: ScaleGroup) -> Builder,
@@ -172,13 +172,15 @@ local function toHumanoidDescription(entries: { HumanoidConfigEntry }): Humanoid
 				Order = if info.IsLayered then info.Order else nil,
 				Puffiness = if info.IsLayered then info.Puffiness else nil,
 			})
-		elseif entry.Type == "Clothing" then
+		elseif entry.Type == "Texture" then
 			if entry.Group == "Pants" then
 				desc.Pants = entry.AssetId
 			elseif entry.Group == "Shirt" then
 				desc.Shirt = entry.AssetId
 			elseif entry.Group == "GraphicTShirt" then
 				desc.GraphicTShirt = entry.AssetId
+			elseif entry.Group == "Face" then
+				desc.Face = entry.AssetId
 			end
 		elseif entry.Type == "Bool" then
 			if entry.Group == "StaticFacialAnimation" then
@@ -338,12 +340,12 @@ local function builder(
 				return entries
 			end)
 		end,
-		addClothing = function(_self: Builder, assetId: number, group: ClothingGroup): Builder
+		addTexture = function(_self: Builder, assetId: number, group: TextureGroup): Builder
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
-					return entry.Type ~= "Clothing" or entry.Group ~= group
+					return entry.Type ~= "Texture" or entry.Group ~= group
 				end)
-				table.insert(entries, { Type = "Clothing", Group = group, AssetId = assetId })
+				table.insert(entries, { Type = "Texture", Group = group, AssetId = assetId })
 				return entries
 			end)
 		end,
@@ -420,13 +422,13 @@ return {
 		for group, assetId in animations do
 			table.insert(entries, { Type = "Animation", Group = group :: AnimationGroup, AssetId = assetId })
 		end
-		local clothing: { [ClothingGroup]: number } = {
+		local textures: { [TextureGroup]: number } = {
 			Pants = desc.Pants,
 			Shirt = desc.Shirt,
 			GraphicTShirt = desc.GraphicTShirt,
 		}
-		for group, assetId in clothing do
-			table.insert(entries, { Type = "Clothing", Group = group :: ClothingGroup, AssetId = assetId })
+		for group, assetId in textures do
+			table.insert(entries, { Type = "Texture", Group = group :: TextureGroup, AssetId = assetId })
 		end
 		local bools: { [BoolGroup]: boolean } = {
 			StaticFacialAnimation = desc.StaticFacialAnimation,

@@ -8,6 +8,7 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Future = TypeUnionLib.Future
 -- Modules
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local HumanoidDescriptionBuilder = require("@game/ReplicatedStorage/Shared/Builder/HumanoidDescription")
 -- Types
 type Future<V, Progress...> = TypeUnionLib.Future<V, Progress...>
 type ArtifactSceneImpl = {
@@ -18,6 +19,7 @@ type ArtifactSceneImpl = {
 export type ArtifactScene = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
+		_HumanoidDescriptionTemplate: HumanoidDescription,
 		_Instance: Folder,
 		_CameraMount: BasePart,
 		_Rig: Future<Model>,
@@ -52,9 +54,12 @@ return Locker(function(): ArtifactScene
 		end
 		return nil
 	end, nil, true, true)
+	local humDesc =
+		HumanoidDescriptionBuilder.new():addBodyColor(Color3.fromHSV(0, 0, 0.5)):setUseAvatarSettings(false):build()
 	local self = setmetatable({
 		IsInitialized = true :: true,
 		_Rotation = 0,
+		_HumanoidDescriptionTemplate = humDesc,
 		_CameraMount = IndexUtil.waitForMatch(inst, function(desc: Instance): BasePart?
 			if desc:IsA("BasePart") and desc.Name == "Cam" then
 				return desc
@@ -62,7 +67,6 @@ return Locker(function(): ArtifactScene
 			return nil
 		end, nil, true, true),
 		_Rig = Future.toDo(function(getIfCanceled)
-			local humDesc = Instance.new("HumanoidDescription")
 			local avatar = Players:CreateHumanoidModelFromDescriptionAsync(
 				humDesc,
 				Enum.HumanoidRigType.R15,
@@ -92,6 +96,7 @@ end, function(self: ArtifactScene)
 		self._Rig = Future.cancel(self._Rig)
 	end
 	self._Instance:Destroy()
+	self._HumanoidDescriptionTemplate:Destroy()
 	table.clear(self._CleanUpCallbacks)
 	table.clear(self :: any)
 end)
