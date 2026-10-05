@@ -10,9 +10,7 @@ rokit install
 
 echo "installing wally packages"
 wally install
-if [ ! -f "$SOURCEMAP" ]; then
-	sh "scripts/sourcemap.sh"
-fi
+sh scripts/sourcemap.sh
 # set +e
 echo "extracting wally package types"
 wally-package-types "Packages" --sourcemap "$SOURCEMAP" # >/dev/null 2>&1

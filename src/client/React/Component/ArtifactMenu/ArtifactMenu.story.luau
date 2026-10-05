@@ -29,7 +29,6 @@ return UILabs.CreateReactStory({
 	reactRoblox = ReactRoblox,
 	controls = {},
 }, function(props)
-
 	local appearance = React.useMemo(function()
 		return {
 			Items = {

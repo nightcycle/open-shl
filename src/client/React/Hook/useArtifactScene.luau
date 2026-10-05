@@ -25,15 +25,21 @@ return function(): (ArtifactScene?, () -> ())
 
 	React.useEffect(function()
 		local newController: ArtifactScene
+		local isDead = false
 		task.spawn(function()
 			newController = ArtifactScene.new()
 			assert(newController.IsAlive, `bad scene`)
 			if newController.Rig.IsToDo then
-				newController.Rig = Future.poll(newController.Rig)
+				newController.Rig = Future.awaitUntil(newController.Rig, function()
+					return isDead
+				end)
 			end
-			setArtifactScene(newController)
+			if not isDead then
+				setArtifactScene(newController)
+			end
 		end)
 		return function()
+			isDead = true
 			setArtifactScene(nil)
 			if newController.IsAlive then
 				newController:Destroy()

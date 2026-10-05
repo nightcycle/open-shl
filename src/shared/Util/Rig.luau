@@ -18,9 +18,14 @@ local Util = {}
 
 Util.FAKE_HEAD_NAME = FAKE_HEAD_NAME
 
+Util.moveTo = function(rig: Model, ground: CFrame): ()
+	local description = rig:FindFirstChildWhichIsA("HumanoidDescription", true)
+	rig:PivotTo(ground * CFrame.new(0, 2.5 * (description and description.HeightScale or 1), 0))
+end
+
 Util.createFromDescription = function(
 	description: HumanoidDescription,
-	groundCFrame: CFrame?,
+	ground: CFrame?,
 	parent: Instance?,
 	noEdits: true?
 ): TypeUnionLib.ToDo<Model>
@@ -58,14 +63,14 @@ Util.createFromDescription = function(
 
 		local fakeHeadMesh = Instance.new("SpecialMesh")
 		fakeHeadMesh.MeshType = Enum.MeshType.Head
-		fakeHeadMesh.Scale = Vector3.one*1.25
+		fakeHeadMesh.Scale = Vector3.one * 1.25
 		fakeHeadMesh.Parent = fakeHead
 
 		local _ = WeldUtil.weldTo(realHead, fakeHead)
 		fakeHead.Parent = avatar
 
-		if groundCFrame then
-			avatar:PivotTo(groundCFrame * CFrame.new(0, 2.5 * description.HeightScale, 0))
+		if ground then
+			Util.moveTo(avatar, ground)
 		end
 		if parent then
 			avatar.Parent = parent

@@ -5,6 +5,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
+local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
 local ConfigurePanel = require("@self/ConfigurePanel")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
@@ -34,24 +35,114 @@ export type ActionInfo =
 	| {
 		Type: "Exit",
 	}
-	| {
-		Type: "RotateCharacter",
-		Direction: "Left" | "Right",
-	}
 
 export type Properties = Frame.Properties & {
 	ItemDefinitions: { ItemDefinition },
 	OnAction: (ActionInfo) -> (),
 }
 -- Constants
+local ROTATION_INC_DEG = 45
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
+function scene(props: {})
+	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
+	local rotationDeg, setRotationDeg = React.useState(0)
+	local artifactScene, refreshScene = useArtifactScene()
+	React.useEffect(function()
+		local viewport = viewportRef.current
+		if not viewport or not artifactScene then
+			return function() end
+		end
+		local camera = Instance.new("Camera")
+		local worldModel = Instance.new("WorldModel")
+		local cleanUp: () -> () = function() end
+		task.spawn(function()
+			assert(artifactScene.IsAlive, `bad scene`)
+			artifactScene.Instance.Parent = worldModel
+			worldModel.Parent = viewport
+			viewport.CurrentCamera = camera
+			camera.CFrame = artifactScene.CameraMount.CFrame
+			camera.Parent = viewport
+		end)
+		return function()
+			cleanUp()
+			worldModel:Destroy()
+			camera:Destroy()
+			refreshScene()
+		end
+	end, { viewportRef.current :: any })
+	React.useEffect(function()
+		if artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone then
+			task.spawn(function()
+				RigUtil.moveTo(
+					artifactScene.Rig.Value,
+					artifactScene.RigAnchor.CFrame * CFrame.Angles(0, math.rad(rotationDeg), 0)
+				)
+			end)
+		end
+	end, { rotationDeg :: any, artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone })
+
+	return e(React.Fragment, {}, {
+		ViewportFrame = e(
+			"ViewportFrame",
+			{
+				BackgroundTransparency = 1,
+				ref = viewportRef,
+				Size = UDim2.fromScale(1, 1),
+			} :: ViewportFrame.Properties
+		),
+
+		TurnCharacter = e("Frame", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromScale(0.225, 0.05),
+			SizeConstraint = Enum.SizeConstraint.RelativeXX,
+		}, {
+			Right = artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone and e("TextButton", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundColor3 = Color3.new(),
+				BackgroundTransparency = 0.5,
+				BorderColor3 = Color3.new(),
+				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
+				Modal = true,
+				Position = UDim2.fromScale(1, 0.5),
+				Size = UDim2.fromScale(0.2, 0.2),
+				SizeConstraint = Enum.SizeConstraint.RelativeXX,
+				Text = ">",
+				TextColor3 = Color3.new(1, 1, 1),
+				TextScaled = true,
+				TextStrokeColor3 = Color3.new(1, 1, 1),
+				[React.Event.Activated] = function()
+					setRotationDeg(rotationDeg + ROTATION_INC_DEG)
+				end,
+			}),
+
+			Left = artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone and e("TextButton", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundColor3 = Color3.new(),
+				BackgroundTransparency = 0.5,
+				BorderColor3 = Color3.new(),
+				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
+				Modal = true,
+				Position = UDim2.fromScale(0, 0.5),
+				Size = UDim2.fromScale(0.2, 0.2),
+				SizeConstraint = Enum.SizeConstraint.RelativeXX,
+				Text = "<",
+				TextColor3 = Color3.new(1, 1, 1),
+				TextScaled = true,
+				TextStrokeColor3 = Color3.new(1, 1, 1),
+				[React.Event.Activated] = function()
+					setRotationDeg(rotationDeg - ROTATION_INC_DEG)
+				end,
+			}),
+		}),
+	})
+end
 -- Class
 return function(props: Properties)
-	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
-
 	local selectedItem: ItemDefinition?, setSelectedItem: (ItemDefinition?) -> () =
 		React.useState(nil :: ItemDefinition?)
 	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
@@ -85,30 +176,6 @@ return function(props: Properties)
 		table.freeze(out)
 		return out
 	end, { props.ItemDefinitions })
-	local artifactScene, refreshScene = useArtifactScene()
-	React.useEffect(function()
-		local viewport = viewportRef.current
-		if not viewport or not artifactScene then
-			return function() end
-		end
-		local camera = Instance.new("Camera")
-		local worldModel = Instance.new("WorldModel")
-		local cleanUp: () -> () = function() end
-		task.spawn(function()
-			assert(artifactScene.IsAlive, `bad scene`)
-			artifactScene.Instance.Parent = worldModel
-			worldModel.Parent = viewport
-			viewport.CurrentCamera = camera
-			camera.CFrame = artifactScene.CameraMount.CFrame
-			camera.Parent = viewport
-		end)
-		return function()
-			cleanUp()
-			worldModel:Destroy()
-			camera:Destroy()
-			refreshScene()
-		end
-	end, { viewportRef.current :: any })
 
 	return e(Frame(
 		{
@@ -116,14 +183,7 @@ return function(props: Properties)
 		},
 		props,
 		{
-			ViewportFrame = e(
-				"ViewportFrame",
-				{
-					BackgroundTransparency = 1,
-					ref = viewportRef,
-					Size = UDim2.fromScale(1, 1),
-				} :: ViewportFrame.Properties
-			),
+			Scene = e(scene, {}),
 			ConfigurePanel = selectedItem and e(
 				ConfigurePanel,
 				{
@@ -187,58 +247,6 @@ return function(props: Properties)
 						Type = "Exit",
 					})
 				end,
-			}),
-
-			TurnCharacter = e("Frame", {
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.5, 0.5),
-				Size = UDim2.fromScale(0.225, 0.05),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}, {
-				Right = e("TextButton", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundColor3 = Color3.new(),
-					BackgroundTransparency = 0.5,
-					BorderColor3 = Color3.new(),
-					FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-					Modal = true,
-					Position = UDim2.fromScale(1, 0.5),
-					Size = UDim2.fromScale(0.2, 0.2),
-					SizeConstraint = Enum.SizeConstraint.RelativeXX,
-					Text = ">",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-					TextStrokeColor3 = Color3.new(1, 1, 1),
-					[React.Event.Activated] = function()
-						props.OnAction({
-							Type = "RotateCharacter",
-							Direction = "Right",
-						})
-					end,
-				}),
-
-				Left = e("TextButton", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundColor3 = Color3.new(),
-					BackgroundTransparency = 0.5,
-					BorderColor3 = Color3.new(),
-					FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-					Modal = true,
-					Position = UDim2.fromScale(0, 0.5),
-					Size = UDim2.fromScale(0.2, 0.2),
-					SizeConstraint = Enum.SizeConstraint.RelativeXX,
-					Text = "<",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-					TextStrokeColor3 = Color3.new(1, 1, 1),
-					[React.Event.Activated] = function()
-						props.OnAction({
-							Type = "RotateCharacter",
-							Direction = "Left",
-						})
-					end,
-				}),
 			}),
 		}
 	))

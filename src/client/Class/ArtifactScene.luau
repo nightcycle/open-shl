@@ -1,12 +1,10 @@
 --!strict
 -- Services
-local Players = game:GetService("Players")
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Future = TypeUnionLib.Future
 -- Modules
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 local HumanoidDescriptionBuilder = require("@game/ReplicatedStorage/Shared/Builder/HumanoidDescription")
 local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Types
@@ -22,16 +20,16 @@ export type ArtifactScene = typeof(setmetatable(
 		_HumanoidDescriptionTemplate: HumanoidDescription,
 		Instance: Folder,
 		CameraMount: BasePart,
+		RigAnchor: BasePart,
 		Rig: Future<Model>,
 		_Rotation: number,
-		_Appearance: AppearanceType.Appearance?,
 		_Character: Model?,
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
 	},
 	{} :: ArtifactSceneImpl
 )) | {
-	IsAlive: nil,
+	IsAlive: false,
 }
 -- Constants
 -- Variables
@@ -46,7 +44,7 @@ function ArtifactScene:Destroy()
 	if not self.IsAlive then
 		return
 	end
-	self.IsAlive = nil :: any
+	self.IsAlive = false :: any
 	for i, v in self._Connections do
 		v:Disconnect()
 	end
@@ -80,6 +78,7 @@ return {
 			IsAlive = true :: true,
 			_Rotation = 0,
 			_HumanoidDescriptionTemplate = humDesc,
+			RigAnchor = rigAnchor,
 			CameraMount = IndexUtil.waitForMatch(inst, function(desc: Instance): BasePart?
 				if desc:IsA("BasePart") and desc.Name == "Cam" then
 					return desc
