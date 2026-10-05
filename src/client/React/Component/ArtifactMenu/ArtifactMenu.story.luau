@@ -29,21 +29,20 @@ return UILabs.CreateReactStory({
 	reactRoblox = ReactRoblox,
 	controls = {},
 }, function(props)
+	local appliedArtifact: Item?, setAppliedArtifact: (Item?) -> () = React.useState(nil :: Item?)
+
 	local appearance = React.useMemo(function()
+		local items = {}
+		if appliedArtifact then
+			table.insert(items, appliedArtifact)
+		end
 		return {
-			Items = {
-				{
-					DefinitionId = "costume/hoods/hood",
-				},
-				{
-					DefinitionId = "costume/artifacts/bluesteel-fedora",
-				},
-			},
+			Items = items,
 			HiddenTags = {
 				-- "Hood"
 			},
 		}
-	end, {})
+	end, { appliedArtifact })
 	local itemDefinitions = React.useMemo(function()
 		local out = {}
 		for i, v in ITEM_DEFINITIONS do
@@ -68,8 +67,14 @@ return UILabs.CreateReactStory({
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 			Size = UDim2.fromScale(1, 1),
-			OnAction = function(action)
-				print("action", action)
+			OnAction = function(action: ParentComponent.ActionInfo)
+				if action.Type == "AddItem" then
+					setAppliedArtifact({
+						DefinitionId = action.ItemDefinition.Id,
+					})
+				elseif action.Type == "RemoveItem" then
+					setAppliedArtifact(nil)
+				end
 			end,
 			SizeConstraint = Enum.SizeConstraint.RelativeXY,
 		}),

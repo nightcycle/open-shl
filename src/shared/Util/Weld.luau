@@ -10,7 +10,7 @@
 -- Class
 local Util = {}
 
-function Util.weldTo(part0: BasePart, part1: BasePart)
+function Util.between(part0: BasePart, part1: BasePart)
 	local weld = Instance.new("Weld")
 	weld.Name = "Weld"
 	weld.Part0 = part0

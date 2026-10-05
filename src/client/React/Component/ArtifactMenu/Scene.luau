@@ -3,7 +3,9 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
+local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
 local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component/ViewportFrame")
@@ -67,6 +69,21 @@ return function(props: Properties): React.ReactNode
 			local isDead = false
 			task.spawn(function()
 				print(`applying appearance: isDead={isDead}`)
+				local resF: TypeUnionLib.Future<TypeUnionLib.Result<true, { string }>> = TypeUnionLib.Future.awaitUntil(
+					AppearanceUtil.apply(artifactScene.Rig.Value, appearance),
+					function()
+						return isDead
+					end
+				)
+				if resF.IsDone then
+					if resF.Value.IsErr then
+						for i, v in resF.Value.Value do
+							warn(`appearance err: {v}`)
+						end
+					else
+						print(`successfully applied appearance`)
+					end
+				end
 			end)
 			return function()
 				isDead = true

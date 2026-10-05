@@ -467,6 +467,6 @@ return {
 		return builder(entries)
 	end,
 	new = function(): Builder
-		return builder({})
+		return builder({}):addBodyColor(Color3.fromHSV(0, 0, 0.5))
 	end,
 }

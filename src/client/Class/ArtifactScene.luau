@@ -11,7 +11,6 @@ local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 type Future<V, Progress...> = TypeUnionLib.Future<V, Progress...>
 type ArtifactSceneImpl = {
 	__index: ArtifactSceneImpl,
-	RotateCharacter: (self: ArtifactScene, degrees: number) -> (),
 	Destroy: (self: ArtifactScene) -> (),
 }
 export type ArtifactScene = typeof(setmetatable(
@@ -54,14 +53,14 @@ function ArtifactScene:Destroy()
 	end
 	if self.Rig.IsDoing then
 		self.Rig = Future.cancel(self.Rig)
+	elseif self.Rig.IsDone then
+		self.Rig.Value:Destroy()
 	end
 	self.Instance:Destroy()
 	self._HumanoidDescriptionTemplate:Destroy()
 	table.clear(self._CleanUpCallbacks)
 	table.clear(self :: any)
 end
-
-function ArtifactScene:RotateCharacter(degrees: number): () end
 
 return {
 	new = function(): ArtifactScene
@@ -72,8 +71,7 @@ return {
 			end
 			return nil
 		end, nil, true, true)
-		local humDesc =
-			HumanoidDescriptionBuilder.new():addBodyColor(Color3.fromHSV(0, 0, 0.5)):setUseAvatarSettings(false):build()
+		local humDesc = HumanoidDescriptionBuilder.new():build()
 		local self = setmetatable({
 			IsAlive = true :: true,
 			_Rotation = 0,
