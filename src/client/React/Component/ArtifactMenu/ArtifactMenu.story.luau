@@ -5,6 +5,7 @@ _G.__REACT_MICROPROFILER_LEVEL = 10
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
+local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
@@ -16,6 +17,8 @@ local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
 local ItemDefSelection =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Selection/AppearanceItemDefinition")
+local PreviewCharacterAppearanceContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 type Item = AppearanceType.Item
@@ -35,23 +38,28 @@ return UILabs.CreateReactStory({
 	local appliedArtifact: Item?, setAppliedArtifact: (Item?) -> () = React.useState(nil :: Item?)
 	local selectedItemDef: ItemDefinition?, setSelectedItemDef: (ItemDefinition?) -> () =
 		React.useState(nil :: ItemDefinition?)
-
-	local appearance = React.useMemo(function()
-		local items = {}
+	local baseAppearance = React.useMemo(function(): AppearanceType.Appearance
+		return {
+			Items = {},
+			HiddenTags = {},
+		}
+	end, {})
+	local appearance = React.useMemo(function(): AppearanceType.Appearance
+		local app = TableUtil.deepCopy(baseAppearance)
+		if appliedArtifact then
+			table.insert(app.Items, appliedArtifact)
+		end
+		return app
+	end, { baseAppearance :: any, appliedArtifact })
+	local previewAppearance = React.useMemo(function(): AppearanceType.Appearance
+		local app = TableUtil.deepCopy(baseAppearance)
 		if selectedItemDef then
-			table.insert(items, {
+			table.insert(app.Items, {
 				DefinitionId = selectedItemDef.Id,
 			})
-		elseif appliedArtifact then
-			table.insert(items, appliedArtifact)
 		end
-		return {
-			Items = items,
-			HiddenTags = {
-				-- "Hood"
-			},
-		}
-	end, { appliedArtifact :: any, selectedItemDef })
+		return app
+	end, { baseAppearance :: any, selectedItemDef })
 	local itemDefinitions = React.useMemo(function()
 		local out = {}
 		for i, v in ITEM_DEFINITIONS do
@@ -70,26 +78,30 @@ return UILabs.CreateReactStory({
 	return e(CharacterAppearanceContext.Provider, {
 		value = appearance,
 	}, {
-		ItemDefSelection = e(ItemDefSelection.Provider, {
-			value = selectedItemDef,
+		PreviewAppearance = e(PreviewCharacterAppearanceContext.Provider, {
+			value = previewAppearance,
 		}, {
-			Menu = e(ParentComponent, {
-				ItemDefinitions = itemDefinitions,
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(0.5, 0.5),
-				Size = UDim2.fromScale(1, 1),
-				OnAction = function(action: ParentComponent.ActionInfo)
-					if action.Type == "AddItem" then
-						setAppliedArtifact({
-							DefinitionId = action.ItemDefinition.Id,
-						})
-					elseif action.Type == "RemoveItem" then
-						setAppliedArtifact(nil)
-					elseif action.Type == "SelectItem" then
-						setSelectedItemDef(action.ItemDefinition)
-					end
-				end,
-				SizeConstraint = Enum.SizeConstraint.RelativeXY,
+			ItemDefSelection = e(ItemDefSelection.Provider, {
+				value = selectedItemDef,
+			}, {
+				Menu = e(ParentComponent, {
+					ItemDefinitions = itemDefinitions,
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Position = UDim2.fromScale(0.5, 0.5),
+					Size = UDim2.fromScale(1, 1),
+					OnAction = function(action: ParentComponent.ActionInfo)
+						if action.Type == "AddItem" then
+							setAppliedArtifact({
+								DefinitionId = action.ItemDefinition.Id,
+							})
+						elseif action.Type == "RemoveItem" then
+							setAppliedArtifact(nil)
+						elseif action.Type == "SelectItem" then
+							setSelectedItemDef(action.ItemDefinition)
+						end
+					end,
+					SizeConstraint = Enum.SizeConstraint.RelativeXY,
+				}),
 			}),
 		}),
 	})

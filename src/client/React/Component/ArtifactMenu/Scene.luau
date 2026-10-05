@@ -14,6 +14,8 @@ local useArtifactScene = require("@game/StarterPlayer/StarterPlayerScripts/Clien
 -- Contexts
 local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
+local CharacterPreviewAppearanceContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
 -- Types
 export type Properties = {}
 -- Constants
@@ -25,6 +27,11 @@ local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
 	local appearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
+	local previewAppearance: CharacterAppearanceContext.Appearance? = React.useContext(CharacterPreviewAppearanceContext)
+	if previewAppearance then
+		appearance = previewAppearance
+	end
+
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local rotationDeg, setRotationDeg = React.useState(0)
 	local artifactScene, refreshScene = useArtifactScene()
@@ -96,6 +103,7 @@ return function(props: Properties): React.ReactNode
 		ViewportFrame = e(
 			"ViewportFrame",
 			{
+				ZIndex = 0,
 				Active = false,
 				BackgroundTransparency = 1,
 				ref = viewportRef,
