@@ -7,7 +7,9 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
+local ArtifactMenu = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ArtifactMenu")
 local ParentComponent = require(".")
 -- Hooks
 -- Contexts
@@ -28,18 +30,34 @@ return UILabs.CreateReactStory({
 		Energy = UILabs.Slider(100, 0, 100, 1),
 	},
 }, function(props)
+	local currentMenuId: PseudoEnum.MenuId?, setCurrentMenuId: (PseudoEnum.MenuId?) -> () =
+		React.useState(nil :: PseudoEnum.MenuId?)
 	return e(CharacterHealthContext.Provider, {
 		value = props.controls.Health,
 	}, {
 		EnergyProvider = e(CharacterEnergyContext.Provider, {
 			value = props.controls.Energy,
 		}, {
-			HUD = e(ParentComponent, {
+			ArtifactMenu = currentMenuId == PseudoEnum.MenuId.Artifact and e(
+				ArtifactMenu,
+				{
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Position = UDim2.fromScale(0.5, 0.5),
+					Size = UDim2.fromScale(1, 1),
+					ItemDefinitions = {},
+					OnAction = function(action: ArtifactMenu.ActionInfo)
+						if action.Type == "Exit" then
+							setCurrentMenuId(nil)
+						end
+					end,
+				} :: ArtifactMenu.Properties
+			),
+			HUD = currentMenuId == nil and e(ParentComponent, {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.fromScale(0.5, 0.5),
 				Size = UDim2.fromScale(0.5, 0.5),
-				OnClick = function(menuId)
-					print(`menuId: {menuId}`)
+				OnClick = function(menuId: PseudoEnum.MenuId)
+					setCurrentMenuId(menuId)
 				end,
 				SizeConstraint = Enum.SizeConstraint.RelativeXY,
 			}),
