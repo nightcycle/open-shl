@@ -8,7 +8,9 @@ local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local ArtifactScene = require(".")
+local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component/ViewportFrame")
+local Future = TypeUnionLib.Future
 -- Components
 -- Hooks
 -- Contexts
@@ -64,6 +66,11 @@ return UILabs.CreateReactStory({
 			worldModel.Parent = viewport
 			viewport.CurrentCamera = camera
 			camera.CFrame = ArtifactScene._CameraMount.CFrame
+			camera.Parent = viewport
+			if ArtifactScene._Rig.IsToDo then
+				ArtifactScene._Rig = Future.poll(ArtifactScene._Rig)
+			end
+
 		end)
 		return function()
 			setController(nil)

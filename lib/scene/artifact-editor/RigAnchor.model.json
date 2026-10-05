@@ -1,6 +1,9 @@
 {
-  "ClassName": "Attachment",
+  "ClassName": "Part",
   "Properties": {
+    "Anchored": {
+      "Bool": true
+    },
     "CFrame": {
       "CFrame": {
         "orientation": [
@@ -21,23 +24,27 @@
           ]
         ],
         "position": [
-          -0.0,
-          -0.5000001192092896,
-          -0.0002722442150115967
+          -270.693,
+          -56.085,
+          36865.98
         ]
       }
     },
-    "Capabilities": {
-      "SecurityCapabilities": 0
-    },
-    "Sandboxed": {
+    "CanCollide": {
       "Bool": false
     },
-    "SourceAssetId": {
-      "Int64": -1
-    },
-    "Visible": {
+    "CanQuery": {
       "Bool": false
+    },
+    "Transparency": {
+      "Float32": 1
+    },
+    "Size": {
+      "Vector3": [
+        1,
+        1,
+        1
+      ]
     }
   }
 }
