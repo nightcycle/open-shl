@@ -8,13 +8,13 @@ local Future = TypeUnionLib.Future
 -- Modules
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 local HumanoidDescriptionBuilder = require("@game/ReplicatedStorage/Shared/Builder/HumanoidDescription")
+local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Types
 type Future<V, Progress...> = TypeUnionLib.Future<V, Progress...>
 type ArtifactSceneImpl = {
 	__index: ArtifactSceneImpl,
 	RotateCharacter: (self: ArtifactScene, degrees: number) -> (),
 	Destroy: (self: ArtifactScene) -> (),
-	Load: (self: ArtifactScene, appearance: AppearanceType.Appearance) -> () -> (),
 }
 export type ArtifactScene = typeof(setmetatable(
 	{} :: {
@@ -65,10 +65,6 @@ end
 
 function ArtifactScene:RotateCharacter(degrees: number): () end
 
-function ArtifactScene:Load(appearance: AppearanceType.Appearance): () -> ()
-	return function() end
-end
-
 return {
 	new = function(): ArtifactScene
 		local inst = SceneTemplate:Clone()
@@ -90,19 +86,7 @@ return {
 				end
 				return nil
 			end, nil, true, true),
-			Rig = Future.toDo(function(getIfCanceled)
-				local avatar = Players:CreateHumanoidModelFromDescriptionAsync(
-					humDesc,
-					Enum.HumanoidRigType.R15,
-					Enum.AssetTypeVerification.ClientOnly
-				)
-				if getIfCanceled() then
-					avatar:Destroy()
-				end
-				avatar:PivotTo(rigAnchor.CFrame * CFrame.new(0, 2.5, 0))
-				avatar.Parent = inst
-				return avatar
-			end),
+			Rig = RigUtil.createFromDescription(humDesc, rigAnchor.CFrame, inst),
 			Instance = inst,
 			_CleanUpCallbacks = {},
 			_Connections = {},

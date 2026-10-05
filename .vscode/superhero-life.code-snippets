@@ -55,6 +55,14 @@
 		"description": "Imports a util.",
 		"scope": "luau"
 	},
+	"irequire cclass": {
+		"prefix": "irequire cclass",
+		"body": [
+			"local ${name} = require(\"@game/StarterPlayer/StarterPlayerScripts/Client/Class/${name}\")"
+		],
+		"description": "Imports a client class.",
+		"scope": "luau"
+	},
 	"irequire comp": {
 		"prefix": "irequire comp",
 		"body": [
