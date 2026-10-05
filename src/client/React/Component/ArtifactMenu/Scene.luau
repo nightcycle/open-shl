@@ -10,6 +10,8 @@ local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component
 -- Hooks
 local useArtifactScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useArtifactScene")
 -- Contexts
+local CharacterAppearanceContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
 -- Types
 export type Properties = {}
 -- Constants
@@ -20,9 +22,11 @@ local ROTATION_INC_DEG = 45
 local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
+	local appearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local rotationDeg, setRotationDeg = React.useState(0)
 	local artifactScene, refreshScene = useArtifactScene()
+
 	React.useEffect(function()
 		local viewport = viewportRef.current
 		if not viewport or not artifactScene then
@@ -46,6 +50,7 @@ return function(props: Properties): React.ReactNode
 			refreshScene()
 		end
 	end, { viewportRef.current :: any })
+
 	React.useEffect(function()
 		if artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone then
 			task.spawn(function()
@@ -56,6 +61,19 @@ return function(props: Properties): React.ReactNode
 			end)
 		end
 	end, { rotationDeg :: any, artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone })
+
+	React.useEffect(function()
+		if appearance and artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone then
+			local isDead = false
+			task.spawn(function()
+				print(`applying appearance: isDead={isDead}`)
+			end)
+			return function()
+				isDead = true
+			end
+		end
+		return function() end
+	end, { appearance :: any, artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone })
 
 	return e(React.Fragment, {}, {
 		ViewportFrame = e(
