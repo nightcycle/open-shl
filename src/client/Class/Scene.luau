@@ -28,7 +28,7 @@ export type Scene = typeof(setmetatable(
 	},
 	{} :: SceneImpl
 )) | {
-	IsAlive: false,
+	IsAlive: false | nil,
 }
 -- Constants
 -- Variables
