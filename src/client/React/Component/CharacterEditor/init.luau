@@ -42,11 +42,14 @@ export type Properties = Frame.Properties & {
 local e = React.createElement
 -- Class
 return function(props: Properties)
+	local isHeroFocus, setIsHeroFocus = React.useState(true)
 	return e("Frame", {
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
 	}, {
-		Scene = e(Scene, {}),
+		Scene = e(Scene, {
+			IsHeroFocus = isHeroFocus,
+		}),
 		Explorer = e(Explorer, {
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.5,
@@ -83,6 +86,9 @@ return function(props: Properties)
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
+				[React.Event.Activated] = function()
+					setIsHeroFocus(not isHeroFocus)
+				end
 			}),
 		}),
 

@@ -1,9 +1,11 @@
 --!strict
 --!native
+local RunService = game:GetService("RunService")
 -- Services
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local React = require("@game/ReplicatedStorage/Packages/React")
+local Spring = require("@game/ReplicatedStorage/Packages/Spring")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
 local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
@@ -18,7 +20,9 @@ local CharacterAppearanceContext =
 local CharacterPreviewAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
 -- Types
-export type Properties = {}
+export type Properties = {
+	IsHeroFocus: boolean,
+}
 -- Constants
 local ROTATION_INC_DEG = 45
 -- Variables
@@ -54,7 +58,7 @@ return function(props: Properties): React.ReactNode
 			secretScene.Instance.Parent = worldModel
 			worldModel.Parent = viewport
 			viewport.CurrentCamera = camera
-			camera.CFrame = heroScene.CameraMount.CFrame
+			camera.CFrame = props.IsHeroFocus and heroScene.CameraMount.CFrame or secretScene.CameraMount.CFrame
 			camera.Parent = viewport
 		end)
 		return function()
@@ -65,6 +69,43 @@ return function(props: Properties): React.ReactNode
 			refreshSecretScene()
 		end
 	end, { viewportRef.current :: any, heroScene, secretScene })
+
+	local currentCamera: Camera?, setCurrentCamera: (Camera?) -> () = React.useState(nil :: Camera?)
+	do
+		local isHeroFocusRef = React.useRef(props.IsHeroFocus)
+		isHeroFocusRef.current = props.IsHeroFocus
+		local springRef = React.useRef(Spring.new(1, 0.8, isHeroFocusRef.current and 0 or 1))
+		React.useEffect(function()
+			if
+				not currentCamera
+				or not heroScene
+				or not secretScene
+				or not heroScene.IsAlive
+				or not secretScene.IsAlive
+			then
+				return function() end
+			end
+
+			local connection = RunService.RenderStepped:Connect(function(dt: number)
+				local spring = springRef.current
+				if isHeroFocusRef.current then
+					spring:Set(0)
+				else
+					spring:Set(1)
+				end
+				spring:Step(dt)
+				currentCamera.CFrame = heroScene.CameraMount.CFrame:Lerp(secretScene.CameraMount.CFrame, spring:Get())
+			end)
+
+			return function()
+				connection:Disconnect()
+			end
+		end, {
+			currentCamera :: any,
+			secretScene and secretScene.IsAlive and secretScene.CameraMount,
+			heroScene and heroScene.IsAlive and heroScene.CameraMount,
+		})
+	end
 
 	React.useEffect(function()
 		if heroScene and heroScene.IsAlive and heroScene.Rig.IsDone then
@@ -125,6 +166,9 @@ return function(props: Properties): React.ReactNode
 				BackgroundTransparency = 1,
 				ref = viewportRef,
 				Size = UDim2.fromScale(1, 1),
+				[React.Change.CurrentCamera] = function(rbx: ViewportFrame)
+					setCurrentCamera(rbx.CurrentCamera)
+				end,
 			} :: ViewportFrame.Properties
 		),
 		TurnChar = e("Frame", {
