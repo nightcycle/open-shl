@@ -41,7 +41,8 @@ return function(props: Properties): React.ReactNode
 	end
 
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
-	local rotationDeg, setRotationDeg = React.useState(0)
+	local heroRotationDeg, setHeroRotationDeg = React.useState(0)
+	local secretRotationDeg, setSecretRotationDeg = React.useState(0)
 	local heroScene, refreshHeroScene = useScene(HeroSceneTemplate)
 	local secretScene, refreshSecretScene = useScene(SecretSceneTemplate)
 
@@ -112,22 +113,22 @@ return function(props: Properties): React.ReactNode
 			task.spawn(function()
 				RigUtil.moveTo(
 					heroScene.Rig.Value,
-					heroScene.RigAnchor.CFrame * CFrame.Angles(0, math.rad(rotationDeg), 0)
+					heroScene.RigAnchor.CFrame * CFrame.Angles(0, math.rad(heroRotationDeg), 0)
 				)
 			end)
 		end
-	end, { rotationDeg :: any, heroScene and heroScene.IsAlive and heroScene.Rig.IsDone })
+	end, { heroRotationDeg :: any, heroScene and heroScene.IsAlive and heroScene.Rig.IsDone })
 
 	React.useEffect(function()
 		if secretScene and secretScene.IsAlive and secretScene.Rig.IsDone then
 			task.spawn(function()
 				RigUtil.moveTo(
 					secretScene.Rig.Value,
-					secretScene.RigAnchor.CFrame * CFrame.Angles(0, math.rad(rotationDeg), 0)
+					secretScene.RigAnchor.CFrame * CFrame.Angles(0, math.rad(secretRotationDeg), 0)
 				)
 			end)
 		end
-	end, { rotationDeg :: any, secretScene and secretScene.IsAlive and secretScene.Rig.IsDone })
+	end, { secretRotationDeg :: any, secretScene and secretScene.IsAlive and secretScene.Rig.IsDone })
 
 	React.useEffect(function()
 		if appearance and heroScene and heroScene.IsAlive and heroScene.Rig.IsDone then
@@ -190,7 +191,11 @@ return function(props: Properties): React.ReactNode
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
-					setRotationDeg(rotationDeg + ROTATION_INC_DEG)
+					if props.IsHeroFocus then
+						setHeroRotationDeg(heroRotationDeg + ROTATION_INC_DEG)
+					else
+						setSecretRotationDeg(secretRotationDeg + ROTATION_INC_DEG)
+					end
 				end,
 			}),
 
@@ -206,7 +211,11 @@ return function(props: Properties): React.ReactNode
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
-					setRotationDeg(rotationDeg - ROTATION_INC_DEG)
+					if props.IsHeroFocus then
+						setHeroRotationDeg(heroRotationDeg - ROTATION_INC_DEG)
+					else
+						setSecretRotationDeg(secretRotationDeg - ROTATION_INC_DEG)
+					end
 				end,
 			}),
 		}),
