@@ -2,6 +2,7 @@
 --!native
 -- Services
 -- Packages
+local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local React = require("@game/ReplicatedStorage/Packages/React")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
@@ -10,7 +11,7 @@ local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
 local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component/ViewportFrame")
 -- Hooks
-local useArtifactScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useArtifactScene")
+local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
 local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
@@ -22,19 +23,21 @@ export type Properties = {}
 local ROTATION_INC_DEG = 45
 -- Variables
 -- References
+local SceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/artifact-editor") :: Folder
 -- Private Functions
 local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
 	local appearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
-	local previewAppearance: CharacterAppearanceContext.Appearance? = React.useContext(CharacterPreviewAppearanceContext)
+	local previewAppearance: CharacterAppearanceContext.Appearance? =
+		React.useContext(CharacterPreviewAppearanceContext)
 	if previewAppearance then
 		appearance = previewAppearance
 	end
 
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local rotationDeg, setRotationDeg = React.useState(0)
-	local artifactScene, refreshScene = useArtifactScene()
+	local artifactScene, refreshScene = useScene(SceneTemplate)
 
 	React.useEffect(function()
 		local viewport = viewportRef.current
@@ -58,7 +61,7 @@ return function(props: Properties): React.ReactNode
 			camera:Destroy()
 			refreshScene()
 		end
-	end, { viewportRef.current :: any })
+	end, { viewportRef.current :: any, artifactScene })
 
 	React.useEffect(function()
 		if artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone then

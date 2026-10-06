@@ -46,6 +46,7 @@ return function(props: Properties)
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
 	}, {
+		Scene = e(Scene, {}),
 		Explorer = e(Explorer, {
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.5,

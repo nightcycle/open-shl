@@ -1,0 +1,59 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Anchored": {
+      "Bool": true
+    },
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            0.7071066498756409,
+            7.99179034061126e-8,
+            0.7071069478988647
+          ],
+          [
+            -8.009386220919623e-8,
+            1,
+            -3.2927133020166366e-8
+          ],
+          [
+            -0.70710688829422,
+            -3.335193099474054e-8,
+            0.7071067094802856
+          ]
+        ],
+        "position": [
+          -272.7398376464844,
+          -67.30903625488281,
+          36865.890625
+        ]
+      }
+    },
+    "CanCollide": {
+      "Bool": false
+    },
+    "CanQuery": {
+      "Bool": false
+    },
+    "CanTouch": {
+      "Bool": true
+    },
+    "CastShadow": {
+      "Bool": false
+    },
+    "Locked": {
+      "Bool": false
+    },
+    "Size": {
+      "Vector3": [
+        2,
+        2,
+        1
+      ]
+    },
+    "Transparency": {
+      "Float32": 1
+    }
+  }
+}

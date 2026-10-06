@@ -2,6 +2,7 @@
 --!native
 -- Services
 -- Packages
+local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local React = require("@game/ReplicatedStorage/Packages/React")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
@@ -10,7 +11,7 @@ local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
 local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component/ViewportFrame")
 -- Hooks
-local useArtifactScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useArtifactScene")
+local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
 local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
@@ -22,6 +23,8 @@ export type Properties = {}
 local ROTATION_INC_DEG = 45
 -- Variables
 -- References
+local HeroSceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/hero-character-editor") :: Folder
+local SecretSceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/secret-character-editor") :: Folder
 -- Private Functions
 local e = React.createElement
 -- Class
@@ -35,50 +38,52 @@ return function(props: Properties): React.ReactNode
 
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local rotationDeg, setRotationDeg = React.useState(0)
-	local artifactScene, refreshScene = useArtifactScene()
+	local heroScene, refreshHeroScene = useScene(HeroSceneTemplate)
+	local secretScene, refreshSecretScene = useScene(SecretSceneTemplate)
 
 	React.useEffect(function()
 		local viewport = viewportRef.current
-		if not viewport or not artifactScene then
+		if not viewport or not heroScene or not secretScene or not heroScene.IsAlive or not secretScene.IsAlive then
 			return function() end
 		end
 		local camera = Instance.new("Camera")
 		local worldModel = Instance.new("WorldModel")
 		local cleanUp: () -> () = function() end
 		task.spawn(function()
-			assert(artifactScene.IsAlive, `bad scene`)
-			artifactScene.Instance.Parent = worldModel
+			heroScene.Instance.Parent = worldModel
+			secretScene.Instance.Parent = worldModel
 			worldModel.Parent = viewport
 			viewport.CurrentCamera = camera
-			camera.CFrame = artifactScene.CameraMount.CFrame
+			camera.CFrame = heroScene.CameraMount.CFrame
 			camera.Parent = viewport
 		end)
 		return function()
 			cleanUp()
 			worldModel:Destroy()
 			camera:Destroy()
-			refreshScene()
+			refreshHeroScene()
+			refreshSecretScene()
 		end
-	end, { viewportRef.current :: any })
+	end, { viewportRef.current :: any, heroScene, secretScene })
 
 	React.useEffect(function()
-		if artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone then
+		if heroScene and heroScene.IsAlive and heroScene.Rig.IsDone then
 			task.spawn(function()
 				RigUtil.moveTo(
-					artifactScene.Rig.Value,
-					artifactScene.RigAnchor.CFrame * CFrame.Angles(0, math.rad(rotationDeg), 0)
+					heroScene.Rig.Value,
+					heroScene.RigAnchor.CFrame * CFrame.Angles(0, math.rad(rotationDeg), 0)
 				)
 			end)
 		end
-	end, { rotationDeg :: any, artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone })
+	end, { rotationDeg :: any, heroScene and heroScene.IsAlive and heroScene.Rig.IsDone })
 
 	React.useEffect(function()
-		if appearance and artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone then
+		if appearance and heroScene and heroScene.IsAlive and heroScene.Rig.IsDone then
 			local isDead = false
 			task.spawn(function()
 				print(`applying appearance: isDead={isDead}`)
 				local resF: TypeUnionLib.Future<TypeUnionLib.Result<true, { string }>> = TypeUnionLib.Future.awaitUntil(
-					AppearanceUtil.apply(artifactScene.Rig.Value, appearance),
+					AppearanceUtil.apply(heroScene.Rig.Value, appearance),
 					function()
 						return isDead
 					end
@@ -98,7 +103,7 @@ return function(props: Properties): React.ReactNode
 			end
 		end
 		return function() end
-	end, { appearance :: any, artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone })
+	end, { appearance :: any, heroScene and heroScene.IsAlive and heroScene.Rig.IsDone })
 
 	return e(React.Fragment, {}, {
 		ViewportFrame = e(
@@ -113,7 +118,7 @@ return function(props: Properties): React.ReactNode
 		),
 		TurnChar = e("Frame", {
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.325, 1.65),
+			Position = UDim2.fromScale(0.325, 0.65),
 			Size = UDim2.fromScale(0.35, 0.05),
 			SizeConstraint = Enum.SizeConstraint.RelativeXX,
 		}, {

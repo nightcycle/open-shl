@@ -6,31 +6,30 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
+local TextButton = require("@game/ReplicatedStorage/Generated/React/Component/TextButton")
 -- Hooks
 -- Contexts
 -- Types
-export type Properties = Frame.Properties & {
-}
+export type Properties = Frame.Properties & {}
 -- Constants
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
-function rowButton(props: {})
-	return e("TextButton", {
+function rowButton(props: TextButton.Properties)
+	return e(TextButton({
 		BackgroundColor3 = Color3.new(),
 		BackgroundTransparency = 0.5,
 		BorderColor3 = Color3.new(1, 1, 1),
 		FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
 		Modal = true,
 		Size = UDim2.new(1, -15, 0.0375, 0),
-		Text = "Exit",
 		TextColor3 = Color3.new(1, 1, 1),
 		TextScaled = true,
 		TextStrokeColor3 = Color3.new(1, 1, 1),
 		TextXAlignment = Enum.TextXAlignment.Left,
 		Visible = false,
-	})
+	}, props))
 end
 -- Class
 return function(props: Properties)
@@ -73,7 +72,6 @@ return function(props: Properties)
 				TextColor3 = Color3.fromRGB(255, 0, 0),
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
-				Visible = false,
 			}),
 		}
 	))
