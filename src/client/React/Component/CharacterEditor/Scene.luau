@@ -78,6 +78,17 @@ return function(props: Properties): React.ReactNode
 	end, { rotationDeg :: any, heroScene and heroScene.IsAlive and heroScene.Rig.IsDone })
 
 	React.useEffect(function()
+		if secretScene and secretScene.IsAlive and secretScene.Rig.IsDone then
+			task.spawn(function()
+				RigUtil.moveTo(
+					secretScene.Rig.Value,
+					secretScene.RigAnchor.CFrame * CFrame.Angles(0, math.rad(rotationDeg), 0)
+				)
+			end)
+		end
+	end, { rotationDeg :: any, secretScene and secretScene.IsAlive and secretScene.Rig.IsDone })
+
+	React.useEffect(function()
 		if appearance and heroScene and heroScene.IsAlive and heroScene.Rig.IsDone then
 			local isDead = false
 			task.spawn(function()
@@ -118,7 +129,7 @@ return function(props: Properties): React.ReactNode
 		),
 		TurnChar = e("Frame", {
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.325, 0.65),
+			Position = UDim2.fromScale(0.325, 0.5),
 			Size = UDim2.fromScale(0.35, 0.05),
 			SizeConstraint = Enum.SizeConstraint.RelativeXX,
 		}, {
