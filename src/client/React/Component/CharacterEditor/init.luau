@@ -88,7 +88,7 @@ return function(props: Properties)
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
 					setIsHeroFocus(not isHeroFocus)
-				end
+				end,
 			}),
 		}),
 

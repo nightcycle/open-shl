@@ -3,11 +3,7 @@
 -- Packages
 -- Modules
 -- Types
-type Branch = {
-	Key: string,
-	Title: string,
-	Branches: { Branch }?,
-}
+local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 -- Constants
 -- Variables
 -- References
