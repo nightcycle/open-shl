@@ -1,11 +1,14 @@
 --!strict
 -- Services
 -- Packages
+local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
+local Option = TypeUnionLib.Option
 -- Modules
 local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local ChoiceDefinitionConstructor = require("@game/ReplicatedStorage/Shared/Constructor/ChoiceDefinition")
 local PageBuilder = require("@game/ReplicatedStorage/Shared/Builder/CharacterEditorPageDefinition")
 -- Types
+type Option<V> = TypeUnionLib.Option<V>
 type PageBuilder = PageBuilder.Builder
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 type PageDefinition = CharacterEditorType.PageDefinition
@@ -125,30 +128,74 @@ Module.DEFINITION = PageBuilder.new("ROOT")
 			:insertExclusionTag("IsSecret")
 			:build()
 	)
-	:addChild(PageBuilder.new("Hoods"):insertExclusionTag("IsSecret"):build())
-	:addChild(PageBuilder.new("Shorts"):insertExclusionTag("IsSecret"):build())
-	:addChild(PageBuilder.new("Boots"):insertExclusionTag("IsSecret"):build())
-	:addChild(PageBuilder.new("Capes"):insertExclusionTag("IsSecret"):build())
-	:addChild(PageBuilder.new("Suit"):insertExclusionTag("IsSecret"):build())
-	:addChild(PageBuilder.new("Leg Armor"):insertExclusionTag("IsSecret"):build())
-	:addChild(PageBuilder.new("Glasses"):insertExclusionTag("IsSuper"):build())
-	:addChild(PageBuilder.new("Gloves"):insertExclusionTag("IsSuper"):build())
-	:addChild(PageBuilder.new("Hats"):insertExclusionTag("IsSuper"):build())
-	:addChild(PageBuilder.new("Jackets"):insertExclusionTag("IsSuper"):build())
-	:addChild(PageBuilder.new("Pants"):insertExclusionTag("IsSuper"):build())
-	:addChild(PageBuilder.new("Shirt"):insertExclusionTag("IsSuper"):build())
-	:addChild(PageBuilder.new("Shoes"):insertExclusionTag("IsSuper"):build())
-	:addChild(PageBuilder.new("Socks"):insertExclusionTag("IsSuper"):build())
-	:addChild(PageBuilder.new("Accessories"):insertExclusionTag("IsSuper"):build())
+	:addChild(newItemPage("Hoods", "costume", "hood", newAccessoryPageBuilder):insertExclusionTag("IsSecret"):build())
+	:addChild(
+		newItemPage("Shorts", "costume", "shorts", newAccessoryPageBuilder):insertExclusionTag("IsSecret"):build()
+	)
+	:addChild(newItemPage("Boots", "costume", "boots", newAccessoryPageBuilder):insertExclusionTag("IsSecret"):build())
+	:addChild(newItemPage("Capes", "costume", "capes", newAccessoryPageBuilder):insertExclusionTag("IsSecret"):build())
+	:addChild(newItemPage("Suit", "costume", "suit", newAccessoryPageBuilder):insertExclusionTag("IsSecret"):build())
+	:addChild(
+		newItemPage("Leg Armor", "costume", "leg-armor", newAccessoryPageBuilder):insertExclusionTag("IsSecret"):build()
+	)
+	:addChild(
+		newItemPage("Glasses", "clothing", "glasses", newAccessoryPageBuilder):insertExclusionTag("IsSuper"):build()
+	)
+	:addChild(
+		newItemPage("Gloves", "clothing", "gloves", newAccessoryPageBuilder):insertExclusionTag("IsSuper"):build()
+	)
+	:addChild(newItemPage("Hats", "clothing", "hats", newAccessoryPageBuilder):insertExclusionTag("IsSuper"):build())
+	:addChild(
+		newItemPage("Jackets", "clothing", "jackets", newAccessoryPageBuilder):insertExclusionTag("IsSuper"):build()
+	)
+	:addChild(newItemPage("Pants", "clothing", "pants", newAccessoryPageBuilder):insertExclusionTag("IsSuper"):build())
+	:addChild(
+		newItemPage("Shirts", "clothing", "shirts", newAccessoryPageBuilder):insertExclusionTag("IsSuper"):build()
+	)
+	:addChild(newItemPage("Shoes", "clothing", "shoes", newAccessoryPageBuilder):insertExclusionTag("IsSuper"):build())
+	:addChild(newItemPage("Socks", "clothing", "socks", newAccessoryPageBuilder):insertExclusionTag("IsSuper"):build())
+	:addChild(
+		newItemPage("Accessories", "clothing", "accessories", newAccessoryPageBuilder)
+			:insertExclusionTag("IsSuper")
+			:build()
+	)
 	:addChild(PageBuilder.new("Eyebrows"):build())
 	:addChild(PageBuilder.new("Eyes"):build())
-	:addChild(PageBuilder.new("Facial Hair"):build())
+	:addChild(newItemPage("Facial Hair", "cosmetics", "facial-hair", newAccessoryPageBuilder):build())
 	:addChild(PageBuilder.new("Eyebrows"):build())
 	:addChild(PageBuilder.new("Eyes"):build())
 	:addChild(PageBuilder.new("Mouths"):build())
-	:addChild(PageBuilder.new("Hair"):build())
+	:addChild(newItemPage("Hair", "cosmetics", "hair", newAccessoryPageBuilder):build())
 	:build()
 
-function Module.getPage() end
+function Module.getPage(path: string): Option<PageDefinition>
+	local segments = path:split("/")
+	assert(Module.DEFINITION.Type == "Default", `bad root page`)
+	if segments[1] == Module.DEFINITION.Key then
+		table.remove(segments, 1)
+	end
+	local function getPage(pageDef: PageDefinition, index: number): Option<PageDefinition>
+		local segment = segments[index]
+		if segment then
+			if index == #segments then
+				if pageDef.Type == "Default" and pageDef.Key == segment then
+					return Option.some(pageDef)
+				elseif pageDef.Type == "Item" and pageDef.DefinitionId == segment then
+					return Option.some(pageDef)
+				end
+			elseif pageDef.Type == "Default" and pageDef.Children then
+				for i, v in pageDef.Children do
+					local childOpt = getPage(v, index + 1)
+					if childOpt.IsSome then
+						return childOpt
+					end
+				end
+			end
+		end
+		return Option.none()
+	end
+
+	return getPage(Module.DEFINITION, 1)
+end
 
 return Module

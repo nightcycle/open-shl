@@ -15,7 +15,7 @@ local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 export type ItemDefinitionIndex = AppearanceType.ItemDefinitionIndex
 export type ItemDefinition = AppearanceType.ItemDefinition
 -- Constants
-local ID_DELIMITER = "/"
+local ID_DELIMITER = "_"
 -- Variables
 local DefinitionIndexCache: { [string]: ItemDefinitionIndex? } = {}
 local TemplateCache: { [string]: Instance? } = {}
