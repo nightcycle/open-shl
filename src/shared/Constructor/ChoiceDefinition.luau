@@ -13,15 +13,16 @@ type IconDefinition = MiscType.IconDefinition
 -- Class
 local Module = {}
 
-function Module.text(value: any, text: string): ChoiceDefinition
+Module.text = function(value: any, text: string?): ChoiceDefinition
 	local out: ChoiceDefinition = {
 		Type = "Text",
-		Text = text,
+		Text = tostring(text or value),
 		Value = value,
 	}
 	table.freeze(out)
 	return out
-end
+end :: ((value: string, text: string?) -> ChoiceDefinition) & ((value: any, text: string) -> ChoiceDefinition)
+
 function Module.icon(value: any, icon: IconDefinition): ChoiceDefinition
 	local out: ChoiceDefinition = {
 		Type = "Icon",

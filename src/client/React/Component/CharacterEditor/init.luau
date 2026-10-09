@@ -13,20 +13,17 @@ local Scene = require("@self/Scene")
 -- Contexts
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
+
 export type ItemDefinition = AppearanceType.ItemDefinition
 export type HiddenTag = AppearanceType.HiddenTag
+export type FieldDefinition = CharacterEditorType.FieldDefinition
 export type ActionInfo =
 	{
-		Type: "SelectItem",
-		ItemDefinition: ItemDefinition?,
-	}
-	| {
-		Type: "AddItem",
-		ItemDefinition: ItemDefinition,
-	}
-	| {
-		Type: "RemoveItem",
-		ItemDefinition: ItemDefinition,
+		Type: "FieldUpdated",
+		Path: string,
+		Field: FieldDefinition,
+		Value: any,
 	}
 	| {
 		Type: "Exit",

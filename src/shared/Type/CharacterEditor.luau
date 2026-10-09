@@ -10,36 +10,37 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
 local Types = {}
 
-export type Tag = "IsHero" | "IsSecret" | "IsLensFocused" | "IsEdgeFocused"
-Types.Tag = Type.literal("IsHero", "IsSecret", "IsLensFocused", "IsEdgeFocused")
+export type Tag = "IsSuper" | "IsSecret" | "IsLensFocused" | "IsEdgeFocused"
+Types.Tag = Type.literal("IsSuper", "IsSecret", "IsLensFocused", "IsEdgeFocused")
 
 export type FieldDefinition =
 	{
 		Type: "Text",
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
-		Description: string,
+		Description: string?,
 		MaxLength: number?,
 	}
 	| {
 		Type: "Choose",
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
-		Description: string,
+		Description: string?,
 		Choices: { MiscType.ChoiceDefinition },
 	}
 	| {
 		Type: "ChoiceList",
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
-		Description: string,
+		Description: string?,
 		Choices: { MiscType.ChoiceDefinition },
 	}
 	| {
 		Type: "Color",
-		Description: string,
+		Description: string?,
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
 		Filtered: { Color3 }?,
 	}
 	| {
 		Type: "Material",
+		Description: string?,
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
 		Filtered: { Enum.Material }?,
 	}
@@ -54,12 +55,14 @@ export type FieldDefinition =
 		DisabledSections: { FieldDefinition }?,
 	}
 	| {
-		Type: "Button",
+		Type: "GenerateAlias",
+		ExclusionTags: { Tag }?, -- used to determine if a field is visible
+	}
+	| {
+		Type: "SectionHeader",
 		Text: string,
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
-		Alignment: Enum.HorizontalAlignment,
 	}
-
 do -- Types.FieldDefinition
 	local checkFieldDefinition: (unknown) -> (boolean, string?)
 	local sections = Type.optional(Type.array(function(value: unknown): (boolean, string?)
@@ -71,29 +74,30 @@ do -- Types.FieldDefinition
 		Type.strictInterface({
 			Type = Type.literal("Text"),
 			ExclusionTags = exclusionTags,
-			Description = Type.string,
+			Description = Type.optional(Type.string),
 			MaxLength = Type.optional(Type.number),
 		}),
 		Type.strictInterface({
 			Type = Type.literal("Choose"),
 			ExclusionTags = exclusionTags,
-			Description = Type.string,
+			Description = Type.optional(Type.string),
 			Choices = Type.array(MiscType.ChoiceDefinition),
 		}),
 		Type.strictInterface({
 			Type = Type.literal("ChoiceList"),
 			ExclusionTags = exclusionTags,
-			Description = Type.string,
+			Description = Type.optional(Type.string),
 			Choices = Type.array(MiscType.ChoiceDefinition),
 		}),
 		Type.strictInterface({
 			Type = Type.literal("Color"),
-			Description = Type.string,
+			Description = Type.optional(Type.string),
 			ExclusionTags = exclusionTags,
 			Filtered = Type.optional(Type.array(Type.Color3)),
 		}),
 		Type.strictInterface({
 			Type = Type.literal("Material"),
+			Description = Type.optional(Type.string),
 			ExclusionTags = exclusionTags,
 			Filtered = Type.optional(Type.array(Type.enum(Enum.Material))),
 		}),
@@ -108,10 +112,13 @@ do -- Types.FieldDefinition
 			DisabledSections = sections,
 		}),
 		Type.strictInterface({
-			Type = Type.literal("Button"),
+			Type = Type.literal("GenerateAlias"),
+			ExclusionTags = exclusionTags,
+		}),
+		Type.strictInterface({
+			Type = Type.literal("SectionHeader"),
 			Text = Type.string,
 			ExclusionTags = exclusionTags,
-			Alignment = Type.enum(Enum.HorizontalAlignment),
 		})
 	)
 	Types.FieldDefinition = checkFieldDefinition

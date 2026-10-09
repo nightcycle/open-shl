@@ -11,22 +11,27 @@ type PageDefinition = CharacterEditorType.PageDefinition
 
 export type Builder = {
 	setTitle: (self: Builder, title: string?) -> Builder,
-	addField: (self: Builder, field: FieldDefinition) -> Builder,
-	insertTextField: (self: Builder, description: string, maxLength: number?, exclusionTags: { Tag }?) -> Builder,
+	insertTextField: (self: Builder, description: string?, maxLength: number?, exclusionTags: { Tag }?) -> Builder,
+	insertSectionHeaderField: (self: Builder, text: string, exclusionTags: { Tag }?) -> Builder,
 	insertChooseField: (
 		self: Builder,
-		description: string,
 		choices: { ChoiceDefinition },
+		description: string?,
 		exclusionTags: { Tag }?
 	) -> Builder,
 	insertChoiceListField: (
 		self: Builder,
-		description: string,
 		choices: { ChoiceDefinition },
+		description: string?,
 		exclusionTags: { Tag }?
 	) -> Builder,
-	insertColorField: (self: Builder, description: string, filtered: { Color3 }?, exclusionTags: { Tag }?) -> Builder,
-	insertMaterialField: (self: Builder, filtered: { Enum.Material }?, exclusionTags: { Tag }?) -> Builder,
+	insertColorField: (self: Builder, description: string?, filtered: { Color3 }?, exclusionTags: { Tag }?) -> Builder,
+	insertMaterialField: (
+		self: Builder,
+		descriptino: string?,
+		filtered: { Enum.Material }?,
+		exclusionTags: { Tag }?
+	) -> Builder,
 	insertToggleField: (
 		self: Builder,
 		focus: Tag,
@@ -37,12 +42,8 @@ export type Builder = {
 		disabledSections: { FieldDefinition }?,
 		exclusionTags: { Tag }?
 	) -> Builder,
-	insertButtonField: (
-		self: Builder,
-		text: string,
-		alignment: Enum.HorizontalAlignment,
-		exclusionTags: { Tag }?
-	) -> Builder,
+	insertExclusionTag: (self: Builder, tag: Tag) -> Builder,
+	insertGenerateAliasField: (self: Builder, exclusionTags: { Tag }?) -> Builder,
 	addChild: (self: Builder, child: PageDefinition) -> Builder,
 	build: (self: Builder) -> PageDefinition,
 }
@@ -72,12 +73,21 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 				return definition
 			end)
 		end,
-		addField = function(_: Builder, field: FieldDefinition): Builder
-			return insertField(field)
+		insertExclusionTag = function(_: Builder, tag: Tag): Builder
+			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
+				if definition.ExclusionTags then
+					local tags = table.clone(definition.ExclusionTags)
+					table.insert(tags, tag)
+					definition.ExclusionTags = tags
+				else
+					definition.ExclusionTags = { tag }
+				end
+				return definition
+			end)
 		end,
 		insertTextField = function(
 			_: Builder,
-			description: string,
+			description: string?,
 			maxLength: number?,
 			exclusionTags: { Tag }?
 		): Builder
@@ -88,10 +98,17 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 				ExclusionTags = exclusionTags,
 			})
 		end,
+		insertSectionHeaderField = function(_: Builder, text: string, exclusionTags: { Tag }?): Builder
+			return insertField({
+				Type = "SectionHeader",
+				Text = text,
+				ExclusionTags = exclusionTags,
+			})
+		end,
 		insertChooseField = function(
 			_: Builder,
-			description: string,
 			choices: { ChoiceDefinition },
+			description: string?,
 			exclusionTags: { Tag }?
 		): Builder
 			return insertField({
@@ -103,8 +120,8 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		insertChoiceListField = function(
 			_: Builder,
-			description: string,
 			choices: { ChoiceDefinition },
+			description: string?,
 			exclusionTags: { Tag }?
 		): Builder
 			return insertField({
@@ -116,7 +133,7 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		insertColorField = function(
 			_: Builder,
-			description: string,
+			description: string?,
 			filtered: { Color3 }?,
 			exclusionTags: { Tag }?
 		): Builder
@@ -127,8 +144,18 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 				ExclusionTags = exclusionTags,
 			})
 		end,
-		insertMaterialField = function(_: Builder, filtered: { Enum.Material }?, exclusionTags: { Tag }?): Builder
-			return insertField({ Type = "Material", Filtered = filtered, ExclusionTags = exclusionTags })
+		insertMaterialField = function(
+			_: Builder,
+			description: string?,
+			filtered: { Enum.Material }?,
+			exclusionTags: { Tag }?
+		): Builder
+			return insertField({
+				Type = "Material",
+				Description = description,
+				Filtered = filtered,
+				ExclusionTags = exclusionTags,
+			})
 		end,
 		insertToggleField = function(
 			_: Builder,
@@ -151,13 +178,8 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 				ExclusionTags = exclusionTags,
 			})
 		end,
-		insertButtonField = function(
-			_: Builder,
-			text: string,
-			alignment: Enum.HorizontalAlignment,
-			exclusionTags: { Tag }?
-		): Builder
-			return insertField({ Type = "Button", Text = text, Alignment = alignment, ExclusionTags = exclusionTags })
+		insertGenerateAliasField = function(_: Builder, exclusionTags: { Tag }?): Builder
+			return insertField({ Type = "GenerateAlias", ExclusionTags = exclusionTags })
 		end,
 		addChild = function(_: Builder, child: PageDefinition): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
@@ -178,7 +200,7 @@ return table.freeze({
 	fromDefinition = function(definition: PageDefinition): Builder
 		return builder(definition)
 	end,
-	new = function(key: string, exclusionTags: { Tag }?): Builder
-		return builder({ Key = key, ExclusionTags = exclusionTags })
+	new = function(key: string): Builder
+		return builder({ Key = key })
 	end,
 })
