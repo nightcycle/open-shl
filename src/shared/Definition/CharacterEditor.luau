@@ -174,6 +174,9 @@ function Module.getPage(path: string): Option<PageDefinition>
 	if segments[1] == Module.DEFINITION.Key then
 		table.remove(segments, 1)
 	end
+	if segments[1] == "" then
+		table.remove(segments, 1)
+	end
 	local function getPage(pageDef: PageDefinition, index: number): Option<PageDefinition>
 		local segment = segments[index]
 		if segment then
