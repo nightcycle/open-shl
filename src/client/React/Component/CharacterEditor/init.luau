@@ -18,10 +18,12 @@ local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/Charact
 export type ItemDefinition = AppearanceType.ItemDefinition
 export type HiddenTag = AppearanceType.HiddenTag
 export type FieldDefinition = CharacterEditorType.FieldDefinition
+export type PageDefinition = CharacterEditorType.PageDefinition
 export type ActionInfo =
 	{
 		Type: "FieldUpdated",
 		Path: string,
+		Page: PageDefinition,
 		Field: FieldDefinition,
 		Value: any,
 	}

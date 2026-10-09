@@ -28,7 +28,7 @@ export type Builder = {
 	insertColorField: (self: Builder, description: string?, filtered: { Color3 }?, exclusionTags: { Tag }?) -> Builder,
 	insertMaterialField: (
 		self: Builder,
-		descriptino: string?,
+		description: string?,
 		filtered: { Enum.Material }?,
 		exclusionTags: { Tag }?
 	) -> Builder,
@@ -59,9 +59,13 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 
 	local function insertField(field: FieldDefinition): Builder
 		return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
-			local properties = table.clone(definition.Properties or {})
+			local properties = table.clone(definition.Fields or {})
 			table.insert(properties, field)
-			definition.Properties = properties
+			if definition.Type == "Default" then
+				definition.Fields = properties
+			else
+				definition.Fields = properties
+			end
 			return definition
 		end)
 	end
@@ -69,18 +73,22 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 	local out: Builder = {
 		setTitle = function(_: Builder, title: string?): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
+				if definition.Type == "Item" then
+					warn(`Cannot set Title on Item page "{definition.DefinitionId}"; only Default pages support Title`)
+					return definition
+				end
 				definition.Title = title
 				return definition
 			end)
 		end,
 		insertExclusionTag = function(_: Builder, tag: Tag): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
-				if definition.ExclusionTags then
-					local tags = table.clone(definition.ExclusionTags)
-					table.insert(tags, tag)
+				local tags: { Tag } = table.clone(definition.ExclusionTags or {})
+				table.insert(tags, tag)
+				if definition.Type == "Default" then
 					definition.ExclusionTags = tags
 				else
-					definition.ExclusionTags = { tag }
+					definition.ExclusionTags = tags
 				end
 				return definition
 			end)
@@ -183,6 +191,12 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		addChild = function(_: Builder, child: PageDefinition): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
+				if definition.Type == "Item" then
+					warn(
+						`Cannot add Children to Item page "{definition.DefinitionId}"; only Default pages support Children`
+					)
+					return definition
+				end
 				local children = table.clone(definition.Children or {})
 				table.insert(children, child)
 				definition.Children = children
@@ -201,6 +215,9 @@ return table.freeze({
 		return builder(definition)
 	end,
 	new = function(key: string): Builder
-		return builder({ Key = key })
+		return builder({ Type = "Default", Key = key })
+	end,
+	newItem = function(definitionId: string): Builder
+		return builder({ Type = "Item", DefinitionId = definitionId })
 	end,
 })

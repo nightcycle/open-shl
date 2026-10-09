@@ -10,8 +10,8 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
 local Types = {}
 
-export type Tag = "IsSuper" | "IsSecret" | "IsLensFocused" | "IsEdgeFocused"
-Types.Tag = Type.literal("IsSuper", "IsSecret", "IsLensFocused", "IsEdgeFocused")
+export type Tag = "IsSuper" | "IsSecret" | "IsLensFocused" | "IsEdgeFocused" | "HasNoLenses"
+Types.Tag = Type.literal("IsSuper", "IsSecret", "IsLensFocused", "IsEdgeFocused", "HasNoLenses")
 
 export type FieldDefinition =
 	{
@@ -123,25 +123,42 @@ do -- Types.FieldDefinition
 	)
 	Types.FieldDefinition = checkFieldDefinition
 end
-export type PageDefinition = {
-	Key: string, -- used for keeping track of selection / paths
-	Title: string?, -- text actually shown on button, uses key otherwise
-	ExclusionTags: { Tag }?, -- used to determine if a field is visible
-	Properties: { FieldDefinition }?, -- the fields to fill the property panel with
-	Children: { PageDefinition }?, -- the buttons that appear in the explorer when this page is selected
-}
+export type PageDefinition =
+	{
+		Type: "Default",
+		Key: string, -- used for keeping track of selection / paths
+		Title: string?, -- text actually shown on button, uses key otherwise
+		ExclusionTags: { Tag }?, -- used to determine if a page is visible
+		Fields: { FieldDefinition }?, -- the fields to fill the property panel with
+		Children: { PageDefinition }?, -- the buttons that appear in the explorer when this page is selected
+	}
+	| {
+		Type: "Item",
+		DefinitionId: string,
+		ExclusionTags: { Tag }?, -- used to determine if a page is visible
+		Fields: { FieldDefinition }?, -- the fields to fill the property panel with
+	}
 
 do -- Types.PageDefinition
 	local checkPageDefinition: (unknown) -> (boolean, string?)
-	checkPageDefinition = Type.strictInterface({
-		Key = Type.string,
-		Title = Type.optional(Type.string),
-		ExclusionTags = Type.optional(Type.array(Types.Tag)),
-		Properties = Type.optional(Type.array(Types.FieldDefinition)),
-		Children = Type.optional(Type.array(function(value: unknown): (boolean, string?)
-			return checkPageDefinition(value)
-		end)),
-	})
+	checkPageDefinition = Type.union(
+		Type.strictInterface({
+			Type = Type.literal("Default"),
+			Key = Type.string,
+			Title = Type.optional(Type.string),
+			ExclusionTags = Type.optional(Type.array(Types.Tag)),
+			Fields = Type.optional(Type.array(Types.FieldDefinition)),
+			Children = Type.optional(Type.array(function(value: unknown): (boolean, string?)
+				return checkPageDefinition(value)
+			end)),
+		}),
+		Type.strictInterface({
+			Type = Type.literal("Item"),
+			DefinitionId = Type.string,
+			ExclusionTags = Type.optional(Type.array(Types.Tag)),
+			Fields = Type.optional(Type.array(Types.FieldDefinition)),
+		})
+	)
 	Types.PageDefinition = checkPageDefinition
 end
 

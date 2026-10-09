@@ -108,10 +108,20 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 	return out
 end
 
-Module.list = function(): { ItemDefinition }
+Module.list = function(group: AppearanceType.ItemGroup?, category: string?): { ItemDefinition }
 	local out = {}
 	for _, groupFolder in CharacterLibrary:GetChildren() do
+		if group ~= nil then
+			if group ~= groupFolder.Name then
+				continue
+			end
+		end
 		for _, categoryFolder in groupFolder:GetChildren() do
+			if category ~= nil then
+				if category ~= categoryFolder.Name then
+					continue
+				end
+			end
 			for _, item in categoryFolder:GetChildren() do
 				local defIndex: ItemDefinitionIndex = {
 					Group = groupFolder.Name :: AppearanceType.ItemGroup,
