@@ -232,7 +232,7 @@ local function builder(
 	TableUtil.deepFreeze(priorEntries)
 
 	local out: Builder = {
-		addEmote = function(_self: Builder, name: string, assetIdOrUrl: AssetIdOrUrl, isEquipped: boolean?): Builder
+		addEmote = function(_: Builder, name: string, assetIdOrUrl: AssetIdOrUrl, isEquipped: boolean?): Builder
 			local assetId = getAssetId(assetIdOrUrl)
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				local slots: { number } = {}
@@ -271,7 +271,7 @@ local function builder(
 				return entries
 			end)
 		end,
-		addBodyColor = function(_self: Builder, color: Color3, bodyPart: Enum.BodyPart?): Builder
+		addBodyColor = function(_: Builder, color: Color3, bodyPart: Enum.BodyPart?): Builder
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
 					return entry.Type ~= "BodyColor" or (bodyPart ~= nil and entry.Group ~= bodyPart)
@@ -293,7 +293,7 @@ local function builder(
 				return entries
 			end)
 		end,
-		addBodyPart = function(_self: Builder, assetIdOrUrl: AssetIdOrUrl, bodyPart: Enum.BodyPart): Builder
+		addBodyPart = function(_: Builder, assetIdOrUrl: AssetIdOrUrl, bodyPart: Enum.BodyPart): Builder
 			local assetId = getAssetId(assetIdOrUrl)
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
@@ -303,7 +303,7 @@ local function builder(
 				return entries
 			end)
 		end,
-		addAnimation = function(_self: Builder, assetIdOrUrl: AssetIdOrUrl, group: AnimationGroup): Builder
+		addAnimation = function(_: Builder, assetIdOrUrl: AssetIdOrUrl, group: AnimationGroup): Builder
 			local assetId = getAssetId(assetIdOrUrl)
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
@@ -314,7 +314,7 @@ local function builder(
 			end)
 		end,
 		addAccessory = function(
-			_self: Builder,
+			_: Builder,
 			assetIdOrUrl: AssetIdOrUrl,
 			group: Enum.AccessoryType,
 			isLayered: boolean?,
@@ -340,7 +340,7 @@ local function builder(
 				return entries
 			end)
 		end,
-		addTexture = function(_self: Builder, assetIdOrUrl: AssetIdOrUrl, group: TextureGroup): Builder
+		addTexture = function(_: Builder, assetIdOrUrl: AssetIdOrUrl, group: TextureGroup): Builder
 			local assetId = getAssetId(assetIdOrUrl)
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
@@ -350,7 +350,7 @@ local function builder(
 				return entries
 			end)
 		end,
-		setStaticFacialAnimation = function(_self: Builder, value: boolean): Builder
+		setStaticFacialAnimation = function(_: Builder, value: boolean): Builder
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
 					return entry.Type ~= "Bool" or entry.Group ~= "StaticFacialAnimation"
@@ -359,7 +359,7 @@ local function builder(
 				return entries
 			end)
 		end,
-		setUseAvatarSettings = function(_self: Builder, value: boolean): Builder
+		setUseAvatarSettings = function(_: Builder, value: boolean): Builder
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
 					return entry.Type ~= "Bool" or entry.Group ~= "UseAvatarSettings"
@@ -368,7 +368,7 @@ local function builder(
 				return entries
 			end)
 		end,
-		addScale = function(_self: Builder, value: number, group: ScaleGroup): Builder
+		addScale = function(_: Builder, value: number, group: ScaleGroup): Builder
 			return builder(priorEntries, function(entries: { HumanoidConfigEntry }): { HumanoidConfigEntry }
 				entries = filter(entries, function(entry: HumanoidConfigEntry): boolean
 					return entry.Type ~= "Scale" or entry.Group ~= group
@@ -377,7 +377,7 @@ local function builder(
 				return entries
 			end)
 		end,
-		build = function(_self: Builder): HumanoidDescription
+		build = function(_: Builder): HumanoidDescription
 			return toHumanoidDescription(priorEntries)
 		end,
 	}

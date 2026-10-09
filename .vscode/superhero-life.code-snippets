@@ -47,6 +47,14 @@
 		"description": "Imports a builder.",
 		"scope": "luau"
 	},
+	"irequire const": {
+		"prefix": "irequire const",
+		"body": [
+			"local ${name}Constructor = require(\"@game/ReplicatedStorage/Shared/Constructor/${name}\")"
+		],
+		"description": "Imports a builder.",
+		"scope": "luau"
+	},
 	"irequire util": {
 		"prefix": "irequire util",
 		"body": [
