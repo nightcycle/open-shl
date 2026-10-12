@@ -4,8 +4,8 @@
 -- Modules
 -- Contexts
 -- Hooks
-local useFirstDefaultPath =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFirstDefaultPath")
+local useFirstFolderPath =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFirstFolderPath")
 local usePage = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/usePage")
 -- Types
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
@@ -16,5 +16,5 @@ export type PageDefinition = CharacterEditorType.PageDefinition
 -- Private Functions
 -- Class
 return function(): PageDefinition?
-	return usePage(useFirstDefaultPath())
+	return usePage(useFirstFolderPath())
 end

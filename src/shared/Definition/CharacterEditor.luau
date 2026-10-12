@@ -40,19 +40,26 @@ end
 function newAccessoryPageBuilder(itemDef: AppearanceType.ItemDefinition): PageBuilder
 	return PageBuilder.newItem(itemDef.Id):insertColorField():insertMaterialField()
 end
-function getParentPath(path: string): Option<string>
+local function getPathSegments(path: string): { string }
 	local segments = path:split("/")
-	if segments[1] == ROOT_KEY then
-		table.remove(segments, 1)
-	end
 	if segments[1] == "" then
 		table.remove(segments, 1)
 	end
+	if segments[1] == ROOT_KEY then
+		table.remove(segments, 1)
+	end
+	if segments[#segments] == "" then
+		table.remove(segments)
+	end
+	return segments
+end
+local function getParentPath(path: string): Option<string>
+	local segments = getPathSegments(path)
 	if #segments == 0 then
 		return Option.none()
-	else
-		return Option.some(table.concat(segments, "/"))
 	end
+	table.remove(segments)
+	return Option.some(table.concat(segments, "/"))
 end
 
 -- Class
@@ -185,61 +192,50 @@ Module.DEFINITION = PageBuilder.new(ROOT_KEY)
 	:build()
 
 function Module.getPage(path: string): Option<PageDefinition>
-	local segments = path:split("/")
-	if segments[1] == ROOT_KEY then
-		table.remove(segments, 1)
-	end
-	if segments[1] == "" then
-		table.remove(segments, 1)
-	end
+	local segments = getPathSegments(path)
 	table.insert(segments, 1, ROOT_KEY)
 	local function getPage(pageDef: PageDefinition, index: number): Option<PageDefinition>
 		local segment = segments[index]
-		if segment then
-			print(`gp seg: {segment}`)
-			if index == #segments and segment then
-				print(` - final: {pageDef.Type}, key: "{pageDef.Key}"`)
-				if pageDef.Type == "Default" and pageDef.Key == segment then
-					return Option.some(pageDef)
-				elseif pageDef.Type == "Item" and pageDef.DefinitionId == segment then
-					return Option.some(pageDef)
-				end
-			elseif pageDef.Type == "Default" and pageDef.Children then
-				for i, v in pageDef.Children do
-					local childOpt = getPage(v, index + 1)
-					if childOpt.IsSome then
-						return childOpt
-					end
+		local key = if pageDef.Type == "Default" then pageDef.Key else pageDef.DefinitionId
+		if key ~= segment then
+			return Option.none()
+		end
+		if index == #segments then
+			return Option.some(pageDef)
+		end
+		if pageDef.Type == "Default" and pageDef.Children then
+			for _, child in pageDef.Children do
+				local childOpt = getPage(child, index + 1)
+				if childOpt.IsSome then
+					return childOpt
 				end
 			end
 		end
 		return Option.none()
 	end
-	if #segments == 0 then
-		return Option.some(Module.DEFINITION)
-	end
 
 	return getPage(Module.DEFINITION, 1)
 end
 
+Module.getParentPath = getParentPath
+
 function Module.getParentPage(path: string): Option<PageDefinition>
-	return Option.flatten(Option.map(getParentPath(path), function(parentPath)
+	return Option.flatten(Option.map(getParentPath(path), function(parentPath: string): Option<PageDefinition>
 		return Module.getPage(parentPath)
 	end))
 end
 
-function Module.getChildPath(path: string, pageDef: PageDefinition)
+function Module.getChildPath(path: string, pageDef: PageDefinition): string
 	if pageDef.Type == "Item" then
 		return path .. "/" .. pageDef.DefinitionId
 	else
 		return path .. "/" .. pageDef.Key
 	end
 end
-function Module.findFirstDefaultPath(path: string): string
+function Module.findFirstFolderPath(path: string): string
 	do
 		local page = Module.getPage(path)
-		print(`first path: {path}`, page)
-		if page.IsSome and page.Value.Type == "Default" then
+		if page.IsSome and page.Value.Type == "Default" and page.Value.Children then
 			return path
 		end
 	end
@@ -247,7 +243,7 @@ function Module.findFirstDefaultPath(path: string): string
 	while parentPathOpt.IsSome do
 		local parentPage = Module.getPage(parentPathOpt.Value)
 		if parentPage.IsSome then
-			if parentPage.Value.Type == "Default" then
+			if parentPage.Value.Type == "Default" and parentPage.Value.Children then
 				return parentPathOpt.Value
 			else
 				parentPathOpt = getParentPath(parentPathOpt.Value)
@@ -258,8 +254,8 @@ function Module.findFirstDefaultPath(path: string): string
 	end
 	return ""
 end
-function Module.findFirstDefaultPage(path: string): Option<PageDefinition>
-	return Module.getPage(Module.findFirstDefaultPath(path))
+function Module.findFirstFolderPage(path: string): Option<PageDefinition>
+	return Module.getPage(Module.findFirstFolderPath(path))
 end
 
 return Module

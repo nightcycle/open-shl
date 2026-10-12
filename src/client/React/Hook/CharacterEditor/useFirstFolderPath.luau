@@ -18,6 +18,6 @@ export type PageDefinition = CharacterEditorType.PageDefinition
 return function(): string
 	local path = React.useContext(CharacterEditorPathContext)
 	return React.useMemo(function(): string
-		return CharacterEditorDefinition.findFirstDefaultPath(path)
+		return CharacterEditorDefinition.findFirstFolderPath(path)
 	end, { path })
 end

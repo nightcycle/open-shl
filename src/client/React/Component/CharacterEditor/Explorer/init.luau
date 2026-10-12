@@ -9,8 +9,8 @@ local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Defini
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local TextButton = require("@game/ReplicatedStorage/Generated/React/Component/TextButton")
 -- Hooks
-local useFirstDefaultPath =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFirstDefaultPath")
+local useFirstFolderPath =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFirstFolderPath")
 local usePage = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/usePage")
 -- Contexts
 local IsHeroFocusContext =
@@ -43,17 +43,15 @@ return function(props: Properties): React.ReactNode
 	local rows: { [string]: React.ReactNode } = {}
 	local isHeroFocus = React.useContext(IsHeroFocusContext)
 	local currentPath = React.useContext(PathContext)
-	print(`path: {currentPath}`)
 	local setCurrentPath = React.useContext(SetPathContext)
-	local currentFirstPath = useFirstDefaultPath()
-	print(`ancestor: {currentFirstPath}`)
+	local currentFirstPath = useFirstFolderPath()
 	local currentFirstPage = usePage(currentFirstPath)
-	if
-		currentFirstPage
-		and currentFirstPage.Type == "Default"
-		and currentFirstPage.Children
-	then
+	if currentFirstPage and currentFirstPage.Type == "Default" and currentFirstPage.Children then
 		for i, pageDef in currentFirstPage.Children do
+			local hasChildren = false
+			if pageDef.Type == "Default" and pageDef.Children then
+				hasChildren = true
+			end
 			local pagePath = CharacterEditorDefinition.getChildPath(currentFirstPath, pageDef)
 			local function navigateTo()
 				if not setCurrentPath then
@@ -95,7 +93,6 @@ return function(props: Properties): React.ReactNode
 			end
 		end
 	end
-	print(`page`, currentFirstPage)
 	return e(Frame(
 		{
 			BackgroundColor3 = Color3.new(),
@@ -145,10 +142,20 @@ return function(props: Properties): React.ReactNode
 				Modal = true,
 				Position = UDim2.fromScale(0.3, 0.125),
 				Size = UDim2.fromScale(0.4, 0.075),
-				Text = "Exit",
-				TextColor3 = Color3.fromRGB(255, 0, 0),
+				Text = currentFirstPath == "" and "Exit" or "Back",
+				TextColor3 = currentFirstPath == "" and Color3.fromRGB(255, 0, 0) or Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
+				[React.Event.Activated] = function()
+					if setCurrentPath then
+						local parentPath = CharacterEditorDefinition.getParentPath(currentFirstPath)
+						if parentPath.IsSome then
+							setCurrentPath(CharacterEditorDefinition.findFirstFolderPath(parentPath.Value))
+						else
+							setCurrentPath("")
+						end
+					end
+				end,
 			}),
 		}
 	))
