@@ -13,6 +13,8 @@ local Types = {}
 export type Tag = "IsSuper" | "IsSecret" | "IsLensFocused" | "IsEdgeFocused" | "HasNoLenses"
 Types.Tag = Type.literal("IsSuper", "IsSecret", "IsLensFocused", "IsEdgeFocused", "HasNoLenses")
 
+export type ButtonStyle = "Outline" | "Filled"
+
 export type FieldDefinition =
 	{
 		Type: "Text",
@@ -50,7 +52,7 @@ export type FieldDefinition =
 		Text: string,
 		DisabledText: string?,
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
-		Style: "Outline" | "Filled",
+		Style: ButtonStyle,
 		Sections: { FieldDefinition }?,
 		DisabledSections: { FieldDefinition }?,
 	}
