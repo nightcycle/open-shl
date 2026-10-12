@@ -19,10 +19,10 @@ local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
 local CharacterPreviewAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
+local IsHeroFocusContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
 -- Types
-export type Properties = {
-	IsHeroFocus: boolean,
-}
+export type Properties = {}
 -- Constants
 local ROTATION_INC_DEG = 45
 -- Variables
@@ -33,6 +33,7 @@ local SecretSceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/sc
 local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
+	local isHeroFocus = React.useContext(IsHeroFocusContext)
 	local appearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
 	local previewAppearance: CharacterAppearanceContext.Appearance? =
 		React.useContext(CharacterPreviewAppearanceContext)
@@ -59,7 +60,7 @@ return function(props: Properties): React.ReactNode
 			secretScene.Instance.Parent = worldModel
 			worldModel.Parent = viewport
 			viewport.CurrentCamera = camera
-			camera.CFrame = props.IsHeroFocus and heroScene.CameraMount.CFrame or secretScene.CameraMount.CFrame
+			camera.CFrame = isHeroFocus and heroScene.CameraMount.CFrame or secretScene.CameraMount.CFrame
 			camera.Parent = viewport
 		end)
 		return function()
@@ -73,8 +74,8 @@ return function(props: Properties): React.ReactNode
 
 	local currentCamera: Camera?, setCurrentCamera: (Camera?) -> () = React.useState(nil :: Camera?)
 	do
-		local isHeroFocusRef = React.useRef(props.IsHeroFocus)
-		isHeroFocusRef.current = props.IsHeroFocus
+		local isHeroFocusRef = React.useRef(isHeroFocus)
+		isHeroFocusRef.current = isHeroFocus
 		local springRef = React.useRef(Spring.new(1, 0.8, isHeroFocusRef.current and 0 or 1))
 		React.useEffect(function()
 			if
@@ -191,7 +192,7 @@ return function(props: Properties): React.ReactNode
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
-					if props.IsHeroFocus then
+					if isHeroFocus then
 						setHeroRotationDeg(heroRotationDeg + ROTATION_INC_DEG)
 					else
 						setSecretRotationDeg(secretRotationDeg + ROTATION_INC_DEG)
@@ -211,7 +212,7 @@ return function(props: Properties): React.ReactNode
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
-					if props.IsHeroFocus then
+					if isHeroFocus then
 						setHeroRotationDeg(heroRotationDeg - ROTATION_INC_DEG)
 					else
 						setSecretRotationDeg(secretRotationDeg - ROTATION_INC_DEG)

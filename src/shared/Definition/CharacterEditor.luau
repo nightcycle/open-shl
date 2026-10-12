@@ -30,7 +30,7 @@ function newItemPage(
 	category: string,
 	fn: (AppearanceType.ItemDefinition) -> PageBuilder
 ): PageBuilder
-	local builder = PageBuilder.new("Chest Armor")
+	local builder = PageBuilder.new(key)
 	for i, app in AppearanceItemDefinition.list(group, category) do
 		builder = builder:addChild(fn(app):build())
 	end
@@ -196,6 +196,10 @@ function Module.getPage(path: string): Option<PageDefinition>
 			end
 		end
 		return Option.none()
+	end
+	print(`segments:`, segments)
+	if #segments == 0 then
+		return Option.some(Module.DEFINITION)
 	end
 
 	return getPage(Module.DEFINITION, 1)

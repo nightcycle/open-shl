@@ -8,7 +8,11 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local TextButton = require("@game/ReplicatedStorage/Generated/React/Component/TextButton")
 -- Hooks
+local useCurrentPage =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useCurrentPage")
 -- Contexts
+local IsHeroFocusContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
 -- Types
 export type Properties = Frame.Properties & {}
 -- Constants
@@ -28,11 +32,40 @@ function rowButton(props: TextButton.Properties)
 		TextScaled = true,
 		TextStrokeColor3 = Color3.new(1, 1, 1),
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Visible = false,
 	}, props))
 end
 -- Class
-return function(props: Properties)
+return function(props: Properties): React.ReactNode
+	local currentPage = useCurrentPage()
+	local rows: { [string]: React.ReactNode } = {}
+	local isHeroFocus = React.useContext(IsHeroFocusContext)
+	if currentPage and currentPage.Type == "Default" and currentPage.Children then
+		for i, pageDef in currentPage.Children do
+			if pageDef.ExclusionTags then
+				if isHeroFocus then
+					if table.find(pageDef.ExclusionTags, "IsSuper") then
+						continue
+					end
+				else
+					if table.find(pageDef.ExclusionTags, "IsSecret") then
+						continue
+					end
+				end
+			end
+			if pageDef.Type == "Item" then
+				rows[`Field-{i}`] = e(rowButton, {
+					LayoutOrder = i,
+					Text = pageDef.DefinitionId,
+				})
+			elseif pageDef.Type == "Default" then
+				rows[`Field-{i}`] = e(rowButton, {
+					LayoutOrder = i,
+					Text = pageDef.Title or pageDef.Key,
+				})
+			end
+		end
+	end
+	print(`page`, currentPage)
 	return e(Frame(
 		{
 			BackgroundColor3 = Color3.new(),
@@ -41,6 +74,12 @@ return function(props: Properties)
 		} :: Frame.Properties,
 		props,
 		{
+			UIPadding = e("UIPadding", {
+				PaddingRight = UDim.new(0, 8),
+				PaddingLeft = UDim.new(0, 8),
+				PaddingTop = UDim.new(0, 8),
+				PaddingBottom = UDim.new(0, 8),
+			}),
 			ScrollingFrame = e("ScrollingFrame", {
 				BackgroundColor3 = Color3.new(),
 				BackgroundTransparency = 0.5,
@@ -49,7 +88,15 @@ return function(props: Properties)
 				ScrollBarThickness = 15,
 				ScrollingDirection = Enum.ScrollingDirection.Y,
 				Size = UDim2.new(1, -16, 0.8, -16),
-			}, {}),
+			}, {
+
+				UIListLayout = e("UIListLayout", {
+					FillDirection = Enum.FillDirection.Vertical,
+					Padding = UDim.new(0, 8),
+					SortOrder = Enum.SortOrder.LayoutOrder,
+				}),
+				Rows = e(React.Fragment, {}, rows),
+			}),
 
 			Title = e("TextLabel", {
 				BackgroundTransparency = 1,

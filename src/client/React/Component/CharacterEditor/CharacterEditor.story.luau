@@ -35,7 +35,7 @@ return UILabs.CreateReactStory({
 	reactRoblox = ReactRoblox,
 	controls = {},
 }, function(props)
-	local appliedArtifact: Item?, setAppliedArtifact: (Item?) -> () = React.useState(nil :: Item?)
+	local appliedArtifact: Item?, _setAppliedArtifact: (Item?) -> () = React.useState(nil :: Item?)
 	local selectedItemDef: ItemDefinition?, setSelectedItemDef: (ItemDefinition?) -> () =
 		React.useState(nil :: ItemDefinition?)
 	local baseAppearance = React.useMemo(function(): AppearanceType.Appearance
@@ -90,15 +90,7 @@ return UILabs.CreateReactStory({
 					Position = UDim2.fromScale(0.5, 0.5),
 					Size = UDim2.fromScale(1, 1),
 					OnAction = function(action: ParentComponent.ActionInfo)
-						if action.Type == "AddItem" then
-							setAppliedArtifact({
-								DefinitionId = action.ItemDefinition.Id,
-							})
-						elseif action.Type == "RemoveItem" then
-							setAppliedArtifact(nil)
-						elseif action.Type == "SelectItem" then
-							setSelectedItemDef(action.ItemDefinition)
-						elseif action.Type == "Exit" then
+						if action.Type == "Exit" then
 							setSelectedItemDef(nil)
 						end
 					end,

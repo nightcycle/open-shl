@@ -11,6 +11,8 @@ local Properties = require("@self/Properties")
 local Scene = require("@self/Scene")
 -- Hooks
 -- Contexts
+local IsHeroFocusContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
@@ -46,18 +48,22 @@ return function(props: Properties)
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
 	}, {
-		Scene = e(Scene, {
-			IsHeroFocus = isHeroFocus,
-		}),
-		Explorer = e(Explorer, {
-			BackgroundColor3 = Color3.new(),
-			BackgroundTransparency = 0.5,
-			BorderColor3 = Color3.fromRGB(27, 42, 53),
-			Position = UDim2.fromScale(0, 0.025),
-			Size = UDim2.fromScale(0.3, 0.54),
-			SizeConstraint = Enum.SizeConstraint.RelativeXX,
-		}),
 
+		HeroFocusProvider = e(IsHeroFocusContext.Provider, {
+			value = isHeroFocus,
+		}, {
+			Scene = e(Scene, {
+				IsHeroFocus = isHeroFocus,
+			}),
+			Explorer = e(Explorer, {
+				BackgroundColor3 = Color3.new(),
+				BackgroundTransparency = 0.5,
+				BorderColor3 = Color3.fromRGB(27, 42, 53),
+				Position = UDim2.fromScale(0, 0.025),
+				Size = UDim2.fromScale(0.3, 0.54),
+				SizeConstraint = Enum.SizeConstraint.RelativeXX,
+			}),
+		}),
 		Properties = e(Properties, {
 			Position = UDim2.fromScale(0.7, 0.025),
 			Size = UDim2.fromScale(0.3, 0.54),
