@@ -15,8 +15,6 @@ local ParentComponent = require(".")
 -- Contexts
 local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
-local ItemDefSelection =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Selection/AppearanceItemDefinition")
 local PreviewCharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
 -- Types
@@ -35,9 +33,6 @@ return UILabs.CreateReactStory({
 	reactRoblox = ReactRoblox,
 	controls = {},
 }, function(props)
-	local appliedArtifact: Item?, _setAppliedArtifact: (Item?) -> () = React.useState(nil :: Item?)
-	local selectedItemDef: ItemDefinition?, setSelectedItemDef: (ItemDefinition?) -> () =
-		React.useState(nil :: ItemDefinition?)
 	local baseAppearance = React.useMemo(function(): AppearanceType.Appearance
 		return {
 			Items = {},
@@ -46,20 +41,14 @@ return UILabs.CreateReactStory({
 	end, {})
 	local appearance = React.useMemo(function(): AppearanceType.Appearance
 		local app = TableUtil.deepCopy(baseAppearance)
-		if appliedArtifact then
-			table.insert(app.Items, appliedArtifact)
-		end
+
 		return app
-	end, { baseAppearance :: any, appliedArtifact })
+	end, { baseAppearance :: any })
 	local previewAppearance = React.useMemo(function(): AppearanceType.Appearance
 		local app = TableUtil.deepCopy(baseAppearance)
-		if selectedItemDef then
-			table.insert(app.Items, {
-				DefinitionId = selectedItemDef.Id,
-			})
-		end
+
 		return app
-	end, { baseAppearance :: any, selectedItemDef })
+	end, { baseAppearance :: any })
 	local itemDefinitions = React.useMemo(function()
 		local out = {}
 		for i, v in ITEM_DEFINITIONS do
@@ -81,21 +70,15 @@ return UILabs.CreateReactStory({
 		PreviewAppearance = e(PreviewCharacterAppearanceContext.Provider, {
 			value = previewAppearance,
 		}, {
-			ItemDefSelection = e(ItemDefSelection.Provider, {
-				value = selectedItemDef,
-			}, {
-				Menu = e(ParentComponent, {
-					ItemDefinitions = itemDefinitions,
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					Position = UDim2.fromScale(0.5, 0.5),
-					Size = UDim2.fromScale(1, 1),
-					OnAction = function(action: ParentComponent.ActionInfo)
-						if action.Type == "Exit" then
-							setSelectedItemDef(nil)
-						end
-					end,
-					SizeConstraint = Enum.SizeConstraint.RelativeXY,
-				}),
+			Menu = e(ParentComponent, {
+				ItemDefinitions = itemDefinitions,
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+				Size = UDim2.fromScale(1, 1),
+				OnAction = function(action: ParentComponent.ActionInfo)
+					print(`action`, action)
+				end,
+				SizeConstraint = Enum.SizeConstraint.RelativeXY,
 			}),
 		}),
 	})

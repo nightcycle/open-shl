@@ -33,6 +33,7 @@ export type ActionInfo =
 	}
 	| {
 		Type: "Exit",
+		IsSaving: boolean,
 	}
 
 export type Properties = Frame.Properties & {
@@ -74,6 +75,12 @@ return function(props: Properties)
 						Position = UDim2.fromScale(0, 0.025),
 						Size = UDim2.fromScale(0.3, 0.54),
 						SizeConstraint = Enum.SizeConstraint.RelativeXX,
+						OnExit = function()
+							props.OnAction({
+								Type = "Exit",
+								IsSaving = false,
+							})
+						end,
 					}),
 				}),
 			}),
@@ -132,6 +139,12 @@ return function(props: Properties)
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
+				[React.Event.Activated] = function()
+					props.OnAction({
+						Type = "Exit",
+						IsSaving = false,
+					})
+				end,
 			}),
 		}),
 	})

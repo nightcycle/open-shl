@@ -18,7 +18,9 @@ local IsHeroFocusContext =
 local PathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Path")
 local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
 -- Types
-export type Properties = Frame.Properties & {}
+export type Properties = Frame.Properties & {
+	OnExit: () -> (),
+}
 -- Constants
 -- Variables
 -- References
@@ -48,10 +50,6 @@ return function(props: Properties): React.ReactNode
 	local currentFirstPage = usePage(currentFirstPath)
 	if currentFirstPage and currentFirstPage.Type == "Default" and currentFirstPage.Children then
 		for i, pageDef in currentFirstPage.Children do
-			local hasChildren = false
-			if pageDef.Type == "Default" and pageDef.Children then
-				hasChildren = true
-			end
 			local pagePath = CharacterEditorDefinition.getChildPath(currentFirstPath, pageDef)
 			local function navigateTo()
 				if not setCurrentPath then
@@ -147,6 +145,10 @@ return function(props: Properties): React.ReactNode
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
+					if currentFirstPath == "" then
+						props.OnExit()
+						return
+					end
 					if setCurrentPath then
 						local parentPath = CharacterEditorDefinition.getParentPath(currentFirstPath)
 						if parentPath.IsSome then
@@ -154,6 +156,7 @@ return function(props: Properties): React.ReactNode
 						else
 							setCurrentPath("")
 						end
+						return
 					end
 				end,
 			}),
