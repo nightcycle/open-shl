@@ -13,6 +13,8 @@ local Scene = require("@self/Scene")
 -- Contexts
 local IsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
+local PathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Path")
+local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
@@ -44,30 +46,42 @@ local e = React.createElement
 -- Class
 return function(props: Properties)
 	local isHeroFocus, setIsHeroFocus = React.useState(true)
+	local path, setPath = React.useState("")
+	local setPathCallback = React.useCallback(function(...)
+		print(`path:`, ...)
+		setPath(...)
+	end, {})
 	return e("Frame", {
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
 	}, {
-
-		HeroFocusProvider = e(IsHeroFocusContext.Provider, {
-			value = isHeroFocus,
+		Path = e(PathContext.Provider, {
+			value = path,
 		}, {
-			Scene = e(Scene, {
-				IsHeroFocus = isHeroFocus,
+			HeroFocusProvider = e(IsHeroFocusContext.Provider, {
+				value = isHeroFocus,
+			}, {
+				Scene = e(Scene, {
+					IsHeroFocus = isHeroFocus,
+				}),
+				SetPath = e(SetPathContext.Provider, {
+					value = setPathCallback,
+				}, {
+					Explorer = e(Explorer, {
+						BackgroundColor3 = Color3.new(),
+						BackgroundTransparency = 0.5,
+						BorderColor3 = Color3.fromRGB(27, 42, 53),
+						Position = UDim2.fromScale(0, 0.025),
+						Size = UDim2.fromScale(0.3, 0.54),
+						SizeConstraint = Enum.SizeConstraint.RelativeXX,
+					}),
+				}),
 			}),
-			Explorer = e(Explorer, {
-				BackgroundColor3 = Color3.new(),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				Position = UDim2.fromScale(0, 0.025),
+			Properties = e(Properties, {
+				Position = UDim2.fromScale(0.7, 0.025),
 				Size = UDim2.fromScale(0.3, 0.54),
 				SizeConstraint = Enum.SizeConstraint.RelativeXX,
 			}),
-		}),
-		Properties = e(Properties, {
-			Position = UDim2.fromScale(0.7, 0.025),
-			Size = UDim2.fromScale(0.3, 0.54),
-			SizeConstraint = Enum.SizeConstraint.RelativeXX,
 		}),
 
 		SwitchIdentity = e("Frame", {

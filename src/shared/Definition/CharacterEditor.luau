@@ -16,6 +16,7 @@ local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
 local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
 type ChoiceDefinition = MiscType.ChoiceDefinition
 -- Constants
+local ROOT_KEY = "ROOT"
 -- Variables
 -- References
 -- Private Functions
@@ -39,10 +40,25 @@ end
 function newAccessoryPageBuilder(itemDef: AppearanceType.ItemDefinition): PageBuilder
 	return PageBuilder.newItem(itemDef.Id):insertColorField():insertMaterialField()
 end
+function getParentPath(path: string): Option<string>
+	local segments = path:split("/")
+	if segments[1] == ROOT_KEY then
+		table.remove(segments, 1)
+	end
+	if segments[1] == "" then
+		table.remove(segments, 1)
+	end
+	if #segments == 0 then
+		return Option.none()
+	else
+		return Option.some(table.concat(segments, "/"))
+	end
+end
+
 -- Class
 local Module = {}
 
-Module.DEFINITION = PageBuilder.new("ROOT")
+Module.DEFINITION = PageBuilder.new(ROOT_KEY)
 	:addChild(PageBuilder.new("Basic Information")
 		:addChild(PageBuilder.new("Name"):insertTextField(nil, 30):insertGenerateAliasField():build())
 		:addChild(PageBuilder.new("Backstory"):insertTextField(nil, 120):build())
@@ -170,17 +186,19 @@ Module.DEFINITION = PageBuilder.new("ROOT")
 
 function Module.getPage(path: string): Option<PageDefinition>
 	local segments = path:split("/")
-	assert(Module.DEFINITION.Type == "Default", `bad root page`)
-	if segments[1] == Module.DEFINITION.Key then
+	if segments[1] == ROOT_KEY then
 		table.remove(segments, 1)
 	end
 	if segments[1] == "" then
 		table.remove(segments, 1)
 	end
+	table.insert(segments, 1, ROOT_KEY)
 	local function getPage(pageDef: PageDefinition, index: number): Option<PageDefinition>
 		local segment = segments[index]
 		if segment then
-			if index == #segments then
+			print(`gp seg: {segment}`)
+			if index == #segments and segment then
+				print(` - final: {pageDef.Type}, key: "{pageDef.Key}"`)
 				if pageDef.Type == "Default" and pageDef.Key == segment then
 					return Option.some(pageDef)
 				elseif pageDef.Type == "Item" and pageDef.DefinitionId == segment then
@@ -197,12 +215,51 @@ function Module.getPage(path: string): Option<PageDefinition>
 		end
 		return Option.none()
 	end
-	print(`segments:`, segments)
 	if #segments == 0 then
 		return Option.some(Module.DEFINITION)
 	end
 
 	return getPage(Module.DEFINITION, 1)
+end
+
+function Module.getParentPage(path: string): Option<PageDefinition>
+	return Option.flatten(Option.map(getParentPath(path), function(parentPath)
+		return Module.getPage(parentPath)
+	end))
+end
+
+function Module.getChildPath(path: string, pageDef: PageDefinition)
+	if pageDef.Type == "Item" then
+		return path .. "/" .. pageDef.DefinitionId
+	else
+		return path .. "/" .. pageDef.Key
+	end
+end
+function Module.findFirstDefaultPath(path: string): string
+	do
+		local page = Module.getPage(path)
+		print(`first path: {path}`, page)
+		if page.IsSome and page.Value.Type == "Default" then
+			return path
+		end
+	end
+	local parentPathOpt = getParentPath(path)
+	while parentPathOpt.IsSome do
+		local parentPage = Module.getPage(parentPathOpt.Value)
+		if parentPage.IsSome then
+			if parentPage.Value.Type == "Default" then
+				return parentPathOpt.Value
+			else
+				parentPathOpt = getParentPath(parentPathOpt.Value)
+			end
+		else
+			return ""
+		end
+	end
+	return ""
+end
+function Module.findFirstDefaultPage(path: string): Option<PageDefinition>
+	return Module.getPage(Module.findFirstDefaultPath(path))
 end
 
 return Module

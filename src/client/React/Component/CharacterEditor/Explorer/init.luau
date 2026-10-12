@@ -4,15 +4,19 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local TextButton = require("@game/ReplicatedStorage/Generated/React/Component/TextButton")
 -- Hooks
-local useCurrentPage =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useCurrentPage")
+local useFirstDefaultPath =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFirstDefaultPath")
+local usePage = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/usePage")
 -- Contexts
 local IsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
+local PathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Path")
+local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
 -- Types
 export type Properties = Frame.Properties & {}
 -- Constants
@@ -36,11 +40,31 @@ function rowButton(props: TextButton.Properties)
 end
 -- Class
 return function(props: Properties): React.ReactNode
-	local currentPage = useCurrentPage()
 	local rows: { [string]: React.ReactNode } = {}
 	local isHeroFocus = React.useContext(IsHeroFocusContext)
-	if currentPage and currentPage.Type == "Default" and currentPage.Children then
-		for i, pageDef in currentPage.Children do
+	local currentPath = React.useContext(PathContext)
+	print(`path: {currentPath}`)
+	local setCurrentPath = React.useContext(SetPathContext)
+	local currentFirstPath = useFirstDefaultPath()
+	print(`ancestor: {currentFirstPath}`)
+	local currentFirstPage = usePage(currentFirstPath)
+	if
+		currentFirstPage
+		and currentFirstPage.Type == "Default"
+		and currentFirstPage.Children
+	then
+		for i, pageDef in currentFirstPage.Children do
+			local pagePath = CharacterEditorDefinition.getChildPath(currentFirstPath, pageDef)
+			local function navigateTo()
+				if not setCurrentPath then
+					return
+				end
+				if pagePath == currentPath then
+					setCurrentPath(currentFirstPath)
+				else
+					setCurrentPath(pagePath)
+				end
+			end
 			if pageDef.ExclusionTags then
 				if isHeroFocus then
 					if table.find(pageDef.ExclusionTags, "IsSuper") then
@@ -56,16 +80,22 @@ return function(props: Properties): React.ReactNode
 				rows[`Field-{i}`] = e(rowButton, {
 					LayoutOrder = i,
 					Text = pageDef.DefinitionId,
+					[React.Event.Activated] = function()
+						navigateTo()
+					end,
 				})
 			elseif pageDef.Type == "Default" then
 				rows[`Field-{i}`] = e(rowButton, {
 					LayoutOrder = i,
 					Text = pageDef.Title or pageDef.Key,
+					[React.Event.Activated] = function()
+						navigateTo()
+					end,
 				})
 			end
 		end
 	end
-	print(`page`, currentPage)
+	print(`page`, currentFirstPage)
 	return e(Frame(
 		{
 			BackgroundColor3 = Color3.new(),
