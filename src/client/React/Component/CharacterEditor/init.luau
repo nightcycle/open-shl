@@ -11,6 +11,8 @@ local Properties = require("@self/Properties")
 local Scene = require("@self/Scene")
 -- Hooks
 -- Contexts
+local CharacterEditorFieldCallback =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
 local IsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
 local PathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Path")
@@ -84,10 +86,14 @@ return function(props: Properties)
 					}),
 				}),
 			}),
-			Properties = e(Properties, {
-				Position = UDim2.fromScale(0.7, 0.025),
-				Size = UDim2.fromScale(0.3, 0.54),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
+			CharacterEditorFieldCallback = e(CharacterEditorFieldCallback.Provider, {
+				value = function() end,
+			}, {
+				Properties = e(Properties, {
+					Position = UDim2.fromScale(0.7, 0.025),
+					Size = UDim2.fromScale(0.3, 0.54),
+					SizeConstraint = Enum.SizeConstraint.RelativeXX,
+				}),
 			}),
 		}),
 

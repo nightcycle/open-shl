@@ -4,6 +4,7 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
@@ -73,9 +74,14 @@ return function(props: Properties): React.ReactNode
 				end
 			end
 			if pageDef.Type == "Item" then
+				local itemDef = AppearanceItemDefinition.get(pageDef.DefinitionId)
+				if itemDef.IsErr then
+					warn(`item-def err: {itemDef.Value}`)
+					continue
+				end
 				rows[`Field-{i}`] = e(rowButton, {
 					LayoutOrder = i,
-					Text = pageDef.DefinitionId,
+					Text = itemDef.Value.Name,
 					[React.Event.Activated] = function()
 						navigateTo()
 					end,

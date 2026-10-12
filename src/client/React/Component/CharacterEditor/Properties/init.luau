@@ -13,12 +13,17 @@ local FieldComponents = {
 	Material = require("@self/Material"),
 	SectionHeader = require("@self/SectionHeader"),
 	Text = require("@self/Text"),
+	Color = require("@self/Color"),
 	Toggle = require("@self/Toggle"),
 }
 -- Hooks
 local useCurrentPage =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useCurrentPage")
 -- Contexts
+-- Contexts
+
+local CharacterEditorFieldDefinition =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldDefinition")
 -- Types
 export type Properties = Frame.Properties & {}
 -- Constants
@@ -38,8 +43,12 @@ return function(props: Properties)
 				continue
 			end
 
-			fields[`Field-{i}`] = e(component, {
-				LayoutOrder = i,
+			fields[`Field-{i}`] = e(CharacterEditorFieldDefinition.Provider, {
+				value = fieldDef,
+			}, {
+				Button = e(component, {
+					LayoutOrder = i,
+				}),
 			})
 		end
 	end
