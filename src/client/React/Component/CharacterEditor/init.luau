@@ -148,7 +148,7 @@ return function(props: Properties)
 				[React.Event.Activated] = function()
 					props.OnAction({
 						Type = "Exit",
-						IsSaving = false,
+						IsSaving = true,
 					})
 				end,
 			}),
