@@ -119,6 +119,7 @@ return function(props: Properties)
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
+					setPath("")
 					setIsHeroFocus(not isHeroFocus)
 				end,
 			}),

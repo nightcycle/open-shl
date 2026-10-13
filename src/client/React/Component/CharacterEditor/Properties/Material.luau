@@ -4,6 +4,7 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 -- Hooks
@@ -15,7 +16,40 @@ local CharacterEditorFieldDefinition =
 -- Types
 local FieldTypes = require("./Types")
 export type Properties = FieldTypes.FieldProperties
+type MaterialInfo = {
+	MATERIAL: Enum.Material,
+	ICON: string,
+}
 -- Constants
+local GRID_COLUMNS = 5
+local BUTTON_SIZE = 1 / GRID_COLUMNS
+local MATERIALS: { MaterialInfo } = {
+	{ MATERIAL = Enum.Material.Plastic, ICON = Image.material["plastic.png"] },
+	{ MATERIAL = Enum.Material.Neon, ICON = Image.material["neon.png"] },
+	{ MATERIAL = Enum.Material.WoodPlanks, ICON = Image.material["wood-planks.png"] },
+	{ MATERIAL = Enum.Material.Slate, ICON = Image.material["slate.png"] },
+	{ MATERIAL = Enum.Material.Granite, ICON = Image.material["granite.png"] },
+
+	{ MATERIAL = Enum.Material.Pebble, ICON = Image.material["pebble.png"] },
+	{ MATERIAL = Enum.Material.CorrodedMetal, ICON = Image.material["corroded-metal.png"] },
+	{ MATERIAL = Enum.Material.Foil, ICON = Image.material["foil.png"] },
+	{ MATERIAL = Enum.Material.Grass, ICON = Image.material["grass.png"] },
+	{ MATERIAL = Enum.Material.Fabric, ICON = Image.material["fabric.png"] },
+
+	{ MATERIAL = Enum.Material.SmoothPlastic, ICON = Image.material["smooth-plastic.png"] },
+	{ MATERIAL = Enum.Material.Wood, ICON = Image.material["wood.png"] },
+	{ MATERIAL = Enum.Material.Marble, ICON = Image.material["marble.png"] },
+	{ MATERIAL = Enum.Material.Concrete, ICON = Image.material["concrete.png"] },
+
+	{ MATERIAL = Enum.Material.Brick, ICON = Image.material["brick.png"] },
+	{ MATERIAL = Enum.Material.Cobblestone, ICON = Image.material["cobblestone.png"] },
+	{ MATERIAL = Enum.Material.DiamondPlate, ICON = Image.material["diamond-plate.png"] },
+	{ MATERIAL = Enum.Material.Metal, ICON = Image.material["metal.png"] },
+	{ MATERIAL = Enum.Material.Sand, ICON = Image.material["sand.png"] },
+
+	{ MATERIAL = Enum.Material.Ice, ICON = Image.material["ice.png"] },
+}
+local GRID_ROWS = math.ceil(#MATERIALS / GRID_COLUMNS)
 -- Variables
 -- References
 -- Private Functions
@@ -30,243 +64,35 @@ return function(props: Properties): React.ReactNode?
 	if not fieldCallback then
 		return
 	end
+
+	local buttons: { [string]: React.ReactNode } = {}
+	for index, CONFIG in MATERIALS do
+		local column = (index - 1) % GRID_COLUMNS
+		local row = math.floor((index - 1) / GRID_COLUMNS)
+		buttons[`{CONFIG.MATERIAL.Name}-{index}`] = e("ImageButton", {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 0.5,
+			BorderColor3 = Color3.fromRGB(27, 42, 53),
+			BorderSizePixel = 0,
+			Image = CONFIG.ICON,
+			Position = UDim2.fromScale(column * BUTTON_SIZE, row / GRID_ROWS),
+			Size = UDim2.fromScale(BUTTON_SIZE, BUTTON_SIZE),
+			SizeConstraint = Enum.SizeConstraint.RelativeXX,
+			[React.Event.Activated] = function()
+				fieldCallback(fieldDefinition, CONFIG.MATERIAL)
+			end,
+		})
+	end
+
 	return e(Frame(
 		{
 			BackgroundTransparency = 1,
-			Size = UDim2.fromScale(0.9, 0.72),
+			Size = UDim2.fromScale(1, GRID_ROWS / GRID_COLUMNS),
 			SizeConstraint = Enum.SizeConstraint.RelativeXX,
 		} :: Frame.Properties,
 		props,
 		{
-			Plastic = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606124009",
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Neon = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606120991",
-				Position = UDim2.fromScale(0.2, 0),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			WoodPlanks = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606130167",
-				Position = UDim2.fromScale(0.4, 0),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Granite = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606113723",
-				Position = UDim2.fromScale(0.8, 0),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Slate = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606126284",
-				Position = UDim2.fromScale(0.6, 0),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Pebble = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606122309",
-				Position = UDim2.fromScale(0, 0.25),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			CorrodedMetal = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606107154",
-				Position = UDim2.fromScale(0.2, 0.25),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Foil = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606112190",
-				Position = UDim2.fromScale(0.4, 0.25),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Grass = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606115488",
-				Position = UDim2.fromScale(0.6, 0.25),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Fabric = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606110569",
-				Position = UDim2.fromScale(0.8, 0.25),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			SmoothPlastic = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606127869",
-				Position = UDim2.fromScale(0, 0.5),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Wood = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606129056",
-				Position = UDim2.fromScale(0.2, 0.5),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Marble = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "rbxassetid://133293265",
-				Position = UDim2.fromScale(0.4, 0.5),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Marble2 = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606118512",
-				Position = UDim2.fromScale(0.4, 0.5),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Concrete = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606105689",
-				Position = UDim2.fromScale(0.6, 0.5),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Brick = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606096509",
-				Position = UDim2.fromScale(0.8, 0.5),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Cobblestone = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606103198",
-				Position = UDim2.fromScale(0, 0.75),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			DiamondPlate = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606109257",
-				Position = UDim2.fromScale(0.2, 0.75),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Metal = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606119709",
-				Position = UDim2.fromScale(0.4, 0.75),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Sand = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606125442",
-				Position = UDim2.fromScale(0.6, 0.75),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
-
-			Ice = e("ImageButton", {
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.fromRGB(27, 42, 53),
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=606117135",
-				Position = UDim2.fromScale(0.8, 0.75),
-				Size = UDim2.fromScale(0.2, 0.2),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-			}),
+			Buttons = e(React.Fragment, {}, buttons),
 		}
 	))
 end

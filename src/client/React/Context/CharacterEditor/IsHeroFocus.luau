@@ -10,4 +10,3 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Private Functions
 -- Class
 return React.createContext(true)
-

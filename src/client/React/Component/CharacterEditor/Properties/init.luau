@@ -6,6 +6,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
+local ScrollingFrame = require("@game/ReplicatedStorage/Generated/React/Component/ScrollingFrame")
 local FieldComponents = {
 	ChoiceList = require("@self/ChoiceList"),
 	Choose = require("@self/Choose"),
@@ -21,7 +22,6 @@ local useCurrentPage =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useCurrentPage")
 -- Contexts
 -- Contexts
-
 local CharacterEditorFieldDefinition =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldDefinition")
 -- Types
@@ -42,13 +42,12 @@ return function(props: Properties)
 				warn(`bad component for type "{fieldDef.Type}"`)
 				continue
 			end
-
 			fields[`Field-{i}`] = e(CharacterEditorFieldDefinition.Provider, {
 				value = fieldDef,
 			}, {
-				Button = e(component, {
+				[`Field-{fieldDef.Type}-{i}`] = e(component, {
 					LayoutOrder = i,
-				}),
+				}) :: React.ReactNode,
 			})
 		end
 	end
@@ -69,29 +68,34 @@ return function(props: Properties)
 				TextScaled = true,
 			}),
 
-			ScrollingFrame = e("ScrollingFrame", {
-				BackgroundColor3 = Color3.new(),
-				BackgroundTransparency = 0.5,
-				BorderColor3 = Color3.new(1, 1, 1),
-				CanvasSize = UDim2.fromScale(0, 1.5),
-				Position = UDim2.new(0, 8, 0.1, 8),
-				ScrollBarThickness = 15,
-				ScrollingDirection = Enum.ScrollingDirection.Y,
-				Size = UDim2.new(1, -16, 0.9, -16),
-			}, {
-				UIPadding = e("UIPadding", {
-					PaddingRight = UDim.new(0, 7),
-					PaddingLeft = UDim.new(0, 7),
-					PaddingTop = UDim.new(0, 7),
-					PaddingBottom = UDim.new(0, 7),
-				}),
-				UIListLayout = e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Vertical,
-					Padding = UDim.new(0, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-				}),
-				Fields = e(React.Fragment, {}, fields),
-			}),
+			ScrollingFrame = e(
+				"ScrollingFrame",
+				{
+					BackgroundColor3 = Color3.new(),
+					BackgroundTransparency = 0.5,
+					BorderColor3 = Color3.new(1, 1, 1),
+					CanvasSize = UDim2.fromScale(0, 1.5),
+					Position = UDim2.new(0, 8, 0.1, 8),
+					ScrollBarThickness = 15,
+					ScrollingDirection = Enum.ScrollingDirection.Y,
+					HorizontalScrollBarInset = Enum.ScrollBarInset.Always,
+					Size = UDim2.new(1, -16, 0.9, -16),
+				} :: ScrollingFrame.Properties,
+				{
+					UIPadding = e("UIPadding", {
+						PaddingRight = UDim.new(0, 15+7),
+						PaddingLeft = UDim.new(0, 7),
+						PaddingTop = UDim.new(0, 7),
+						PaddingBottom = UDim.new(0, 7),
+					}),
+					UIListLayout = e("UIListLayout", {
+						FillDirection = Enum.FillDirection.Vertical,
+						Padding = UDim.new(0, 7),
+						SortOrder = Enum.SortOrder.LayoutOrder,
+					}),
+					Fields = e(React.Fragment, {}, fields),
+				}
+			),
 		}
 	))
 end
