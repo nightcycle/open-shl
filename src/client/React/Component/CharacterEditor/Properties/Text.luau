@@ -6,6 +6,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 -- Components
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
+local TextBox = require("@game/ReplicatedStorage/Generated/React/Component/TextBox")
 -- Hooks
 -- Contexts
 local CharacterEditorFieldCallback =
@@ -38,22 +39,26 @@ return function(props: Properties): React.ReactNode?
 		} :: Frame.Properties,
 		props,
 		{
-			TextBox = e("TextBox", {
-				BackgroundColor3 = Color3.new(),
-				BackgroundTransparency = 0.3,
-				BorderColor3 = Color3.new(1, 1, 1),
-				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-				MultiLine = true,
-				PlaceholderColor3 = Color3.fromRGB(178, 178, 178),
-				Position = UDim2.fromScale(0.062, 0.125),
-				Size = UDim2.fromScale(0.875, 1.5),
-				Text = "Insert Story Here",
-				TextColor3 = Color3.new(1, 1, 1),
-				TextSize = 14,
-				TextWrapped = true,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				TextYAlignment = Enum.TextYAlignment.Top,
-			}),
+			TextBox = e(
+				"TextBox",
+				{
+					BackgroundColor3 = Color3.new(),
+					BackgroundTransparency = 0.3,
+					BorderColor3 = Color3.new(1, 1, 1),
+					FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
+					MultiLine = true,
+					PlaceholderColor3 = Color3.fromRGB(178, 178, 178),
+					Position = UDim2.fromScale(0.062, 0.125),
+					Size = UDim2.fromScale(0.875, 0.5),
+					Text = "",
+					PlaceholderText = fieldDefinition.Description,
+					TextColor3 = Color3.new(1, 1, 1),
+					TextSize = 14,
+					TextWrapped = true,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					TextYAlignment = Enum.TextYAlignment.Top,
+				} :: TextBox.Properties
+			),
 
 			Test = e("TextButton", {
 				BackgroundColor3 = Color3.fromRGB(0, 170, 255),
@@ -61,7 +66,7 @@ return function(props: Properties): React.ReactNode?
 				BorderColor3 = Color3.new(1, 1, 1),
 				BorderSizePixel = 2,
 				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-				Position = UDim2.fromScale(0.25, 1.75),
+				Position = UDim2.fromScale(0.25, 0.75),
 				Size = UDim2.fromScale(0.5, 0.1),
 				SizeConstraint = Enum.SizeConstraint.RelativeXX,
 				Text = "Test for Censorship",
