@@ -38,7 +38,10 @@ function newItemPage(
 	return builder
 end
 function newAccessoryPageBuilder(itemDef: AppearanceType.ItemDefinition): PageBuilder
-	return PageBuilder.newItem(itemDef.Id):insertColorField():insertMaterialField()
+	return PageBuilder.newItem(itemDef.Id)
+		:insertToggleField("IsItemAdded", "Add Item", "Filled", "Remove Item")
+		:insertColorField()
+		:insertMaterialField()
 end
 local function getPathSegments(path: string): { string }
 	local segments = path:split("/")

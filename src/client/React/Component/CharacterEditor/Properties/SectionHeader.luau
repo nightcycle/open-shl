@@ -24,7 +24,7 @@ local e = React.createElement
 return function(props: Properties): React.ReactNode?
 	local fieldDefinition = React.useContext(CharacterEditorFieldDefinition)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
-	if not fieldDefinition or fieldDefinition.Type ~= "GenerateAlias" then
+	if not fieldDefinition or fieldDefinition.Type ~= "SectionHeader" then
 		return
 	end
 	if not fieldCallback then

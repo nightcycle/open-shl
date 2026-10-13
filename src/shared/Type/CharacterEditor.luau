@@ -10,8 +10,8 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
 local Types = {}
 
-export type Tag = "IsSuper" | "IsSecret" | "IsLensFocused" | "IsEdgeFocused" | "HasNoLenses"
-Types.Tag = Type.literal("IsSuper", "IsSecret", "IsLensFocused", "IsEdgeFocused", "HasNoLenses")
+export type Tag = "IsSuper" | "IsSecret" | "IsLensFocused" | "IsEdgeFocused" | "HasNoLenses" | "IsItemAdded"
+Types.Tag = Type.literal("IsSuper", "IsSecret", "IsLensFocused", "IsEdgeFocused", "HasNoLenses", "IsItemAdded")
 
 export type ButtonStyle = "Outline" | "Filled"
 

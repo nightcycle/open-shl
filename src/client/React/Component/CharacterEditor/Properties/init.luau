@@ -35,8 +35,11 @@ local e = React.createElement
 return function(props: Properties)
 	local currentPage = useCurrentPage()
 	local fields: { [string]: React.ReactNode } = {}
-	if currentPage and currentPage.Type == "Item" and currentPage.Fields then
-		for i, fieldDef in currentPage.Fields do
+	if currentPage and currentPage.Fields then
+		local currentFields: { CharacterEditorFieldDefinition.FieldDefinition } = currentPage.Type == "Default"
+				and currentPage.Fields
+			or currentPage.Fields
+		for i, fieldDef in currentFields do
 			local component = FieldComponents[fieldDef.Type]
 			if not component then
 				warn(`bad component for type "{fieldDef.Type}"`)
@@ -83,14 +86,14 @@ return function(props: Properties)
 				} :: ScrollingFrame.Properties,
 				{
 					UIPadding = e("UIPadding", {
-						PaddingRight = UDim.new(0, 15+7),
+						PaddingRight = UDim.new(0, 15 + 7),
 						PaddingLeft = UDim.new(0, 7),
 						PaddingTop = UDim.new(0, 7),
 						PaddingBottom = UDim.new(0, 7),
 					}),
 					UIListLayout = e("UIListLayout", {
 						FillDirection = Enum.FillDirection.Vertical,
-						Padding = UDim.new(0, 7),
+						Padding = UDim.new(0, 14),
 						SortOrder = Enum.SortOrder.LayoutOrder,
 					}),
 					Fields = e(React.Fragment, {}, fields),

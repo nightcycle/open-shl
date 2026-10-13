@@ -129,7 +129,7 @@ return function(props: Properties): React.ReactNode?
 	return e(Frame(
 		{
 			BackgroundTransparency = 1,
-			Size = UDim2.fromScale(1, 0.5),
+			Size = UDim2.fromScale(1, 1),
 			SizeConstraint = Enum.SizeConstraint.RelativeXX,
 		} :: Frame.Properties,
 		props,

@@ -30,6 +30,24 @@ return function(props: Properties): React.ReactNode?
 	if not fieldCallback then
 		return
 	end
+	local buttons: { [string]: React.ReactNode } = {}
+	for i, choice in fieldDefinition.Choices do
+		if choice.Type ~= "Text" then
+			warn(`expected text for choice {choice.Value}`)
+			continue
+		end
+		local width = 1 / #fieldDefinition.Choices
+		local padPx = 7
+		buttons[`Button{i}`] = e("TextButton", {
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderColor3 = Color3.new(1, 1, 1),
+			FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
+			Position = UDim2.new((i - 1) * width, padPx * (i-0.5) / #fieldDefinition.Choices, 0, 0),
+			Size = UDim2.new(width, -padPx, 1, 0),
+			Text = choice.Text,
+			TextSize = 14,
+		})
+	end
 	return e(Frame(
 		{
 			BackgroundTransparency = 1,
@@ -38,53 +56,22 @@ return function(props: Properties): React.ReactNode?
 		} :: Frame.Properties,
 		props,
 		{
-			TextLabel = e("TextLabel", {
+			TextLabel = fieldDefinition.Description and e("TextLabel", {
 				BackgroundTransparency = 1,
 				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-				Size = UDim2.fromScale(1, 0.15),
-				Text = "Choose One:",
+				Size = UDim2.fromScale(1, 0.3),
+				Text = fieldDefinition.Description,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 			}),
 
 			Buttons = e("Frame", {
 				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0, 0.1525),
-				Size = UDim2.fromScale(1, 0.35),
-				SizeConstraint = Enum.SizeConstraint.RelativeXX,
+				AnchorPoint = Vector2.new(0, 1),
+				Position = UDim2.fromScale(0, 1),
+				Size = UDim2.fromScale(1, 0.675),
 			}, {
-				Evil = e("TextButton", {
-					BackgroundColor3 = Color3.new(1, 1, 1),
-					BorderColor3 = Color3.new(1, 1, 1),
-					FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-					Position = UDim2.fromScale(0.02, 0),
-					Size = UDim2.fromScale(0.3, 0.3),
-					SizeConstraint = Enum.SizeConstraint.RelativeXX,
-					Text = "Evil",
-					TextSize = 14,
-				}),
-
-				Neutral = e("TextButton", {
-					BackgroundColor3 = Color3.new(1, 1, 1),
-					BorderColor3 = Color3.new(1, 1, 1),
-					FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-					Position = UDim2.fromScale(0.345, 0),
-					Size = UDim2.fromScale(0.3, 0.3),
-					SizeConstraint = Enum.SizeConstraint.RelativeXX,
-					Text = "Neutral",
-					TextSize = 14,
-				}),
-
-				Good = e("TextButton", {
-					BackgroundColor3 = Color3.new(1, 1, 1),
-					BorderColor3 = Color3.new(1, 1, 1),
-					FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-					Position = UDim2.fromScale(0.67, 0),
-					Size = UDim2.fromScale(0.3, 0.3),
-					SizeConstraint = Enum.SizeConstraint.RelativeXX,
-					Text = "Good",
-					TextSize = 14,
-				}),
+				Buttons = e(React.Fragment, {}, buttons),
 			}),
 		}
 	))
