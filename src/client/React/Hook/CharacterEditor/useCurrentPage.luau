@@ -16,6 +16,7 @@ export type PageDefinition = CharacterEditorType.PageDefinition
 -- References
 -- Private Functions
 -- Class
-return function(): PageDefinition?
-	return usePage(React.useContext(CharacterEditorPathContext))
+return function(): (PageDefinition?, string)
+	local path = React.useContext(CharacterEditorPathContext)
+	return usePage(path), path
 end

@@ -12,7 +12,7 @@ local UIListLayout = require("@game/ReplicatedStorage/Generated/React/Component/
 -- Hooks
 -- Contexts
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 export type ItemDefinition = AppearanceType.ItemDefinition
 export type RarityItemGroup = {
 	Rarity: PseudoEnum.Rarity,

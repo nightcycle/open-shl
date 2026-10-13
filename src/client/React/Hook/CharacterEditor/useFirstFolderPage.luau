@@ -15,6 +15,7 @@ export type PageDefinition = CharacterEditorType.PageDefinition
 -- References
 -- Private Functions
 -- Class
-return function(): PageDefinition?
-	return usePage(useFirstFolderPath())
+return function(): (PageDefinition?, string?)
+	local path = useFirstFolderPath()
+	return usePage(path), path
 end

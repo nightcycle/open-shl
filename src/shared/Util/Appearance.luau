@@ -11,7 +11,7 @@ local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definit
 local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 local WeldUtil = require("@game/ReplicatedStorage/Shared/Util/Weld")
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 export type Appearance = AppearanceType.Appearance
 type Item = AppearanceType.Item

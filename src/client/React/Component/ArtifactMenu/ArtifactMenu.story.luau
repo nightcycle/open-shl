@@ -19,7 +19,7 @@ local ItemDefSelection =
 local PreviewCharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
 -- Constants

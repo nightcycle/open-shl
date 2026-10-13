@@ -4,7 +4,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 export type ItemDefinition = AppearanceType.ItemDefinition
 -- Constants
 -- Variables

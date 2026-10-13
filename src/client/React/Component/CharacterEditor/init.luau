@@ -3,25 +3,32 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 -- Components
+local EditableCharacterProvider = require("@self/EditableCharacterProvider")
 local Explorer = require("@self/Explorer")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local Properties = require("@self/Properties")
 local Scene = require("@self/Scene")
 -- Hooks
+local useCurrentPage =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useCurrentPage")
 -- Contexts
+local CharacterAppearanceContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
 local IsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
 local PathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Path")
+local PreviewCharacterAppearanceContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
 local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
-
 export type ItemDefinition = AppearanceType.ItemDefinition
 export type HiddenTag = AppearanceType.HiddenTag
 export type FieldDefinition = CharacterEditorType.FieldDefinition
@@ -38,7 +45,6 @@ export type ActionInfo =
 		Type: "Exit",
 		IsSaving: boolean,
 	}
-
 export type Properties = Frame.Properties & {
 	OnAction: (ActionInfo) -> (),
 }
@@ -62,34 +68,33 @@ return function(props: Properties)
 		Path = e(PathContext.Provider, {
 			value = path,
 		}, {
-			HeroFocusProvider = e(IsHeroFocusContext.Provider, {
-				value = isHeroFocus,
-			}, {
-				Scene = e(Scene, {
-					IsHeroFocus = isHeroFocus,
-				}),
-				SetPath = e(SetPathContext.Provider, {
-					value = setPathCallback,
+			EditableCharacterProvider = e(EditableCharacterProvider, {}, {
+				HeroFocusProvider = e(IsHeroFocusContext.Provider, {
+					value = isHeroFocus,
 				}, {
-					Explorer = e(Explorer, {
-						BackgroundColor3 = Color3.new(),
-						BackgroundTransparency = 0.5,
-						BorderColor3 = Color3.fromRGB(27, 42, 53),
-						Position = UDim2.fromScale(0, 0.025),
-						Size = UDim2.fromScale(0.3, 0.54),
-						SizeConstraint = Enum.SizeConstraint.RelativeXX,
-						OnExit = function()
-							props.OnAction({
-								Type = "Exit",
-								IsSaving = false,
-							})
-						end,
+					Scene = e(Scene, {
+						IsHeroFocus = isHeroFocus,
+					}),
+					SetPath = e(SetPathContext.Provider, {
+						value = setPathCallback,
+					}, {
+						Explorer = e(Explorer, {
+							BackgroundColor3 = Color3.new(),
+							BackgroundTransparency = 0.5,
+							BorderColor3 = Color3.fromRGB(27, 42, 53),
+							Position = UDim2.fromScale(0, 0.025),
+							Size = UDim2.fromScale(0.3, 0.54),
+							SizeConstraint = Enum.SizeConstraint.RelativeXX,
+							OnExit = function()
+								props.OnAction({
+									Type = "Exit",
+									IsSaving = false,
+								})
+							end,
+						}),
 					}),
 				}),
-			}),
-			CharacterEditorFieldCallback = e(CharacterEditorFieldCallback.Provider, {
-				value = function() end,
-			}, {
+
 				Properties = e(Properties, {
 					Position = UDim2.fromScale(0.7, 0.025),
 					Size = UDim2.fromScale(0.3, 0.54),

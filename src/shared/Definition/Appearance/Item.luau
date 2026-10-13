@@ -11,7 +11,7 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 type ToDo<V, Progress...> = TypeUnionLib.ToDo<V, Progress...>
 type Result<V, E> = TypeUnionLib.Result<V, E>
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 export type ItemDefinitionIndex = AppearanceType.ItemDefinitionIndex
 export type ItemDefinition = AppearanceType.ItemDefinition
 -- Constants
@@ -105,6 +105,22 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 	end
 	local out = Result.ok(itemDefinition)
 	DefinitionCache[id] = out
+	return out
+end
+
+Module.listCategories = function(group: AppearanceType.ItemGroup): { string }
+	local out = {}
+	for _, groupFolder in CharacterLibrary:GetChildren() do
+		if group ~= nil then
+			if group ~= groupFolder.Name then
+				continue
+			end
+		end
+		for _, categoryFolder in groupFolder:GetChildren() do
+			table.insert(out, categoryFolder.Name)
+		end
+	end
+	table.freeze(out)
 	return out
 end
 

@@ -12,7 +12,7 @@ type Option<V> = TypeUnionLib.Option<V>
 type PageBuilder = PageBuilder.Builder
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 type PageDefinition = CharacterEditorType.PageDefinition
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
 type ChoiceDefinition = MiscType.ChoiceDefinition
 -- Constants

@@ -16,7 +16,7 @@ local Scene = require("@self/Scene")
 local ItemDefSelection =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Selection/AppearanceItemDefinition")
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 export type ItemDefinition = AppearanceType.ItemDefinition
 export type HiddenTag = AppearanceType.HiddenTag
 export type ActionInfo =

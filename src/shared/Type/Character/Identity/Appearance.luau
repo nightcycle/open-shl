@@ -41,6 +41,7 @@ Types.HiddenTag = Type.literal("Hood", "Mask", "MouthCover", "Hair")
 
 export type ItemDefinitionTag = "IsMask" | HiddenTag
 Types.ItemDefinitionTag = Type.union(Type.literal("IsMask"), Types.HiddenTag)
+
 export type ItemDefinition = {
 	Id: string,
 	Name: string?,
@@ -64,13 +65,23 @@ Types.Item = Type.strictInterface({
 	DefinitionId = Type.string,
 })
 
+export type TransitionType = "Death" | "Transformation"
+Types.TransitionType = Type.literal("Death", "Transformation")
+
+export type Transition = {}
+Types.Transition = Type.strictInterface({})
+
 export type Appearance = {
 	Items: { Item },
+	Transitions: {
+		[TransitionType]: Transition?,
+	},
 	HiddenTags: { HiddenTag },
 }
 
 Types.Appearance = Type.strictInterface({
 	Items = Type.array(Types.Item),
+	Transitions = Type.map(Types.TransitionType, Types.Transition),
 	HiddenTags = Type.array(Types.HiddenTag),
 })
 

@@ -42,7 +42,7 @@
 	"irequire builder": {
 		"prefix": "irequire builder",
 		"body": [
-			"local ${name}Builder = require(\"@game/ReplicatedStorage/Shared/Builder/${name}\")"
+			"local $1Builder = require(\"@game/ReplicatedStorage/Shared/Builder/$2\")"
 		],
 		"description": "Imports a builder.",
 		"scope": "luau"
@@ -50,9 +50,17 @@
 	"irequire const": {
 		"prefix": "irequire const",
 		"body": [
-			"local ${name}Constructor = require(\"@game/ReplicatedStorage/Shared/Constructor/${name}\")"
+			"local $1Constructor = require(\"@game/ReplicatedStorage/Shared/Constructor/$2\")"
 		],
 		"description": "Imports a builder.",
+		"scope": "luau"
+	},
+	"irequire rand": {
+		"prefix": "irequire rand",
+		"body": [
+			"local Random$1 = require(\"@game/ReplicatedStorage/Shared/Random/$2\")"
+		],
+		"description": "Imports a random constructor.",
 		"scope": "luau"
 	},
 	"irequire util": {
@@ -130,7 +138,7 @@
 	"irequire type": {
 		"prefix": "irequire type",
 		"body": [
-			"local ${name}Type = require(\"@game/ReplicatedStorage/Shared/Type/${name}\")"
+			"local $1Type = require(\"@game/ReplicatedStorage/Shared/Type/$2\")"
 		],
 		"description": "Imports a shared types module.",
 		"scope": "luau"

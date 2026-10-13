@@ -4,7 +4,17 @@ use_union_types_for_parameters = true
 assign_static_strings = true
 
 [enums]
-Alignment = ["Good", "Neutral", "Evil"]
+Alignment = [
+	"LawfulGood",
+	"NeutralGood",
+	"ChaoticGood",
+	"LawfulNeutral",
+	"TrueNeutral",
+	"ChaoticNeutral",
+	"LawfulEvil",
+	"NeutralEvil",
+	"ChaoticEvil",
+]
 MenuId = [
 	"Artifact",
 	"Build",
@@ -17,3 +27,4 @@ MenuId = [
 	"Characters",
 ]
 Rarity = ["VeryCommon", "Common", "Uncommon", "Rare", "Legendary"]
+TransitionType = ["Death", "Transformation"]

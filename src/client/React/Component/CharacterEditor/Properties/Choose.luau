@@ -42,7 +42,7 @@ return function(props: Properties): React.ReactNode?
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderColor3 = Color3.new(1, 1, 1),
 			FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-			Position = UDim2.new((i - 1) * width, padPx * (i-0.5) / #fieldDefinition.Choices, 0, 0),
+			Position = UDim2.new((i - 1) * width, padPx * (i - 0.5) / #fieldDefinition.Choices, 0, 0),
 			Size = UDim2.new(width, -padPx, 1, 0),
 			Text = choice.Text,
 			TextSize = 14,

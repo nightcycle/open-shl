@@ -13,7 +13,7 @@ local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local CharacterAppearanceContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Appearance")
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
 export type Properties = Frame.Properties & {
