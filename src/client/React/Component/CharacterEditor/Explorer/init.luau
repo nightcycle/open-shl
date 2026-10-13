@@ -27,9 +27,13 @@ export type Properties = Frame.Properties & {
 -- References
 -- Private Functions
 local e = React.createElement
-function rowButton(props: TextButton.Properties)
+function rowButton(props: TextButton.Properties & {
+	IsSelected: boolean?,
+})
+	local currentPath = React.useContext(PathContext)
+
 	return e(TextButton({
-		BackgroundColor3 = Color3.new(),
+		BackgroundColor3 = props.IsSelected and Color3.fromRGB(0, 170, 0) or Color3.new(),
 		BackgroundTransparency = 0.5,
 		BorderColor3 = Color3.new(1, 1, 1),
 		FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
@@ -82,7 +86,8 @@ return function(props: Properties): React.ReactNode
 				rows[`Field-{i}`] = e(rowButton, {
 					LayoutOrder = i,
 					Text = itemDef.Value.Name,
-					[React.Event.Activated] = function()
+					IsSelected = pagePath == currentPath,
+					[React.Event.Activated] = function(rbx: GuiObject)
 						navigateTo()
 					end,
 				})
