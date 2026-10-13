@@ -229,11 +229,9 @@ function Module.getParentPage(path: string): Option<PageDefinition>
 end
 
 function Module.getChildPath(path: string, pageDef: PageDefinition): string
-	if pageDef.Type == "Item" then
-		return path .. "/" .. pageDef.DefinitionId
-	else
-		return path .. "/" .. pageDef.Key
-	end
+	local segments = getPathSegments(path)
+	table.insert(segments, if pageDef.Type == "Item" then pageDef.DefinitionId else pageDef.Key)
+	return table.concat(segments, "/")
 end
 function Module.findFirstFolderPath(path: string): string
 	do

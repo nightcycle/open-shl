@@ -93,6 +93,7 @@ return function(props: Properties): React.ReactNode
 				rows[`Field-{i}`] = e(rowButton, {
 					LayoutOrder = i,
 					Text = pageDef.Title or pageDef.Key,
+					IsSelected = pagePath == currentPath,
 					[React.Event.Activated] = function()
 						navigateTo()
 					end,
@@ -155,6 +156,7 @@ return function(props: Properties): React.ReactNode
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
 					if currentFirstPath == "" then
+
 						props.OnExit()
 						return
 					end
