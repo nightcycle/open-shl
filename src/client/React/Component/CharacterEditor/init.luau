@@ -4,6 +4,7 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 -- Components
 local Explorer = require("@self/Explorer")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
@@ -119,7 +120,18 @@ return function(props: Properties)
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
-					setPath("")
+					local page = CharacterEditorDefinition.getPage(path)
+					if page.IsSome and page.Value.ExclusionTags then
+						if not isHeroFocus then
+							if table.find(page.Value.ExclusionTags, "IsSuper") then
+								setPath("")
+							end
+						else
+							if table.find(page.Value.ExclusionTags, "IsSecret") then
+								setPath("")
+							end
+						end
+					end
 					setIsHeroFocus(not isHeroFocus)
 				end,
 			}),
