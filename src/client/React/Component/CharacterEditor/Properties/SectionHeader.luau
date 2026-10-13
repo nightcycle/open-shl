@@ -8,8 +8,6 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 -- Hooks
 -- Contexts
-local CharacterEditorFieldCallback =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
 local CharacterEditorFieldDefinition =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldDefinition")
 -- Types
@@ -23,11 +21,7 @@ local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode?
 	local fieldDefinition = React.useContext(CharacterEditorFieldDefinition)
-	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
 	if not fieldDefinition or fieldDefinition.Type ~= "SectionHeader" then
-		return
-	end
-	if not fieldCallback then
 		return
 	end
 	return e(Frame(
@@ -47,7 +41,7 @@ return function(props: Properties): React.ReactNode?
 				),
 				Size = UDim2.fromScale(1, 0.2),
 				SizeConstraint = Enum.SizeConstraint.RelativeXX,
-				Text = "Choose Four Powers",
+				Text = fieldDefinition.Text,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				ZIndex = 10,

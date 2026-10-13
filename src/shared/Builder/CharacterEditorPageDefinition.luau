@@ -11,7 +11,13 @@ type PageDefinition = CharacterEditorType.PageDefinition
 
 export type Builder = {
 	setTitle: (self: Builder, title: string?) -> Builder,
-	insertTextField: (self: Builder, description: string?, maxLength: number?, exclusionTags: { Tag }?) -> Builder,
+	insertTextField: (
+		self: Builder,
+		description: string?,
+		maxLength: number?,
+		isMultiLine: boolean?,
+		exclusionTags: { Tag }?
+	) -> Builder,
 	insertSectionHeaderField: (self: Builder, text: string, exclusionTags: { Tag }?) -> Builder,
 	insertChooseField: (
 		self: Builder,
@@ -97,12 +103,14 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 			_: Builder,
 			description: string?,
 			maxLength: number?,
+			isMultiLine: boolean?,
 			exclusionTags: { Tag }?
 		): Builder
 			return insertField({
 				Type = "Text",
 				Description = description,
 				MaxLength = maxLength,
+				IsMultiLine = isMultiLine,
 				ExclusionTags = exclusionTags,
 			})
 		end,

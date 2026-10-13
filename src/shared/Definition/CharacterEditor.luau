@@ -71,7 +71,7 @@ local Module = {}
 Module.DEFINITION = PageBuilder.new(ROOT_KEY)
 	:addChild(PageBuilder.new("Basic Information")
 		:addChild(PageBuilder.new("Name"):insertTextField(nil, 30):insertGenerateAliasField():build())
-		:addChild(PageBuilder.new("Backstory"):insertTextField(nil, 120):build())
+		:addChild(PageBuilder.new("Backstory"):insertTextField(nil, 120, true):build())
 		:addChild(PageBuilder.new("Alignment")
 			:insertChooseField({
 				ChoiceDefinitionConstructor.text("Evil"),

@@ -50,6 +50,9 @@ return function(props: Properties): React.ReactNode?
 				Text = "Generate Alias",
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
+				[React.Event.Activated] = function()
+					fieldCallback(fieldDefinition)
+				end,
 			}),
 		}
 	))

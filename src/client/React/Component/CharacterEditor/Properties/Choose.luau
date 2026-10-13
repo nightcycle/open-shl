@@ -46,6 +46,9 @@ return function(props: Properties): React.ReactNode?
 			Size = UDim2.new(width, -padPx, 1, 0),
 			Text = choice.Text,
 			TextSize = 14,
+			[React.Event.Activated] = function()
+				fieldCallback(fieldDefinition, choice.Value)
+			end,
 		})
 	end
 	return e(Frame(

@@ -24,13 +24,20 @@ local e = React.createElement
 return function(props: Properties): React.ReactNode?
 	local fieldDefinition = React.useContext(CharacterEditorFieldDefinition)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
+	local selected, setSelected = React.useState(false)
 	if not fieldDefinition or fieldDefinition.Type ~= "Toggle" then
 		return
 	end
 	if not fieldCallback then
 		return
 	end
-	local isSelected = true
+	local isSelected = if props.IsSelected == nil then selected else props.IsSelected
+	local function toggle()
+		local nextSelected = not isSelected
+		setSelected(nextSelected)
+		fieldCallback(fieldDefinition, nextSelected)
+	end
+	local text = if isSelected then fieldDefinition.DisabledText or fieldDefinition.Text else fieldDefinition.Text
 	return e(Frame(
 		{
 			BackgroundTransparency = 1,
@@ -48,13 +55,11 @@ return function(props: Properties): React.ReactNode?
 				Modal = true,
 				Position = UDim2.fromScale(0.125, 0.25),
 				Size = UDim2.fromScale(0.75, 0.5),
-				Text = fieldDefinition.Text,
+				Text = text,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
-				[React.Event.Activated] = function()
-					fieldCallback(fieldDefinition, not isSelected)
-				end,
+				[React.Event.Activated] = toggle,
 			}),
 			OutlinedButton = fieldDefinition.Style == "Outline" and e("TextButton", {
 				BackgroundColor3 = Color3.fromRGB(107, 107, 107),
@@ -65,13 +70,11 @@ return function(props: Properties): React.ReactNode?
 				Modal = true,
 				Position = UDim2.fromScale(0.125, 0.25),
 				Size = UDim2.fromScale(0.75, 0.5),
-				Text = fieldDefinition.Text,
+				Text = text,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
-				[React.Event.Activated] = function()
-					fieldCallback(fieldDefinition, not isSelected)
-				end,
+				[React.Event.Activated] = toggle,
 			}),
 		}
 	))

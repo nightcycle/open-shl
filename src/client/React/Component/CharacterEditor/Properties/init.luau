@@ -24,6 +24,8 @@ local useCurrentPage =
 -- Contexts
 local CharacterEditorFieldDefinition =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldDefinition")
+local IsHeroFocusContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
 -- Types
 export type Properties = Frame.Properties & {}
 -- Constants
@@ -33,7 +35,8 @@ export type Properties = Frame.Properties & {}
 local e = React.createElement
 -- Class
 return function(props: Properties)
-	local currentPage = useCurrentPage()
+	local currentPage, path = useCurrentPage()
+	local isHeroFocus = React.useContext(IsHeroFocusContext)
 	local fields: { [string]: React.ReactNode } = {}
 	if currentPage and currentPage.Fields then
 		local currentFields: { CharacterEditorFieldDefinition.FieldDefinition } = currentPage.Type == "Default"
@@ -45,7 +48,7 @@ return function(props: Properties)
 				warn(`bad component for type "{fieldDef.Type}"`)
 				continue
 			end
-			fields[`Field-{i}`] = e(CharacterEditorFieldDefinition.Provider, {
+			fields[`{path}-{isHeroFocus}-Field-{i}`] = e(CharacterEditorFieldDefinition.Provider, {
 				value = fieldDef,
 			}, {
 				[`Field-{fieldDef.Type}-{i}`] = e(component, {

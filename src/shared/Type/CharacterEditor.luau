@@ -21,6 +21,7 @@ export type FieldDefinition =
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
 		Description: string?,
 		MaxLength: number?,
+		IsMultiLine: boolean?,
 	}
 	| {
 		Type: "Choose",
@@ -78,6 +79,7 @@ do -- Types.FieldDefinition
 			ExclusionTags = exclusionTags,
 			Description = Type.optional(Type.string),
 			MaxLength = Type.optional(Type.number),
+			IsMultiLine = Type.optional(Type.boolean),
 		}),
 		Type.strictInterface({
 			Type = Type.literal("Choose"),

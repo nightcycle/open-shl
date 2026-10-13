@@ -9,6 +9,7 @@ local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local WeldUtil = require("@game/ReplicatedStorage/Shared/Util/Weld")
 -- Types
 -- Constants
+local IN_PROGRESS_TAG = "IN_PROGRESS"
 local FAKE_HEAD_NAME = "FAKE_HEAD"
 -- Variables
 -- References
@@ -65,9 +66,18 @@ Util.applyDescription = function(rig: Model, description: HumanoidDescription, n
 			return
 		end
 		do
+			while humanoid:HasTag(IN_PROGRESS_TAG) do
+				if getIfCanceled() then
+					return
+				end
+				task.wait()
+			end
+
+			humanoid:AddTag(IN_PROGRESS_TAG)
 			local success, msg = pcall(function()
 				humanoid:ApplyDescriptionResetAsync(description, Enum.AssetTypeVerification.ClientOnly)
 			end)
+			humanoid:RemoveTag(IN_PROGRESS_TAG)
 			if not success then
 				warn(msg)
 			end
