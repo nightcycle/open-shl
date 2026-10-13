@@ -5,67 +5,43 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
--- Components
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 -- Hooks
 local useCurrentPage =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useCurrentPage")
 -- Contexts
-local CharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
+local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
-local PreviewCharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
+local PreviewCharacterContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Preview")
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
-local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
-export type ItemDefinition = AppearanceType.ItemDefinition
-export type HiddenTag = AppearanceType.HiddenTag
-export type FieldDefinition = CharacterEditorType.FieldDefinition
-export type PageDefinition = CharacterEditorType.PageDefinition
-export type ActionInfo =
-	{
-		Type: "FieldUpdated",
-		Path: string,
-		Page: PageDefinition,
-		Field: FieldDefinition,
-		Value: any,
-	}
-	| {
-		Type: "Exit",
-		IsSaving: boolean,
-	}
-export type Properties = Frame.Properties & {
-	OnAction: (ActionInfo) -> (),
+local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+export type Properties = {
+	children: { [string]: React.ReactNode }?,
 }
 -- Constants
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
-return function(props: { children: { [string]: React.ReactNode }? }): React.ReactNode
-	local page, path = useCurrentPage()
-	local baseAppearance = React.useContext(CharacterAppearanceContext)
-	local appearance = React.useMemo(function(): AppearanceType.Appearance
-		local app = TableUtil.deepCopy(baseAppearance)
-
-		return app
-	end, { baseAppearance :: any })
-	local previewAppearance = React.useMemo(function(): AppearanceType.Appearance
-		local app = TableUtil.deepCopy(baseAppearance)
-
-		return app
-	end, { baseAppearance :: any })
-	return e(CharacterAppearanceContext.Provider, {
-		value = appearance,
+return function(props: Properties): React.ReactNode
+	local _, path = useCurrentPage()
+	local baseCharacter = React.useContext(CharacterContext)
+	local character = React.useMemo(function(): CharacterType.Character
+		return TableUtil.deepCopy(baseCharacter)
+	end, { baseCharacter :: any })
+	local previewCharacter = React.useMemo(function(): CharacterType.Character
+		return TableUtil.deepCopy(character)
+	end, { character :: any })
+	return e(CharacterContext.Provider, {
+		value = character,
 	}, {
-		PreviewAppearance = e(PreviewCharacterAppearanceContext.Provider, {
-			value = previewAppearance,
+		PreviewCharacter = e(PreviewCharacterContext.Provider, {
+			value = previewCharacter,
 		}, {
 			CharacterEditorFieldCallback = e(CharacterEditorFieldCallback.Provider, {
-				value = function(...)
-					print(path, "editor", ...)
+				value = function(field: CharacterEditorFieldCallback.FieldDefinition, value: any?)
+					print(path, "editor", field, value)
 				end,
 			}, props.children),
 		}),

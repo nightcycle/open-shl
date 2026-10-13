@@ -13,10 +13,9 @@ local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component
 -- Hooks
 local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
-local CharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
-local CharacterPreviewAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
+local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
+local PreviewCharacterContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Preview")
 -- Types
 export type Properties = {}
 -- Constants
@@ -28,12 +27,9 @@ local SceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/ar
 local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
-	local appearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
-	local previewAppearance: CharacterAppearanceContext.Appearance? =
-		React.useContext(CharacterPreviewAppearanceContext)
-	if previewAppearance then
-		appearance = previewAppearance
-	end
+	local character = React.useContext(CharacterContext)
+	local previewCharacter = React.useContext(PreviewCharacterContext)
+	local appearance = (previewCharacter or character).Identities.Main.Appearance
 
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local rotationDeg, setRotationDeg = React.useState(0)

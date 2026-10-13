@@ -8,18 +8,19 @@ local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
+local CharacterConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character")
 -- Components
 local ParentComponent = require(".")
 -- Hooks
 -- Contexts
-local CharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
+local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
 local ItemDefSelection =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Selection/AppearanceItemDefinition")
-local PreviewCharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
+local PreviewCharacterContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Preview")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
+local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
 -- Constants
@@ -36,34 +37,32 @@ return UILabs.CreateReactStory({
 	local appliedArtifact: Item?, setAppliedArtifact: (Item?) -> () = React.useState(nil :: Item?)
 	local selectedItemDef: ItemDefinition?, setSelectedItemDef: (ItemDefinition?) -> () =
 		React.useState(nil :: ItemDefinition?)
-	local baseAppearance = React.useMemo(function(): AppearanceType.Appearance
-		return {
-			Items = {},
-			HiddenTags = {},
-		}
+	local baseCharacter = React.useMemo(function(): CharacterType.Character
+		return CharacterConstructor.new()
 	end, {})
-	local appearance = React.useMemo(function(): AppearanceType.Appearance
-		local app = TableUtil.deepCopy(baseAppearance)
+	local character = React.useMemo(function(): CharacterType.Character
+		local out = TableUtil.deepCopy(baseCharacter)
 		if appliedArtifact then
-			table.insert(app.Items, appliedArtifact)
+			table.insert(out.Identities.Main.Appearance.Items, appliedArtifact)
 		end
-		return app
-	end, { baseAppearance :: any, appliedArtifact })
-	local previewAppearance = React.useMemo(function(): AppearanceType.Appearance
-		local app = TableUtil.deepCopy(baseAppearance)
-		if selectedItemDef then
-			table.insert(app.Items, {
-				DefinitionId = selectedItemDef.Id,
-			})
+		return out
+	end, { baseCharacter :: any, appliedArtifact })
+	local previewCharacter = React.useMemo(function(): CharacterType.Character?
+		if not selectedItemDef then
+			return nil
 		end
-		return app
-	end, { baseAppearance :: any, selectedItemDef })
+		local out = TableUtil.deepCopy(baseCharacter)
+		table.insert(out.Identities.Main.Appearance.Items, {
+			DefinitionId = selectedItemDef.Id,
+		})
+		return out
+	end, { baseCharacter :: any, selectedItemDef })
 
-	return e(CharacterAppearanceContext.Provider, {
-		value = appearance,
+	return e(CharacterContext.Provider, {
+		value = character,
 	}, {
-		PreviewAppearance = e(PreviewCharacterAppearanceContext.Provider, {
-			value = previewAppearance,
+		PreviewCharacter = e(PreviewCharacterContext.Provider, {
+			value = previewCharacter,
 		}, {
 			ItemDefSelection = e(ItemDefSelection.Provider, {
 				value = selectedItemDef,

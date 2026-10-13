@@ -3,7 +3,6 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
-local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 -- Components
@@ -12,19 +11,10 @@ local Explorer = require("@self/Explorer")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local Properties = require("@self/Properties")
 local Scene = require("@self/Scene")
--- Hooks
-local useCurrentPage =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useCurrentPage")
 -- Contexts
-local CharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
-local CharacterEditorFieldCallback =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
 local IsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
 local PathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Path")
-local PreviewCharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
 local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")

@@ -10,8 +10,7 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 -- Hooks
 -- Contexts
-local CharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
+local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 type Item = AppearanceType.Item
@@ -39,7 +38,8 @@ function buttonGroup(props: {
 	PositionY: UDim,
 	SetVisibility: (tag: AppearanceType.HiddenTag, toVisibility: boolean) -> (),
 })
-	local characterAppearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
+	local character = React.useContext(CharacterContext)
+	local characterAppearance = character.Identities.Main.Appearance
 	local hasItem = React.useMemo(function(): boolean
 		for i, item in characterAppearance.Items do
 			local definition = ItemAppearanceDefinition.get(item.DefinitionId)
@@ -103,7 +103,8 @@ function wearButton(props: {
 	OnWear: (itemDef: ItemDefinition) -> (),
 	OnRemove: (itemDef: ItemDefinition) -> (),
 })
-	local characterAppearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
+	local character = React.useContext(CharacterContext)
+	local characterAppearance = character.Identities.Main.Appearance
 	local isWearing = React.useMemo(function(): boolean
 		for i, item in characterAppearance.Items do
 			if item.DefinitionId == props.SelectedItemDefinition.Id then

@@ -8,6 +8,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local Spring = require("@game/ReplicatedStorage/Packages/Spring")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
+local AppearanceConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance")
 local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
@@ -15,37 +16,65 @@ local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component
 -- Hooks
 local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
-local CharacterAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Appearance")
-local CharacterPreviewAppearanceContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/PreviewAppearance")
+local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
 local IsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
+local PreviewCharacterContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Preview")
 -- Types
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 export type Properties = {}
 -- Constants
 local ROTATION_INC_DEG = 45
+local EMPTY_APPEARANCE = AppearanceConstructor.new()
 -- Variables
 -- References
 local HeroSceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/hero-character-editor") :: Folder
 local SecretSceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/secret-character-editor") :: Folder
 -- Private Functions
 local e = React.createElement
+local function useAppearance(scene: useScene.Scene?, appearance: AppearanceType.Appearance)
+	local rig = if scene and scene.IsAlive and scene.Rig.IsDone then scene.Rig.Value else nil
+	React.useEffect(function()
+		if not rig then
+			return function() end
+		end
+		local isDead = false
+		task.spawn(function()
+			local resF: TypeUnionLib.Future<TypeUnionLib.Result<true, { string }>> = TypeUnionLib.Future.awaitUntil(
+				AppearanceUtil.apply(rig, appearance),
+				function()
+					return isDead
+				end
+			)
+			if resF.IsDone and resF.Value.IsErr then
+				for _, message in resF.Value.Value do
+					warn(`appearance err: {message}`)
+				end
+			end
+		end)
+		return function()
+			isDead = true
+		end
+	end, { appearance :: any, rig })
+end
 -- Class
 return function(props: Properties): React.ReactNode
 	local isHeroFocus = React.useContext(IsHeroFocusContext)
-	local appearance: CharacterAppearanceContext.Appearance = React.useContext(CharacterAppearanceContext)
-	local previewAppearance: CharacterAppearanceContext.Appearance? =
-		React.useContext(CharacterPreviewAppearanceContext)
-	if previewAppearance then
-		appearance = previewAppearance
-	end
+	local character = React.useContext(CharacterContext)
+	local previewCharacter = React.useContext(PreviewCharacterContext)
+	local displayedCharacter = previewCharacter or character
+	local mainAppearance = displayedCharacter.Identities.Main.Appearance
+	local secretIdentity = displayedCharacter.Identities.Secret
+	local secretAppearance = if secretIdentity then secretIdentity.Appearance else EMPTY_APPEARANCE
 
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local heroRotationDeg, setHeroRotationDeg = React.useState(0)
 	local secretRotationDeg, setSecretRotationDeg = React.useState(0)
 	local heroScene, refreshHeroScene = useScene(HeroSceneTemplate)
 	local secretScene, refreshSecretScene = useScene(SecretSceneTemplate)
+	useAppearance(heroScene, mainAppearance)
+	useAppearance(secretScene, secretAppearance)
 
 	React.useEffect(function()
 		local viewport = viewportRef.current
@@ -130,34 +159,6 @@ return function(props: Properties): React.ReactNode
 			end)
 		end
 	end, { secretRotationDeg :: any, secretScene and secretScene.IsAlive and secretScene.Rig.IsDone })
-
-	React.useEffect(function()
-		if appearance and heroScene and heroScene.IsAlive and heroScene.Rig.IsDone then
-			local isDead = false
-			task.spawn(function()
-				print(`applying appearance: isDead={isDead}`)
-				local resF: TypeUnionLib.Future<TypeUnionLib.Result<true, { string }>> = TypeUnionLib.Future.awaitUntil(
-					AppearanceUtil.apply(heroScene.Rig.Value, appearance),
-					function()
-						return isDead
-					end
-				)
-				if resF.IsDone then
-					if resF.Value.IsErr then
-						for i, v in resF.Value.Value do
-							warn(`appearance err: {v}`)
-						end
-					else
-						print(`successfully applied appearance`)
-					end
-				end
-			end)
-			return function()
-				isDead = true
-			end
-		end
-		return function() end
-	end, { appearance :: any, heroScene and heroScene.IsAlive and heroScene.Rig.IsDone })
 
 	return e(React.Fragment, {}, {
 		ViewportFrame = e(

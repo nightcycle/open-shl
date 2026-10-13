@@ -64,8 +64,14 @@ Util.applyDescription = function(rig: Model, description: HumanoidDescription, n
 		if not humanoid then
 			return
 		end
-
-		humanoid:ApplyDescriptionResetAsync(description, Enum.AssetTypeVerification.ClientOnly)
+		do
+			local success, msg = pcall(function()
+				humanoid:ApplyDescriptionResetAsync(description, Enum.AssetTypeVerification.ClientOnly)
+			end)
+			if not success then
+				warn(msg)
+			end
+		end
 
 		if not noEdits then
 			applyEdits(rig, description)
