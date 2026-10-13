@@ -30,8 +30,6 @@ local e = React.createElement
 function rowButton(props: TextButton.Properties & {
 	IsSelected: boolean?,
 })
-	local currentPath = React.useContext(PathContext)
-
 	return e(TextButton({
 		BackgroundColor3 = props.IsSelected and Color3.fromRGB(0, 170, 0) or Color3.new(),
 		BackgroundTransparency = 0.5,
