@@ -23,15 +23,17 @@ Types.ItemDefinitionIndex = Type.strictInterface({
 	Key = Type.string,
 })
 
+export type TextureGroupKey = "Primary" | "Secondary" | "Tertiary" | "Hair" | "Skin"
+Types.TextureGroupKey = Type.literal("Primary", "Secondary", "Tertiary", "Hair", "Skin")
 export type TextureGroupDefinition = {
-	Key: string,
+	Key: TextureGroupKey,
 	Transparency: NumberRange | number?,
 	Colors: { Color3 } | true?,
 	Materials: { Enum.Material } | true?,
 }
 
 Types.TextureGroupDefinition = Type.strictInterface({
-	Key = Type.string,
+	Key = Types.TextureGroupKey,
 	Transparency = Type.optional(Type.union(Type.numberConstrained(0, 1), Type.NumberRange)),
 	Colors = Type.optional(Type.union(Type.array(Type.Color3), Type.literal(true))),
 	Materials = Type.optional(Type.union(Type.array(Type.enum(Enum.Material)), Type.literal(true))),

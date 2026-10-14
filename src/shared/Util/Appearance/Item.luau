@@ -136,7 +136,8 @@ function applyModel(definitionId: string, rig: Model, model: Model): Result<true
 		globalCF = anchor.CFrame
 	end
 	globalCF *= attachment.CFrame:Inverse()
-	model:SetPrimaryPartCFrame(globalCF)
+	model.WorldPivot = root.CFrame * root.PivotOffset
+	model:PivotTo(globalCF)
 	prepItemInst(definitionId, model)
 	for i, v in model:QueryDescendants("BasePart") do
 		WeldUtil.between(root, v)

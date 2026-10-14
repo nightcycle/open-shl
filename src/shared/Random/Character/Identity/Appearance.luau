@@ -16,6 +16,16 @@ local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Id
 -- Class
 local Module = {}
 
+Module.TextureGroupKey = function(seed: number?): AppearanceType.TextureGroupKey
+	return RandomMisc.literal(seed, {
+		"Primary",
+		"Secondary",
+		"Tertiary",
+		"Hair",
+		"Skin",
+	}) :: AppearanceType.TextureGroupKey
+end
+
 Module.HiddenTag = function(seed: number?): AppearanceType.HiddenTag
 	return RandomMisc.literal(seed, { "Hood", "Mask", "MouthCover", "Hair" }) :: AppearanceType.HiddenTag
 end
