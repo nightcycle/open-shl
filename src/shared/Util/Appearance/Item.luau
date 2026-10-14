@@ -103,12 +103,54 @@ function applyBasePart(definitionId: string, rig: Model, basePart: BasePart, isR
 	WeldUtil.between(anchorPart, basePart)
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
+function applyModel(definitionId: string, rig: Model, model: Model): Result<true, string>
+	local root = model:FindFirstChild("root")
+	if not root then
+		return Result.err(`couldn't find root`)
+	end
+	if not root:IsA("BasePart") then
+		return Result.err(`root wasn't BasePart`)
+	end
+	local attachments = root:QueryDescendants("Attachment") :: { Attachment }
+	if #attachments == 0 then
+		return Result.err(`failed to find valid attachment under part`)
+	elseif #attachments > 1 then
+		return Result.err(`returned #{attachments} attachments, expected only one`)
+	end
+	local attachment = attachments[1]
+	local anchor = getAnchorFromName(rig, attachment.Name)
+	if not anchor then
+		return Result.err(`attachment name "{attachment.Name}" couldn't be mapped into a valid anchor instance`)
+	end
+	local globalCF: CFrame
+	local anchorPart: BasePart
+	if anchor:IsA("Attachment") then
+		local anchorParent = anchor:FindFirstAncestorWhichIsA("BasePart")
+		if not anchorParent then
+			return Result.err(`couldn't find basepart ancestor for root attachment "{attachment.Name}"`)
+		end
+		anchorPart = anchorPart
+		globalCF = anchorParent.CFrame * anchor.CFrame
+	else
+		anchorPart = anchor
+		globalCF = anchor.CFrame
+	end
+	globalCF *= attachment.CFrame:Inverse()
+	model:SetPrimaryPartCFrame(globalCF)
+	prepItemInst(definitionId, model)
+	for i, v in model:QueryDescendants("BasePart") do
+		WeldUtil.between(root, v)
+	end
+	WeldUtil.between(anchorPart, root)
+
+	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
+end
 
 -- Modules
 local Util = {}
 
 function Util.apply(rig: Model, appearance: Appearance, item: Item): Result<true, string>
-local newItemRes = newItemInst(item)
+	local newItemRes = newItemInst(item)
 	if newItemRes.IsErr then
 		return newItemRes
 	end
@@ -116,10 +158,18 @@ local newItemRes = newItemInst(item)
 	local applyResOpt: Option<Result<true, string>> = Option.none()
 	if newItem:IsA("BasePart") then
 		applyResOpt = Option.some(applyBasePart(item.DefinitionId, rig, newItem, true))
+	elseif newItem:IsA("Model") then
+		applyResOpt = Option.some(applyModel(item.DefinitionId, rig, newItem))
 	elseif newItem:IsA("Folder") then
 		for i, inst in newItem:GetChildren() do
 			if inst:IsA("BasePart") then
 				local applyChildRes = applyBasePart(item.DefinitionId, rig, inst, true)
+				if applyChildRes.IsErr then
+					applyResOpt = Option.some(applyChildRes)
+					break
+				end
+			elseif inst:IsA("Model") then
+				local applyChildRes = applyModel(item.DefinitionId, rig, inst)
 				if applyChildRes.IsErr then
 					applyResOpt = Option.some(applyChildRes)
 					break
