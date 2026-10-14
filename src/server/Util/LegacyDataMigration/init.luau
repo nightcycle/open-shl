@@ -54,25 +54,27 @@ local COLORS: { [string]: BrickColor } = CONSTANTS.COLORS
 local COLOR_ALIASES: { [string]: BrickColor } = CONSTANTS.COLOR_ALIASES
 local MATERIALS: { [string]: Enum.Material } = CONSTANTS.MATERIALS
 local ITEM_GROUPS: { [string]: { [string]: { [string]: string } } } = CONSTANTS.ITEMS
-local ITEM_CODES: { [string]: string } = CONSTANTS.ITEM_CODES
 -- Variables
 local ItemIds: { [string]: string } = {}
 local KnownItemCodes: { [string]: boolean } = {}
 local MaterialNames: { [string]: Enum.Material } = {}
 -- References
 -- Private Functions
+local function normalizeItemName(value: string): string
+	return (value:lower():gsub("%W", ""))
+end
+
 for _, categories in ITEM_GROUPS do
 	for _, items in categories do
 		for code, id in items do
-			ItemIds[code] = id
-			ItemIds[id] = id
+			KnownItemCodes[code] = true
+			if id ~= "" then
+				ItemIds[code] = id
+				ItemIds[id] = id
+				local key = assert(id:match("^[^_]+_[^_]+_(.+)$"), `Invalid item definition ID: {id}`)
+				ItemIds[normalizeItemName(key)] = id
+			end
 		end
-	end
-end
-for name, code in ITEM_CODES do
-	KnownItemCodes[code] = true
-	if ItemIds[code] then
-		ItemIds[name] = ItemIds[code]
 	end
 end
 table.freeze(ItemIds)
@@ -156,7 +158,7 @@ local function convertItem(raw: unknown, path: string): Item?
 	assert(success, `{path}: {message}`)
 	local values = raw :: { unknown }
 	local name = values[1] :: string
-	local id = ItemIds[name]
+	local id = ItemIds[name] or ItemIds[normalizeItemName(name)]
 	if not id then
 		assert(not name:match("^i%d") or KnownItemCodes[name], `{path}: Unresolved legacy code: {name}`)
 		return nil
