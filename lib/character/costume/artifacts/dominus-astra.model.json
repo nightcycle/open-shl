@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Dominus Astra"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

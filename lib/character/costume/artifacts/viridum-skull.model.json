@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Viridum Skull"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

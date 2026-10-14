@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Black Crisis"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

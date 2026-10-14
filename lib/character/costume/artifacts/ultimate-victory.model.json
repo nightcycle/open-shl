@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Ultimate Victory"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

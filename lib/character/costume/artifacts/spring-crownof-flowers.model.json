@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Spring Crown of Flowers"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

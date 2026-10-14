@@ -18,6 +18,9 @@
         },
         "Name": {
           "String": "The Riddling Skull"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

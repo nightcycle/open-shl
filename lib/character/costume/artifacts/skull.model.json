@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Skull"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

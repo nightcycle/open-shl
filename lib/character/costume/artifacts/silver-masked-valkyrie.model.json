@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Silver Masked Valkyrie"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

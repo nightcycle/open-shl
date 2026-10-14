@@ -18,7 +18,14 @@
         2.131999969482422
       ]
     },
-    "Tags": []
+    "Tags": [],
+    "Attributes": {
+      "Attributes": {
+        "TextureGroup": {
+          "String": "Primary"
+        }
+      }
+    }
   },
   "Children": [
     {

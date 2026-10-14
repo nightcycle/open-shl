@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Hei Matau"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

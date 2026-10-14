@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "The Crown of the Horned Prince"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

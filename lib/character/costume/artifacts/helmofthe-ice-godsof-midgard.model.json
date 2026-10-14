@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Helm of the Ice Gods of Midgard"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

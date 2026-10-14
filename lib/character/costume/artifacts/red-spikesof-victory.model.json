@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Red Spikes of Victory"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

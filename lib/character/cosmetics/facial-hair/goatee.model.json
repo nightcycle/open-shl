@@ -118,6 +118,13 @@
             0.42639994621276855,
             0.2183999866247177
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [
@@ -184,6 +191,13 @@
             0.4887999892234802,
             0.2183999866247177
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [
@@ -250,6 +264,13 @@
             0.3431999981403351,
             0.2807999551296234
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [
@@ -316,6 +337,13 @@
             0.17679999768733978,
             0.10399999469518661
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [
@@ -382,6 +410,13 @@
             0.42639994621276855,
             0.2183999866247177
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [
@@ -448,6 +483,13 @@
             0.3431999981403351,
             0.2807999551296234
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [
@@ -514,6 +556,13 @@
             0.17679999768733978,
             0.10399999469518661
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [
@@ -580,6 +629,13 @@
             0.4887999892234802,
             0.2183999866247177
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [

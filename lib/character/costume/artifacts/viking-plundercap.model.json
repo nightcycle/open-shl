@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Viking Plundercap"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

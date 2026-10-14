@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Sparkle Time Fedora"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

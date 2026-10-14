@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Noir Thief"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

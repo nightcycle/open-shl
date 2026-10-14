@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Korblox Keeper"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

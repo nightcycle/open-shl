@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Ice Nine Dronehelm"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Noramros the Hero's Hero"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "A Dark Presence"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

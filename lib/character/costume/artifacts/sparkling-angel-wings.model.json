@@ -18,6 +18,9 @@
         },
         "Name": {
           "String": "Sparkling Angel Wings"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

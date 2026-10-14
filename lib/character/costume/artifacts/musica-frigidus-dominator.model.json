@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Musica Frigidus Dominator"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

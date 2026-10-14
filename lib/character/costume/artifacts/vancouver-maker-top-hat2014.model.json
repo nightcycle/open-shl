@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Vancouver Maker Top Hat 2014"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

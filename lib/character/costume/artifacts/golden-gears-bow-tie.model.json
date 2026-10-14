@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Golden Gears Bow Tie"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

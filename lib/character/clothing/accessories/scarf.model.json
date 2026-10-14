@@ -38,6 +38,9 @@
       "Attributes": {
         "Name": {
           "String": "Scarf"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

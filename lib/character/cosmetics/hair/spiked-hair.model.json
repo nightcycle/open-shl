@@ -8,6 +8,9 @@
         },
         "Name": {
           "String": "Spiked Hair"
+        },
+        "TextureGroup": {
+          "String": "Hair"
         }
       }
     },

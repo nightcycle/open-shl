@@ -23,6 +23,9 @@
       "Attributes": {
         "Name": {
           "String": "Belt"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

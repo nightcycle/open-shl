@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Future Phantom"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

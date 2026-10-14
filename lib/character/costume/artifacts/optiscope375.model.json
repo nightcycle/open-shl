@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Optiscope 375"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Spiky Bionic Eye Patch"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Justice of the Thief"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Mystic Spiral"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

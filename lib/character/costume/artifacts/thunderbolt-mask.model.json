@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Thunderbolt Mask"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

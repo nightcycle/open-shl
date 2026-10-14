@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Elite Space Trooper"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

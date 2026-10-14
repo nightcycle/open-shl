@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Securbot 8990"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -23,6 +23,9 @@
       "Attributes": {
         "Name": {
           "String": "Soul Patch"
+        },
+        "TextureGroup": {
+          "String": "Hair"
         }
       }
     }

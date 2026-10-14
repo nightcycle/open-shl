@@ -115,6 +115,13 @@
             0.41599997878074646,
             2.235999822616577
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -164,6 +171,13 @@
             0.4159998893737793,
             2.2360000610351562
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     }

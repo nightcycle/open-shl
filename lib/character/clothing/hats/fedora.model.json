@@ -20,6 +20,9 @@
       "Attributes": {
         "Name": {
           "String": "Fedora"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

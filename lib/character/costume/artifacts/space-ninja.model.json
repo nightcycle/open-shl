@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Space Ninja"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

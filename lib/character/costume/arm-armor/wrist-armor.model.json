@@ -47,6 +47,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Skin"
+            }
+          }
         }
       },
       "Children": [
@@ -105,7 +112,14 @@
             1.1439998149871826
           ]
         },
-        "Tags": []
+        "Tags": [],
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        }
       },
       "Children": [
         {
@@ -178,6 +192,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Skin"
+            }
+          }
         }
       },
       "Children": [
@@ -251,6 +272,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Skin"
+            }
+          }
         }
       },
       "Children": [
@@ -309,7 +337,14 @@
             1.0920000076293945
           ]
         },
-        "Tags": []
+        "Tags": [],
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        }
       },
       "Children": [
         {
@@ -382,6 +417,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Skin"
+            }
+          }
         }
       },
       "Children": [

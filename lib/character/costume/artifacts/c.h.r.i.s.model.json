@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "C.H.R.I.S"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

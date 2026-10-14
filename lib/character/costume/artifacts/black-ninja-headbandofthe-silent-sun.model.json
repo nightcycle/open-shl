@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Black Ninja Headband of the Silent Sun"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

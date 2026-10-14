@@ -43,6 +43,13 @@
         0.3119998276233673,
         0.6239998936653137
       ]
+    },
+    "Attributes": {
+      "Attributes": {
+        "TextureGroup": {
+          "String": "Primary"
+        }
+      }
     }
   }
 }

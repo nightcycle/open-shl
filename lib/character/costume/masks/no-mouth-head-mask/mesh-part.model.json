@@ -58,6 +58,13 @@
     },
     "TextureContent": {
       "Content": "None"
+    },
+    "Attributes": {
+      "Attributes": {
+        "TextureGroup": {
+          "String": "Primary"
+        }
+      }
     }
   }
 }

@@ -47,6 +47,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Skin"
+            }
+          }
         }
       },
       "Children": [
@@ -202,6 +209,13 @@
                 0.2104729413986206,
                 2.1573476791381836
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -251,6 +265,13 @@
                 0.36832770705223083,
                 1.0523645877838135
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -317,6 +338,13 @@
                 0.36832770705223083,
                 1.0523645877838135
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -383,6 +411,13 @@
                 0.36832770705223083,
                 0.2104729413986206
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [

@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Mr Robot"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

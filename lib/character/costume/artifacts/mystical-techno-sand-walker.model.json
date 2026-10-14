@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Mystical Techno Sand Walker"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

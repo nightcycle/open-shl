@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Guardian of the Temple of Light"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

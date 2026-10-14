@@ -129,6 +129,13 @@
                 0.9879999160766602,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -178,6 +185,13 @@
                 1.091999888420105,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -234,6 +248,13 @@
                 0.20799998939037323,
                 1.0920000076293945
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         }
@@ -357,6 +378,13 @@
                 1.091999888420105,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -413,6 +441,13 @@
                 0.5719999074935913,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -462,6 +497,13 @@
                 1.091999888420105,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -592,6 +634,13 @@
                 0.312000036239624,
                 2.131999969482422
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -641,6 +690,13 @@
                 0.25999996066093445,
                 0.2079998254776001
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -690,6 +746,13 @@
                 0.25999996066093445,
                 0.2079998254776001
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         }
@@ -813,6 +876,13 @@
                 1.091999888420105,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -869,6 +939,13 @@
                 0.9879999160766602,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -918,6 +995,13 @@
                 0.20799998939037323,
                 1.0920000076293945
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         }
@@ -1041,6 +1125,13 @@
                 1.091999888420105,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -1097,6 +1188,13 @@
                 0.5719999074935913,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -1146,6 +1244,13 @@
                 1.091999888420105,
                 1.091999888420105
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -1276,6 +1381,13 @@
                 1.8616056442260742,
                 0.20799998939037323
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -1325,6 +1437,13 @@
                 1.8615679740905762,
                 0.2079998254776001
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         }

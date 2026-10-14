@@ -50,6 +50,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -194,6 +201,13 @@
             },
             "TextureContent": {
               "Content": "None"
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -258,6 +272,13 @@
             },
             "TextureContent": {
               "Content": "None"
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -307,6 +328,13 @@
             },
             "shape": {
               "Enum": 2
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
             }
           }
         }
@@ -348,6 +376,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -421,6 +456,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -494,6 +536,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -567,6 +616,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -737,6 +793,13 @@
             },
             "TextureContent": {
               "Content": "None"
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -801,6 +864,13 @@
             },
             "TextureContent": {
               "Content": "None"
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -850,6 +920,13 @@
             },
             "shape": {
               "Enum": 2
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
             }
           }
         }
@@ -891,6 +968,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -964,6 +1048,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -1037,6 +1128,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -1110,6 +1208,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [
@@ -1183,6 +1288,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       },
       "Children": [

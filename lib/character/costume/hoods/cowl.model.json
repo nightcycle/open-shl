@@ -50,6 +50,9 @@
       "Attributes": {
         "Name": {
           "String": "Cowl"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

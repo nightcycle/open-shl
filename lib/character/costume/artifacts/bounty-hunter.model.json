@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Bounty Hunter"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

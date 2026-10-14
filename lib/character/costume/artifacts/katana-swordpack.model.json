@@ -18,6 +18,9 @@
         },
         "Name": {
           "String": "Katana Swordpack"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

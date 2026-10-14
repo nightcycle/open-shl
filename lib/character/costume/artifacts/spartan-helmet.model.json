@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Spartan Helmet"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

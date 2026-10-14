@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Pirates Captain Hat"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

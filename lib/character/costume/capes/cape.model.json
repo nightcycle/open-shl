@@ -38,6 +38,9 @@
       "Attributes": {
         "Name": {
           "String": "Cape"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

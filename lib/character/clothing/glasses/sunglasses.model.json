@@ -20,6 +20,9 @@
       "Attributes": {
         "Name": {
           "String": "Sunglasses"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

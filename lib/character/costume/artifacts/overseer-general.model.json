@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Overseer General"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

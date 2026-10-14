@@ -23,6 +23,9 @@
       "Attributes": {
         "Name": {
           "String": "Bracelet"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

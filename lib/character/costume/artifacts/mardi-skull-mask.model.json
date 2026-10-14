@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Mardi Skull Mask"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

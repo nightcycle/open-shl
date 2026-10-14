@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Knight of the Stygian Abyss"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

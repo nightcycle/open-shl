@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Blackvalk"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

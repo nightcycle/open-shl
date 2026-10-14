@@ -47,6 +47,13 @@
         "Tags": [],
         "TextureContent": {
           "Content": "None"
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Skin"
+            }
+          }
         }
       },
       "Children": [
@@ -202,6 +209,13 @@
                 0.20918013155460358,
                 0.20918013155460358
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -275,6 +289,13 @@
                 0.3258143663406372,
                 2.2421138286590576
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -324,6 +345,13 @@
                 0.3258143961429596,
                 2.2421135902404785
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -373,6 +401,13 @@
                 0.20918013155460358,
                 0.20918013155460358
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -446,6 +481,13 @@
                 0.20918013155460358,
                 0.20918013155460358
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [
@@ -519,6 +561,13 @@
                 0.325814425945282,
                 2.2421135902404785
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -568,6 +617,13 @@
                 0.3258143961429596,
                 2.2421133518218994
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           }
         },
@@ -617,6 +673,13 @@
                 0.20918013155460358,
                 0.20918013155460358
               ]
+            },
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
             }
           },
           "Children": [

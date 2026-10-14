@@ -32,6 +32,9 @@
         },
         "Name": {
           "String": "The Crimson Catseye"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

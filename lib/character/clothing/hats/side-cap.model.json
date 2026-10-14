@@ -20,6 +20,9 @@
       "Attributes": {
         "Name": {
           "String": "Side Cap"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

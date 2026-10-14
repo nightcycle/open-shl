@@ -118,6 +118,13 @@
             0.4367999732494354,
             0.2183999866247177
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [
@@ -184,6 +191,13 @@
             0.4367999732494354,
             0.2183999866247177
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
         }
       },
       "Children": [

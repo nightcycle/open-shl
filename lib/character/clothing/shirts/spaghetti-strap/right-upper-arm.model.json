@@ -33,6 +33,13 @@
     "Tags": [],
     "TextureContent": {
       "Content": "None"
+    },
+    "Attributes": {
+      "Attributes": {
+        "TextureGroup": {
+          "String": "Skin"
+        }
+      }
     }
   },
   "Children": [

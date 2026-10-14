@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Eyepatch"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -18,6 +18,9 @@
         },
         "Name": {
           "String": "The Emerald Eye"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

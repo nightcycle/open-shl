@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Big Bad Wolf"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

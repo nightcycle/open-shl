@@ -22,6 +22,9 @@
       "Attributes": {
         "Name": {
           "String": "Super Sunglasses"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

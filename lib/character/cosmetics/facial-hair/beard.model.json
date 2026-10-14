@@ -38,6 +38,9 @@
       "Attributes": {
         "Name": {
           "String": "Beard"
+        },
+        "TextureGroup": {
+          "String": "Hair"
         }
       }
     }

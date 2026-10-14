@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Lava Monster Warrior"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

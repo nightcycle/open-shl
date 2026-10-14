@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Bluesteel Fedora"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

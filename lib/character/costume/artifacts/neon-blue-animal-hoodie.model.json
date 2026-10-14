@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Neon Blue Animal Hoodie"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

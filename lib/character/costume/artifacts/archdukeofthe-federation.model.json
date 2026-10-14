@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Archduke of the Federation"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

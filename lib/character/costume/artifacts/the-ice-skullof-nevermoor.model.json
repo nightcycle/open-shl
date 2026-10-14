@@ -21,6 +21,9 @@
         },
         "Name": {
           "String": "The Ice Skull of Nevermoor"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

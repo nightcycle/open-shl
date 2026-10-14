@@ -20,6 +20,9 @@
       "Attributes": {
         "Name": {
           "String": "Backwards Cap"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

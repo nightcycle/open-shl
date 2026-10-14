@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Crimsonwrath, Lord of Entropy"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

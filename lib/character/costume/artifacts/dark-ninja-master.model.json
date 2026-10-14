@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Dark Ninja Master"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

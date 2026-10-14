@@ -8,6 +8,9 @@
         },
         "Name": {
           "String": "Beautiful People Hair"
+        },
+        "TextureGroup": {
+          "String": "Hair"
         }
       }
     },

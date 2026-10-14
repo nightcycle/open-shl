@@ -115,6 +115,13 @@
             1.8719998598098755,
             0.6759998798370361
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -164,6 +171,13 @@
             1.871999740600586,
             0.6759998798370361
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -213,6 +227,13 @@
             1.8719998598098755,
             0.8839999437332153
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -262,6 +283,13 @@
             1.4040000438690186,
             0.8839999437332153
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -311,6 +339,13 @@
             0.20799998939037323,
             0.46799999475479126
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -360,6 +395,13 @@
             0.20799998939037323,
             0.46799999475479126
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -409,6 +451,13 @@
             0.2600001096725464,
             0.6759998798370361
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -458,6 +507,13 @@
             0.20800010859966278,
             1.091999888420105
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -507,6 +563,13 @@
             0.25999999046325684,
             0.20799998939037323
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -556,6 +619,13 @@
             0.25999999046325684,
             0.20799998939037323
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     }

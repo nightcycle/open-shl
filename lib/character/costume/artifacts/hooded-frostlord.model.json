@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Hooded Frostlord"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

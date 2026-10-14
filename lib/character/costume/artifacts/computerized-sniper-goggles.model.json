@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Computerized Sniper Goggles"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -115,6 +115,13 @@
             0.6005538105964661,
             1.8200000524520874
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -161,6 +168,13 @@
             0.49655386805534363,
             0.2600001096725464
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -207,6 +221,13 @@
             1.0808767080307007,
             0.2600001096725464
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -253,6 +274,13 @@
             0.28064775466918945,
             0.2600001096725464
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -299,6 +327,13 @@
             0.10399999469518661,
             0.2600001096725464
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -345,6 +380,13 @@
             0.581210196018219,
             0.20799781382083893
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -391,6 +433,13 @@
             0.05199999734759331,
             0.5720011591911316
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -437,6 +486,13 @@
             0.6084825992584229,
             0.1040063425898552
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -483,6 +539,13 @@
             0.1040063425898552,
             0.6084825992584229
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -529,6 +592,13 @@
             0.05199999734759331,
             1.8199999332427979
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -575,6 +645,13 @@
             1.1294872760772705,
             0.2600001096725464
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -621,6 +698,13 @@
             1.0685539245605469,
             2.0279998779296875
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -667,6 +751,13 @@
             0.05199999734759331,
             0.5720011591911316
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -713,6 +804,13 @@
             0.20799781382083893,
             0.581210196018219
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     },
@@ -759,6 +857,13 @@
             0.49655386805534363,
             0.2600001096725464
           ]
+        },
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
         }
       }
     }

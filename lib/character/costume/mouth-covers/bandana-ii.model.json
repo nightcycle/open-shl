@@ -40,6 +40,9 @@
       "Attributes": {
         "Name": {
           "String": "Bandana II"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

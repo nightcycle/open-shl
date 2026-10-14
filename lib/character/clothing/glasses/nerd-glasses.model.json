@@ -20,6 +20,9 @@
       "Attributes": {
         "Name": {
           "String": "Nerd Glasses"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

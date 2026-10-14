@@ -15,6 +15,9 @@
         },
         "Name": {
           "String": "Masked Danger"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     },

@@ -40,6 +40,9 @@
       "Attributes": {
         "Name": {
           "String": "Hood"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }

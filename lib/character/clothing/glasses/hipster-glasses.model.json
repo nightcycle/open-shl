@@ -20,6 +20,9 @@
       "Attributes": {
         "Name": {
           "String": "Hipster Glasses"
+        },
+        "TextureGroup": {
+          "String": "Primary"
         }
       }
     }
