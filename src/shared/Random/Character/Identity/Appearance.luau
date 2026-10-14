@@ -78,7 +78,7 @@ Module.TextureGroup = function(seed: number?): AppearanceType.TextureGroup
 	return TextureGroupConstructor.new(
 		Color3.fromRGB(rng:NextInteger(0, 255), rng:NextInteger(0, 255), rng:NextInteger(0, 255)),
 		RandomMisc.literal(RandomUtil.newSeed(rng), Enum.Material:GetEnumItems()),
-		rng:NextNumber() < 0.9 and 0 or rng:NextNumber()*0.7
+		rng:NextNumber() < 0.9 and 0 or rng:NextNumber() * 0.7
 	)
 end
 
