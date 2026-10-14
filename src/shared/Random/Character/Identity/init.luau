@@ -21,11 +21,11 @@ Module.Alignment = function(seed: number?): PseudoEnum.Alignment
 	return RandomMisc.literal(seed, PseudoEnum.getEnumItems("Alignment")) :: PseudoEnum.Alignment
 end
 
-Module.Identity = function(seed: number?): IdentityType.Identity
+Module.Identity = function(isSuper: boolean, seed: number?): IdentityType.Identity
 	local rng = Random.new(seed)
 	return FreezeUtil.delta(IdentityConstructor.new(), function(t)
 		t.Profile.Alignment = Module.Alignment(RandomUtil.newSeed(rng))
-		t.Appearance = RandomAppearance.Appearance(RandomUtil.newSeed(rng))
+		t.Appearance = RandomAppearance.Appearance(isSuper, RandomUtil.newSeed(rng))
 		return t
 	end)
 end

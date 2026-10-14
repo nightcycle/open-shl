@@ -81,9 +81,9 @@ Module.Item = function(seed: number?): AppearanceType.Item
 	}
 end
 
-Module.Appearance = function(seed: number?): AppearanceType.Appearance
+Module.Appearance = function(isSuper: boolean, seed: number?): AppearanceType.Appearance
 	local rng = Random.new(seed)
-	return FreezeUtil.delta(AppearanceConstructor.new(), function(t)
+	return AppearanceConstructor.fix(FreezeUtil.delta(AppearanceConstructor.new(), function(t)
 		t.HiddenTags =
 			RandomMisc.set(RandomUtil.newSeed(rng), Module.HiddenTag, rng:NextInteger(0, 5)) :: { AppearanceType.HiddenTag }
 		t.Transitions = {
@@ -92,13 +92,36 @@ Module.Appearance = function(seed: number?): AppearanceType.Appearance
 		}
 		local items = {}
 
-		for i = 1, rng:NextInteger(0, 12) do
-			table.insert(items, Module.ItemOfGroup("costume", RandomUtil.newSeed(rng)))
+		-- for i = 1, rng:NextInteger(0, 12) do
+		if isSuper then
+			for j, cat in ItemDefinition.listCategories("costume") do
+				if cat == "artifacts" then
+					continue
+				end
+				if rng:NextNumber() < 0.2 then
+					continue
+				end
+				table.insert(items, Module.ItemOfCategory("costume", cat, RandomUtil.newSeed(rng)))
+			end
+		else
+			for j, cat in ItemDefinition.listCategories("clothing") do
+				if rng:NextNumber() < 0.2 then
+					continue
+				end
+				table.insert(items, Module.ItemOfCategory("clothing", cat, RandomUtil.newSeed(rng)))
+			end
 		end
+		for j, cat in ItemDefinition.listCategories("cosmetics") do
+			if rng:NextNumber() < 0.2 then
+				continue
+			end
+			table.insert(items, Module.ItemOfCategory("cosmetics", cat, RandomUtil.newSeed(rng)))
+		end
+		-- end
 
 		t.Items = items
 		return t
-	end)
+	end))
 end
 
 return Module

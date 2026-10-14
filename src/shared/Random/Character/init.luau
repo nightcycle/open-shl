@@ -20,8 +20,8 @@ Module.Character = function(seed: number?): CharacterType.Character
 		Id = tostring(RandomUtil.newSeed(rng)),
 		Powers = {},
 		Identities = {
-			Main = RandomIdentity.Identity(RandomUtil.newSeed(rng)),
-			Secret = rng:NextNumber() > 0.5 and RandomIdentity.Identity(RandomUtil.newSeed(rng)) or nil,
+			Main = RandomIdentity.Identity(true, RandomUtil.newSeed(rng)),
+			Secret = RandomIdentity.Identity(false, RandomUtil.newSeed(rng)),
 		},
 	}
 	TableUtil.deepFreeze(out)
