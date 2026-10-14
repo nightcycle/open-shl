@@ -14,8 +14,11 @@ type Result<V, E> = TypeUnionLib.Result<V, E>
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 export type ItemDefinitionIndex = AppearanceType.ItemDefinitionIndex
 export type ItemDefinition = AppearanceType.ItemDefinition
+type TextureGroupKey = AppearanceType.TextureGroupKey
 -- Constants
 local ID_DELIMITER = "_"
+local TEXTURE_GROUP_KEYS: { TextureGroupKey } = { "Primary", "Secondary", "Tertiary", "Hair", "Skin" }
+table.freeze(TEXTURE_GROUP_KEYS)
 -- Variables
 local DefinitionIndexCache: { [string]: ItemDefinitionIndex? } = {}
 local TemplateCache: { [string]: Instance? } = {}
@@ -23,6 +26,28 @@ local DefinitionCache: { [string]: Result<ItemDefinition, string>? } = {}
 -- References
 local CharacterLibrary = IndexUtil.waitForPath("game/ReplicatedStorage/lib/character")
 -- Private Functions
+local function getTextureGroups(template: Instance): { TextureGroupKey }
+	local instances = template:GetDescendants()
+	table.insert(instances, 1, template)
+	local usedGroups: { [string]: boolean } = {}
+	for _, inst in instances do
+		if inst:IsA("BasePart") then
+			local group = inst:GetAttribute("TextureGroup")
+			if type(group) == "string" then
+				usedGroups[group] = true
+			end
+		end
+	end
+
+	local groups: { TextureGroupKey } = {}
+	for _, group in TEXTURE_GROUP_KEYS do
+		if usedGroups[group] then
+			table.insert(groups, group)
+		end
+	end
+	return groups
+end
+
 -- Class
 local Module = {}
 
@@ -92,7 +117,7 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 		Name = itemDefRes.Value:GetAttribute("Name") :: string?,
 		Rarity = itemDefRes.Value:GetAttribute("Rarity") :: PseudoEnum.Rarity?,
 		Tags = itemDefRes.Value:GetTags(),
-		TextureGroups = {},
+		TextureGroups = getTextureGroups(itemDefRes.Value),
 	}
 	TableUtil.deepFreeze(itemDefinition)
 	do

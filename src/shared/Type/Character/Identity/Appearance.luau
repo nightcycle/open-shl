@@ -25,18 +25,16 @@ Types.ItemDefinitionIndex = Type.strictInterface({
 
 export type TextureGroupKey = "Primary" | "Secondary" | "Tertiary" | "Hair" | "Skin"
 Types.TextureGroupKey = Type.literal("Primary", "Secondary", "Tertiary", "Hair", "Skin")
-export type TextureGroupDefinition = {
-	Key: TextureGroupKey,
-	Transparency: NumberRange | number?,
-	Colors: { Color3 } | true?,
-	Materials: { Enum.Material } | true?,
+export type TextureGroup = {
+	Transparency: number,
+	Color: Color3,
+	Material: Enum.Material,
 }
 
-Types.TextureGroupDefinition = Type.strictInterface({
-	Key = Types.TextureGroupKey,
-	Transparency = Type.optional(Type.union(Type.numberConstrained(0, 1), Type.NumberRange)),
-	Colors = Type.optional(Type.union(Type.array(Type.Color3), Type.literal(true))),
-	Materials = Type.optional(Type.union(Type.array(Type.enum(Enum.Material)), Type.literal(true))),
+Types.TextureGroup = Type.strictInterface({
+	Transparency = Type.optional(Type.numberConstrained(0, 1)),
+	Color = Type.optional(Type.Color3),
+	Material = Type.optional(Type.enum(Enum.Material)),
 })
 export type HiddenTag = "Hood" | "Mask" | "MouthCover" | "Hair"
 Types.HiddenTag = Type.literal("Hood", "Mask", "MouthCover", "Hair")
@@ -48,23 +46,25 @@ export type ItemDefinition = {
 	Id: string,
 	Name: string?,
 	Rarity: PseudoEnum.Rarity?,
-	TextureGroups: { TextureGroupDefinition },
+	TextureGroups: { TextureGroupKey },
 	Tags: { ItemDefinitionTag },
 }
 Types.ItemDefinition = Type.strictInterface({
 	Id = Type.string,
 	Name = Type.optional(Type.string),
 	Rarity = Type.optional(Type.literal(table.unpack(PseudoEnum.getEnumItems("Rarity")))),
-	TextureGroups = Type.array(Types.TextureGroupDefinition),
+	TextureGroups = Type.array(Types.TextureGroupKey),
 	Tags = Type.array(Types.ItemDefinitionTag),
 })
 
 export type Item = {
 	DefinitionId: string,
+	TextureGroups: { [TextureGroupKey]: TextureGroup? },
 }
 
 Types.Item = Type.strictInterface({
 	DefinitionId = Type.string,
+	TextureGroups = Type.map(Types.TextureGroupKey, Types.TextureGroup),
 })
 
 export type TransitionType = "Death" | "Transformation"

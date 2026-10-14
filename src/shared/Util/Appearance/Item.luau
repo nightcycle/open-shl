@@ -72,6 +72,20 @@ function newItemInst(item: Item): Result<Instance, string>
 	return Result.ok(itemTemplateRes.Value:Clone())
 end
 
+function applyTextureGroups(part: BasePart, item: Item)
+	local attr: AppearanceType.TextureGroupKey? = part:GetAttribute("TextureGroup") :: AppearanceType.TextureGroupKey?
+	if not attr then
+		return
+	end
+	local group = item.TextureGroups[attr]
+	if not group then
+		return
+	end
+	part.Color = group.Color
+	part.Material = group.Material
+	part.Transparency = group.Transparency
+end
+
 function applyBasePart(definitionId: string, rig: Model, basePart: BasePart, isRoot: boolean): Result<true, string>
 	local attachments = basePart:QueryDescendants("Attachment") :: { Attachment }
 	if #attachments == 0 then
@@ -156,6 +170,9 @@ function Util.apply(rig: Model, appearance: Appearance, item: Item): Result<true
 		return newItemRes
 	end
 	local newItem = newItemRes.Value
+	for i, v in newItem:QueryDescendants("BasePart") do
+		applyTextureGroups(v, item)
+	end
 	local applyResOpt: Option<Result<true, string>> = Option.none()
 	if newItem:IsA("BasePart") then
 		applyResOpt = Option.some(applyBasePart(item.DefinitionId, rig, newItem, true))
