@@ -25,7 +25,12 @@ Module.Character = function(seed: number?): CharacterType.Character
 		},
 	}
 	TableUtil.deepFreeze(out)
-	return out
+	-- return out
+	local res = require("@game/ServerScriptService/Server/Util/LegacyDataMigration").toCharacter(
+		require(`@game/ServerScriptService/Data/legacy/starter-suits/Suit{rng:NextInteger(1, 10)}`) :: any
+	)
+	assert(res.IsOk, `{res.Value}`)
+	return res.Value
 end
 
 return Module
