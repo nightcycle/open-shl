@@ -115,7 +115,7 @@ return function(props: Properties)
 				TextScaled = true,
 				TextStrokeColor3 = Color3.new(1, 1, 1),
 				[React.Event.Activated] = function()
-					local page = CharacterEditorDefinition.getPage(path)
+					local page = CharacterEditorDefinition.findFirstFolderPage(path)
 					if page.IsSome and page.Value.ExclusionTags then
 						if not isHeroFocus then
 							if table.find(page.Value.ExclusionTags, "IsSuper") then
