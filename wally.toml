@@ -32,6 +32,8 @@ ReactErrorBoundary = "chriscerie/react-error-boundary@0.2.0" # don't let a singl
 ServiceLocker = "nightcycle/service-locker@1.0.3" # preferred method for ensuring a singleton was initialized
 TypeUnionLib = "nightcycle/type-union-lib@0.3.3" # some useful types and methods for handling unions in luau
 IndexUtil = "nightcycle/index-util@3.1.0" # handy methods for dealing with the various states associated with locating an instance
+ProceduralPackage = "nightcycle/procedural-package@0.3.0" # ProceduralModel templates built around allowing for the automated placement of assets using their in-engine path.
+ImposterRender = "nightcycle/imposter-render@0.1.0" # easy swapping of imposters
 
 [dev-dependencies]
 UILabs = "pepeeltoro41/ui-labs@2.4.2" # helper methods for the amazing UI Labs plugin
