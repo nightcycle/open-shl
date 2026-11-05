@@ -3,10 +3,9 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 -- Components
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
-local TextBox = require("@game/ReplicatedStorage/Generated/React/Component/TextBox")
 -- Hooks
 -- Contexts
 local CharacterEditorFieldCallback =
@@ -36,12 +35,12 @@ return function(props: Properties): React.ReactNode?
 	local function submit()
 		fieldCallback(fieldDefinition, textRef.current)
 	end
-	return e(Frame(
+	return e(RobloxComponents.Frame(
 		{
 			BackgroundTransparency = 1,
 			Size = UDim2.fromScale(1, 0.25 * (fieldDefinition.IsMultiLine and 2 or 1)),
 			SizeConstraint = Enum.SizeConstraint.RelativeXX,
-		} :: Frame.Properties,
+		} :: RobloxComponents.FrameProperties,
 		props,
 		{
 			TextBox = e(
@@ -81,7 +80,7 @@ return function(props: Properties): React.ReactNode?
 						end
 					end,
 					[React.Event.FocusLost] = submit,
-				} :: TextBox.Properties
+				} :: RobloxComponents.TextBoxProperties
 			),
 
 			Test = e("TextButton", {

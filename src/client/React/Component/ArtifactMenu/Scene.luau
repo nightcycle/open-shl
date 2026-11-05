@@ -4,12 +4,12 @@
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
 local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
-local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component/ViewportFrame")
 -- Hooks
 local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
@@ -107,7 +107,7 @@ return function(props: Properties): React.ReactNode
 				BackgroundTransparency = 1,
 				ref = viewportRef,
 				Size = UDim2.fromScale(1, 1),
-			} :: ViewportFrame.Properties
+			} :: RobloxComponents.ViewportFrameProperties
 		),
 
 		TurnCharacter = e("Frame", {

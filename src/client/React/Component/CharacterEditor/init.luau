@@ -3,12 +3,12 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 -- Components
 local EditableCharacterProvider = require("@self/EditableCharacterProvider")
 local Explorer = require("@self/Explorer")
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local Properties = require("@self/Properties")
 local Scene = require("@self/Scene")
 -- Contexts
@@ -35,7 +35,7 @@ export type ActionInfo =
 		Type: "Exit",
 		IsSaving: boolean,
 	}
-export type Properties = Frame.Properties & {
+export type Properties = RobloxComponents.FrameProperties & {
 	OnAction: (ActionInfo) -> (),
 }
 -- Constants

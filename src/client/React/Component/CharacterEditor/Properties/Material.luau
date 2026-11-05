@@ -3,10 +3,10 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Components
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 -- Hooks
 -- Contexts
 local CharacterEditorFieldCallback =
@@ -84,12 +84,12 @@ return function(props: Properties): React.ReactNode?
 		})
 	end
 
-	return e(Frame(
+	return e(RobloxComponents.Frame(
 		{
 			BackgroundTransparency = 1,
 			Size = UDim2.fromScale(1, GRID_ROWS / GRID_COLUMNS),
 			SizeConstraint = Enum.SizeConstraint.RelativeXX,
-		} :: Frame.Properties,
+		} :: RobloxComponents.FrameProperties,
 		props,
 		{
 			Buttons = e(React.Fragment, {}, buttons),

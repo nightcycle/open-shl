@@ -3,12 +3,11 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
-local ScrollingFrame = require("@game/ReplicatedStorage/Generated/React/Component/ScrollingFrame")
-local UIListLayout = require("@game/ReplicatedStorage/Generated/React/Component/UIListLayout")
 -- Hooks
 -- Contexts
 -- Types
@@ -18,7 +17,7 @@ export type RarityItemGroup = {
 	Rarity: PseudoEnum.Rarity,
 	ItemDefinitions: { ItemDefinition },
 }
-export type Properties = ScrollingFrame.Properties & {
+export type Properties = RobloxComponents.ScrollingFrameProperties & {
 	SelectedItemDefinition: ItemDefinition?,
 	ItemGroups: { RarityItemGroup },
 	OnClick: (ItemDefinition) -> (),
@@ -78,7 +77,7 @@ return function(props: Properties)
 			})
 		end
 	end
-	return e(ScrollingFrame(
+	return e(RobloxComponents.ScrollingFrame(
 		{
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.3,
@@ -94,7 +93,7 @@ return function(props: Properties)
 					FillDirection = Enum.FillDirection.Vertical,
 					SortOrder = Enum.SortOrder.LayoutOrder,
 					Padding = UDim.new(),
-				} :: UIListLayout.Properties
+				} :: RobloxComponents.UIListLayoutProperties
 			),
 			Rows = e(React.Fragment, {}, out),
 		}

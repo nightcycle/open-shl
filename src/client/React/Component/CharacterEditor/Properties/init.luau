@@ -3,10 +3,9 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 -- Components
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
-local ScrollingFrame = require("@game/ReplicatedStorage/Generated/React/Component/ScrollingFrame")
 local FieldComponents = {
 	ChoiceList = require("@self/ChoiceList"),
 	Choose = require("@self/Choose"),
@@ -27,7 +26,7 @@ local CharacterEditorFieldDefinition =
 local IsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/IsHeroFocus")
 -- Types
-export type Properties = Frame.Properties & {}
+export type Properties = RobloxComponents.FrameProperties & {}
 -- Constants
 -- Variables
 -- References
@@ -57,12 +56,12 @@ return function(props: Properties)
 			})
 		end
 	end
-	return e(Frame(
+	return e(RobloxComponents.Frame(
 		{
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.5,
 			BorderColor3 = Color3.fromRGB(27, 42, 53),
-		} :: Frame.Properties,
+		} :: RobloxComponents.FrameProperties,
 		props,
 		{
 			Title = e("TextLabel", {
@@ -86,7 +85,7 @@ return function(props: Properties)
 					ScrollingDirection = Enum.ScrollingDirection.Y,
 					HorizontalScrollBarInset = Enum.ScrollBarInset.Always,
 					Size = UDim2.new(1, -16, 0.9, -16),
-				} :: ScrollingFrame.Properties,
+				} :: RobloxComponents.ScrollingFrameProperties,
 				{
 					UIPadding = e("UIPadding", {
 						PaddingRight = UDim.new(0, 15 + 7),

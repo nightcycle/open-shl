@@ -21,6 +21,7 @@ OutlinedMaterialIcons = "nightcycle/material-icons-outlined-dp24-1x@^1.0" # hand
 OutlinedMaterialIconsHD = "nightcycle/material-icons-outlined-dp48-2x@^1.0" # handy for UI icons
 React = "jsdotlua/react@^17.2" # preferred framework for UI
 ReactRoblox = "jsdotlua/react-roblox@^17.2" # allows react to be bound to roblox instances
+RobloxComponents = "nightcycle/typed-instance-components@^0.1.1" # strictly typed React instance builders
 Osiris = "nightcycle/osiris@0.1.9" # preferred debug menu tool (iris wrapper)
 Noise = "nightcycle/noise@1.0.0" # you know how `Random` is often more useful than `math.random`? This is that for `math.noise`
 Draw = "nightcycle/draw@1.0.6" # helps with debugging 3D space

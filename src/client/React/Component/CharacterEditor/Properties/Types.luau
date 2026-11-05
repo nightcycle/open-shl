@@ -1,10 +1,10 @@
 --!strict
 -- Services
 -- Packages
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 -- Types
-export type FieldProperties = Frame.Properties & {
+export type FieldProperties = RobloxComponents.FrameProperties & {
 	IsSelected: boolean?,
 }
 -- Constants

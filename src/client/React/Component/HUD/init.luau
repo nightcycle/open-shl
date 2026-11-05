@@ -2,15 +2,13 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
-local ImageButton = require("@game/ReplicatedStorage/Generated/React/Component/ImageButton")
 local StatBars = require("@self/StatBars")
-local UIListLayout = require("@game/ReplicatedStorage/Generated/React/Component/UIListLayout")
 -- Types
-export type Properties = Frame.Properties & {
+export type Properties = RobloxComponents.FrameProperties & {
 	OnClick: (PseudoEnum.MenuId) -> (),
 }
 -- Constants
@@ -35,7 +33,7 @@ return function(props: Properties): React.ReactNode
 				[React.Event.Activated] = function()
 					props.OnClick(buttonInfo.MenuId)
 				end,
-			} :: ImageButton.Properties
+			} :: RobloxComponents.ImageButtonProperties
 		)
 	end
 	local rightButtons: { [string]: React.ReactNode } = {}
@@ -52,10 +50,10 @@ return function(props: Properties): React.ReactNode
 				[React.Event.Activated] = function()
 					props.OnClick(buttonInfo.MenuId)
 				end,
-			} :: ImageButton.Properties
+			} :: RobloxComponents.ImageButtonProperties
 		)
 	end
-	return e(Frame(
+	return e(RobloxComponents.Frame(
 		{
 			BackgroundTransparency = 1,
 			Active = false,
@@ -71,7 +69,7 @@ return function(props: Properties): React.ReactNode
 					SizeConstraint = Enum.SizeConstraint.RelativeYY,
 					BackgroundTransparency = 1,
 					Active = false,
-				} :: Frame.Properties,
+				} :: RobloxComponents.FrameProperties,
 				{
 					UIListLayout = e(
 						"UIListLayout",
@@ -79,7 +77,7 @@ return function(props: Properties): React.ReactNode
 							FillDirection = Enum.FillDirection.Vertical,
 							Padding = UDim.new(0.02, 0),
 							SortOrder = Enum.SortOrder.LayoutOrder,
-						} :: UIListLayout.Properties
+						} :: RobloxComponents.UIListLayoutProperties
 					),
 					Buttons = e(React.Fragment, {}, leftButtons),
 				}
@@ -93,7 +91,7 @@ return function(props: Properties): React.ReactNode
 					SizeConstraint = Enum.SizeConstraint.RelativeYY,
 					BackgroundTransparency = 1,
 					Active = false,
-				} :: Frame.Properties,
+				} :: RobloxComponents.FrameProperties,
 				{
 					UIListLayout = e(
 						"UIListLayout",
@@ -101,7 +99,7 @@ return function(props: Properties): React.ReactNode
 							FillDirection = Enum.FillDirection.Vertical,
 							Padding = UDim.new(0.02, 0),
 							SortOrder = Enum.SortOrder.LayoutOrder,
-						} :: UIListLayout.Properties
+						} :: RobloxComponents.UIListLayoutProperties
 					),
 					Buttons = e(React.Fragment, {}, rightButtons),
 				}

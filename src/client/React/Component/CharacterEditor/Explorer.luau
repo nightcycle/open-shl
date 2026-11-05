@@ -3,12 +3,11 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 -- Components
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
-local TextButton = require("@game/ReplicatedStorage/Generated/React/Component/TextButton")
 -- Hooks
 local useFirstFolderPath =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFirstFolderPath")
@@ -19,7 +18,7 @@ local IsHeroFocusContext =
 local PathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Path")
 local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
 -- Types
-export type Properties = Frame.Properties & {
+export type Properties = RobloxComponents.FrameProperties & {
 	OnExit: () -> (),
 }
 -- Constants
@@ -27,10 +26,10 @@ export type Properties = Frame.Properties & {
 -- References
 -- Private Functions
 local e = React.createElement
-function rowButton(props: TextButton.Properties & {
+function rowButton(props: RobloxComponents.TextButtonProperties & {
 	IsSelected: boolean?,
 })
-	return e(TextButton({
+	return e(RobloxComponents.TextButton({
 		BackgroundColor3 = props.IsSelected and Color3.fromRGB(0, 170, 0) or Color3.new(),
 		BackgroundTransparency = 0.5,
 		BorderColor3 = Color3.new(1, 1, 1),
@@ -101,12 +100,12 @@ return function(props: Properties): React.ReactNode
 			end
 		end
 	end
-	return e(Frame(
+	return e(RobloxComponents.Frame(
 		{
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.5,
 			BorderColor3 = Color3.fromRGB(27, 42, 53),
-		} :: Frame.Properties,
+		} :: RobloxComponents.FrameProperties,
 		props,
 		{
 			UIPadding = e("UIPadding", {

@@ -3,11 +3,11 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 -- Hooks
 -- Contexts
 local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
@@ -15,7 +15,7 @@ local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Clien
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
-export type Properties = Frame.Properties & {
+export type Properties = RobloxComponents.FrameProperties & {
 	SelectedItemDefinition: ItemDefinition,
 	SetVisibility: (tag: AppearanceType.HiddenTag, toVisibility: boolean) -> (),
 	OnWear: (itemDef: ItemDefinition) -> (),
@@ -140,7 +140,7 @@ return function(props: Properties)
 		return ItemAppearanceDefinition.getIndex(props.SelectedItemDefinition.Id)
 	end, { props.SelectedItemDefinition.Id })
 
-	return e(Frame(
+	return e(RobloxComponents.Frame(
 		{
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.3,

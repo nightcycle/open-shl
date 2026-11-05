@@ -3,12 +3,12 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local ConfigurePanel = require("@self/ConfigurePanel")
-local Frame = require("@game/ReplicatedStorage/Generated/React/Component/Frame")
 local ItemList = require("@self/ItemList")
 local Scene = require("@self/Scene")
 -- Hooks
@@ -41,7 +41,7 @@ export type ActionInfo =
 		Type: "Exit",
 	}
 
-export type Properties = Frame.Properties & {
+export type Properties = RobloxComponents.FrameProperties & {
 	OnAction: (ActionInfo) -> (),
 }
 -- Constants
@@ -100,7 +100,7 @@ return function(props: Properties)
 		return out
 	end, { itemDefinitions })
 
-	return e(Frame(
+	return e(RobloxComponents.Frame(
 		{
 			BackgroundTransparency = 1,
 		},

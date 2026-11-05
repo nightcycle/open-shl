@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 local Spring = require("@game/ReplicatedStorage/Packages/Spring")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
@@ -12,7 +13,6 @@ local AppearanceConstructor = require("@game/ReplicatedStorage/Shared/Constructo
 local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
-local ViewportFrame = require("@game/ReplicatedStorage/Generated/React/Component/ViewportFrame")
 -- Hooks
 local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
@@ -172,7 +172,7 @@ return function(props: Properties): React.ReactNode
 				[React.Change.CurrentCamera] = function(rbx: ViewportFrame)
 					setCurrentCamera(rbx.CurrentCamera)
 				end,
-			} :: ViewportFrame.Properties
+			} :: RobloxComponents.ViewportFrameProperties
 		),
 		TurnChar = e("Frame", {
 			BackgroundTransparency = 1,
