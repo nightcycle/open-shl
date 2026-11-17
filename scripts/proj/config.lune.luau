@@ -40,6 +40,10 @@ do -- write in a do block now to make it easier to copy to other things later / 
 		node["Server"] = {
 			["$path"] = "src/server",
 		}
+		-- legacy save data stays server-side, each json file becomes a module
+		node["Data"] = {
+			["$path"] = "data",
+		}
 	end)
 
 	appendService("ReplicatedStorage", function(node: rojo.ProjectNode)
@@ -63,6 +67,10 @@ do -- write in a do block now to make it easier to copy to other things later / 
 			["character"] = {
 				["$path"] = "lib/character",
 			} :: rojo.ProjectNode,
+			-- props are worn like character items, but are not part of the item library
+			["prop"] = {
+				["$path"] = "lib/prop",
+			} :: rojo.ProjectNode,
 			["scene"] = {
 				["$path"] = "lib/scene",
 			} :: rojo.ProjectNode,
@@ -70,6 +78,10 @@ do -- write in a do block now to make it easier to copy to other things later / 
 	end)
 
 	appendService("StarterPlayer", function(node: rojo.ProjectNode)
+		-- every avatar is dressed by the game, the look a player joins with would only load in late + cover it
+		node["$properties"] = {
+			LoadCharacterAppearance = false,
+		} :: rojo.NodeProperties
 		node["StarterPlayerScripts"] = {
 			["$className"] = "StarterPlayerScripts",
 			["Client"] = {

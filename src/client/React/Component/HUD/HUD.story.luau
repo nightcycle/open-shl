@@ -15,6 +15,8 @@ local ParentComponent = require(".")
 -- Contexts
 local CharacterEnergyContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Energy")
 local CharacterHealthContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Health")
+local CharacterIsEnergyInsufficientContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/IsEnergyInsufficient")
 -- Types
 -- Constants
 -- Variables
@@ -27,7 +29,11 @@ return UILabs.CreateReactStory({
 	reactRoblox = ReactRoblox,
 	controls = {
 		Health = UILabs.Slider(100, 0, 100, 1),
-		Energy = UILabs.Slider(100, 0, 100, 1),
+		Energy = UILabs.Slider(200, 0, 200, 1),
+		IsEnergyInsufficient = UILabs.Boolean(false),
+		IsCombat = UILabs.Boolean(true),
+		IsInResidence = UILabs.Boolean(false),
+		IsCameraHidden = UILabs.Boolean(false),
 	},
 }, function(props)
 	local currentMenuId: PseudoEnum.MenuId?, setCurrentMenuId: (PseudoEnum.MenuId?) -> () =
@@ -38,32 +44,45 @@ return UILabs.CreateReactStory({
 		EnergyProvider = e(CharacterEnergyContext.Provider, {
 			value = props.controls.Energy,
 		}, {
-			Screen = e("Frame", {
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(0.5, 0.5),
-				Size = UDim2.fromScale(0.75, 0.75),
+			IsEnergyInsufficientProvider = e(CharacterIsEnergyInsufficientContext.Provider, {
+				value = props.controls.IsEnergyInsufficient,
 			}, {
-				ArtifactMenu = currentMenuId == PseudoEnum.MenuId.Artifact and e(
-					ArtifactMenu,
-					{
+				Screen = e("Frame", {
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Position = UDim2.fromScale(0.5, 0.5),
+					Size = UDim2.fromScale(0.75, 0.75),
+				}, {
+					ArtifactMenu = currentMenuId == PseudoEnum.MenuId.Artifact and e(
+						ArtifactMenu,
+						{
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							Position = UDim2.fromScale(0.5, 0.5),
+							Size = UDim2.fromScale(1, 1),
+							OnAction = function(action: ArtifactMenu.ActionInfo)
+								if action.Type == "Exit" then
+									setCurrentMenuId(nil)
+								end
+							end,
+						} :: ArtifactMenu.Properties
+					),
+					HUD = currentMenuId ~= PseudoEnum.MenuId.Artifact and e(ParentComponent, {
 						AnchorPoint = Vector2.new(0.5, 0.5),
 						Position = UDim2.fromScale(0.5, 0.5),
 						Size = UDim2.fromScale(1, 1),
-						OnAction = function(action: ArtifactMenu.ActionInfo)
-							if action.Type == "Exit" then
+						IsBuildVisible = props.controls.IsInResidence,
+						IsCameraMode = currentMenuId == PseudoEnum.MenuId.Camera,
+						IsCameraHidden = props.controls.IsCameraHidden,
+						IsHealthVisible = props.controls.IsCombat,
+						IsEnergyVisible = props.controls.IsCombat,
+						OnClick = function(menuId: PseudoEnum.MenuId)
+							if menuId == currentMenuId then
 								setCurrentMenuId(nil)
+							else
+								setCurrentMenuId(menuId)
 							end
 						end,
-					} :: ArtifactMenu.Properties
-				),
-				HUD = currentMenuId == nil and e(ParentComponent, {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					Position = UDim2.fromScale(0.5, 0.5),
-					Size = UDim2.fromScale(1, 1),
-					OnClick = function(menuId: PseudoEnum.MenuId)
-						setCurrentMenuId(menuId)
-					end,
-					SizeConstraint = Enum.SizeConstraint.RelativeXY,
+						SizeConstraint = Enum.SizeConstraint.RelativeXY,
+					}),
 				}),
 			}),
 		}),

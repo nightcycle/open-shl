@@ -19,6 +19,10 @@ Types.Power = Type.strictInterface({
 	Id = Type.string,
 })
 
+-- Main is the super identity, Secret is the civilian one
+export type IdentityKey = "Main" | "Secret"
+Types.IdentityKey = Type.literal("Main", "Secret")
+
 export type Character = {
 	Id: string,
 	Powers: { Power },

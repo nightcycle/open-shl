@@ -17,6 +17,7 @@ type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
 export type Properties = RobloxComponents.FrameProperties & {
 	SelectedItemDefinition: ItemDefinition,
+	IsOwned: boolean,
 	SetVisibility: (tag: AppearanceType.HiddenTag, toVisibility: boolean) -> (),
 	OnWear: (itemDef: ItemDefinition) -> (),
 	OnRemove: (itemDef: ItemDefinition) -> (),
@@ -25,13 +26,14 @@ export type Properties = RobloxComponents.FrameProperties & {
 local LABEL_FONT = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 local BUTTON_FONT = Font.new("rbxasset://fonts/families/SourceSansPro.json")
 local GREEN_BUTTON_COLOR = Color3.fromRGB(75, 151, 75)
-local RED_BUTTON_COLOR = Color3.fromRGB(151, 75, 75)
+local RED_BUTTON_COLOR = Color3.fromRGB(255, 0, 0)
+local WEAR_BUTTON_COLOR = Color3.fromRGB(0, 170, 0)
 
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
-function buttonGroup(props: {
+local function buttonGroup(props: {
 	SelectedItemDefinition: ItemDefinition,
 	HiddenTag: AppearanceType.HiddenTag,
 	Text: string?,
@@ -98,11 +100,12 @@ function buttonGroup(props: {
 			}),
 		})
 end
-function wearButton(props: {
+local function wearButton(props: {
 	SelectedItemDefinition: ItemDefinition,
+	IsOwned: boolean,
 	OnWear: (itemDef: ItemDefinition) -> (),
 	OnRemove: (itemDef: ItemDefinition) -> (),
-})
+}): React.ReactNode
 	local character = React.useContext(CharacterContext)
 	local characterAppearance = character.Identities.Main.Appearance
 	local isWearing = React.useMemo(function(): boolean
@@ -114,15 +117,29 @@ function wearButton(props: {
 		return false
 	end, { characterAppearance.Items :: any, props.SelectedItemDefinition })
 
+	-- whatever is on can always come off, only putting one on takes owning it
+	if not isWearing and not props.IsOwned then
+		return e("TextLabel", {
+			AnchorPoint = Vector2.new(0.5, 0),
+			BackgroundTransparency = 1,
+			FontFace = BUTTON_FONT,
+			Position = UDim2.fromScale(0.5, 0.85),
+			Size = UDim2.fromScale(0.9, 0.12),
+			Text = "Available for purchase in the Shop",
+			TextColor3 = Color3.new(1, 1, 1),
+			TextScaled = true,
+		})
+	end
+
 	return e("TextButton", {
 		AnchorPoint = Vector2.new(0.5, 0),
-		BackgroundColor3 = isWearing and RED_BUTTON_COLOR or GREEN_BUTTON_COLOR,
+		BackgroundColor3 = isWearing and RED_BUTTON_COLOR or WEAR_BUTTON_COLOR,
 		BorderColor3 = Color3.fromRGB(27, 42, 53),
 		BorderSizePixel = 0,
 		FontFace = BUTTON_FONT,
 		Position = UDim2.fromScale(0.5, 0.85),
 		Size = UDim2.fromScale(0.5, 0.12),
-		Text = isWearing and "Remove" or "Wear",
+		Text = isWearing and "Take off" or "Wear",
 		TextColor3 = Color3.new(1, 1, 1),
 		TextScaled = true,
 		[React.Event.Activated] = function()
@@ -198,6 +215,7 @@ return function(props: Properties)
 				}),
 				MouthCover = e(buttonGroup, {
 					HiddenTag = "MouthCover" :: AppearanceType.HiddenTag,
+					Text = "Mouth Cover",
 					PositionY = UDim.new(0.5, 0),
 					SetVisibility = props.SetVisibility,
 					SelectedItemDefinition = props.SelectedItemDefinition,
@@ -206,6 +224,7 @@ return function(props: Properties)
 
 			Wear = e(wearButton, {
 				SelectedItemDefinition = props.SelectedItemDefinition,
+				IsOwned = props.IsOwned,
 				OnWear = props.OnWear,
 				OnRemove = props.OnRemove,
 			}),

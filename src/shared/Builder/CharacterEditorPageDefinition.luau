@@ -6,34 +6,59 @@ local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/Charact
 local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
 type ChoiceDefinition = MiscType.ChoiceDefinition
 type Tag = CharacterEditorType.Tag
+type ButtonStyle = CharacterEditorType.ButtonStyle
+type WearRule = CharacterEditorType.WearRule
+type ProfileBinding = CharacterEditorType.ProfileBinding
+type ChooseBinding = CharacterEditorType.ChooseBinding
+type PowersBinding = CharacterEditorType.PowersBinding
+type PowerLimitBinding = CharacterEditorType.PowerLimitBinding
+type ColorBinding = CharacterEditorType.ColorBinding
+type ItemTextureBinding = CharacterEditorType.ItemTextureBinding
 type FieldDefinition = CharacterEditorType.FieldDefinition
 type PageDefinition = CharacterEditorType.PageDefinition
 
+-- the binding leads every field that has one, it's the piece of the character the field edits
 export type Builder = {
 	setTitle: (self: Builder, title: string?) -> Builder,
 	insertTextField: (
 		self: Builder,
+		binding: ProfileBinding,
 		description: string?,
 		maxLength: number?,
 		isMultiLine: boolean?,
 		exclusionTags: { Tag }?
 	) -> Builder,
-	insertSectionHeaderField: (self: Builder, text: string, exclusionTags: { Tag }?) -> Builder,
+	insertSectionHeaderField: (
+		self: Builder,
+		text: string,
+		binding: PowerLimitBinding?,
+		exclusionTags: { Tag }?
+	) -> Builder,
 	insertChooseField: (
 		self: Builder,
+		binding: ChooseBinding,
 		choices: { ChoiceDefinition },
 		description: string?,
+		isVertical: boolean?,
 		exclusionTags: { Tag }?
 	) -> Builder,
 	insertChoiceListField: (
 		self: Builder,
+		binding: PowersBinding,
 		choices: { ChoiceDefinition },
 		description: string?,
 		exclusionTags: { Tag }?
 	) -> Builder,
-	insertColorField: (self: Builder, description: string?, filtered: { Color3 }?, exclusionTags: { Tag }?) -> Builder,
+	insertColorField: (
+		self: Builder,
+		binding: ColorBinding,
+		description: string?,
+		filtered: { Color3 }?,
+		exclusionTags: { Tag }?
+	) -> Builder,
 	insertMaterialField: (
 		self: Builder,
+		binding: ItemTextureBinding,
 		description: string?,
 		filtered: { Enum.Material }?,
 		exclusionTags: { Tag }?
@@ -42,14 +67,14 @@ export type Builder = {
 		self: Builder,
 		focus: Tag,
 		text: string,
-		style: "Outline" | "Filled",
+		style: ButtonStyle,
 		disabledText: string?,
 		sections: { FieldDefinition }?,
 		disabledSections: { FieldDefinition }?,
 		exclusionTags: { Tag }?
 	) -> Builder,
 	insertExclusionTag: (self: Builder, tag: Tag) -> Builder,
-	insertGenerateAliasField: (self: Builder, exclusionTags: { Tag }?) -> Builder,
+	insertGenerateAliasField: (self: Builder, binding: ProfileBinding, exclusionTags: { Tag }?) -> Builder,
 	addChild: (self: Builder, child: PageDefinition) -> Builder,
 	build: (self: Builder) -> PageDefinition,
 }
@@ -101,6 +126,7 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		insertTextField = function(
 			_: Builder,
+			binding: ProfileBinding,
 			description: string?,
 			maxLength: number?,
 			isMultiLine: boolean?,
@@ -108,40 +134,53 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		): Builder
 			return insertField({
 				Type = "Text",
+				Binding = binding,
 				Description = description,
 				MaxLength = maxLength,
 				IsMultiLine = isMultiLine,
 				ExclusionTags = exclusionTags,
 			})
 		end,
-		insertSectionHeaderField = function(_: Builder, text: string, exclusionTags: { Tag }?): Builder
+		insertSectionHeaderField = function(
+			_: Builder,
+			text: string,
+			binding: PowerLimitBinding?,
+			exclusionTags: { Tag }?
+		): Builder
 			return insertField({
 				Type = "SectionHeader",
 				Text = text,
+				Binding = binding,
 				ExclusionTags = exclusionTags,
 			})
 		end,
 		insertChooseField = function(
 			_: Builder,
+			binding: ChooseBinding,
 			choices: { ChoiceDefinition },
 			description: string?,
+			isVertical: boolean?,
 			exclusionTags: { Tag }?
 		): Builder
 			return insertField({
 				Type = "Choose",
+				Binding = binding,
 				Description = description,
 				Choices = choices,
+				IsVertical = isVertical,
 				ExclusionTags = exclusionTags,
 			})
 		end,
 		insertChoiceListField = function(
 			_: Builder,
+			binding: PowersBinding,
 			choices: { ChoiceDefinition },
 			description: string?,
 			exclusionTags: { Tag }?
 		): Builder
 			return insertField({
 				Type = "ChoiceList",
+				Binding = binding,
 				Description = description,
 				Choices = choices,
 				ExclusionTags = exclusionTags,
@@ -149,12 +188,14 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		insertColorField = function(
 			_: Builder,
+			binding: ColorBinding,
 			description: string?,
 			filtered: { Color3 }?,
 			exclusionTags: { Tag }?
 		): Builder
 			return insertField({
 				Type = "Color",
+				Binding = binding,
 				Description = description,
 				Filtered = filtered,
 				ExclusionTags = exclusionTags,
@@ -162,12 +203,14 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		insertMaterialField = function(
 			_: Builder,
+			binding: ItemTextureBinding,
 			description: string?,
 			filtered: { Enum.Material }?,
 			exclusionTags: { Tag }?
 		): Builder
 			return insertField({
 				Type = "Material",
+				Binding = binding,
 				Description = description,
 				Filtered = filtered,
 				ExclusionTags = exclusionTags,
@@ -177,7 +220,7 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 			_: Builder,
 			focus: Tag,
 			text: string,
-			style: "Outline" | "Filled",
+			style: ButtonStyle,
 			disabledText: string?,
 			sections: { FieldDefinition }?,
 			disabledSections: { FieldDefinition }?,
@@ -194,8 +237,8 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 				ExclusionTags = exclusionTags,
 			})
 		end,
-		insertGenerateAliasField = function(_: Builder, exclusionTags: { Tag }?): Builder
-			return insertField({ Type = "GenerateAlias", ExclusionTags = exclusionTags })
+		insertGenerateAliasField = function(_: Builder, binding: ProfileBinding, exclusionTags: { Tag }?): Builder
+			return insertField({ Type = "GenerateAlias", Binding = binding, ExclusionTags = exclusionTags })
 		end,
 		addChild = function(_: Builder, child: PageDefinition): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
@@ -225,7 +268,8 @@ return table.freeze({
 	new = function(key: string): Builder
 		return builder({ Type = "Default", Key = key })
 	end,
-	newItem = function(definitionId: string): Builder
-		return builder({ Type = "Item", DefinitionId = definitionId })
+	-- an item swaps out what's worn of its category unless a rule says otherwise
+	newItem = function(definitionId: string, wearRule: WearRule?): Builder
+		return builder({ Type = "Item", DefinitionId = definitionId, WearRule = wearRule or "Single" })
 	end,
 })

@@ -103,14 +103,6 @@
 		"description": "Imports a react context.",
 		"scope": "luau"
 	},
-	"irequire gen-comp": {
-		"prefix": "irequire gen-comp",
-		"body": [
-			"local ${name} = require(\"@game/ReplicatedStorage/Generated/React/Component/${name}\")"
-		],
-		"description": "Imports a generated react component.",
-		"scope": "luau"
-	},
 	"irequire shared": {
 		"prefix": "irequire shared",
 		"body": [
@@ -207,13 +199,13 @@
 			"-- Services",
 			"-- Packages",
 			"local React = require(\"@game/ReplicatedStorage/Packages/React\")",
+			"local RobloxComponents = require(\"@game/ReplicatedStorage/Packages/RobloxComponents\")",
 			"-- Modules",
 			"-- Components",
-			"local ${name} = require(\"@game/ReplicatedStorage/Generated/React/Component/${name}\")",
 			"-- Hooks",
 			"-- Contexts",
 			"-- Types",
-			"export type Properties = ${name}.Properties & {}",
+			"export type Properties = RobloxComponents.${name}Properties & {}",
 			"-- Constants",
 			"-- Variables",
 			"-- References",
@@ -221,7 +213,7 @@
 			"local e = React.createElement",
 			"-- Class",
 			"return function(props: Properties)",
-			"\treturn e(${name}({} :: ${name}.Properties, props, {}))",
+			"\treturn e(RobloxComponents.${name}({} :: RobloxComponents.${name}Properties, props, {}))",
 			"end"
 		],
 		"description": "A basic template for a file.",
@@ -288,7 +280,6 @@
 			"\tfor i, v in self._Connections do",
 			"\t\tv:Disconnect()",
 			"\tend",
-			"\ttable.clear(self._CleanUpCallbacks)",
 			"\tfor i, v in self._CleanUpCallbacks do",
 			"\t\ttask.spawn(v)",
 			"\tend",

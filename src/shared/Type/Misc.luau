@@ -49,6 +49,7 @@ export type ChoiceDefinition =
 		Type: "TextIcon",
 		Value: any,
 		Text: string,
+		Icon: IconDefinition,
 	}
 
 Types.ChoiceDefinition = Type.union(

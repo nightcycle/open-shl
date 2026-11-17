@@ -20,6 +20,7 @@ Module.new = function(): Character
 		Powers = {},
 		Identities = {
 			Main = IdentityConstructor.new(),
+			Secret = IdentityConstructor.new(),
 		},
 	}
 	TableUtil.deepFreeze(out)

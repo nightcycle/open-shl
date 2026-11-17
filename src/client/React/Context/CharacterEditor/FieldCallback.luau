@@ -6,7 +6,8 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Types
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 export type FieldDefinition = CharacterEditorType.FieldDefinition
-export type FieldCallback = (field: FieldDefinition, value: any?) -> ()
+export type FieldEdit = CharacterEditorType.FieldEdit
+export type FieldCallback = (field: FieldDefinition, edit: FieldEdit) -> ()
 -- Constants
 -- Variables
 -- References

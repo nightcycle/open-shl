@@ -7,6 +7,8 @@ local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxCompone
 -- Modules
 -- Components
 -- Hooks
+local useFieldValue =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFieldValue")
 -- Contexts
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
@@ -24,18 +26,19 @@ local e = React.createElement
 return function(props: Properties): React.ReactNode?
 	local fieldDefinition = React.useContext(CharacterEditorFieldDefinition)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
-	local selected, setSelected = React.useState(false)
+	local value = useFieldValue()
 	if not fieldDefinition or fieldDefinition.Type ~= "Toggle" then
 		return
 	end
-	if not fieldCallback then
+	if not fieldCallback or not value or value.Type ~= "Toggle" then
 		return
 	end
-	local isSelected = if props.IsSelected == nil then selected else props.IsSelected
+	local isSelected = if props.IsSelected == nil then value.IsSelected else props.IsSelected
 	local function toggle()
-		local nextSelected = not isSelected
-		setSelected(nextSelected)
-		fieldCallback(fieldDefinition, nextSelected)
+		fieldCallback(fieldDefinition, {
+			Type = "Toggle",
+			IsSelected = not isSelected,
+		})
 	end
 	local text = if isSelected then fieldDefinition.DisabledText or fieldDefinition.Text else fieldDefinition.Text
 	return e(RobloxComponents.Frame(
@@ -47,7 +50,7 @@ return function(props: Properties): React.ReactNode?
 		props,
 		{
 			FilledButton = fieldDefinition.Style == "Filled" and e("TextButton", {
-				BackgroundColor3 = Color3.fromRGB(0, 170, 0),
+				BackgroundColor3 = isSelected and Color3.fromRGB(170, 0, 0) or Color3.fromRGB(0, 170, 0),
 				BackgroundTransparency = 0.5,
 				BorderColor3 = Color3.new(1, 1, 1),
 				BorderSizePixel = 0,
@@ -65,7 +68,7 @@ return function(props: Properties): React.ReactNode?
 				BackgroundColor3 = Color3.fromRGB(107, 107, 107),
 				BackgroundTransparency = 0.5,
 				BorderColor3 = Color3.new(1, 1, 1),
-				BorderSizePixel = 0,
+				BorderSizePixel = isSelected and 3 or 0,
 				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
 				Modal = true,
 				Position = UDim2.fromScale(0.125, 0.25),

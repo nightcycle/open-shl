@@ -7,6 +7,8 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
 local CONSTANTS = require("@self/CONSTANTS")
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
+local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
@@ -63,6 +65,11 @@ local COLORS: { [string]: BrickColor } = CONSTANTS.COLORS
 local COLOR_ALIASES: { [string]: BrickColor } = CONSTANTS.COLOR_ALIASES
 local MATERIALS: { [string]: Enum.Material } = CONSTANTS.MATERIALS
 local ITEM_GROUPS: { [string]: { [string]: { [string]: string } } } = CONSTANTS.ITEMS
+local ITEM_ALIASES: { [string]: string } = CONSTANTS.ITEM_ALIASES
+local POWERS: { [string]: string } = CONSTANTS.POWERS
+local DEATH_STYLES: { [string]: string } = CONSTANTS.DEATH_STYLES
+local TRANSFORMATION_STYLES: { [string]: string } = CONSTANTS.TRANSFORMATION_STYLES
+local FACE_SLOTS: { AppearanceType.FaceSlot } = table.freeze({ "Eyebrows" :: AppearanceType.FaceSlot, "Eyes", "Mouth" })
 -- Variables
 local ItemIds: { [string]: string } = {}
 local KnownItemCodes: { [string]: boolean } = {}
@@ -81,10 +88,20 @@ for _, categories in ITEM_GROUPS do
 				ItemIds[code] = id
 				ItemIds[id] = id
 				local key = assert(id:match("^[^_]+_[^_]+_(.+)$"), `Invalid item definition ID: {id}`)
-				ItemIds[normalizeItemName(key)] = id
+				local name = key
+				-- Every face slot holds the same keys, legacy told them apart by the slot in the name.
+				for _, slot: AppearanceType.FaceSlot in FACE_SLOTS do
+					if ItemAppearanceDefinition.getFaceId(slot, key) == id then
+						name ..= slot
+					end
+				end
+				ItemIds[normalizeItemName(name)] = id
 			end
 		end
 	end
+end
+for name, id in ITEM_ALIASES do
+	ItemIds[normalizeItemName(name)] = id
 end
 table.freeze(ItemIds)
 table.freeze(KnownItemCodes)
@@ -235,13 +252,23 @@ local function convertItems(values: { unknown }, start: number, path: string): R
 	return Result.ok(items)
 end
 
-local function convertPower(power: { string }, path: string): Result<Power, string>
-	local name = decode(power[1])
-	if name.IsErr then
-		return Result.err(`{path}[1]: {name.Value}`)
+local function convertPower(power: { string }, path: string): Result<Power?, string>
+	local name = power[1]
+	local id: string? = POWERS[name]
+	if not id then
+		if name:match("^p%d") then
+			return Result.err(`{path}[1]: Unresolved legacy code: {name}`)
+		end
+		-- Legacy skipped a power it no longer had, the rest of the character is kept.
+		return Result.ok(nil :: Power?)
+	end
+	local definition = PowerDefinition.get(id)
+	if definition.IsErr then
+		return Result.err(`{path}[1]: {definition.Value}`)
 	end
 	local color: BrickColor? = nil
-	if power[2] ~= nil then
+	-- Legacy only applied a saved color to the powers that can be recolored.
+	if power[2] ~= nil and definition.Value.ColorGroups.Primary then
 		local decoded = decodeColor(power[2])
 		if decoded.IsErr then
 			return Result.err(`{path}[2]: {decoded.Value}`)
@@ -249,7 +276,7 @@ local function convertPower(power: { string }, path: string): Result<Power, stri
 		color = decoded.Value
 	end
 	return Result.ok({
-		Name = name.Value,
+		Name = definition.Value.Id,
 		MasterColor = color,
 	})
 end
@@ -263,12 +290,17 @@ local function convertIdentity(raw: unknown, path: string): Result<Identity, str
 	local shared = values[1] :: { unknown }
 	local unique = values[2] :: { string }
 	local powers: { Power } = {}
+	local powerNames: { [string]: boolean } = {}
 	for index, power in shared[1] :: { { string } } do
 		local converted = convertPower(power, `{path}[1][1][{index}]`)
 		if converted.IsErr then
 			return converted
 		end
-		table.insert(powers, converted.Value)
+		-- Power skins are keyed by power, so a repeated power can only be kept once.
+		if converted.Value and not powerNames[converted.Value.Name] then
+			powerNames[converted.Value.Name] = true
+			table.insert(powers, converted.Value)
+		end
 	end
 	local alignment = decode(shared[2] :: string)
 	if alignment.IsErr then
@@ -337,6 +369,50 @@ local function convertAlignment(value: string): Result<PseudoEnum.Alignment, str
 	return Result.ok(alignment :: PseudoEnum.Alignment) :: TypeUnionLib.Ok<PseudoEnum.Alignment>
 end
 
+local function convertDeathTransition(value: string): Result<AppearanceType.DeathTransition?, string>
+	if value == CONSTANTS.NONE or value == "nons" then
+		return Result.ok(nil :: AppearanceType.DeathTransition?)
+	end
+	local style: string? = DEATH_STYLES[value]
+	if not style then
+		return Result.err(`Invalid legacy death style "{value}"`)
+	end
+	local transition: AppearanceType.DeathTransition = {
+		Style = style :: PseudoEnum.DeathStyle,
+	}
+	return Result.ok(transition)
+end
+
+local function convertTransformationTransition(value: string): Result<AppearanceType.TransformationTransition?, string>
+	if value == CONSTANTS.NONE or value == "nons" then
+		return Result.ok(nil :: AppearanceType.TransformationTransition?)
+	end
+	local style: string? = TRANSFORMATION_STYLES[value]
+	if not style then
+		return Result.err(`Invalid legacy transformation style "{value}"`)
+	end
+	local transition: AppearanceType.TransformationTransition = {
+		Style = style :: PseudoEnum.TransformationStyle,
+	}
+	return Result.ok(transition)
+end
+
+local function convertPowerSkins(powers: { Power }): { [string]: IdentityType.PowerSkin }
+	local skins: { [string]: IdentityType.PowerSkin } = {}
+	for _, power in powers do
+		-- A power without a saved color keeps the default of its definition.
+		if power.MasterColor then
+			skins[power.Name] = {
+				Id = power.Name,
+				ColorGroups = {
+					Primary = power.MasterColor.Color,
+				},
+			}
+		end
+	end
+	return skins
+end
+
 local function convertTextureGroup(
 	template: Instance,
 	group: AppearanceType.TextureGroupKey,
@@ -376,21 +452,23 @@ local function convertTextureGroup(
 	})
 end
 
-local function convertAppearanceItem(item: Item, skinColor: BrickColor): Result<AppearanceType.Item, string>
-	local ItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
-	local definition = ItemDefinition.get(item.Name)
-	if definition.IsErr then
-		return definition
-	end
-	local template = ItemDefinition.getTemplate(item.Name)
-	if template.IsErr then
-		return template
-	end
-	local groups = definition.Value.TextureGroups
+local function convertAppearanceItem(
+	item: Item,
+	definition: AppearanceType.ItemDefinition
+): Result<AppearanceType.Item, string>
 	local converted: AppearanceType.Item = {
 		DefinitionId = item.Name,
 		TextureGroups = {},
 	}
+	-- A face is an image, it has no template and no texture groups to fill.
+	if definition.Type == "Face" then
+		return Result.ok(converted)
+	end
+	local template = ItemAppearanceDefinition.getTemplate(item.Name)
+	if template.IsErr then
+		return template
+	end
+	local groups = definition.TextureGroups
 	if item.Primary then
 		local group: AppearanceType.TextureGroupKey? = if table.find(groups, "Primary")
 			then "Primary"
@@ -419,14 +497,33 @@ local function convertAppearanceItem(item: Item, skinColor: BrickColor): Result<
 		end
 		converted.TextureGroups["Secondary" :: AppearanceType.TextureGroupKey] = texture.Value
 	end
-	if table.find(groups, "Skin") then
-		local texture = convertTextureGroup(template.Value, "Skin", skinColor.Color, nil, nil)
-		if texture.IsErr then
-			return texture
-		end
-		converted.TextureGroups["Skin" :: AppearanceType.TextureGroupKey] = texture.Value
-	end
+	-- Skin parts are left out, they fall back to the SkinColor of the appearance.
 	return Result.ok(converted)
+end
+
+local function convertAppearanceItems(legacyItems: { Item }): Result<{ AppearanceType.Item }, string>
+	local items: { AppearanceType.Item } = {}
+	local itemIndexes: { [string]: number } = {}
+	for index, item in legacyItems do
+		local definition = ItemAppearanceDefinition.get(item.Name)
+		if definition.IsErr then
+			return Result.err(`item [{index}] ({item.Name}): {definition.Value}`)
+		end
+		local converted = convertAppearanceItem(item, definition.Value)
+		if converted.IsErr then
+			return Result.err(`item [{index}] ({item.Name}): {converted.Value}`)
+		end
+		-- An item is worn once and a face slot holds one item, the newest stays like AppearanceConstructor.fix.
+		local key: string = if definition.Value.Type == "Face" then definition.Value.Slot else item.Name
+		local itemIndex: number? = itemIndexes[key]
+		if itemIndex then
+			items[itemIndex] = converted.Value
+			continue
+		end
+		itemIndexes[key] = #items + 1
+		table.insert(items, converted.Value)
+	end
+	return Result.ok(items)
 end
 
 local function convertFinalIdentity(identity: Identity): Result<IdentityType.Identity, string>
@@ -434,13 +531,17 @@ local function convertFinalIdentity(identity: Identity): Result<IdentityType.Ide
 	if alignment.IsErr then
 		return alignment
 	end
-	local items: { AppearanceType.Item } = {}
-	for index, item in identity.Items do
-		local converted = convertAppearanceItem(item, identity.SkinColor)
-		if converted.IsErr then
-			return Result.err(`item [{index}] ({item.Name}): {converted.Value}`)
-		end
-		table.insert(items, converted.Value)
+	local death = convertDeathTransition(identity.SharedValues.DeathAnimation)
+	if death.IsErr then
+		return death
+	end
+	local transformation = convertTransformationTransition(identity.SharedValues.TransformationAnimation)
+	if transformation.IsErr then
+		return transformation
+	end
+	local items = convertAppearanceItems(identity.Items)
+	if items.IsErr then
+		return items
 	end
 	return Result.ok({
 		Profile = {
@@ -448,11 +549,15 @@ local function convertFinalIdentity(identity: Identity): Result<IdentityType.Ide
 			Backstory = convertProfileText(identity.UniqueValues.Backstory),
 			Alignment = alignment.Value,
 		},
-		PowerSkins = {},
+		PowerSkins = convertPowerSkins(identity.SharedValues.Powers),
 		Appearance = {
-			Items = items,
-			-- Transition currently has no fields for legacy animation styles.
-			Transitions = {},
+			Items = items.Value,
+			SkinColor = identity.SkinColor.Color,
+			-- An unset style is left out, a missing transition plays the legacy default.
+			Transitions = {
+				Death = death.Value,
+				Transformation = transformation.Value,
+			},
 			HiddenTags = {},
 		},
 	})
@@ -499,9 +604,14 @@ Module.toCharacter = function(raw: unknown): Result<CharacterType.Character, str
 	if civilian.IsErr then
 		return Result.err(`SecretIdentity: {civilian.Value}`)
 	end
+	-- Both identities carry a copy of the shared values, the powers are read from the super one.
+	local powers: { CharacterType.Power } = {}
+	for _, power in super.Value.SharedValues.Powers do
+		table.insert(powers, { Id = power.Name })
+	end
 	local character: CharacterType.Character = {
 		Id = id,
-		Powers = {},
+		Powers = powers,
 		Identities = {
 			Main = main.Value,
 			Secret = civilian.Value,

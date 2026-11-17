@@ -7,6 +7,8 @@ local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxCompone
 -- Modules
 -- Components
 -- Hooks
+local useFieldValue =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFieldValue")
 -- Contexts
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
@@ -16,6 +18,7 @@ local CharacterEditorFieldDefinition =
 local FieldTypes = require("./Types")
 export type Properties = FieldTypes.FieldProperties
 -- Constants
+local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor/CONSTANTS")
 local GRID_COLUMNS = 8
 local BUTTON_SIZE = 1 / GRID_COLUMNS
 local GRID_STEP = 0.895 / (GRID_COLUMNS - 1)
@@ -100,28 +103,48 @@ local e = React.createElement
 return function(props: Properties): React.ReactNode?
 	local fieldDefinition = React.useContext(CharacterEditorFieldDefinition)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
+	local value = useFieldValue()
 	if not fieldDefinition or fieldDefinition.Type ~= "Color" then
 		return
 	end
-	if not fieldCallback then
+	if not fieldCallback or not value or value.Type ~= "Color" then
 		return
+	end
+
+	-- compared as hex, a color that went through a save may not be bit equal to its swatch
+	local selectedHex = if value.Color then value.Color:ToHex() else nil
+	local filteredHexes: { string } = {}
+	if fieldDefinition.Filtered then
+		for _, filteredColor in fieldDefinition.Filtered do
+			table.insert(filteredHexes, filteredColor:ToHex())
+		end
 	end
 
 	local buttons: { [string]: React.ReactNode } = {}
 	for index, color in COLORS do
+		local hex = color.Color:ToHex()
+		-- a swatch that's left out leaves its cell empty, the rest of the palette stays where it is
+		if table.find(filteredHexes, hex) then
+			continue
+		end
 		local column = (index - 1) % GRID_COLUMNS
 		local row = math.floor((index - 1) / GRID_COLUMNS)
+		local isSelected = hex == selectedHex
 		buttons[tostring(index)] = e("TextButton", {
 			BackgroundColor3 = color.Color,
-			BorderColor3 = Color3.new(1, 1, 1),
-			BorderSizePixel = 0,
+			BorderColor3 = isSelected and CONSTANTS.SELECTION_COLOR or Color3.new(1, 1, 1),
+			BorderSizePixel = isSelected and 3 or 0,
 			FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
 			Position = UDim2.fromScale(column * GRID_STEP, row * GRID_STEP),
 			Size = UDim2.fromScale(BUTTON_SIZE, BUTTON_SIZE),
 			Text = "",
 			TextSize = 14,
+			ZIndex = isSelected and 2 or 1,
 			[React.Event.Activated] = function()
-				fieldCallback(fieldDefinition, color.Color)
+				fieldCallback(fieldDefinition, {
+					Type = "Color",
+					Color = color.Color,
+				})
 			end,
 		})
 	end

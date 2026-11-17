@@ -6,6 +6,7 @@ local AppearanceConstructor = require("@game/ReplicatedStorage/Shared/Constructo
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item")
 local ItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local RandomMisc = require("@game/ReplicatedStorage/Shared/Random/Misc")
 local RandomUtil = require("@game/ReplicatedStorage/Shared/Util/Random")
 local TextureGroupConstructor =
@@ -13,6 +14,12 @@ local TextureGroupConstructor =
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 -- Constants
+local ITEM_GROUPS: { AppearanceType.ItemGroup } = table.freeze({
+	"clothing" :: AppearanceType.ItemGroup,
+	"costume",
+	"cosmetics",
+	"body",
+})
 -- Variables
 -- References
 -- Private Functions
@@ -33,15 +40,41 @@ Module.HiddenTag = function(seed: number?): AppearanceType.HiddenTag
 	return RandomMisc.literal(seed, { "Hood", "Mask", "MouthCover", "Hair" }) :: AppearanceType.HiddenTag
 end
 
+Module.FaceSlot = function(seed: number?): AppearanceType.FaceSlot
+	return RandomMisc.literal(seed, { "Eyebrows", "Eyes", "Mouth" }) :: AppearanceType.FaceSlot
+end
+
+Module.SkinColor = function(seed: number?): Color3
+	local rng = Random.new(seed)
+	-- kept within believable skin tones so a preview still reads as a person
+	return Color3.fromHSV(rng:NextNumber(0.04, 0.1), rng:NextNumber(0.2, 0.6), rng:NextNumber(0.35, 1))
+end
+
 Module.TransitionType = function(seed: number?): AppearanceType.TransitionType
-	return RandomMisc.literal(seed, { "Death", "Transformation" }) :: AppearanceType.TransitionType
+	return RandomMisc.literal(seed, PseudoEnum.getEnumItems("TransitionType")) :: AppearanceType.TransitionType
+end
+
+Module.DeathTransition = function(seed: number?): AppearanceType.DeathTransition
+	return table.freeze({
+		Style = RandomMisc.literal(seed, PseudoEnum.getEnumItems("DeathStyle")) :: PseudoEnum.DeathStyle,
+	})
+end
+
+Module.TransformationTransition = function(seed: number?): AppearanceType.TransformationTransition
+	return table.freeze({
+		Style = RandomMisc.literal(seed, PseudoEnum.getEnumItems("TransformationStyle")) :: PseudoEnum.TransformationStyle,
+	})
 end
 
 Module.TransitionOfType = function(
 	transitionType: AppearanceType.TransitionType,
 	seed: number?
 ): AppearanceType.Transition
-	return {}
+	if transitionType == PseudoEnum.TransitionType.Death then
+		return Module.DeathTransition(seed)
+	else
+		return Module.TransformationTransition(seed)
+	end
 end
 
 Module.Transition = function(seed: number?): AppearanceType.Transition
@@ -50,11 +83,18 @@ Module.Transition = function(seed: number?): AppearanceType.Transition
 end
 
 Module.ItemGroup = function(seed: number?): AppearanceType.ItemGroup
-	return RandomMisc.literal(seed, { "clothing", "costume", "cosmetics", "body" }) :: AppearanceType.ItemGroup
+	-- a group with nothing in the library (body) can't produce an item
+	local groups: { AppearanceType.ItemGroup } = {}
+	for _, group: AppearanceType.ItemGroup in ITEM_GROUPS do
+		if #ItemDefinition.listCategories(group) > 0 then
+			table.insert(groups, group)
+		end
+	end
+	return RandomMisc.literal(seed, groups) :: AppearanceType.ItemGroup
 end
 
 Module.ItemCategoryOfGroup = function(group: AppearanceType.ItemGroup, seed: number?): string
-	return RandomMisc.literal(seed, ItemDefinition.listCategories(group)) :: AppearanceType.ItemGroup
+	return RandomMisc.literal(seed, ItemDefinition.listCategories(group))
 end
 
 Module.ItemDefinitionOfCategory = function(
@@ -86,7 +126,7 @@ Module.ItemOfCategory = function(group: AppearanceType.ItemGroup, category: stri
 	local rng = Random.new(seed)
 	local itemDef = Module.ItemDefinitionOfCategory(group, category, RandomUtil.newSeed(rng))
 	return FreezeUtil.delta(ItemConstructor.new(itemDef.Id), function(item)
-		for i, k in itemDef.TextureGroups do
+		for _, k in itemDef.TextureGroups do
 			item.TextureGroups[k :: AppearanceType.TextureGroupKey] = Module.TextureGroup(RandomUtil.newSeed(rng))
 		end
 		return item
@@ -110,15 +150,16 @@ Module.Appearance = function(isSuper: boolean, seed: number?): AppearanceType.Ap
 	return AppearanceConstructor.fix(FreezeUtil.delta(AppearanceConstructor.new(), function(t)
 		t.HiddenTags =
 			RandomMisc.set(RandomUtil.newSeed(rng), Module.HiddenTag, rng:NextInteger(0, 5)) :: { AppearanceType.HiddenTag }
+		t.SkinColor = Module.SkinColor(RandomUtil.newSeed(rng))
 		t.Transitions = {
-			Death = Module.TransitionOfType("Death", RandomUtil.newSeed(rng)),
-			Transformation = Module.TransitionOfType("Transformation", RandomUtil.newSeed(rng)),
+			Death = Module.DeathTransition(RandomUtil.newSeed(rng)),
+			Transformation = Module.TransformationTransition(RandomUtil.newSeed(rng)),
 		}
 		local items = {}
 
 		-- for i = 1, rng:NextInteger(0, 12) do
 		if isSuper then
-			for j, cat in ItemDefinition.listCategories("costume") do
+			for _, cat in ItemDefinition.listCategories("costume") do
 				if cat == "artifacts" then
 					continue
 				end
@@ -128,14 +169,15 @@ Module.Appearance = function(isSuper: boolean, seed: number?): AppearanceType.Ap
 				table.insert(items, Module.ItemOfCategory("costume", cat, RandomUtil.newSeed(rng)))
 			end
 		else
-			for j, cat in ItemDefinition.listCategories("clothing") do
+			for _, cat in ItemDefinition.listCategories("clothing") do
 				if rng:NextNumber() < 0.2 then
 					continue
 				end
 				table.insert(items, Module.ItemOfCategory("clothing", cat, RandomUtil.newSeed(rng)))
 			end
 		end
-		for j, cat in ItemDefinition.listCategories("cosmetics") do
+		-- cosmetics include the face, one category per slot
+		for _, cat in ItemDefinition.listCategories("cosmetics") do
 			if rng:NextNumber() < 0.2 then
 				continue
 			end

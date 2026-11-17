@@ -29,6 +29,11 @@ return function(template: Folder): (Scene?, () -> ())
 		task.spawn(function()
 			newController = Scene.new(template)
 			assert(newController.IsAlive, `bad scene`)
+			-- a template can take a while to find its parts, the effect may have been cleaned up by then
+			if isDead then
+				newController:Destroy()
+				return
+			end
 			if newController.Rig.IsToDo then
 				newController.Rig = Future.awaitUntil(newController.Rig, function()
 					return isDead
@@ -41,7 +46,7 @@ return function(template: Folder): (Scene?, () -> ())
 		return function()
 			isDead = true
 			setScene(nil)
-			if newController.IsAlive then
+			if newController and newController.IsAlive then
 				newController:Destroy()
 			end
 		end

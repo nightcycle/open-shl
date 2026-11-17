@@ -16,7 +16,7 @@ type EquippedEmote = {
 	Slot: number,
 }
 export type AnimationGroup = "Climb" | "Fall" | "Idle" | "Jump" | "Mood" | "Run" | "Swim" | "Walk"
-export type TextureGroup = "Pants" | "Shirt" | "GraphicTShirt"
+export type TextureGroup = "Pants" | "Shirt" | "GraphicTShirt" | "Face"
 type BoolGroup = "StaticFacialAnimation" | "UseAvatarSettings"
 export type ScaleGroup = "BodyType" | "Depth" | "Head" | "Height" | "Proportion" | "Width"
 type HumanoidConfigEntry =
@@ -105,7 +105,7 @@ local function filter<V>(entries: { V }, fn: (V) -> boolean): { V }
 	end
 	return out
 end
-function getAssetId(assetId: AssetIdOrUrl): number
+local function getAssetId(assetId: AssetIdOrUrl): number
 	if type(assetId) == "number" then
 		return assetId
 	else
@@ -328,7 +328,7 @@ local function builder(
 			local info: AccessoryInfo = {
 				AssetId = assetId,
 				AccessoryType = group,
-				IsLayered = isLayered == false,
+				IsLayered = isLayered == true,
 				Order = if isLayered then order or 0 else nil,
 				Puffiness = if isLayered then puffiness or 1 else nil,
 			}
@@ -427,6 +427,7 @@ return {
 			Pants = desc.Pants,
 			Shirt = desc.Shirt,
 			GraphicTShirt = desc.GraphicTShirt,
+			Face = desc.Face,
 		}
 		for group, assetId in textures do
 			table.insert(entries, { Type = "Texture", Group = group :: TextureGroup, AssetId = assetId })

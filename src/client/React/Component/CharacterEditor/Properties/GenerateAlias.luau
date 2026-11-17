@@ -5,8 +5,11 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
+local RandomUtil = require("@game/ReplicatedStorage/Shared/Util/Random")
 -- Components
 -- Hooks
+local useFieldValue =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFieldValue")
 -- Contexts
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
@@ -24,10 +27,11 @@ local e = React.createElement
 return function(props: Properties): React.ReactNode?
 	local fieldDefinition = React.useContext(CharacterEditorFieldDefinition)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
+	local value = useFieldValue()
 	if not fieldDefinition or fieldDefinition.Type ~= "GenerateAlias" then
 		return
 	end
-	if not fieldCallback then
+	if not fieldCallback or not value or value.Type ~= "Text" then
 		return
 	end
 	return e(RobloxComponents.Frame(
@@ -51,8 +55,27 @@ return function(props: Properties): React.ReactNode?
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				[React.Event.Activated] = function()
-					fieldCallback(fieldDefinition)
+					fieldCallback(fieldDefinition, {
+						Type = "Alias",
+						Seed = RandomUtil.newSeed(Random.new()),
+					})
 				end,
+			}),
+
+			Title = e("TextLabel", {
+				BackgroundTransparency = 1,
+				FontFace = Font.new(
+					"rbxasset://fonts/families/SourceSansPro.json",
+					Enum.FontWeight.Bold,
+					Enum.FontStyle.Normal
+				),
+				Position = UDim2.fromScale(0.45, 0.2),
+				Size = UDim2.fromScale(0.5, 0.1),
+				SizeConstraint = Enum.SizeConstraint.RelativeXX,
+				Text = value.Text,
+				TextColor3 = Color3.new(1, 1, 1),
+				TextScaled = true,
+				ZIndex = 10,
 			}),
 		}
 	))

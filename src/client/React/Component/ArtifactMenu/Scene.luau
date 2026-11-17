@@ -5,14 +5,14 @@
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
-local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
-local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
 -- Hooks
+local useAppearance = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useAppearance")
 local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
+local AppTopInsetContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/TopInset")
 local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
 local PreviewCharacterContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Preview")
@@ -27,6 +27,7 @@ local SceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/ar
 local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
+	local topInset = React.useContext(AppTopInsetContext)
 	local character = React.useContext(CharacterContext)
 	local previewCharacter = React.useContext(PreviewCharacterContext)
 	local appearance = (previewCharacter or character).Identities.Main.Appearance
@@ -70,33 +71,7 @@ return function(props: Properties): React.ReactNode
 		end
 	end, { rotationDeg :: any, artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone })
 
-	React.useEffect(function()
-		if appearance and artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone then
-			local isDead = false
-			task.spawn(function()
-				print(`applying appearance: isDead={isDead}`)
-				local resF: TypeUnionLib.Future<TypeUnionLib.Result<true, { string }>> = TypeUnionLib.Future.awaitUntil(
-					AppearanceUtil.apply(artifactScene.Rig.Value, appearance),
-					function()
-						return isDead
-					end
-				)
-				if resF.IsDone then
-					if resF.Value.IsErr then
-						for i, v in resF.Value.Value do
-							warn(`appearance err: {v}`)
-						end
-					else
-						print(`successfully applied appearance`)
-					end
-				end
-			end)
-			return function()
-				isDead = true
-			end
-		end
-		return function() end
-	end, { appearance :: any, artifactScene and artifactScene.IsAlive and artifactScene.Rig.IsDone })
+	useAppearance(artifactScene, appearance)
 
 	return e(React.Fragment, {}, {
 		ViewportFrame = e(
@@ -106,7 +81,9 @@ return function(props: Properties): React.ReactNode
 				Active = false,
 				BackgroundTransparency = 1,
 				ref = viewportRef,
-				Size = UDim2.fromScale(1, 1),
+				-- the menu starts under the top bar, the viewport reaches back up over it
+				Position = UDim2.fromOffset(0, -topInset),
+				Size = UDim2.new(1, 0, 1, topInset),
 			} :: RobloxComponents.ViewportFrameProperties
 		),
 

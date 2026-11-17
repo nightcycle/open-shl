@@ -1,0 +1,89 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Size": {
+      "Vector3": [
+        0.10000000149011612,
+        0.10000000149011612,
+        0.10000000149011612
+      ]
+    },
+    "Attributes": {
+      "Attributes": {
+        "Rarity": {
+          "String": "Legendary"
+        },
+        "NoCape": {
+          "Bool": true
+        },
+        "Name": {
+          "String": "Colossal Bladepack"
+        },
+        "TextureGroup": {
+          "String": "Primary"
+        }
+      }
+    },
+    "Tags": []
+  },
+  "Children": [
+    {
+      "Name": "Mesh",
+      "ClassName": "SpecialMesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=83509558"
+          }
+        },
+        "MeshType": {
+          "Enum": 5
+        },
+        "Scale": {
+          "Vector3": [
+            1,
+            1,
+            1
+          ]
+        },
+        "TextureContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=83509797"
+          }
+        }
+      }
+    },
+    {
+      "Name": "UpperTorso",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -0.9288972616195679,
+                -0.36889368295669556,
+                0.03267018124461174
+              ],
+              [
+                0.37033751606941223,
+                -0.9252756834030151,
+                0.08194480836391449
+              ],
+              [
+                1.862645149230957e-09,
+                0.08821731060743332,
+                0.9961012601852417
+              ]
+            ],
+            "position": [
+              -0.27394866943359375,
+              -0.2955474853515625,
+              -0.6518478393554688
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

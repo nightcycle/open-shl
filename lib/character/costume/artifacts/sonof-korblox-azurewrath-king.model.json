@@ -1,0 +1,86 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Size": {
+      "Vector3": [
+        0.5325119495391846,
+        0.5325119495391846,
+        0.5325119495391846
+      ]
+    },
+    "Attributes": {
+      "Attributes": {
+        "Rarity": {
+          "String": "VeryCommon"
+        },
+        "Name": {
+          "String": "Son of Korblox: Azurewrath King"
+        },
+        "TextureGroup": {
+          "String": "Primary"
+        }
+      }
+    },
+    "Tags": []
+  },
+  "Children": [
+    {
+      "Name": "Mesh",
+      "ClassName": "SpecialMesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=243839182 "
+          }
+        },
+        "MeshType": {
+          "Enum": 5
+        },
+        "Scale": {
+          "Vector3": [
+            2.9820668697357178,
+            2.9820668697357178,
+            2.9820668697357178
+          ]
+        },
+        "TextureContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=244098348"
+          }
+        }
+      }
+    },
+    {
+      "Name": "Head",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                1.8932661725304283e-29,
+                0
+              ],
+              [
+                1.8932661725304283e-29,
+                1,
+                -2.524354896707238e-29
+              ],
+              [
+                0,
+                -2.524354896707238e-29,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              -0.3461151123046875,
+              0.053253173828125
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

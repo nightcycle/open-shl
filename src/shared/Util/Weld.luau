@@ -15,8 +15,8 @@ function Util.between(part0: BasePart, part1: BasePart)
 	weld.Name = "Weld"
 	weld.Part0 = part0
 	weld.Part1 = part1
-	weld.C0 = part0.CFrame:Inverse()
-	weld.C1 = part1.CFrame:Inverse()
+	-- the offset is kept local to part0, world positions far from the origin would cost it precision
+	weld.C0 = part0.CFrame:ToObjectSpace(part1.CFrame)
 	weld.Parent = part1
 	return weld
 end

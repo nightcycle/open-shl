@@ -19,10 +19,12 @@ export type RarityItemGroup = {
 }
 export type Properties = RobloxComponents.ScrollingFrameProperties & {
 	SelectedItemDefinition: ItemDefinition?,
+	OwnedDefinitionIds: { string },
 	ItemGroups: { RarityItemGroup },
 	OnClick: (ItemDefinition) -> (),
 }
 -- Constants
+local OWNED_TEXT_COLOR = Color3.fromRGB(0, 170, 0)
 -- Variables
 -- References
 -- Private Functions
@@ -31,10 +33,8 @@ local e = React.createElement
 return function(props: Properties)
 	local out: { [string]: React.ReactNode } = {}
 	local rowIndex = 0
-	local categoryIndex = 0
 	for rarityOrder, rarityEntry in props.ItemGroups do
 		rowIndex += 1
-		categoryIndex += 1
 		out[`{rarityOrder}`] = e("TextLabel", {
 			BackgroundTransparency = 1,
 			SizeConstraint = Enum.SizeConstraint.RelativeXX,
@@ -57,6 +57,7 @@ return function(props: Properties)
 			end
 			rowIndex += 1
 			local isSelected = props.SelectedItemDefinition and props.SelectedItemDefinition.Id == itemDef.Id or false
+			local isOwned = table.find(props.OwnedDefinitionIds, itemDef.Id) ~= nil
 			out[`{rarityOrder}-{i}`] = e("TextButton", {
 				BackgroundColor3 = isSelected and Color3.new(1, 1, 1) or Color3.new(),
 				BorderColor3 = Color3.fromRGB(27, 42, 53),
@@ -68,7 +69,7 @@ return function(props: Properties)
 				FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
 				Size = UDim2.new(1, -15, 0.008 * 14, 0),
 				Text = name,
-				TextColor3 = isSelected and Color3.new() or Color3.new(1, 1, 1),
+				TextColor3 = isSelected and Color3.new() or isOwned and OWNED_TEXT_COLOR or Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextStrokeTransparency = isSelected and 0 or 1,
 				[React.Event.Activated] = function()
@@ -82,7 +83,8 @@ return function(props: Properties)
 			BackgroundColor3 = Color3.new(),
 			BackgroundTransparency = 0.3,
 			BorderColor3 = Color3.fromRGB(27, 42, 53),
-			CanvasSize = UDim2.fromScale(0, categoryIndex * 0.015 + rowIndex * 0.06),
+			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			CanvasSize = UDim2.new(),
 			ScrollingDirection = Enum.ScrollingDirection.Y,
 		},
 		props,

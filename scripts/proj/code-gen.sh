@@ -7,3 +7,4 @@ if [ ! -d "Generated" ]; then
 fi
 
 pseudo-enum build
+lune run scripts/proj/build-config.lune.luau

@@ -10,7 +10,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Private Functions
 -- Class
 return function(inst: Instance?, key: string): any?
-	local value, setValue = React.useState(inst and inst:GetAttribute(key) or nil)
+	local value, setValue = React.useState(if inst then inst:GetAttribute(key) else nil)
 	React.useEffect(function()
 		local function update()
 			if inst then

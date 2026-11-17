@@ -7,18 +7,42 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
+local Image = require("@game/ReplicatedStorage/Generated/Image")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
+local TextureGroupConstructor =
+	require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item/TextureGroup")
 -- Types
 type ToDo<V, Progress...> = TypeUnionLib.ToDo<V, Progress...>
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 export type ItemDefinitionIndex = AppearanceType.ItemDefinitionIndex
 export type ItemDefinition = AppearanceType.ItemDefinition
+type ItemGroup = AppearanceType.ItemGroup
 type TextureGroupKey = AppearanceType.TextureGroupKey
+type TextureGroup = AppearanceType.TextureGroup
+type FaceSlot = AppearanceType.FaceSlot
 -- Constants
 local ID_DELIMITER = "_"
+local PATH_DELIMITER = "/"
 local TEXTURE_GROUP_KEYS: { TextureGroupKey } = { "Primary", "Secondary", "Tertiary", "Hair", "Skin" }
 table.freeze(TEXTURE_GROUP_KEYS)
+-- face items have no template in the library, they are images sorted into a folder per slot
+local FACE_GROUP: ItemGroup = "cosmetics"
+local FACE_IMAGE_EXTENSION = ".png"
+local FACE_SLOTS: { FaceSlot } = table.freeze({ "Eyebrows" :: FaceSlot, "Eyes", "Mouth" })
+local FACE_CATEGORIES: { [FaceSlot]: string } = table.freeze({
+	Eyebrows = "eyebrows",
+	Eyes = "eyes",
+	Mouth = "mouth",
+})
+local FACE_IMAGES: { [FaceSlot]: { [string]: string } } = table.freeze({
+	Eyebrows = Image.face.eyebrows,
+	Eyes = Image.face.eyes,
+	Mouth = Image.face.mouth,
+})
+local FACE_NAMES: { [string]: string } = table.freeze({
+	cosmetics_eyebrows_worried = "Sad Eyebrows",
+})
 -- Variables
 local DefinitionIndexCache: { [string]: ItemDefinitionIndex? } = {}
 local TemplateCache: { [string]: Instance? } = {}
@@ -48,6 +72,34 @@ local function getTextureGroups(template: Instance): { TextureGroupKey }
 	return groups
 end
 
+local function getFaceSlot(defIndex: ItemDefinitionIndex): FaceSlot?
+	if defIndex.Group ~= FACE_GROUP then
+		return nil
+	end
+	for _, slot: FaceSlot in FACE_SLOTS do
+		if FACE_CATEGORIES[slot] == defIndex.Category then
+			return slot
+		end
+	end
+	return nil
+end
+
+local function getFaceKeys(slot: FaceSlot): { string }
+	local keys: { string } = {}
+	for fileName in FACE_IMAGES[slot] do
+		if fileName:sub(-#FACE_IMAGE_EXTENSION) == FACE_IMAGE_EXTENSION then
+			table.insert(keys, fileName:sub(1, -#FACE_IMAGE_EXTENSION - 1))
+		end
+	end
+	-- dictionaries have no order, sorting keeps lists + seeded picks stable
+	table.sort(keys)
+	return keys
+end
+
+local function getFaceName(slot: FaceSlot, id: string, key: string): string
+	return FACE_NAMES[id] or `{key:sub(1, 1):upper()}{key:sub(2)} {slot}`
+end
+
 -- Class
 local Module = {}
 
@@ -69,6 +121,12 @@ Module.getIndex = function(id: string): Result<ItemDefinitionIndex, string>
 		end
 		local category = keys[2]
 		local item = keys[3]
+		-- a path inside of a key would resolve to the insides of a template
+		for _, key in keys do
+			if key == "" or key:find(PATH_DELIMITER, 1, true) then
+				return Result.err(`bad key "{key}" in "{id}"`)
+			end
+		end
 		local defIndex: ItemDefinitionIndex = table.freeze({
 			Group = group :: AppearanceType.ItemGroup,
 			Category = category,
@@ -85,6 +143,10 @@ Module.getIdFromIndex = function(definitionIndex: ItemDefinitionIndex): string
 	return table.concat({ definitionIndex.Group, definitionIndex.Category, definitionIndex.Key }, ID_DELIMITER)
 end
 
+Module.getFaceId = function(slot: FaceSlot, key: string): string
+	return table.concat({ FACE_GROUP, FACE_CATEGORIES[slot], key }, ID_DELIMITER)
+end
+
 Module.getTemplate = function(id: string): Result<Instance, string>
 	do
 		local cachedValue = TemplateCache[id]
@@ -92,8 +154,17 @@ Module.getTemplate = function(id: string): Result<Instance, string>
 			return Result.ok(cachedValue)
 		end
 	end
+	do
+		local indexRes = Module.getIndex(id)
+		if indexRes.IsErr then
+			return Result.err(`template "{id}" failed: {indexRes.Value}`)
+		end
+		if getFaceSlot(indexRes.Value) then
+			return Result.err(`"{id}" is a face item, it has no template`)
+		end
+	end
 	local keys = id:split(ID_DELIMITER)
-	local templateRes = IndexUtil.tryFirstLocalPath(CharacterLibrary, table.concat(keys, "/"))
+	local templateRes = IndexUtil.tryFirstLocalPath(CharacterLibrary, table.concat(keys, PATH_DELIMITER))
 	if templateRes.IsOk then
 		TemplateCache[id] = templateRes.Value
 	end
@@ -101,24 +172,47 @@ Module.getTemplate = function(id: string): Result<Instance, string>
 end
 
 Module.get = function(id: string): Result<ItemDefinition, string>
-	local itemDefRes = Module.getTemplate(id)
-	if itemDefRes.IsErr then
-		return Result.err(`get "{id}" failed: {itemDefRes.Value}`)
-	end
 	do
 		local cachedValue = DefinitionCache[id]
 		if cachedValue then
 			return cachedValue
 		end
 	end
+	local indexRes = Module.getIndex(id)
+	if indexRes.IsErr then
+		return Result.err(`get "{id}" failed: {indexRes.Value}`)
+	end
 
-	local itemDefinition: ItemDefinition = {
-		Id = id,
-		Name = itemDefRes.Value:GetAttribute("Name") :: string?,
-		Rarity = itemDefRes.Value:GetAttribute("Rarity") :: PseudoEnum.Rarity?,
-		Tags = itemDefRes.Value:GetTags(),
-		TextureGroups = getTextureGroups(itemDefRes.Value),
-	}
+	local itemDefinition: ItemDefinition
+	local faceSlot: FaceSlot? = getFaceSlot(indexRes.Value)
+	if faceSlot then
+		local image: string? = FACE_IMAGES[faceSlot][`{indexRes.Value.Key}{FACE_IMAGE_EXTENSION}`]
+		if image == nil then
+			return Result.err(`get "{id}" failed: no "{faceSlot}" image for "{indexRes.Value.Key}"`)
+		end
+		itemDefinition = {
+			Type = "Face",
+			Id = id,
+			Name = getFaceName(faceSlot, id, indexRes.Value.Key),
+			Tags = {},
+			TextureGroups = {},
+			Slot = faceSlot,
+			Image = image,
+		}
+	else
+		local itemDefRes = Module.getTemplate(id)
+		if itemDefRes.IsErr then
+			return Result.err(`get "{id}" failed: {itemDefRes.Value}`)
+		end
+		itemDefinition = {
+			Type = "Model",
+			Id = id,
+			Name = itemDefRes.Value:GetAttribute("Name") :: string?,
+			Rarity = itemDefRes.Value:GetAttribute("Rarity") :: PseudoEnum.Rarity?,
+			Tags = itemDefRes.Value:GetTags(),
+			TextureGroups = getTextureGroups(itemDefRes.Value),
+		}
+	end
 	TableUtil.deepFreeze(itemDefinition)
 	do
 		local success, msg = AppearanceType.ItemDefinition(itemDefinition)
@@ -133,7 +227,22 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 	return out
 end
 
-Module.listCategories = function(group: AppearanceType.ItemGroup): { string }
+Module.getDefaultTextureGroup = function(id: string, key: TextureGroupKey): Result<TextureGroup, string>
+	local templateRes = Module.getTemplate(id)
+	if templateRes.IsErr then
+		return Result.err(`default "{key}" of "{id}" failed: {templateRes.Value}`)
+	end
+	local instances = templateRes.Value:GetDescendants()
+	table.insert(instances, 1, templateRes.Value)
+	for _, inst in instances do
+		if inst:IsA("BasePart") and inst:GetAttribute("TextureGroup") == key then
+			return Result.ok(TextureGroupConstructor.new(inst.Color, inst.Material, inst.Transparency))
+		end
+	end
+	return Result.err(`"{id}" has no "{key}" texture group`)
+end
+
+Module.listCategories = function(group: ItemGroup?): { string }
 	local out = {}
 	for _, groupFolder in CharacterLibrary:GetChildren() do
 		if group ~= nil then
@@ -145,11 +254,16 @@ Module.listCategories = function(group: AppearanceType.ItemGroup): { string }
 			table.insert(out, categoryFolder.Name)
 		end
 	end
+	if group == nil or group == FACE_GROUP then
+		for _, slot: FaceSlot in FACE_SLOTS do
+			table.insert(out, FACE_CATEGORIES[slot])
+		end
+	end
 	table.freeze(out)
 	return out
 end
 
-Module.list = function(group: AppearanceType.ItemGroup?, category: string?): { ItemDefinition }
+Module.list = function(group: ItemGroup?, category: string?): { ItemDefinition }
 	local out = {}
 	for _, groupFolder in CharacterLibrary:GetChildren() do
 		if group ~= nil then
@@ -172,6 +286,23 @@ Module.list = function(group: AppearanceType.ItemGroup?, category: string?): { I
 				table.freeze(defIndex)
 				local id = Module.getIdFromIndex(defIndex)
 				local itemDefRes = Module.get(id)
+				if itemDefRes.IsOk then
+					table.insert(out, itemDefRes.Value)
+				else
+					warn(itemDefRes.Value)
+				end
+			end
+		end
+	end
+	if group == nil or group == FACE_GROUP then
+		for _, slot: FaceSlot in FACE_SLOTS do
+			if category ~= nil then
+				if category ~= FACE_CATEGORIES[slot] then
+					continue
+				end
+			end
+			for _, key in getFaceKeys(slot) do
+				local itemDefRes = Module.get(Module.getFaceId(slot, key))
 				if itemDefRes.IsOk then
 					table.insert(out, itemDefRes.Value)
 				else

@@ -61,5 +61,10 @@ return {
 				BackgroundColor3 = Color3.fromRGB(169, 216, 0),
 			},
 		},
+		BUILD = {
+			MenuId = PseudoEnum.MenuId.Build,
+			Image = Image.ui["build.png"],
+			BackgroundColor3 = Color3.fromRGB(135, 0, 203),
+		} :: ButtonInfo,
 	},
 }

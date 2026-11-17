@@ -1,0 +1,86 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Size": {
+      "Vector3": [
+        0.5325119495391846,
+        0.5325119495391846,
+        0.5325119495391846
+      ]
+    },
+    "Attributes": {
+      "Attributes": {
+        "Rarity": {
+          "String": "Rare"
+        },
+        "Name": {
+          "String": "Chronoterminus: the Epochalypse Helm"
+        },
+        "TextureGroup": {
+          "String": "Primary"
+        }
+      }
+    },
+    "Tags": []
+  },
+  "Children": [
+    {
+      "Name": "Mesh",
+      "ClassName": "SpecialMesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=24479544"
+          }
+        },
+        "MeshType": {
+          "Enum": 5
+        },
+        "Scale": {
+          "Vector3": [
+            1.0650238990783691,
+            1.0650238990783691,
+            1.0650238990783691
+          ]
+        },
+        "TextureContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=24479531"
+          }
+        }
+      }
+    },
+    {
+      "Name": "Head",
+      "ClassName": "Attachment",
+      "Properties": {
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                1.8932661725304283e-29,
+                0
+              ],
+              [
+                1.8932661725304283e-29,
+                1,
+                -2.524354896707238e-29
+              ],
+              [
+                0,
+                -2.524354896707238e-29,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              -0.77215576171875,
+              -0.074554443359375
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -46,7 +46,6 @@ function Scene:Destroy()
 	for i, v in self._Connections do
 		v:Disconnect()
 	end
-	table.clear(self._CleanUpCallbacks)
 	for i, v in self._CleanUpCallbacks do
 		task.spawn(v)
 	end

@@ -13,6 +13,8 @@ export type IconDefinition = MiscType.IconDefinition
 local Module = {}
 
 function Module.decal(assetIdOrUrl: number | string): IconDefinition
+	-- indexing Generated/Image with a key it doesn't hold isn't a type error, a renamed image shows up here as nil
+	assert(assetIdOrUrl ~= nil, `no image`)
 	local url = if type(assetIdOrUrl) == "string" then assetIdOrUrl else `rbxassetid://{assetIdOrUrl}`
 	local out: IconDefinition = {
 		Type = "Decal",
@@ -24,6 +26,7 @@ function Module.decal(assetIdOrUrl: number | string): IconDefinition
 end
 
 function Module.sprite(sheetIdOrUrl: number | string, position: Vector2, size: Vector2): IconDefinition
+	assert(sheetIdOrUrl ~= nil, `no image`)
 	local url = if type(sheetIdOrUrl) == "string" then sheetIdOrUrl else `rbxassetid://{sheetIdOrUrl}`
 	local out: IconDefinition = {
 		Type = "Sprite",

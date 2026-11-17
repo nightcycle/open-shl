@@ -8,6 +8,8 @@ local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxCompone
 local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Components
 -- Hooks
+local useFieldValue =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/CharacterEditor/useFieldValue")
 -- Contexts
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
@@ -21,6 +23,7 @@ type MaterialInfo = {
 	ICON: string,
 }
 -- Constants
+local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor/CONSTANTS")
 local GRID_COLUMNS = 5
 local BUTTON_SIZE = 1 / GRID_COLUMNS
 local MATERIALS: { MaterialInfo } = {
@@ -58,28 +61,37 @@ local e = React.createElement
 return function(props: Properties): React.ReactNode?
 	local fieldDefinition = React.useContext(CharacterEditorFieldDefinition)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
+	local value = useFieldValue()
 	if not fieldDefinition or fieldDefinition.Type ~= "Material" then
 		return
 	end
-	if not fieldCallback then
+	if not fieldCallback or not value or value.Type ~= "Material" then
 		return
 	end
 
 	local buttons: { [string]: React.ReactNode } = {}
 	for index, CONFIG in MATERIALS do
+		if fieldDefinition.Filtered and table.find(fieldDefinition.Filtered, CONFIG.MATERIAL) then
+			continue
+		end
 		local column = (index - 1) % GRID_COLUMNS
 		local row = math.floor((index - 1) / GRID_COLUMNS)
+		local isSelected = CONFIG.MATERIAL == value.Material
 		buttons[`{CONFIG.MATERIAL.Name}-{index}`] = e("ImageButton", {
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BackgroundTransparency = 0.5,
-			BorderColor3 = Color3.fromRGB(27, 42, 53),
-			BorderSizePixel = 0,
+			BorderColor3 = isSelected and CONSTANTS.SELECTION_COLOR or Color3.fromRGB(27, 42, 53),
+			BorderSizePixel = isSelected and 3 or 0,
 			Image = CONFIG.ICON,
 			Position = UDim2.fromScale(column * BUTTON_SIZE, row / GRID_ROWS),
 			Size = UDim2.fromScale(BUTTON_SIZE, BUTTON_SIZE),
 			SizeConstraint = Enum.SizeConstraint.RelativeXX,
+			ZIndex = isSelected and 2 or 1,
 			[React.Event.Activated] = function()
-				fieldCallback(fieldDefinition, CONFIG.MATERIAL)
+				fieldCallback(fieldDefinition, {
+					Type = "Material",
+					Material = CONFIG.MATERIAL,
+				})
 			end,
 		})
 	end

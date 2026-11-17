@@ -5,6 +5,9 @@
       "Attributes": {
         "EyeTrans": {
           "Float64": 1
+        },
+        "TextureGroup": {
+          "String": "Secondary"
         }
       }
     },
