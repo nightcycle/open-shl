@@ -17,8 +17,10 @@ local NetworkService = require("@game/ServerScriptService/Server/Service/Network
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 -- Types
+local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type ExpressionId = ExpressionDefinition.ExpressionId
+type PlayerSave = SaveType.PlayerSave
 type Session = SessionService.Session
 -- none of it is saved. it belongs to the player rather than to the avatar, so it's still there after a respawn
 type Roleplay = {
@@ -143,8 +145,16 @@ return ServiceLocker(function(): RoleplayService
 	table.insert(
 		self._Connections,
 		NetworkService:Connect(RemoteDefinition.SetApartmentLocked, function(player: Player, isLocked: boolean)
-			-- todo: apartment doors don't read this yet
-			AttributeDefinition.set(player, AttributeDefinition.IsApartmentLocked, isLocked)
+			local saveRes = SessionService:Update(player, function(save: PlayerSave): PlayerSave?
+				if save.IsApartmentLocked == isLocked then
+					return nil
+				end
+				save.IsApartmentLocked = isLocked
+				return save
+			end)
+			if saveRes.IsErr then
+				warn(`apartment lock err: {saveRes.Value}`)
+			end
 		end)
 	)
 
@@ -161,7 +171,7 @@ return ServiceLocker(function(): RoleplayService
 	local changedConnection = SessionService.Changed:Connect(
 		function(player: Player, session: Session, priorSession: Session)
 			local roleplay = self._Roleplays[player]
-			if not roleplay or session.ActiveCharacterId == priorSession.ActiveCharacterId then
+			if not roleplay or session.Save.ActiveCharacterId == priorSession.Save.ActiveCharacterId then
 				return
 			end
 			roleplay.ExpressionId = nil

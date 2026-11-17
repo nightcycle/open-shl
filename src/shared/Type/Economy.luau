@@ -83,4 +83,16 @@ Types.ProductDefinition = Type.strictInterface({
 	LegacyPriceText = Type.string,
 })
 
+-- what the engine hands the server once a developer product is paid for, only the fields that are read
+export type Receipt = {
+	PurchaseId: string,
+	PlayerId: number,
+	ProductId: number,
+}
+Types.Receipt = Type.interface({
+	PurchaseId = Type.string,
+	PlayerId = Type.integer,
+	ProductId = Type.integer,
+})
+
 return Types

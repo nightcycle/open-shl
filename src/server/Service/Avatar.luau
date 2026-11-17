@@ -7,21 +7,17 @@ local Workspace = game:GetService("Workspace")
 local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local Signal = require("@game/ReplicatedStorage/Packages/Signal")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
-local Result = TypeUnionLib.Result
 local Option = TypeUnionLib.Option
 local Future = TypeUnionLib.Future
 -- Modules
 local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
-local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local TransitionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Transition")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
-type Result<V, E> = TypeUnionLib.Result<V, E>
 type Option<V> = TypeUnionLib.Option<V>
 type Appearance = AppearanceType.Appearance
 type Power = CharacterType.Power
@@ -36,6 +32,7 @@ type Look = {
 type AvatarServiceImpl = {
 	__index: AvatarServiceImpl,
 	Dress: (self: AvatarService, player: Player) -> (),
+	PlayEffect: (self: AvatarService, character: Model, effect: EffectDefinition) -> (),
 	GetAppearance: (self: AvatarService, player: Player) -> Option<Appearance>,
 	GetIfMasked: (self: AvatarService, player: Player) -> boolean,
 	SetMasked: (self: AvatarService, player: Player, isMasked: boolean) -> (),
@@ -46,7 +43,6 @@ export type AvatarService = typeof(setmetatable(
 		-- the avatar of a player wears a new set of items, whatever else sits on it has to be put back on
 		Dressed: Signal.Signal<Player, Model>,
 		_IsUnmasked: { [Player]: true? },
-		_IsSwapping: { [Player]: true? },
 		_PlayerConnections: { [Player]: { RBXScriptConnection } },
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
@@ -140,46 +136,6 @@ local function setInMenu(player: Player, character: Model, isInMenu: boolean)
 	end
 end
 
-local function playEffect(character: Model, effect: EffectDefinition)
-	local rootPart = character:FindFirstChild("HumanoidRootPart")
-	if not rootPart or not rootPart:IsA("BasePart") then
-		return
-	end
-	local holder = Instance.new("Part")
-	holder.Name = EFFECT_NAME
-	holder.Anchored = true
-	holder.CanCollide = false
-	holder.CanQuery = false
-	holder.CanTouch = false
-	holder.Transparency = 1
-	holder.Size = Vector3.one
-	holder.CFrame = rootPart.CFrame + effect.Offset
-
-	if effect.Type == "Fire" then
-		local fire = Instance.new("Fire")
-		fire.Color = effect.Color
-		fire.SecondaryColor = effect.SecondaryColor
-		fire.Heat = effect.Heat
-		fire.Size = effect.Size
-		fire.Parent = holder
-		task.delay(effect.EmitDuration, function()
-			fire.Enabled = false
-		end)
-	else
-		local smoke = Instance.new("Smoke")
-		smoke.Color = effect.Color
-		smoke.Opacity = effect.Opacity
-		smoke.RiseVelocity = effect.RiseVelocity
-		smoke.Size = effect.Size
-		smoke.Parent = holder
-		task.delay(effect.EmitDuration, function()
-			smoke.Enabled = false
-		end)
-	end
-	holder.Parent = character
-	Debris:AddItem(holder, effect.Lifetime)
-end
-
 local function onCharacter(self: AvatarService, player: Player, character: Model)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	-- health + energy start out full, nothing takes them down for as long as the powers do nothing
@@ -229,7 +185,6 @@ local function remove(self: AvatarService, player: Player)
 	end
 	self._PlayerConnections[player] = nil
 	self._IsUnmasked[player] = nil
-	self._IsSwapping[player] = nil
 end
 -- Class
 local AvatarService = {} :: AvatarServiceImpl
@@ -265,6 +220,47 @@ function AvatarService:Dress(player: Player)
 	end)
 end
 
+-- what everybody sees of a transformation, the costume changes behind it
+function AvatarService:PlayEffect(character: Model, effect: EffectDefinition)
+	local rootPart = character:FindFirstChild("HumanoidRootPart")
+	if not rootPart or not rootPart:IsA("BasePart") then
+		return
+	end
+	local holder = Instance.new("Part")
+	holder.Name = EFFECT_NAME
+	holder.Anchored = true
+	holder.CanCollide = false
+	holder.CanQuery = false
+	holder.CanTouch = false
+	holder.Transparency = 1
+	holder.Size = Vector3.one
+	holder.CFrame = rootPart.CFrame + effect.Offset
+
+	if effect.Type == "Fire" then
+		local fire = Instance.new("Fire")
+		fire.Color = effect.Color
+		fire.SecondaryColor = effect.SecondaryColor
+		fire.Heat = effect.Heat
+		fire.Size = effect.Size
+		fire.Parent = holder
+		task.delay(effect.EmitDuration, function()
+			fire.Enabled = false
+		end)
+	else
+		local smoke = Instance.new("Smoke")
+		smoke.Color = effect.Color
+		smoke.Opacity = effect.Opacity
+		smoke.RiseVelocity = effect.RiseVelocity
+		smoke.Size = effect.Size
+		smoke.Parent = holder
+		task.delay(effect.EmitDuration, function()
+			smoke.Enabled = false
+		end)
+	end
+	holder.Parent = character
+	Debris:AddItem(holder, effect.Lifetime)
+end
+
 function AvatarService:GetAppearance(player: Player): Option<Appearance>
 	local lookOpt = getLook(self, player)
 	if lookOpt.IsNone then
@@ -292,68 +288,15 @@ function AvatarService:SetMasked(player: Player, isMasked: boolean)
 end
 
 return ServiceLocker(function(): AvatarService
-	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local self = setmetatable({
 		IsInitialized = true :: true,
 		Dressed = Signal.new() :: Signal.Signal<Player, Model>,
 		_IsUnmasked = {} :: { [Player]: true? },
-		_IsSwapping = {} :: { [Player]: true? },
 		_PlayerConnections = {},
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, AvatarService)
-
-	-- the client plays the animation of the transformation + asks once, the server picks the moment the costume
-	-- changes behind it. nothing about the swap is read from the client
-	NetworkService:Handle(RemoteDefinition.SwapIdentity, function(player: Player): Result<IdentityKey, string>
-		local sessionOpt = SessionService:Get(player)
-		local characterOpt = SessionService:GetActiveCharacter(player)
-		local avatar = player.Character
-		if sessionOpt.IsNone or characterOpt.IsNone or not avatar then
-			return Result.err(`there's no avatar to swap`)
-		end
-		if self._IsSwapping[player] then
-			return Result.err(`a swap is already underway`)
-		end
-		local character = characterOpt.Value
-		local identityKey: IdentityKey = sessionOpt.Value.ActiveIdentityKey
-		local nextIdentityKey: IdentityKey = if identityKey == "Main" then "Secret" else "Main"
-		local identity = character.Identities[identityKey]
-		if not identity or not character.Identities[nextIdentityKey] then
-			return Result.err(`the character has no identity to swap to`)
-		end
-		local transformation = identity.Appearance.Transitions.Transformation
-		local definition = TransitionDefinition.getTransformation(transformation and transformation.Style)
-		self._IsSwapping[player] = true
-		local effect = definition.Effect
-		if effect then
-			task.delay(effect.StartDelay, function()
-				if player.Character == avatar then
-					playEffect(avatar, effect)
-				end
-			end)
-		end
-		task.delay(definition.SwapDelay, function()
-			if not self.IsInitialized then
-				return
-			end
-			self._IsSwapping[player] = nil
-			local newSessionOpt = SessionService:Get(player)
-			if
-				newSessionOpt.IsNone
-				or newSessionOpt.Value.ActiveCharacterId ~= character.Id
-				or newSessionOpt.Value.ActiveIdentityKey ~= identityKey
-			then
-				return
-			end
-			local identityRes = SessionService:SetActiveIdentity(player, nextIdentityKey)
-			if identityRes.IsErr then
-				warn(`swap err: {identityRes.Value}`)
-			end
-		end)
-		return Result.ok(nextIdentityKey :: any) :: TypeUnionLib.Ok<IdentityKey>
-	end)
 
 	local activeCharacterConnection = SessionService.ActiveCharacterChanged:Connect(function(player: Player)
 		self._IsUnmasked[player] = nil

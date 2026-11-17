@@ -196,7 +196,6 @@ return function(props: Properties)
 	end
 	for i, definition in themeDefinitions do
 		local isOwned = table.find(inventory.ThemeIds, definition.Id) ~= nil
-		-- the base is shared for now, so it may wear a theme that somebody else owns
 		local state: CardState = if isOwned
 			then (if props.AppliedThemeId == definition.Id then "Active" else "Owned")
 			elseif props.PendingId == definition.Id then "Purchasing"

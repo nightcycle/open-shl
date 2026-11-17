@@ -1,13 +1,14 @@
 --!strict
 -- Services
+local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 -- Packages
 local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
 local FurnitureDefinition = require("@game/ReplicatedStorage/Shared/Definition/Furniture")
-local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
@@ -15,11 +16,15 @@ local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remo
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local ThemeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Theme")
 -- Types
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
+local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type BaseInventory = BaseType.BaseInventory
+type EntitlementKey = EconomyType.EntitlementKey
+type ProductDefinition = EconomyType.ProductDefinition
+type Receipt = EconomyType.Receipt
+type PlayerSave = SaveType.PlayerSave
 type Purchasable = {
 	Id: string,
 	Name: string,
@@ -34,21 +39,16 @@ type EconomyServiceImpl = {
 		currency: PseudoEnum.Currency,
 		amount: number
 	) -> Result<true, string>,
-	Spend: (
-		self: EconomyService,
-		player: Player,
-		currency: PseudoEnum.Currency,
-		amount: number
-	) -> Result<true, string>,
 	GrantArtifact: (self: EconomyService, player: Player, rarity: PseudoEnum.Rarity) -> Result<string, string>,
 }
 export type EconomyService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
 		_Random: Random,
-		-- when a user last got the daily reward, by user id so that leaving + coming back doesn't hand out another
-		_DailyRewardTimes: { [number]: number },
 		_DailyRewardThreads: { [Player]: thread },
+		-- the passes of everyone with a session that the engine is being asked about because a prompt ended on paid
+		-- for, one call per pass at a time
+		_PurchasedPassKeys: { [Player]: { EntitlementKey } },
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
 	},
@@ -58,128 +58,296 @@ export type EconomyService = typeof(setmetatable(
 local DAILY_REWARD = ProductDefinition.DAILY_REWARD
 -- how long after a player joined the daily reward is looked at
 local DAILY_REWARD_DELAY = 20
-local ARTIFACT_GROUP: AppearanceType.ItemGroup = "costume"
-local ARTIFACT_CATEGORY = "artifacts"
--- the colossal bladepack is a gift, it's never drawn
-local UNDRAWN_ARTIFACT_IDS = table.freeze({ "costume_artifacts_colossal-bladepack" })
+-- the engine only hands a receipt in again until it's told the receipt is done with, so the last few are all that's
+-- ever compared against
+local MAX_PURCHASE_IDS = 100
+-- how long a receipt is held for a save that's still on its way
+local RECEIPT_SESSION_TIMEOUT = 30
+-- asking if a pass is owned is a web call, it's made a few times over before a player goes a visit without theirs
+local PASS_ATTEMPTS = 3
+-- a pass that was only just paid for can take a while to count as owned, it's given longer than a call that failed
+local PURCHASED_PASS_ATTEMPTS = 6
+local PASS_RETRY_DELAY = 2
 local isAmount = EconomyType.Balance
+local isReceipt = EconomyType.Receipt
 -- Variables
 -- References
 -- Private Functions
-local function setInventory(player: Player, inventory: BaseInventory): Result<true, string>
-	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+-- whoever asked only wants to know if the save took the change
+local function update(player: Player, fn: (save: PlayerSave) -> PlayerSave?): Result<true, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local inventoryRes = SessionService:SetInventory(player, inventory)
-	if inventoryRes.IsErr then
-		return inventoryRes
+	local saveRes = SessionService:Update(player, fn)
+	if saveRes.IsErr then
+		return saveRes
 	end
-	NetworkService:Fire(RemoteDefinition.InventoryChanged, player, inventory)
-	return inventoryRes
+	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
 
+-- the price is taken + the piece is owned in one write, a save never holds one without the other
 local function purchase(
-	self: EconomyService,
 	player: Player,
-	ownedIds: { string },
-	purchasable: Purchasable
-): Result<{ string }, string>
-	if table.find(ownedIds, purchasable.Id) then
-		return Result.err(`"{purchasable.Name}" is already owned`)
-	end
-	local spendRes = self:Spend(player, purchasable.Currency, purchasable.Price)
-	if spendRes.IsErr then
-		return spendRes
-	end
-	local out = table.clone(ownedIds)
-	table.insert(out, purchasable.Id)
-	return Result.ok(out)
-end
-
-local function purchaseFurniture(self: EconomyService, player: Player, furnitureId: string): Result<true, string>
+	purchasable: Purchasable,
+	getOwnedIds: (inventory: BaseInventory) -> { string }
+): Result<true, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
 	if sessionOpt.IsNone then
 		return Result.err(`{player.Name} has no session`)
 	end
+	local save = sessionOpt.Value.Save
+	if table.find(getOwnedIds(save.Inventory), purchasable.Id) then
+		return Result.err(`"{purchasable.Name}" is already owned`)
+	end
+	if save.Balances[purchasable.Currency] < purchasable.Price then
+		return Result.err(`not enough {ProductDefinition.getCurrencyName(purchasable.Currency)}`)
+	end
+	return update(player, function(t: PlayerSave): PlayerSave?
+		t.Balances[purchasable.Currency] -= purchasable.Price
+		table.insert(getOwnedIds(t.Inventory), purchasable.Id)
+		return t
+	end)
+end
+
+local function purchaseFurniture(player: Player, furnitureId: string): Result<true, string>
 	local definitionRes = FurnitureDefinition.get(furnitureId)
 	if definitionRes.IsErr then
 		return definitionRes
 	end
-	local inventory = sessionOpt.Value.Inventory
-	local furnitureIdsRes = purchase(self, player, inventory.FurnitureIds, definitionRes.Value)
-	if furnitureIdsRes.IsErr then
-		return furnitureIdsRes
-	end
-	return setInventory(player, {
-		FurnitureIds = furnitureIdsRes.Value,
-		ThemeIds = table.clone(inventory.ThemeIds),
-	})
+	return purchase(player, definitionRes.Value, function(inventory: BaseInventory): { string }
+		return inventory.FurnitureIds
+	end)
 end
 
-local function purchaseTheme(self: EconomyService, player: Player, themeId: string): Result<true, string>
+local function purchaseTheme(player: Player, themeId: string): Result<true, string>
+	local definitionRes = ThemeDefinition.get(themeId)
+	if definitionRes.IsErr then
+		return definitionRes
+	end
+	return purchase(player, definitionRes.Value, function(inventory: BaseInventory): { string }
+		return inventory.ThemeIds
+	end)
+end
+
+-- a pass is never saved, the session holds it for the visit + everything that reads an entitlement reads it there
+local function addPassEntitlement(player: Player, key: EntitlementKey)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local sessionOpt = SessionService:Get(player)
+	if sessionOpt.IsNone or table.find(sessionOpt.Value.PassEntitlements, key) then
+		return
+	end
+	local out = table.clone(sessionOpt.Value.PassEntitlements)
+	table.insert(out, key)
+	local setRes = SessionService:SetPassEntitlements(player, out)
+	if setRes.IsErr then
+		warn(`pass err: "{key}" of {player.Name}: {setRes.Value}`)
+	end
+end
+
+-- they can be gone by the time an answer is in, so can the service
+local function getIfGone(self: EconomyService, player: Player): boolean
+	return not self.IsInitialized or self._PurchasedPassKeys[player] == nil
+end
+
+-- yields. for a pass that was only just paid for a no is asked about again the way a call that failed is
+local function getIfPassOwned(
+	self: EconomyService,
+	player: Player,
+	passId: number,
+	isPurchased: boolean
+): Result<boolean, string>
+	local attempts = if isPurchased then PURCHASED_PASS_ATTEMPTS else PASS_ATTEMPTS
+	local res: Result<boolean, string> = Result.err(`it wasn't asked for`)
+	for attempt = 1, attempts do
+		local success, value = pcall(function(): boolean
+			return MarketplaceService:UserOwnsGamePassAsync(player.UserId, passId)
+		end)
+		res = if success then Result.ok(value) else Result.err(tostring(value))
+		if (res.IsOk and (res.Value or not isPurchased)) or attempt == attempts then
+			break
+		end
+		task.wait(PASS_RETRY_DELAY)
+		if getIfGone(self, player) then
+			break
+		end
+	end
+	return res
+end
+
+-- yields
+local function checkPasses(self: EconomyService, player: Player)
+	for _, definition in ProductDefinition.list() do
+		local grant = definition.Grant
+		if grant.Type ~= "Entitlement" then
+			continue
+		end
+		local ownedRes = getIfPassOwned(self, player, definition.LegacyId, false)
+		if getIfGone(self, player) then
+			return
+		end
+		if ownedRes.IsErr then
+			warn(`pass err: "{definition.Name}" of {player.Name}: {ownedRes.Value}`)
+		elseif ownedRes.Value then
+			addPassEntitlement(player, grant.Key)
+		end
+	end
+end
+
+-- yields. a prompt is ended by the client of whoever it was for, so that it was paid for is only a reason to ask the
+-- engine. a pass it doesn't own up to in time is theirs with their next visit
+local function checkPurchasedPass(
+	self: EconomyService,
+	player: Player,
+	definition: ProductDefinition,
+	key: EntitlementKey
+)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local purchasedKeys = self._PurchasedPassKeys[player]
+	local sessionOpt = SessionService:Get(player)
+	if
+		not purchasedKeys
+		or sessionOpt.IsNone
+		or table.find(purchasedKeys, key)
+		or table.find(sessionOpt.Value.PassEntitlements, key)
+	then
+		return
+	end
+	table.insert(purchasedKeys, key)
+	local ownedRes = getIfPassOwned(self, player, definition.LegacyId, true)
+	if getIfGone(self, player) then
+		return
+	end
+	table.remove(purchasedKeys, table.find(purchasedKeys, key))
+	if ownedRes.IsErr then
+		warn(`pass err: "{definition.Name}" of {player.Name}: {ownedRes.Value}`)
+	elseif ownedRes.Value then
+		addPassEntitlement(player, key)
+	else
+		warn(
+			`pass err: "{definition.Name}" of {player.Name}: a prompt ended on paid for, the engine says it isn't owned`
+		)
+	end
+end
+
+local function drawArtifact(self: EconomyService, save: PlayerSave, rarity: PseudoEnum.Rarity): Result<string, string>
+	local artifactIdsRes = ProductDefinition.listUnownedArtifactIds(rarity, save.ArtifactIds)
+	if artifactIdsRes.IsErr then
+		return artifactIdsRes
+	end
+	local artifactIds = artifactIdsRes.Value
+	return Result.ok(artifactIds[self._Random:NextInteger(1, #artifactIds)])
+end
+
+-- what a product hands over + the receipt it was paid with go into the save in one write, a save never holds one
+-- without the other. a product that was handed over for free has no receipt
+local function grantProduct(
+	self: EconomyService,
+	player: Player,
+	definition: ProductDefinition,
+	purchaseId: string?
+): Result<true, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
 	if sessionOpt.IsNone then
 		return Result.err(`{player.Name} has no session`)
 	end
-	local definitionRes = ThemeDefinition.get(themeId)
-	if definitionRes.IsErr then
-		return definitionRes
-	end
-	local inventory = sessionOpt.Value.Inventory
-	local themeIdsRes = purchase(self, player, inventory.ThemeIds, definitionRes.Value)
-	if themeIdsRes.IsErr then
-		return themeIdsRes
-	end
-	return setInventory(player, {
-		FurnitureIds = table.clone(inventory.FurnitureIds),
-		ThemeIds = themeIdsRes.Value,
-	})
-end
-
--- todo: real robux purchases, for now the product is just handed over
-local function purchaseProduct(self: EconomyService, player: Player, productId: string): Result<true, string>
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local definitionRes = ProductDefinition.get(productId)
-	if definitionRes.IsErr then
-		return definitionRes
-	end
-	local definition = definitionRes.Value
 	local grant = definition.Grant
-	if grant.Type == "Currency" then
-		return self:Grant(player, grant.Currency, grant.Amount)
-	elseif grant.Type == "Artifact" then
-		local artifactRes = self:GrantArtifact(player, grant.Rarity)
+	local artifactId: string? = nil
+	if grant.Type == "Artifact" then
+		local artifactRes = drawArtifact(self, sessionOpt.Value.Save, grant.Rarity)
 		if artifactRes.IsErr then
 			return artifactRes
 		end
-		return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
-	else
-		if table.find(SessionService:GetEntitlements(player), grant.Key) then
-			return Result.err(`"{definition.Name}" is already owned`)
-		end
-		return SessionService:GrantEntitlement(player, grant.Key)
+		artifactId = artifactRes.Value
+	elseif grant.Type == "Entitlement" and table.find(SessionService:GetEntitlements(player), grant.Key) then
+		return Result.err(`"{definition.Name}" is already owned`)
 	end
+	return update(player, function(save: PlayerSave): PlayerSave?
+		if grant.Type == "Currency" then
+			save.Balances[grant.Currency] += grant.Amount
+		elseif grant.Type == "Entitlement" then
+			table.insert(save.Entitlements, grant.Key)
+		elseif artifactId then
+			table.insert(save.ArtifactIds, artifactId)
+		end
+		if purchaseId then
+			table.insert(save.PurchaseIds, purchaseId)
+			while #save.PurchaseIds > MAX_PURCHASE_IDS do
+				table.remove(save.PurchaseIds, 1)
+			end
+		end
+		return save
+	end)
 end
 
--- a few gems once per rolling day. nothing is saved yet, so the day only lasts as long as the server
-local function grantDailyReward(self: EconomyService, player: Player)
+-- yields. answers the engine if a receipt is done with. one that isn't is handed in again later + paid back if it
+-- never is, so it's only done with once the save holds what it paid for
+local function processReceipt(self: EconomyService, value: unknown): Enum.ProductPurchaseDecision
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local success, msg = isReceipt(value)
+	if not success then
+		warn(`bad receipt: {msg}`)
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	local receipt = value :: Receipt
+	local definitionRes = ProductDefinition.getFromLegacyId(receipt.ProductId, false)
+	if definitionRes.IsErr then
+		warn(`receipt err: {definitionRes.Value}`)
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	local player = Players:GetPlayerByUserId(receipt.PlayerId)
+	if not player then
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	-- the engine hands in what a player still has open as they join, their save takes longer than that to get here.
+	-- turned down right away the receipt would only come back with their next visit, to lose the same race again
+	local startTime = os.clock()
+	while
+		self.IsInitialized
+		and SessionService.IsInitialized
+		and SessionService:Get(player).IsNone
+		and player.Parent ~= nil
+		and os.clock() - startTime < RECEIPT_SESSION_TIMEOUT
+	do
+		task.wait()
+	end
+	if not self.IsInitialized or not SessionService.IsInitialized then
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	-- a save that isn't loaded can't take anything
+	local sessionOpt = SessionService:Get(player)
+	if sessionOpt.IsNone then
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	-- the engine didn't hear the answer the first time, the product isn't handed over twice for it
+	if table.find(sessionOpt.Value.Save.PurchaseIds, receipt.PurchaseId) then
+		return Enum.ProductPurchaseDecision.PurchaseGranted
+	end
+	local grantRes = grantProduct(self, player, definitionRes.Value, receipt.PurchaseId)
+	if grantRes.IsErr then
+		warn(`receipt err: "{definitionRes.Value.Name}" of {player.Name}: {grantRes.Value}`)
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	return Enum.ProductPurchaseDecision.PurchaseGranted
+end
+
+-- a few gems once per rolling day, counted from the last time they were handed out on whatever server that was
+local function grantDailyReward(player: Player)
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	if SessionService:Get(player).IsNone then
-		return
-	end
+	local sessionOpt = SessionService:Get(player)
 	local now = os.time()
-	local priorTime = self._DailyRewardTimes[player.UserId]
-	if priorTime and now - priorTime < DAILY_REWARD.INTERVAL then
+	if sessionOpt.IsNone or now - sessionOpt.Value.Save.LastDailyRewardAt < DAILY_REWARD.INTERVAL then
 		return
 	end
-	local grantRes = self:Grant(player, DAILY_REWARD.CURRENCY, DAILY_REWARD.AMOUNT)
+	local grantRes = update(player, function(save: PlayerSave): PlayerSave?
+		save.Balances[DAILY_REWARD.CURRENCY] += DAILY_REWARD.AMOUNT
+		save.LastDailyRewardAt = now
+		return save
+	end)
 	if grantRes.IsErr then
 		warn(`daily reward err: {grantRes.Value}`)
 		return
 	end
-	self._DailyRewardTimes[player.UserId] = now
 	NetworkService:Fire(RemoteDefinition.DailyRewardGranted, player, {
 		Currency = DAILY_REWARD.CURRENCY,
 		Amount = DAILY_REWARD.AMOUNT,
@@ -187,12 +355,14 @@ local function grantDailyReward(self: EconomyService, player: Player)
 end
 
 local function add(self: EconomyService, player: Player)
-	if self._DailyRewardThreads[player] then
+	if self._PurchasedPassKeys[player] then
 		return
 	end
+	self._PurchasedPassKeys[player] = {}
+	task.spawn(checkPasses, self, player)
 	self._DailyRewardThreads[player] = task.delay(DAILY_REWARD_DELAY, function()
 		self._DailyRewardThreads[player] = nil
-		grantDailyReward(self, player)
+		grantDailyReward(player)
 	end)
 end
 
@@ -202,66 +372,44 @@ local function remove(self: EconomyService, player: Player)
 		task.cancel(thread)
 	end
 	self._DailyRewardThreads[player] = nil
+	self._PurchasedPassKeys[player] = nil
 end
 -- Class
 local EconomyService = {} :: EconomyServiceImpl
 EconomyService.__index = EconomyService
 
 function EconomyService:Grant(player: Player, currency: PseudoEnum.Currency, amount: number): Result<true, string>
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local success, msg = isAmount(amount)
 	if not success then
 		return Result.err(`bad amount: {msg}`)
 	end
-	return SessionService:SetBalance(player, currency, SessionService:GetBalance(player, currency) + amount)
-end
-
-function EconomyService:Spend(player: Player, currency: PseudoEnum.Currency, amount: number): Result<true, string>
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local success, msg = isAmount(amount)
-	if not success then
-		return Result.err(`bad amount: {msg}`)
-	end
-	local balance = SessionService:GetBalance(player, currency)
-	if balance < amount then
-		return Result.err(`not enough {ProductDefinition.getCurrencyName(currency)}`)
-	end
-	return SessionService:SetBalance(player, currency, balance - amount)
+	return update(player, function(save: PlayerSave): PlayerSave?
+		save.Balances[currency] += amount
+		return save
+	end)
 end
 
 -- draws an artifact of the rarity the player doesn't own yet + answers with its definition id. the player owns it
 -- by the time their client hears of it, the unlock cut-scene it plays is only for show
 function EconomyService:GrantArtifact(player: Player, rarity: PseudoEnum.Rarity): Result<string, string>
-	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
 	if sessionOpt.IsNone then
 		return Result.err(`{player.Name} has no session`)
 	end
-	local ownedIds = sessionOpt.Value.ArtifactIds
-	local drawnIds: { string } = {}
-	for _, itemDef in ItemAppearanceDefinition.list(ARTIFACT_GROUP, ARTIFACT_CATEGORY) do
-		if
-			itemDef.Rarity == rarity
-			and not table.find(UNDRAWN_ARTIFACT_IDS, itemDef.Id)
-			and not table.find(ownedIds, itemDef.Id)
-		then
-			table.insert(drawnIds, itemDef.Id)
-		end
+	local artifactRes = drawArtifact(self, sessionOpt.Value.Save, rarity)
+	if artifactRes.IsErr then
+		return artifactRes
 	end
-	if #drawnIds == 0 then
-		local rarityName = rarity == PseudoEnum.Rarity.VeryCommon and "Very Common" or rarity
-		return Result.err(`every {rarityName} artifact is already owned`)
+	local artifactId = artifactRes.Value
+	local grantRes = update(player, function(save: PlayerSave): PlayerSave?
+		table.insert(save.ArtifactIds, artifactId)
+		return save
+	end)
+	if grantRes.IsErr then
+		return grantRes
 	end
-	local artifactId = drawnIds[self._Random:NextInteger(1, #drawnIds)]
-	local artifactIds = table.clone(ownedIds)
-	table.insert(artifactIds, artifactId)
-	local artifactIdsRes = SessionService:SetArtifactIds(player, artifactIds)
-	if artifactIdsRes.IsErr then
-		return artifactIdsRes
-	end
-	NetworkService:Fire(RemoteDefinition.ArtifactGranted, player, artifactId)
-	return Result.ok(artifactId)
+	return artifactRes
 end
 
 return ServiceLocker(function(): EconomyService
@@ -270,8 +418,8 @@ return ServiceLocker(function(): EconomyService
 	local self = setmetatable({
 		IsInitialized = true :: true,
 		_Random = Random.new(),
-		_DailyRewardTimes = {},
 		_DailyRewardThreads = {},
+		_PurchasedPassKeys = {},
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, EconomyService)
@@ -279,20 +427,51 @@ return ServiceLocker(function(): EconomyService
 	NetworkService:Handle(
 		RemoteDefinition.PurchaseProduct,
 		function(player: Player, productId: string): Result<true, string>
-			return purchaseProduct(self, player, productId)
+			-- the product is handed over for free, that's only for where nobody plays for real
+			if not RunService:IsStudio() then
+				return Result.err(`products are only free in studio`)
+			end
+			local definitionRes = ProductDefinition.get(productId)
+			if definitionRes.IsErr then
+				return definitionRes
+			end
+			return grantProduct(self, player, definitionRes.Value, nil)
 		end
 	)
 	NetworkService:Handle(
 		RemoteDefinition.PurchaseFurniture,
 		function(player: Player, furnitureId: string): Result<true, string>
-			return purchaseFurniture(self, player, furnitureId)
+			return purchaseFurniture(player, furnitureId)
 		end
 	)
 	NetworkService:Handle(
 		RemoteDefinition.PurchaseTheme,
 		function(player: Player, themeId: string): Result<true, string>
-			return purchaseTheme(self, player, themeId)
+			return purchaseTheme(player, themeId)
 		end
+	)
+
+	-- the engine holds on to the callback for as long as the server runs, the service can be gone when it's called
+	MarketplaceService.ProcessReceipt = function(receipt: unknown): Enum.ProductPurchaseDecision
+		if not self.IsInitialized or not SessionService.IsInitialized then
+			return Enum.ProductPurchaseDecision.NotProcessedYet
+		end
+		return processReceipt(self, receipt)
+	end
+	table.insert(
+		self._Connections,
+		MarketplaceService.PromptGamePassPurchaseFinished:Connect(
+			function(player: Player, passId: number, isPurchased: boolean)
+				local definitionRes = ProductDefinition.getFromLegacyId(passId, true)
+				if not isPurchased or definitionRes.IsErr then
+					return
+				end
+				local grant = definitionRes.Value.Grant
+				if grant.Type == "Entitlement" then
+					checkPurchasedPass(self, player, definitionRes.Value, grant.Key)
+				end
+			end
+		)
 	)
 
 	local addedConnection = SessionService.Added:Connect(function(player: Player)
@@ -304,7 +483,7 @@ return ServiceLocker(function(): EconomyService
 	table.insert(self._CleanUpCallbacks, function()
 		addedConnection:Disconnect()
 		removingConnection:Disconnect()
-		for player in self._DailyRewardThreads do
+		for player in self._PurchasedPassKeys do
 			remove(self, player)
 		end
 	end)

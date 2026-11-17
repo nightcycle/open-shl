@@ -7,7 +7,6 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local ResidenceService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Residence")
-local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
 local BuildMenu = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/BuildMenu")
@@ -18,7 +17,7 @@ local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/R
 -- Contexts
 -- Types
 type ClientFunction<V, T> = RemoteDefinition.ClientFunction<V, T>
-type BaseLayout = SessionService.BaseLayout
+type ResidenceState = ResidenceService.ResidenceState
 type Refusal = BuildMenu.Refusal
 export type Properties = {}
 -- Constants
@@ -31,13 +30,13 @@ local e = React.createElement
 return function(): React.ReactNode
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(ResidenceService.IsInitialized, `the residence service isn't initialized`)
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	assert(ShellService.IsInitialized, `the shell service isn't initialized`)
 	local selectedFurnitureId: string? = useSignalState(ResidenceService.FurnitureIdChanged, function(): string?
 		return ResidenceService:GetFurnitureId()
 	end)
-	local layout = useSignalState(SessionService.BaseLayoutChanged, function(): BaseLayout
-		return SessionService:GetBaseLayout()
+	-- the menu is only up inside of the player's own residence
+	local state: ResidenceState? = useSignalState(ResidenceService.StateChanged, function(): ResidenceState?
+		return ResidenceService:GetState()
 	end)
 	local pendingId: string?, setPendingId: (string?) -> () = React.useState(nil :: string?)
 	local refusal: Refusal?, setRefusal: (Refusal?) -> () = useTimedState(REFUSAL_DURATION)
@@ -87,7 +86,7 @@ return function(): React.ReactNode
 			Position = UDim2.fromScale(1, 0.55),
 			Size = UDim2.fromScale(0.3, 0.8),
 			SelectedFurnitureId = selectedFurnitureId,
-			AppliedThemeId = layout.ThemeId,
+			AppliedThemeId = if state then state.Layout.ThemeId else nil,
 			PendingId = pendingId,
 			Refusal = refusal,
 			OnAction = function(action: BuildMenu.ActionInfo)

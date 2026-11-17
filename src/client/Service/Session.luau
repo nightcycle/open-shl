@@ -24,7 +24,6 @@ type Snapshot = SessionType.Snapshot
 export type Character = CharacterType.Character
 export type IdentityKey = CharacterType.IdentityKey
 export type BaseInventory = BaseType.BaseInventory
-export type BaseLayout = BaseType.BaseLayout
 export type QuestState = QuestType.QuestState
 export type PublicProfile = ProfileType.PublicProfile
 export type DailyReward = SessionType.DailyReward
@@ -39,7 +38,6 @@ type SessionServiceImpl = {
 	GetArtifactIds: (self: SessionService) -> { string },
 	GetInventory: (self: SessionService) -> BaseInventory,
 	GetQuest: (self: SessionService) -> QuestState?,
-	GetBaseLayout: (self: SessionService) -> BaseLayout,
 	GetProfiles: (self: SessionService) -> { PublicProfile },
 	GetDailyReward: (self: SessionService) -> DailyReward?,
 	SelectCharacter: (self: SessionService, id: string) -> Result<true, string>,
@@ -58,7 +56,6 @@ export type SessionService = typeof(setmetatable(
 		InventoryChanged: Signal<BaseInventory>,
 		QuestChanged: Signal<QuestState?>,
 		ArtifactGranted: Signal<string>, -- the definition id
-		BaseLayoutChanged: Signal<BaseLayout>,
 		ProfilesChanged: Signal<{ PublicProfile }>,
 		DailyRewardGranted: Signal<DailyReward>,
 		_IsLoaded: boolean,
@@ -68,7 +65,6 @@ export type SessionService = typeof(setmetatable(
 		_ArtifactIds: { string },
 		_Inventory: BaseInventory,
 		_Quest: QuestState?,
-		_BaseLayout: BaseLayout,
 		_Profiles: { PublicProfile },
 		_DailyReward: DailyReward?,
 		_Connections: { RBXScriptConnection },
@@ -123,11 +119,6 @@ end
 local function setQuest(self: SessionService, quest: QuestState?)
 	self._Quest = quest
 	self.QuestChanged:Fire(quest)
-end
-
-local function setBaseLayout(self: SessionService, layout: BaseLayout)
-	self._BaseLayout = layout
-	self.BaseLayoutChanged:Fire(layout)
 end
 
 local function setProfiles(self: SessionService, profiles: { PublicProfile })
@@ -191,10 +182,6 @@ function SessionService:GetQuest(): QuestState?
 	return self._Quest
 end
 
-function SessionService:GetBaseLayout(): BaseLayout
-	return self._BaseLayout
-end
-
 function SessionService:GetProfiles(): { PublicProfile }
 	return self._Profiles
 end
@@ -252,7 +239,6 @@ return ServiceLocker(function(): SessionService
 		InventoryChanged = Signal.new(),
 		QuestChanged = Signal.new(),
 		ArtifactGranted = Signal.new(),
-		BaseLayoutChanged = Signal.new(),
 		ProfilesChanged = Signal.new(),
 		DailyRewardGranted = Signal.new(),
 		_IsLoaded = false,
@@ -262,7 +248,6 @@ return ServiceLocker(function(): SessionService
 		_ArtifactIds = table.freeze({}),
 		_Inventory = BaseConstructor.newInventory(),
 		_Quest = nil :: QuestState?,
-		_BaseLayout = BaseConstructor.new(),
 		_Profiles = table.freeze({}),
 		_DailyReward = nil :: DailyReward?,
 		_CleanUpCallbacks = {},
@@ -298,13 +283,6 @@ return ServiceLocker(function(): SessionService
 			table.freeze(artifactIds)
 			setArtifactIds(self, artifactIds)
 			self.ArtifactGranted:Fire(definitionId)
-		end)
-	)
-
-	table.insert(
-		self._Connections,
-		NetworkService:Connect(RemoteDefinition.BaseLayoutChanged, function(layout: BaseLayout)
-			setBaseLayout(self, layout)
 		end)
 	)
 	table.insert(
@@ -381,19 +359,10 @@ return ServiceLocker(function(): SessionService
 		end
 		warn(`gave up on the session, the menus stay empty`)
 	end)
-	-- the base + the roster only come by themselves when they change, what they are right now is asked for
+	-- the roster only comes by itself when it changes, what it is right now is asked for
 	task.spawn(function()
 		if not NetworkService.IsInitialized then
 			return
-		end
-		local layoutRes = NetworkService:Invoke(RemoteDefinition.GetBaseLayout, nil)
-		if not self.IsInitialized or not NetworkService.IsInitialized then
-			return
-		end
-		if layoutRes.IsOk then
-			setBaseLayout(self, layoutRes.Value)
-		else
-			warn(`base layout request failed: {layoutRes.Value}`)
 		end
 		local profilesRes = NetworkService:Invoke(RemoteDefinition.GetProfiles, nil)
 		if not self.IsInitialized then
@@ -422,7 +391,6 @@ end, function(self: SessionService)
 	self.InventoryChanged:Destroy()
 	self.QuestChanged:Destroy()
 	self.ArtifactGranted:Destroy()
-	self.BaseLayoutChanged:Destroy()
 	self.ProfilesChanged:Destroy()
 	self.DailyRewardGranted:Destroy()
 	table.clear(self :: any)

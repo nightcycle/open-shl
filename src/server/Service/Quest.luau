@@ -175,7 +175,7 @@ local function onDefeat(self: QuestService, victim: Player)
 	end
 end
 
--- nothing takes health down yet, so only a reset or a fall off the map gets here
+-- nothing takes health down yet, so only a reset, a fall off the map or a hazard gets here
 local function watchAvatar(self: QuestService, player: Player, character: Model, connections: { RBXScriptConnection })
 	table.insert(
 		connections,

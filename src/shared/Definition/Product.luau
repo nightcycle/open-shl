@@ -5,10 +5,12 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 export type ProductDefinition = EconomyType.ProductDefinition
 export type ShopTab = EconomyType.ShopTab
@@ -55,6 +57,10 @@ local DAILY_REWARD = table.freeze({
 	AMOUNT = 5,
 	INTERVAL = 24 * 60 * 60,
 })
+local ARTIFACT_GROUP: AppearanceType.ItemGroup = "costume"
+local ARTIFACT_CATEGORY = "artifacts"
+-- the colossal bladepack is a gift, it's never drawn
+local UNDRAWN_ARTIFACT_IDS = table.freeze({ "costume_artifacts_colossal-bladepack" })
 -- the price text is what a card shows until the live price is known
 local DEFINITIONS: { ProductDefinition } = {
 	{
@@ -243,6 +249,10 @@ Module.getCharacterSlotCount = function(entitlements: { EntitlementKey }): numbe
 	return DEFAULT_CHARACTER_SLOT_COUNT
 end
 
+Module.getIfGamePass = function(definition: ProductDefinition): boolean
+	return definition.Grant.Type == "Entitlement"
+end
+
 Module.get = function(id: string): Result<ProductDefinition, string>
 	for _, definition in DEFINITIONS do
 		if definition.Id == id then
@@ -250,6 +260,39 @@ Module.get = function(id: string): Result<ProductDefinition, string>
 		end
 	end
 	return Result.err(`no product "{id}"`)
+end
+
+-- a game pass + a developer product can carry the same number, so which of the two is meant comes with it
+Module.getFromLegacyId = function(legacyId: number, isGamePass: boolean): Result<ProductDefinition, string>
+	for _, definition in DEFINITIONS do
+		if definition.LegacyId == legacyId and Module.getIfGamePass(definition) == isGamePass then
+			return Result.ok(definition)
+		end
+	end
+	return Result.err(`no {if isGamePass then "game pass" else "developer product"} {legacyId}`)
+end
+
+-- the artifacts of a rarity that can still be drawn for somebody who owns the given ones, an error once there's none
+Module.listUnownedArtifactIds = function(
+	rarity: PseudoEnum.Rarity,
+	ownedArtifactIds: { string }
+): Result<{ string }, string>
+	local out: { string } = {}
+	for _, itemDef in ItemAppearanceDefinition.list(ARTIFACT_GROUP, ARTIFACT_CATEGORY) do
+		if
+			itemDef.Rarity == rarity
+			and not table.find(UNDRAWN_ARTIFACT_IDS, itemDef.Id)
+			and not table.find(ownedArtifactIds, itemDef.Id)
+		then
+			table.insert(out, itemDef.Id)
+		end
+	end
+	if #out == 0 then
+		local rarityName = rarity == PseudoEnum.Rarity.VeryCommon and "Very Common" or rarity
+		return Result.err(`every {rarityName} artifact is already owned`)
+	end
+	table.freeze(out)
+	return Result.ok(out)
 end
 
 Module.list = function(tab: ShopTab?): { ProductDefinition }

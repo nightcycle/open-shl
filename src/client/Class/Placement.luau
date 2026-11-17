@@ -41,7 +41,7 @@ export type Placement = typeof(setmetatable(
 	{} :: {
 		IsAlive: true,
 		Residence: Residence,
-		-- requests only, nothing in the base changes until the layout came back
+		-- requests only, nothing in the base changes until the server said so
 		PlaceRequested: Signal<FurniturePlacement>,
 		MoveRequested: Signal<FurnitureMove>,
 		RemoveRequested: Signal<string>, -- the id of the placed piece
@@ -387,13 +387,13 @@ return {
 
 		residence:SetPadsShown(true)
 		-- somebody else may have moved or removed the piece that's picked
-		local layoutConnection = residence.LayoutChanged:Connect(function()
+		local stateConnection = residence.StateChanged:Connect(function()
 			if self.IsAlive then
 				self:SetSelection(self._SelectedId)
 			end
 		end)
 		table.insert(self._CleanUpCallbacks, function()
-			layoutConnection:Disconnect()
+			stateConnection:Disconnect()
 		end)
 		table.insert(
 			self._Connections,

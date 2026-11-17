@@ -9,12 +9,16 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 -- Hooks
 -- Types
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
+type Appearance = AppearanceType.Appearance
 type Character = CharacterType.Character
 type IdentityKey = CharacterType.IdentityKey
 type BaseInventory = BaseType.BaseInventory
+type BaseLayout = BaseType.BaseLayout
+type ResidenceId = BaseType.ResidenceId
 type ZoneId = BaseType.ZoneId
 type QuestState = QuestType.QuestState
 
@@ -71,6 +75,20 @@ Types.FurnitureMove = Type.strictInterface({
 	X = isFinite,
 	Z = isFinite,
 	RotationDeg = isFinite,
+})
+
+-- everything a client builds a residence from, the server only hands it to somebody who may walk in
+export type ResidenceState = {
+	ResidenceId: ResidenceId,
+	OwnerUserId: number,
+	Layout: BaseLayout,
+	Costumes: { [string]: Appearance }, -- what the suit displays wear, keyed by the character id they hold
+}
+Types.ResidenceState = Type.strictInterface({
+	ResidenceId = BaseType.ResidenceId,
+	OwnerUserId = Type.integer,
+	Layout = BaseType.BaseLayout,
+	Costumes = Type.map(Type.string, AppearanceType.Appearance),
 })
 
 export type DailyReward = {

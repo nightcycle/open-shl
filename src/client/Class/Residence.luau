@@ -7,13 +7,21 @@ local Signal = require("@game/ReplicatedStorage/Packages/Signal")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
+local AppearanceConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance")
 local BaseUtil = require("@game/ReplicatedStorage/Shared/Util/Base")
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local ItemConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item")
+local ItemUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance/Item")
+local StateUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/State")
 local ThemeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Theme")
 -- Types
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
+local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Signal<T...> = Signal.Signal<T...>
-export type BaseLayout = BaseType.BaseLayout
+type Appearance = AppearanceType.Appearance
+type ResidenceState = SessionType.ResidenceState
 export type PlacedFurniture = BaseType.PlacedFurniture
 export type ZoneId = BaseType.ZoneId
 -- a way from one floor of the residence to the other
@@ -26,6 +34,7 @@ export type Passage = {
 type Piece = {
 	Placed: PlacedFurniture,
 	Model: Model,
+	Costume: Appearance?, -- what a suit display wears right now
 }
 -- one half of the bookshelf the base hides behind
 type ShelfDoor = {
@@ -35,7 +44,7 @@ type ShelfDoor = {
 }
 type ResidenceImpl = {
 	__index: ResidenceImpl,
-	SetLayout: (self: Residence, layout: BaseLayout) -> (),
+	SetState: (self: Residence, state: ResidenceState) -> (),
 	GetZoneId: (self: Residence, pad: Instance) -> ZoneId?,
 	GetPlaced: (self: Residence, placedId: string) -> PlacedFurniture?,
 	GetModel: (self: Residence, placedId: string) -> Model?,
@@ -56,8 +65,8 @@ export type Residence = typeof(setmetatable(
 		Passages: { Passage },
 		ShelfTrigger: BasePart, -- stepped on it opens the bookshelf
 		Pads: { [ZoneId]: BasePart },
-		Layout: BaseLayout,
-		LayoutChanged: Signal<BaseLayout>, -- fires once the furniture + the theme match the new layout
+		State: ResidenceState,
+		StateChanged: Signal<ResidenceState>, -- fires once the furniture + the theme match the new state
 		_Pieces: { [string]: Piece },
 		_ShelfDoors: { ShelfDoor },
 		_IsShelfOpen: boolean,
@@ -201,7 +210,30 @@ local function applyTheme(interior: Model, themeId: string)
 	end
 end
 
-local function newPiece(self: Residence, placed: PlacedFurniture): Result<Piece, string>
+-- a suit display is a mannequin + a pedestal a head on a stand, so they're dressed the way an avatar is
+local function wear(model: Model, appearance: Appearance)
+	for _, item in appearance.Items do
+		-- one broken item shouldn't cost the residence the rest of its furniture
+		local success, res = pcall(ItemUtil.apply, model, appearance, item)
+		if not success then
+			warn(`display err: item "{item.DefinitionId}" threw: {res}`)
+		elseif res.IsErr then
+			warn(`display err: item "{item.DefinitionId}" failed to apply: {res.Value}`)
+		end
+	end
+end
+
+local function setCostume(piece: Piece, costume: Appearance?)
+	for _, v in piece.Model:QueryDescendants(`.{ItemUtil.ITEM_TAG}`) do
+		v:Destroy()
+	end
+	piece.Costume = costume
+	if costume then
+		wear(piece.Model, costume)
+	end
+end
+
+local function newPiece(self: Residence, placed: PlacedFurniture, costume: Appearance?): Result<Piece, string>
 	if not self.IsAlive then
 		return Result.err(`the residence is gone`)
 	end
@@ -221,14 +253,28 @@ local function newPiece(self: Residence, placed: PlacedFurniture): Result<Piece,
 		Placed = placed,
 		Model = model,
 	}
+	if costume then
+		setCostume(out, costume)
+	end
+	local artifactId = placed.ArtifactId
+	if artifactId then
+		wear(
+			model,
+			FreezeUtil.delta(AppearanceConstructor.new(), function(t: Appearance): Appearance
+				table.insert(t.Items, ItemConstructor.new(artifactId))
+				return t
+			end)
+		)
+	end
 	return Result.ok(out)
 end
 
--- only what differs from the layout is touched, a piece that's picked in build mode keeps its model as it moves
-local function furnish(self: Residence, layout: BaseLayout)
+-- only what differs from the state is touched, a piece that's picked in build mode keeps its model as it moves
+local function furnish(self: Residence, state: ResidenceState)
 	if not self.IsAlive then
 		return
 	end
+	local layout = state.Layout
 	local placedById: { [string]: PlacedFurniture } = {}
 	for _, placed in layout.Furniture do
 		placedById[placed.Id] = placed
@@ -241,9 +287,10 @@ local function furnish(self: Residence, layout: BaseLayout)
 		end
 	end
 	for _, placed in layout.Furniture do
+		local costume = if placed.CharacterId then state.Costumes[placed.CharacterId] else nil
 		local piece = self._Pieces[placed.Id]
 		if not piece then
-			local pieceRes = newPiece(self, placed)
+			local pieceRes = newPiece(self, placed, costume)
 			if pieceRes.IsErr then
 				warn(`furniture err: {pieceRes.Value}`)
 				continue
@@ -260,6 +307,10 @@ local function furnish(self: Residence, layout: BaseLayout)
 			end
 		end
 		piece.Placed = placed
+		-- a costume that came through a remote is a new table every time, whatever is in it
+		if not StateUtil.getIfEqual(piece.Costume, costume) then
+			setCostume(piece, costume)
+		end
 	end
 end
 
@@ -288,16 +339,16 @@ end
 local Residence = {} :: ResidenceImpl
 Residence.__index = Residence
 
-function Residence:SetLayout(layout: BaseLayout)
+function Residence:SetState(state: ResidenceState)
 	if not self.IsAlive then
 		return
 	end
-	if self.Layout.ThemeId ~= layout.ThemeId then
-		applyTheme(self.Interior, layout.ThemeId)
+	if self.State.Layout.ThemeId ~= state.Layout.ThemeId then
+		applyTheme(self.Interior, state.Layout.ThemeId)
 	end
-	furnish(self, layout)
-	self.Layout = layout
-	self.LayoutChanged:Fire(layout)
+	furnish(self, state)
+	self.State = state
+	self.StateChanged:Fire(state)
 end
 
 function Residence:GetZoneId(pad: Instance): ZoneId?
@@ -384,14 +435,14 @@ function Residence:Destroy()
 	for _, v in self._CleanUpCallbacks do
 		task.spawn(v)
 	end
-	self.LayoutChanged:Destroy()
+	self.StateChanged:Destroy()
 	self.Instance:Destroy()
 	table.clear(self._CleanUpCallbacks)
 	table.clear(self :: any)
 end
 
 return {
-	new = function(anchor: CFrame, layout: BaseLayout, parent: Instance): Result<Residence, string>
+	new = function(anchor: CFrame, state: ResidenceState, parent: Instance): Result<Residence, string>
 		local inst = Instance.new("Model")
 		inst.Name = INSTANCE_NAME
 		local frame = FrameTemplate:Clone()
@@ -439,7 +490,7 @@ return {
 		end
 
 		-- the template is stored looking like one of the themes, the one of the layout always goes over it
-		applyTheme(interior, layout.ThemeId)
+		applyTheme(interior, state.Layout.ThemeId)
 		local self = setmetatable({
 			IsAlive = true :: true,
 			Instance = inst,
@@ -451,15 +502,15 @@ return {
 			Passages = table.freeze({ toBaseRes.Value, toApartmentRes.Value }),
 			ShelfTrigger = shelfTriggerRes.Value,
 			Pads = getPads(interior),
-			Layout = layout,
-			LayoutChanged = Signal.new(),
+			State = state,
+			StateChanged = Signal.new(),
 			_Pieces = {},
 			_ShelfDoors = shelfDoors,
 			_IsShelfOpen = false,
 			_CleanUpCallbacks = {},
 			_Connections = {},
 		}, Residence)
-		furnish(self, layout)
+		furnish(self, state)
 		-- everything is in place by the time the world sees any of it
 		inst.Parent = parent
 		return Result.ok(self)

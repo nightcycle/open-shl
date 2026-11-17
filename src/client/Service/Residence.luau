@@ -10,11 +10,11 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Future = TypeUnionLib.Future
 local Result = TypeUnionLib.Result
 -- Modules
+local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local Placement = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/Placement")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local Residence = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/Residence")
-local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Types
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
@@ -26,16 +26,18 @@ type Placement = Placement.Placement
 type Residence = Residence.Residence
 type FurniturePlacement = SessionType.FurniturePlacement
 type FurnitureMove = SessionType.FurnitureMove
-type BaseLayout = BaseType.BaseLayout
+type ResidenceId = BaseType.ResidenceId
+export type ResidenceState = SessionType.ResidenceState
 export type PlacedFurniture = BaseType.PlacedFurniture
 type Door = {
-	Trigger: BasePart,
+	ResidenceId: ResidenceId,
 	Doorstep: CFrame, -- where the avatar is put as it leaves, its back to the door
 	Anchor: CFrame, -- where the residence is built
 	Parent: Instance, -- what the residence is put under
 }
 type ResidenceServiceImpl = {
 	__index: ResidenceServiceImpl,
+	GetState: (self: ResidenceService) -> ResidenceState?,
 	GetFurnitureId: (self: ResidenceService) -> string?,
 	SetFurnitureId: (self: ResidenceService, furnitureId: string?) -> Result<true, string>,
 	GetSelection: (self: ResidenceService) -> PlacedFurniture?,
@@ -44,12 +46,15 @@ type ResidenceServiceImpl = {
 export type ResidenceService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
+		StateChanged: Signal<ResidenceState?>, -- of the residence the avatar is inside of
 		FurnitureIdChanged: Signal<string?>, -- the furniture the pointer places
 		SelectionChanged: Signal<PlacedFurniture?>, -- the placed piece the gizmo floats over
 		RequestFailed: Signal<string>, -- the line the server turned a request down with
-		_Door: Door?,
+		_Door: Door?, -- the one the avatar came in through
 		_Residence: Residence?, -- only while the avatar is inside
 		_Placement: Placement?, -- only while the base is built on
+		_IsEntering: boolean, -- the server hasn't said yet if the door opens
+		_PendingState: ResidenceState?, -- a change that got here ahead of the answer it follows
 		_IsRequesting: boolean, -- the server hasn't answered the last request yet
 		_TeleportTime: number,
 		_ResidenceConnections: { RBXScriptConnection }, -- the triggers of the residence
@@ -61,12 +66,11 @@ export type ResidenceService = typeof(setmetatable(
 -- Constants
 local MAP_PATH = "game/Workspace/Map"
 local APARTMENTS_PATH = "buildings/Apartments"
--- todo: one shared residence until the server hands them out per player
-local RESIDENCE_NAME = "N3"
-local DOOR_TRIGGER_PATH = `{APARTMENTS_PATH}/Lobby/Doors/{RESIDENCE_NAME}/Part`
-local DOOR_PLATE_PATH = `{APARTMENTS_PATH}/Lobby/Doors/{RESIDENCE_NAME}/Address`
-local DOOR_LABEL_PATH = "SurfaceGui/Frame/TextLabel"
-local ANCHOR_PATH = `{APARTMENTS_PATH}/Residences/{RESIDENCE_NAME}/Anchor`
+local DOORS_PATH = `{APARTMENTS_PATH}/Lobby/Doors`
+local DOOR_TRIGGER_NAME = "Part"
+local DOOR_PLATE_NAME = "Address"
+local ANCHORS_PATH = `{APARTMENTS_PATH}/Residences`
+local ANCHOR_NAME = "Anchor"
 local LOBBY_TRIGGER_PATH = `{APARTMENTS_PATH}/Trigz`
 -- the value under a trigger that holds the part it leads to
 local EXIT_NAME = "Exit"
@@ -119,6 +123,16 @@ local function getDoorstep(door: BasePart, plate: BasePart): CFrame
 	end
 	local position = door.Position + out * DOORSTEP_DISTANCE
 	return CFrame.lookAt(position, position + out)
+end
+
+-- the server says who lives where through an attribute on every player
+local function getOwner(residenceId: ResidenceId): Player?
+	for _, player in Players:GetPlayers() do
+		if AttributeDefinition.get(player, AttributeDefinition.ResidenceId) == residenceId then
+			return player
+		end
+	end
+	return nil
 end
 
 local function getIfReady(self: ResidenceService): boolean
@@ -193,6 +207,9 @@ local function startBuilding(self: ResidenceService): Result<true, string>
 		if not residence or not residence.IsAlive then
 			return Result.err(`can't build outside of a residence`)
 		end
+		if residence.State.OwnerUserId ~= Players.LocalPlayer.UserId then
+			return Result.err(`can't build in somebody else's residence`)
+		end
 		local placementRes = Placement.new(residence)
 		if placementRes.IsErr then
 			return placementRes
@@ -227,8 +244,16 @@ local function leave(self: ResidenceService)
 	table.clear(self._ResidenceConnections)
 	local residence = self._Residence
 	self._Residence = nil
-	if residence and residence.IsAlive then
-		residence:Destroy()
+	self._Door = nil
+	if residence then
+		if residence.IsAlive then
+			residence:Destroy()
+		end
+		-- the server stops telling of changes to a residence nobody looks at
+		if NetworkService.IsInitialized then
+			NetworkService:Fire(RemoteDefinition.LeaveResidence, nil)
+		end
+		self.StateChanged:Fire(nil)
 	end
 	if ShellService.IsInitialized then
 		ShellService:SetIsInResidence(false)
@@ -266,7 +291,7 @@ local function watch(self: ResidenceService, bounds: CFrame, limit: Vector3)
 	teleport(self, door.Doorstep)
 end
 
-local function bindResidence(self: ResidenceService, residence: Residence)
+local function bindResidence(self: ResidenceService, residence: Residence, isOwn: boolean)
 	if not residence.IsAlive then
 		return
 	end
@@ -293,7 +318,7 @@ local function bindResidence(self: ResidenceService, residence: Residence)
 			if not getIfReady(self) or not teleport(self, getLanding(passage.Exit, passage.Return)) then
 				return
 			end
-			if passage.IsToBase and ShellService.IsInitialized then
+			if passage.IsToBase and isOwn and ShellService.IsInitialized then
 				ShellService:FireTutorialTrigger("BaseEntered")
 			end
 		end)
@@ -305,25 +330,71 @@ local function bindResidence(self: ResidenceService, residence: Residence)
 	end)
 end
 
-local function walkIn(self: ResidenceService)
-	local door = self._Door
-	if not door or self._Residence or not SessionService.IsInitialized or not ShellService.IsInitialized then
-		return
-	end
-	local residenceRes = Residence.new(door.Anchor, SessionService:GetBaseLayout(), door.Parent)
+local function moveIn(self: ResidenceService, door: Door, state: ResidenceState)
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	local residenceRes = Residence.new(door.Anchor, state, door.Parent)
 	if residenceRes.IsErr then
 		warn(`residence err: {residenceRes.Value}`)
+		NetworkService:Fire(RemoteDefinition.LeaveResidence, nil)
 		return
 	end
 	local residence = residenceRes.Value
+	local isOwn = state.OwnerUserId == Players.LocalPlayer.UserId
+	self._Door = door
 	self._Residence = residence
-	bindResidence(self, residence)
+	bindResidence(self, residence, isOwn)
 	if not residence.IsAlive or not teleport(self, getLanding(residence.Entrance, residence.Exit)) then
 		leave(self)
 		return
 	end
-	ShellService:SetIsInResidence(true)
-	ShellService:FireTutorialTrigger("ApartmentEntered")
+	self.StateChanged:Fire(state)
+	-- a visitor looks around, the base is only built on by whoever it belongs to
+	if isOwn and ShellService.IsInitialized then
+		ShellService:SetIsInResidence(true)
+		ShellService:FireTutorialTrigger("ApartmentEntered")
+	end
+end
+
+-- a door nobody lives behind stays shut, so does a locked one for anybody but its owner
+local function walkIn(self: ResidenceService, door: Door)
+	if self._IsEntering or self._Residence or not getIfReady(self) or not NetworkService.IsInitialized then
+		return
+	end
+	local owner = getOwner(door.ResidenceId)
+	if not owner then
+		return
+	end
+	if owner ~= Players.LocalPlayer and AttributeDefinition.get(owner, AttributeDefinition.IsApartmentLocked) then
+		return
+	end
+	local avatar = Players.LocalPlayer.Character
+	self._IsEntering = true
+	-- a door the server keeps shut after all isn't asked for again with every step the avatar takes on it
+	self._TeleportTime = os.clock()
+	task.spawn(function()
+		local stateRes = NetworkService:Invoke(RemoteDefinition.EnterResidence, door.ResidenceId)
+		if not self.IsInitialized then
+			return
+		end
+		self._IsEntering = false
+		local pendingState = self._PendingState
+		self._PendingState = nil
+		if stateRes.IsErr then
+			warn(`residence err: {stateRes.Value}`)
+			return
+		end
+		-- the server only tells of a change behind a door it opened, so one that's here already is the newer of the two
+		local state = if pendingState and pendingState.ResidenceId == door.ResidenceId
+			then pendingState
+			else stateRes.Value
+		-- the avatar that stood at the door may have died since, the one after it spawned far from here. the owner may
+		-- have left since as well, a residence built now would stand for good as nobody says they're gone a second time
+		if Players.LocalPlayer.Character ~= avatar or not Players:GetPlayerByUserId(state.OwnerUserId) then
+			NetworkService:Fire(RemoteDefinition.LeaveResidence, nil)
+			return
+		end
+		moveIn(self, door, state)
+	end)
 end
 
 local function bindTeleports(self: ResidenceService, map: Instance)
@@ -359,38 +430,46 @@ local function bindTeleports(self: ResidenceService, map: Instance)
 	end
 end
 
-local function bindDoor(self: ResidenceService, map: Instance)
-	local triggerRes = tryPart(map, DOOR_TRIGGER_PATH)
-	local plateRes = tryPart(map, DOOR_PLATE_PATH)
-	local anchorRes = tryPart(map, ANCHOR_PATH)
-	if triggerRes.IsErr or plateRes.IsErr or anchorRes.IsErr then
-		warn(`the map has no door to a residence`)
+-- every door of the lobby leads to the residence of the same name, whoever lives there
+local function bindDoors(self: ResidenceService, map: Instance)
+	local doors = IndexUtil.findFirstLocalPath(map, DOORS_PATH)
+	local anchors = IndexUtil.findFirstLocalPath(map, ANCHORS_PATH)
+	if not doors or not anchors then
+		warn(`the map has no doors to a residence`)
 		return
 	end
-	local door: Door = {
-		Trigger = triggerRes.Value,
-		Doorstep = getDoorstep(triggerRes.Value, plateRes.Value),
-		Anchor = anchorRes.Value.CFrame,
-		Parent = anchorRes.Value.Parent or map,
-	}
-	table.freeze(door)
-	self._Door = door
-	bind(self._Connections, door.Trigger, function()
-		walkIn(self)
-	end)
-	-- the tutorial sends the player looking for their name next to the door
-	local label = IndexUtil.findFirstLocalPath(plateRes.Value, DOOR_LABEL_PATH)
-	if label and label:IsA("TextLabel") then
-		local text = label.Text
-		label.Text = Players.LocalPlayer.Name
-		table.insert(self._CleanUpCallbacks, function()
-			label.Text = text
+	for _, inst in doors:GetChildren() do
+		local triggerRes = tryPart(inst, DOOR_TRIGGER_NAME)
+		local plateRes = tryPart(inst, DOOR_PLATE_NAME)
+		local anchorRes = tryPart(anchors, `{inst.Name}/{ANCHOR_NAME}`)
+		if not BaseType.ResidenceId(inst.Name) or triggerRes.IsErr or plateRes.IsErr or anchorRes.IsErr then
+			warn(`"{inst.Name}" isn't the door of a residence`)
+			continue
+		end
+		local door: Door = {
+			ResidenceId = inst.Name :: ResidenceId,
+			Doorstep = getDoorstep(triggerRes.Value, plateRes.Value),
+			Anchor = anchorRes.Value.CFrame,
+			Parent = anchorRes.Value.Parent or map,
+		}
+		table.freeze(door)
+		bind(self._Connections, triggerRes.Value, function()
+			walkIn(self, door)
 		end)
 	end
 end
 -- Class
 local ResidenceService = {} :: ResidenceServiceImpl
 ResidenceService.__index = ResidenceService
+
+-- the same table until the server tells of a change
+function ResidenceService:GetState(): ResidenceState?
+	local residence = self._Residence
+	if not residence or not residence.IsAlive then
+		return nil
+	end
+	return residence.State
+end
 
 function ResidenceService:GetFurnitureId(): string?
 	local placement = self._Placement
@@ -435,17 +514,19 @@ end
 
 return ServiceLocker(function(): ResidenceService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	assert(ShellService.IsInitialized, `the shell service isn't initialized`)
 
 	local self = setmetatable({
 		IsInitialized = true :: true,
+		StateChanged = Signal.new() :: Signal<ResidenceState?>,
 		FurnitureIdChanged = Signal.new(),
 		SelectionChanged = Signal.new(),
 		RequestFailed = Signal.new(),
 		_Door = nil :: Door?,
 		_Residence = nil :: Residence?,
 		_Placement = nil :: Placement?,
+		_IsEntering = false,
+		_PendingState = nil :: ResidenceState?,
 		_IsRequesting = false,
 		_TeleportTime = -TELEPORT_COOLDOWN,
 		_ResidenceConnections = {},
@@ -453,21 +534,29 @@ return ServiceLocker(function(): ResidenceService
 		_Connections = {},
 	}, ResidenceService)
 
-	local layoutConnection = SessionService.BaseLayoutChanged:Connect(function(layout: BaseLayout)
-		local residence = self._Residence
-		if not residence or not residence.IsAlive then
-			return
-		end
-		residence:SetLayout(layout)
-		-- a piece that's still picked may stand somewhere else by now
-		local selection = self:GetSelection()
-		if selection then
-			self.SelectionChanged:Fire(selection)
-		end
-	end)
-	table.insert(self._CleanUpCallbacks, function()
-		layoutConnection:Disconnect()
-	end)
+	table.insert(
+		self._Connections,
+		NetworkService:Connect(RemoteDefinition.ResidenceChanged, function(state: ResidenceState)
+			local residence = self._Residence
+			if not residence or not residence.IsAlive then
+				-- nothing says the answer of a door gets here before the first change behind it does
+				if self._IsEntering then
+					self._PendingState = state
+				end
+				return
+			end
+			if residence.State.ResidenceId ~= state.ResidenceId then
+				return
+			end
+			residence:SetState(state)
+			self.StateChanged:Fire(state)
+			-- a piece that's still picked may stand somewhere else by now
+			local selection = self:GetSelection()
+			if selection then
+				self.SelectionChanged:Fire(selection)
+			end
+		end)
+	)
 	local panelConnection = ShellService.PanelChanged:Connect(function(panelId: ShellService.PanelId?)
 		if panelId ~= "Build" then
 			stopBuilding(self)
@@ -487,6 +576,21 @@ return ServiceLocker(function(): ResidenceService
 			leave(self)
 		end)
 	)
+	-- a residence goes with its owner, whoever is visiting is put back in front of the door
+	table.insert(
+		self._Connections,
+		Players.PlayerRemoving:Connect(function(player: Player)
+			local residence = self._Residence
+			local door = self._Door
+			if not residence or not residence.IsAlive or residence.State.OwnerUserId ~= player.UserId then
+				return
+			end
+			if door then
+				teleport(self, door.Doorstep)
+			end
+			leave(self)
+		end)
+	)
 	table.insert(self._CleanUpCallbacks, function()
 		leave(self)
 	end)
@@ -503,7 +607,7 @@ return ServiceLocker(function(): ResidenceService
 			return
 		end
 		bindTeleports(self, mapF.Value)
-		bindDoor(self, mapF.Value)
+		bindDoors(self, mapF.Value)
 	end)
 
 	return self
@@ -515,6 +619,7 @@ end, function(self: ResidenceService)
 		task.spawn(v)
 	end
 	table.clear(self._CleanUpCallbacks)
+	self.StateChanged:Destroy()
 	self.FurnitureIdChanged:Destroy()
 	self.SelectionChanged:Destroy()
 	self.RequestFailed:Destroy()

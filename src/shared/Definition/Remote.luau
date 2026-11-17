@@ -14,24 +14,32 @@ local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Character = CharacterType.Character
 type IdentityKey = CharacterType.IdentityKey
 type BaseInventory = BaseType.BaseInventory
-type BaseLayout = BaseType.BaseLayout
 type PlacedFurniture = BaseType.PlacedFurniture
+type ResidenceId = BaseType.ResidenceId
 type PublicProfile = ProfileType.PublicProfile
 type QuestState = QuestType.QuestState
 type ExpressionId = RoleplayType.ExpressionId
 type Snapshot = SessionType.Snapshot
+type ResidenceState = SessionType.ResidenceState
 type FurniturePlacement = SessionType.FurniturePlacement
 type FurnitureMove = SessionType.FurnitureMove
 type DailyReward = SessionType.DailyReward
 export type Validator = (value: unknown) -> (boolean, string?)
 export type Kind = "Event" | "Function"
 export type Direction = "ClientToServer" | "ServerToClient"
+-- a player gets Count calls of a remote within Duration seconds, the server drops whatever is over it
+export type RateLimit = {
+	Count: number,
+	Duration: number,
+}
 export type Remote = {
 	Name: string,
 	Kind: Kind,
 	Direction: Direction,
 	Argument: Validator, -- a remote carries one value, or nil when there's nothing to say
 	Returns: Validator?, -- checks the Result a function answers with
+	RateLimit: RateLimit?, -- every remote a client calls has one
+	IsExclusive: boolean?, -- a function that turns a player down while an earlier call of theirs is being answered
 }
 -- _Signature is never set, it only carries the types
 export type ClientEvent<T> = {
@@ -39,6 +47,7 @@ export type ClientEvent<T> = {
 	Kind: "Event",
 	Direction: "ClientToServer",
 	Argument: Validator,
+	RateLimit: RateLimit,
 	_Signature: (T) -> (),
 }
 export type ServerEvent<T> = {
@@ -54,10 +63,18 @@ export type ClientFunction<V, T> = {
 	Direction: "ClientToServer",
 	Argument: Validator,
 	Returns: Validator,
+	RateLimit: RateLimit,
+	IsExclusive: boolean,
 	_Signature: (V, T) -> (),
 }
 -- Constants
 local FOLDER_NAME = "Remotes"
+-- a button a player can keep pressing
+local INPUT_LIMIT: RateLimit = table.freeze({ Count = 60, Duration = 10 })
+-- an answer the server has to work for
+local REQUEST_LIMIT: RateLimit = table.freeze({ Count = 30, Duration = 10 })
+-- the text filter is a web call
+local FILTER_LIMIT: RateLimit = table.freeze({ Count = 10, Duration = 10 })
 local isCharacter = CharacterType.Character
 -- the character type lets any key into Identities, a client may only hand in the two every character is made of
 local isEditedCharacter = Type.intersection(
@@ -110,12 +127,13 @@ local function isResult(check: Validator): Validator
 	end
 end
 
-local function newClientEvent(name: string, argument: Validator): any
+local function newClientEvent(name: string, argument: Validator, rateLimit: RateLimit): any
 	return register({
 		Name = name,
 		Kind = "Event",
 		Direction = "ClientToServer",
 		Argument = argument,
+		RateLimit = rateLimit,
 	})
 end
 
@@ -128,13 +146,21 @@ local function newServerEvent(name: string, argument: Validator): any
 	})
 end
 
-local function newClientFunction(name: string, argument: Validator, returns: Validator): any
+local function newClientFunction(
+	name: string,
+	argument: Validator,
+	returns: Validator,
+	rateLimit: RateLimit,
+	isExclusive: boolean?
+): any
 	return register({
 		Name = name,
 		Kind = "Function",
 		Direction = "ClientToServer",
 		Argument = argument,
 		Returns = isResult(returns),
+		RateLimit = rateLimit,
+		IsExclusive = isExclusive == true,
 	})
 end
 -- Class
@@ -143,61 +169,75 @@ local Module = {}
 Module.FOLDER_NAME = FOLDER_NAME
 
 -- session
-Module.GetSession = newClientFunction("GetSession", Type.none, SessionType.Snapshot) :: ClientFunction<Snapshot, nil>
+Module.GetSession =
+	newClientFunction("GetSession", Type.none, SessionType.Snapshot, REQUEST_LIMIT) :: ClientFunction<Snapshot, nil>
 
 -- characters
 Module.SelectCharacter =
-	newClientFunction("SelectCharacter", Type.string, Type.literal(true)) :: ClientFunction<true, string>
+	newClientFunction("SelectCharacter", Type.string, Type.literal(true), REQUEST_LIMIT) :: ClientFunction<true, string>
 Module.SwapIdentity =
-	newClientFunction("SwapIdentity", Type.none, CharacterType.IdentityKey) :: ClientFunction<IdentityKey, nil>
+	newClientFunction("SwapIdentity", Type.none, CharacterType.IdentityKey, REQUEST_LIMIT) :: ClientFunction<IdentityKey, nil>
+-- the filter yields in the middle of a save, a second one would work on the slot the first is about to replace
 Module.SaveCharacter =
-	newClientFunction("SaveCharacter", isEditedCharacter, isCharacter) :: ClientFunction<Character, Character>
-Module.FilterText = newClientFunction("FilterText", Type.string, Type.string) :: ClientFunction<string, string>
+	newClientFunction("SaveCharacter", isEditedCharacter, isCharacter, REQUEST_LIMIT, true) :: ClientFunction<Character, Character>
+Module.FilterText =
+	newClientFunction("FilterText", Type.string, Type.string, FILTER_LIMIT) :: ClientFunction<string, string>
 Module.CharacterChanged = newServerEvent("CharacterChanged", isCharacter) :: ServerEvent<Character>
-Module.SetInMenu = newClientEvent("SetInMenu", Type.boolean) :: ClientEvent<boolean>
+Module.SetInMenu = newClientEvent("SetInMenu", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
 
 -- roleplay
 Module.SetExpression =
-	newClientEvent("SetExpression", Type.optional(RoleplayType.ExpressionId)) :: ClientEvent<ExpressionId?>
-Module.SetMasked = newClientEvent("SetMasked", Type.boolean) :: ClientEvent<boolean>
-Module.SetHandcuffed = newClientEvent("SetHandcuffed", Type.boolean) :: ClientEvent<boolean>
-Module.SetApartmentLocked = newClientEvent("SetApartmentLocked", Type.boolean) :: ClientEvent<boolean>
+	newClientEvent("SetExpression", Type.optional(RoleplayType.ExpressionId), INPUT_LIMIT) :: ClientEvent<ExpressionId?>
+Module.SetMasked = newClientEvent("SetMasked", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
+Module.SetHandcuffed = newClientEvent("SetHandcuffed", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
+Module.SetApartmentLocked = newClientEvent("SetApartmentLocked", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
 
 -- economy
 Module.PurchaseProduct =
-	newClientFunction("PurchaseProduct", Type.string, Type.literal(true)) :: ClientFunction<true, string>
+	newClientFunction("PurchaseProduct", Type.string, Type.literal(true), REQUEST_LIMIT) :: ClientFunction<true, string>
 Module.PurchaseFurniture =
-	newClientFunction("PurchaseFurniture", Type.string, Type.literal(true)) :: ClientFunction<true, string>
+	newClientFunction("PurchaseFurniture", Type.string, Type.literal(true), REQUEST_LIMIT) :: ClientFunction<true, string>
 Module.PurchaseTheme =
-	newClientFunction("PurchaseTheme", Type.string, Type.literal(true)) :: ClientFunction<true, string>
+	newClientFunction("PurchaseTheme", Type.string, Type.literal(true), REQUEST_LIMIT) :: ClientFunction<true, string>
 Module.InventoryChanged = newServerEvent("InventoryChanged", BaseType.BaseInventory) :: ServerEvent<BaseInventory>
 Module.ArtifactGranted = newServerEvent("ArtifactGranted", Type.string) :: ServerEvent<string>
 Module.DailyRewardGranted = newServerEvent("DailyRewardGranted", SessionType.DailyReward) :: ServerEvent<DailyReward>
 
--- base
-Module.GetBaseLayout =
-	newClientFunction("GetBaseLayout", Type.none, BaseType.BaseLayout) :: ClientFunction<BaseLayout, nil>
-Module.BaseLayoutChanged = newServerEvent("BaseLayoutChanged", BaseType.BaseLayout) :: ServerEvent<BaseLayout>
+-- residences
+-- an error is why the door stays shut. once it answered, the server counts the player as inside + tells them of
+-- every change until they say they left
+Module.EnterResidence = newClientFunction(
+	"EnterResidence",
+	BaseType.ResidenceId,
+	SessionType.ResidenceState,
+	REQUEST_LIMIT
+) :: ClientFunction<ResidenceState, ResidenceId>
+Module.LeaveResidence = newClientEvent("LeaveResidence", Type.none, INPUT_LIMIT) :: ClientEvent<nil>
+Module.ResidenceChanged = newServerEvent("ResidenceChanged", SessionType.ResidenceState) :: ServerEvent<ResidenceState>
+-- the base of a residence, only its owner builds on it
 Module.PlaceFurniture =
-	newClientFunction("PlaceFurniture", isPlacement, isPlaced) :: ClientFunction<PlacedFurniture, FurniturePlacement>
+	newClientFunction("PlaceFurniture", isPlacement, isPlaced, REQUEST_LIMIT) :: ClientFunction<PlacedFurniture, FurniturePlacement>
+-- a piece goes a stud or an eighth of a turn with every press of an arrow, across its pad that's a lot of them
 Module.MoveFurniture =
-	newClientFunction("MoveFurniture", isMove, isPlaced) :: ClientFunction<PlacedFurniture, FurnitureMove>
+	newClientFunction("MoveFurniture", isMove, isPlaced, INPUT_LIMIT) :: ClientFunction<PlacedFurniture, FurnitureMove>
 Module.RemoveFurniture =
-	newClientFunction("RemoveFurniture", Type.string, Type.literal(true)) :: ClientFunction<true, string>
-Module.SetBaseTheme = newClientFunction("SetBaseTheme", Type.string, Type.literal(true)) :: ClientFunction<true, string>
+	newClientFunction("RemoveFurniture", Type.string, Type.literal(true), REQUEST_LIMIT) :: ClientFunction<true, string>
+Module.SetBaseTheme =
+	newClientFunction("SetBaseTheme", Type.string, Type.literal(true), REQUEST_LIMIT) :: ClientFunction<true, string>
 
 -- quests
 -- the server picks the goal, an error is the line the quest giver turns the player down with
 Module.StartQuest =
-	newClientFunction("StartQuest", isQuestType, QuestType.QuestState) :: ClientFunction<QuestState, PseudoEnum.QuestType>
-Module.CancelQuest = newClientEvent("CancelQuest", Type.none) :: ClientEvent<nil>
+	newClientFunction("StartQuest", isQuestType, QuestType.QuestState, REQUEST_LIMIT) :: ClientFunction<QuestState, PseudoEnum.QuestType>
+Module.CancelQuest = newClientEvent("CancelQuest", Type.none, INPUT_LIMIT) :: ClientEvent<nil>
 Module.QuestChanged = newServerEvent("QuestChanged", QuestType.QuestState) :: ServerEvent<QuestState>
 
 -- tutorial
-Module.SetTutorialEnabled = newClientEvent("SetTutorialEnabled", Type.boolean) :: ClientEvent<boolean>
+Module.SetTutorialEnabled = newClientEvent("SetTutorialEnabled", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
 
 -- profiles
-Module.GetProfiles = newClientFunction("GetProfiles", Type.none, isProfiles) :: ClientFunction<{ PublicProfile }, nil>
+Module.GetProfiles =
+	newClientFunction("GetProfiles", Type.none, isProfiles, REQUEST_LIMIT) :: ClientFunction<{ PublicProfile }, nil>
 Module.ProfilesChanged = newServerEvent("ProfilesChanged", isProfiles) :: ServerEvent<{ PublicProfile }>
 
 -- combat

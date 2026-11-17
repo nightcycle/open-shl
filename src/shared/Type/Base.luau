@@ -65,12 +65,16 @@ export type PlacedFurniture = {
 	FurnitureId: string,
 	ZoneId: ZoneId,
 	CFrame: CFrame, -- of the primary part, relative to its pad
+	CharacterId: string?, -- only on a suit display: the character whose costume it wears
+	ArtifactId: string?, -- only on a pedestal: the artifact that sits on it
 }
 Types.PlacedFurniture = Type.strictInterface({
 	Id = Type.string,
 	FurnitureId = Type.string,
 	ZoneId = Types.ZoneId,
 	CFrame = Type.CFrame,
+	CharacterId = Type.optional(Type.string),
+	ArtifactId = Type.optional(Type.string),
 })
 
 export type BaseLayout = {
@@ -90,5 +94,50 @@ Types.BaseInventory = Type.strictInterface({
 	FurnitureIds = Type.array(Type.string),
 	ThemeIds = Type.array(Type.string),
 })
+
+-- a door of the apartment lobby + the spot in the tower the residence behind it is built at
+export type ResidenceId =
+	"N1"
+	| "N2"
+	| "N3"
+	| "N4"
+	| "N5"
+	| "N6"
+	| "N7"
+	| "N8"
+	| "N9"
+	| "N10"
+	| "S1"
+	| "S2"
+	| "S3"
+	| "S4"
+	| "S5"
+	| "S6"
+	| "S7"
+	| "S8"
+	| "S9"
+	| "S10"
+Types.ResidenceId = Type.literal(
+	"N1",
+	"N2",
+	"N3",
+	"N4",
+	"N5",
+	"N6",
+	"N7",
+	"N8",
+	"N9",
+	"N10",
+	"S1",
+	"S2",
+	"S3",
+	"S4",
+	"S5",
+	"S6",
+	"S7",
+	"S8",
+	"S9",
+	"S10"
+)
 
 return Types

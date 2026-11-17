@@ -8,9 +8,11 @@ local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
+local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
+type ResidenceId = BaseType.ResidenceId
 type IdentityKey = CharacterType.IdentityKey
 type EntitlementKey = EconomyType.EntitlementKey
 type ExpressionId = RoleplayType.ExpressionId
@@ -87,6 +89,8 @@ Module.HasMultiHair = new("Player", "HasMultiHair", Type.boolean, false) :: Attr
 Module.ActiveCharacterId = new("Player", "ActiveCharacterId", Type.string, "") :: Attribute<string>
 Module.IsTutorialEnabled = new("Player", "IsTutorialEnabled", Type.boolean, true) :: Attribute<boolean>
 Module.IsApartmentLocked = new("Player", "IsApartmentLocked", Type.boolean, true) :: Attribute<boolean>
+-- nil for as long as the player has no residence
+Module.ResidenceId = new("Player", "ResidenceId", Type.optional(BaseType.ResidenceId), nil) :: Attribute<ResidenceId?>
 
 Module.list = function(owner: Owner?): { Attribute<any> }
 	local out: { Attribute<any> } = {}
@@ -142,15 +146,10 @@ Module.setDefaults = function(inst: Instance, owner: Owner)
 	end
 end
 
-Module.getEntitlements = function(player: Instance?): { EntitlementKey }
-	local out: { EntitlementKey } = {}
+Module.setEntitlements = function(player: Instance, entitlements: { EntitlementKey })
 	for _, key: EntitlementKey in ENTITLEMENT_KEYS do
-		if Module.get(player, Module.fromEntitlement(key)) then
-			table.insert(out, key)
-		end
+		Module.set(player, Module.fromEntitlement(key), table.find(entitlements, key) ~= nil)
 	end
-	table.freeze(out)
-	return out
 end
 
 return Module
