@@ -5,6 +5,7 @@ sourcemap.json
 *.project.json
 *.rbxl
 *.lock
+*.env
 
 # directories
 Packages

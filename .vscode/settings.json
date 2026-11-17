@@ -144,7 +144,5 @@
 	"[luau]": {
 		"editor.defaultFormatter": "JohnnyMorganz.stylua"
 	},
-	"secrets.enabledFolders": [
-		"superhero-life"
-	],
+	"secrets.enabledFolders": [],
 }
