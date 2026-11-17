@@ -1,5 +1,6 @@
 # file
 sourcemap.json
+.mcp.json
 
 # extensions
 *.project.json
