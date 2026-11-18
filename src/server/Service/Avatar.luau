@@ -13,16 +13,21 @@ local Future = TypeUnionLib.Future
 local AbilityService = require("@game/ServerScriptService/Server/Service/Ability")
 local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local TransitionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Transition")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
+local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local IdentityType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity")
 type Option<V> = TypeUnionLib.Option<V>
 type Appearance = AppearanceType.Appearance
+type Character = CharacterType.Character
+type PowerColorSource = CharacterEditorType.PowerColorSource
 type Grant = AbilityType.Grant
 type IdentityKey = CharacterType.IdentityKey
 type EffectDefinition = TransitionDefinition.EffectDefinition
@@ -55,26 +60,59 @@ export type AvatarService = typeof(setmetatable(
 -- Constants
 local DRESS_TIMEOUT = 20
 local EFFECT_NAME = "TransformationEffect"
+-- nil in a game whose powers are colored by a pick of their own
+local POWER_COLOR_SOURCE = CharacterEditorDefinition.POWER_COLOR_SOURCE
 -- Variables
 -- References
 -- Private Functions
--- an ability comes in the color the identity wears it in
-local function getGrants(powers: { CharacterType.Power }, identity: IdentityType.Identity): { Grant }
+-- the two colors of the item the powers of the game are colored by, whichever identity is out. an item without
+-- them, or none at all, leaves a power in the colors it comes in
+local function getSourceColors(character: Character, source: PowerColorSource): (Color3?, Color3?)
+	local identity = character.Identities[source.IdentityKey]
+	if not identity then
+		return nil, nil
+	end
+	for _, item in identity.Appearance.Items do
+		local itemDefIndexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
+		if
+			itemDefIndexRes.IsErr
+			or itemDefIndexRes.Value.Group ~= source.Group
+			or itemDefIndexRes.Value.Category ~= source.Category
+		then
+			continue
+		end
+		local primary, secondary = item.TextureGroups[source.Primary], item.TextureGroups[source.Secondary]
+		return if primary then primary.Color else nil, if secondary then secondary.Color else nil
+	end
+	return nil, nil
+end
+
+-- an ability comes in the color the identity wears it in, or in the colors of what the game takes them from
+local function getGrants(character: Character, identity: IdentityType.Identity): { Grant }
 	local grants: { Grant } = {}
-	for _, power in powers do
+	local sourceColor: Color3?, sourceSecondaryColor: Color3? = nil, nil
+	if POWER_COLOR_SOURCE then
+		sourceColor, sourceSecondaryColor = getSourceColors(character, POWER_COLOR_SOURCE)
+	end
+	for _, power in character.Powers do
 		local definitionRes = PowerDefinition.get(power.Id)
 		if definitionRes.IsErr then
 			warn(`power err: {definitionRes.Value}`)
 			continue
 		end
-		local powerSkin = identity.PowerSkins[power.Id]
-		local colorOpt =
-			PowerDefinition.getColor(definitionRes.Value, if powerSkin then powerSkin.ColorGroups.Primary else nil)
+		local color: Color3? = sourceColor
+		if not POWER_COLOR_SOURCE then
+			local powerSkin = identity.PowerSkins[power.Id]
+			local colorOpt =
+				PowerDefinition.getColor(definitionRes.Value, if powerSkin then powerSkin.ColorGroups.Primary else nil)
+			color = if colorOpt.IsSome then colorOpt.Value else nil
+		end
 		table.insert(
 			grants,
 			table.freeze({
 				Id = power.Id,
-				Color = if colorOpt.IsSome then colorOpt.Value else nil,
+				Color = color,
+				SecondaryColor = sourceSecondaryColor,
 			})
 		)
 	end
@@ -98,7 +136,7 @@ local function getLook(self: AvatarService, player: Player): Option<Look>
 		IdentityKey = identityKey,
 		PersonaName = identity.Profile.Name,
 		Appearance = identity.Appearance,
-		Grants = getGrants(character.Powers, identity),
+		Grants = getGrants(character, identity),
 	}
 	local secret = character.Identities.Secret
 	if identityKey == "Main" and self._IsUnmasked[player] and secret then
