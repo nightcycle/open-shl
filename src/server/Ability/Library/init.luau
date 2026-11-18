@@ -2,48 +2,25 @@
 -- Services
 -- Packages
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
+local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 type ServerDefinition = AbilityType.ServerDefinition
 -- Constants
-local DEFINITIONS: { ServerDefinition } = {
-	require("@self/AdvancedMelee/FirePunch"),
-	require("@self/AdvancedMelee/ForceExplosion"),
-	require("@self/AdvancedMelee/IceStorm"),
-	require("@self/AdvancedMelee/Tornado"),
-	require("@self/BasicMelee/BoStaff"),
-	require("@self/BasicMelee/Claws"),
-	require("@self/BasicMelee/DualKatana"),
-	require("@self/BasicMelee/ForceBlast"),
-	require("@self/BasicMelee/Hammer"),
-	require("@self/BasicMelee/JungleKnife"),
-	require("@self/BasicMelee/MartialArts"),
-	require("@self/BasicMelee/Sword"),
-	require("@self/BasicMelee/Trident"),
-	require("@self/Ranged/AssaultGun"),
-	require("@self/Ranged/Bow"),
-	require("@self/Ranged/FireHand"),
-	require("@self/Ranged/Handgun"),
-	require("@self/Ranged/IceHand"),
-	require("@self/Ranged/LaserEyes"),
-	require("@self/Ranged/LaserGun"),
-	require("@self/Ranged/LaserHand"),
-	require("@self/Ranged/LightningHand"),
-	require("@self/Ranged/MagicHand"),
-	require("@self/Ranged/ThrowingStar"),
-	require("@self/Special/Camouflage"),
-	require("@self/Special/ForceField"),
-	require("@self/Special/HealingFactor"),
-	require("@self/Special/Invisibility"),
-	require("@self/Special/Invulnerability"),
-	require("@self/Special/MindReading"),
-	require("@self/Transportation/Flight"),
-	require("@self/Transportation/Grapple"),
-	require("@self/Transportation/Portals"),
-	require("@self/Transportation/SuperSpeed"),
-	require("@self/Transportation/Teleport"),
-	require("@self/Transportation/WallClimb"),
-}
+-- which abilities are built is the game's own. the halves of another game's are never required, so none of them
+-- looks for a power this game doesn't have
+local DEFINITIONS: { ServerDefinition } = GameDefinition.pick({
+	shl1 = function(): { ServerDefinition }
+		error(`shl1 has no abilities yet`)
+	end,
+	shl2 = function(): { ServerDefinition }
+		return require("@game/ServerScriptService/Server/Ability/Set/SHL2")
+	end,
+	shl3 = function(): { ServerDefinition }
+		error(`shl3 has no abilities yet`)
+	end,
+})
 -- Variables
 local DefinitionsById: { [string]: ServerDefinition } = {}
 -- References
@@ -54,6 +31,8 @@ local Module = {}
 for _, definition in DEFINITIONS do
 	local id = definition.Layout.Id
 	assert(DefinitionsById[id] == nil, `the server half of "{id}" is defined twice`)
+	-- not every half looks its power up itself, + one that's built without a power is never handed out
+	assert(PowerDefinition.get(id).IsOk, `the server half of "{id}" is built for a power the game doesn't have`)
 	DefinitionsById[id] = definition
 end
 
