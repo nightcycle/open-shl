@@ -12,8 +12,10 @@ local AppearanceConstructor = require("@game/ReplicatedStorage/Shared/Constructo
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterSlotUtil = require("@game/ServerScriptService/Server/Util/CharacterSlot")
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
+local PatternAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Pattern")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
@@ -29,6 +31,7 @@ local IdentityType = require("@game/ReplicatedStorage/Shared/Type/Character/Iden
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Appearance = AppearanceType.Appearance
+type Scale = AppearanceType.Scale
 type Character = CharacterType.Character
 type Power = CharacterType.Power
 type IdentityKey = CharacterType.IdentityKey
@@ -58,6 +61,9 @@ local HAIR_CATEGORY = "hair"
 local MAX_NAME_LENGTH = CharacterEditorDefinition.MAX_NAME_LENGTH
 local MAX_BACKSTORY_LENGTH = CharacterEditorDefinition.MAX_BACKSTORY_LENGTH
 local FILTER_TIMEOUT = 5
+-- the sizes a body can have are the game's own, nil in a game where every body is the size it comes in
+local SCALE = CharacterEditorDefinition.SCALE
+local SCALE_EPSILON = CharacterEditorDefinition.SCALE_EPSILON
 -- Variables
 -- References
 -- Private Functions
@@ -181,13 +187,51 @@ local function getIfMultiHair(appearance: Appearance): boolean
 	return count > 1
 end
 
+-- a size is kept when it's one the game offers, any other is the size a body starts at. a game without sizes keeps
+-- none, + a look that was never given one is left without
+local function getScale(scale: Scale?): Scale?
+	if not SCALE or not scale then
+		return nil
+	end
+	local isOffered = false
+	for _, height in SCALE.Heights do
+		isOffered = isOffered or math.abs(scale.Height - height) < SCALE_EPSILON
+	end
+	if not isOffered then
+		return SCALE.Default
+	end
+	for _, ratio in SCALE.WidthRatios do
+		if math.abs(scale.Width / scale.Height - ratio) < SCALE_EPSILON then
+			return scale
+		end
+	end
+	return SCALE.Default
+end
+
+-- what a look holds beyond its items is checked against the game as well: a size nobody can pick or a pattern there's
+-- no image for would be stored for good + never be seen
+local function fixAppearance(appearance: Appearance): Appearance
+	return FreezeUtil.delta(AppearanceConstructor.fix(appearance), function(t: Appearance): Appearance
+		t.Scale = getScale(t.Scale)
+		for _, item in t.Items do
+			for _, textureGroup in item.TextureGroups do
+				local pattern = if textureGroup then textureGroup.Pattern else nil
+				if textureGroup and pattern ~= nil and PatternAppearanceDefinition.get(pattern).IsErr then
+					textureGroup.Pattern = nil
+				end
+			end
+		end
+		return t
+	end)
+end
+
 local function newIdentity(
 	identity: Identity,
 	profile: Profile,
 	powers: { Power },
 	entitlements: { EntitlementKey }
 ): Result<Identity, string>
-	local appearance = AppearanceConstructor.fix(identity.Appearance)
+	local appearance = fixAppearance(identity.Appearance)
 	if getIfMultiHair(appearance) and not table.find(entitlements, "MultiHair") then
 		return Result.err(`more than one hair needs the multi hair pass`)
 	end
