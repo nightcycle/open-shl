@@ -339,6 +339,9 @@ function Util.setTag(state: EditorState, tag: Tag, isSelected: boolean): Result<
 	if tag == "IsSuper" or tag == "IsSecret" then
 		local isSuper = (tag == "IsSuper") == isSelected
 		return Result.ok(Util.setIdentityKey(state, if isSuper then "Main" else "Secret"))
+	elseif tag == "IsColorMatched" then
+		-- stub: nothing ties the colors of the identities together yet, the press is taken + changes nothing
+		return Result.ok(state)
 	end
 	local itemDef = PageUtil.getItemDefinition(state)
 	if not itemDef then
@@ -367,12 +370,14 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 		out = { Type = "Text", Text = text }
 	elseif field.Type == "Choose" then
 		local binding = field.Binding
-		out = {
-			Type = "Choice",
-			Value = if binding.Type == "Alignment"
-				then ProfileUtil.getAlignment(state, binding.Axis)
-				else getTransitionStyle(StateUtil.getIdentity(state).Appearance, binding.TransitionType),
-		}
+		local value: any = nil
+		if binding.Type == "Alignment" then
+			value = ProfileUtil.getAlignment(state, binding.Axis)
+		elseif binding.Type == "Transition" then
+			value = getTransitionStyle(StateUtil.getIdentity(state).Appearance, binding.TransitionType)
+		end
+		-- stub: a body size isn't read off the draft yet, none of its choices shows as the one that's picked
+		out = { Type = "Choice", Value = value }
 	elseif field.Type == "ChoiceList" then
 		out = {
 			Type = "Powers",
@@ -391,6 +396,13 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 	elseif field.Type == "Material" then
 		local group = getItemTexture(state, field.Binding)
 		out = { Type = "Material", Material = if group then group.Material else nil }
+	elseif field.Type == "Pattern" then
+		local group = getItemTexture(state, field.Binding)
+		out = {
+			Type = "Pattern",
+			Material = if group then group.Material else nil,
+			Pattern = if group then group.Pattern else nil,
+		}
 	else
 		out = { Type = "Toggle", IsSelected = Util.getTags(state)[field.Focus] == true }
 	end
@@ -418,8 +430,14 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		local binding = field.Binding
 		if binding.Type == "Alignment" then
 			return ProfileUtil.setAlignment(state, binding.Axis, edit.Value)
+		elseif binding.Type == "Transition" then
+			return setTransitionStyle(state, binding.TransitionType, edit.Value)
 		end
-		return setTransitionStyle(state, binding.TransitionType, edit.Value)
+		-- stub: a body size isn't written to the draft yet, the pick is taken + changes nothing
+		return Result.ok(state)
+	elseif field.Type == "Pattern" and edit.Type == "Pattern" then
+		-- stub: a pattern isn't written to the draft yet, the pick is taken + changes nothing
+		return Result.ok(state)
 	elseif field.Type == "ChoiceList" and edit.Type == "Power" then
 		return PowerUtil.setSelected(state, field.Binding.Group, edit.Id, edit.IsSelected)
 	elseif field.Type == "ChoiceList" and edit.Type == "PowerColor" then

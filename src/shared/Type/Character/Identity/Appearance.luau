@@ -38,6 +38,18 @@ Types.TextureGroup = Type.strictInterface({
 	Material = Type.enum(Enum.Material),
 	Pattern = Type.optional(Type.string),
 })
+-- an image a game draws over the color of a texture group, a group names it by its key
+export type PatternDefinition = {
+	Key: string,
+	Name: string,
+	Image: string,
+}
+Types.PatternDefinition = Type.strictInterface({
+	Key = Type.string,
+	Name = Type.string,
+	Image = Type.string,
+})
+
 export type HiddenTag = "Hood" | "Mask" | "MouthCover" | "Hair"
 Types.HiddenTag = Type.literal("Hood", "Mask", "MouthCover", "Hair")
 

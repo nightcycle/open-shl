@@ -20,6 +20,8 @@ type PageDefinition = CharacterEditorType.PageDefinition
 -- the binding leads every field that has one, it's the piece of the character the field edits
 export type Builder = {
 	setTitle: (self: Builder, title: string?) -> Builder,
+	setShared: (self: Builder) -> Builder,
+	setStandIn: (self: Builder, definitionId: string) -> Builder,
 	insertTextField: (
 		self: Builder,
 		binding: ProfileBinding,
@@ -61,6 +63,12 @@ export type Builder = {
 		binding: ItemTextureBinding,
 		description: string?,
 		filtered: { Enum.Material }?,
+		exclusionTags: { Tag }?
+	) -> Builder,
+	insertPatternField: (
+		self: Builder,
+		binding: ItemTextureBinding,
+		description: string?,
 		exclusionTags: { Tag }?
 	) -> Builder,
 	insertToggleField: (
@@ -110,6 +118,27 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 					return definition
 				end
 				definition.Title = title
+				return definition
+			end)
+		end,
+		setShared = function(_: Builder): Builder
+			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
+				-- selene: allow(if_same_then_else)
+				if definition.Type == "Default" then
+					definition.IsShared = true
+				else
+					definition.IsShared = true
+				end
+				return definition
+			end)
+		end,
+		setStandIn = function(_: Builder, definitionId: string): Builder
+			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
+				if definition.Type == "Default" then
+					warn(`Cannot set a stand-in on page "{definition.Key}"; only Item pages are worn`)
+					return definition
+				end
+				definition.StandInId = definitionId
 				return definition
 			end)
 		end,
@@ -215,6 +244,19 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 				Binding = binding,
 				Description = description,
 				Filtered = filtered,
+				ExclusionTags = exclusionTags,
+			})
+		end,
+		insertPatternField = function(
+			_: Builder,
+			binding: ItemTextureBinding,
+			description: string?,
+			exclusionTags: { Tag }?
+		): Builder
+			return insertField({
+				Type = "Pattern",
+				Binding = binding,
+				Description = description,
 				ExclusionTags = exclusionTags,
 			})
 		end,

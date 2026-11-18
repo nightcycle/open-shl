@@ -15,6 +15,8 @@ type PageDefinition = CharacterEditorType.PageDefinition
 -- Constants
 local ROOT_KEY = EditorPageDefinition.ROOT_KEY
 local PATH_DELIMITER = "/"
+-- two widths of a body are the same one when they're this close, a width went through a division on its way here
+local SCALE_EPSILON = 0.001
 -- which pages there are + how much of a name is kept is the game's own, the tree of another game is never required
 local EDITOR: EditorDefinition = GameDefinition.pick({
 	shl1 = function(): EditorDefinition
@@ -24,7 +26,7 @@ local EDITOR: EditorDefinition = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): EditorDefinition
-		error(`shl3 has no editor pages yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(CharacterEditorType.EditorDefinition(EDITOR))
@@ -64,8 +66,28 @@ do
 	assert(root.Type == "Default" and root.Key == ROOT_KEY, `the root page isn't "{ROOT_KEY}"`)
 end
 
+do
+	-- a body that's never been sized has to be one of the sizes that can be picked
+	local scale = EDITOR.Scale
+	if scale then
+		local default = scale.Default
+		local isRatio = false
+		for _, ratio in scale.WidthRatios do
+			isRatio = isRatio or math.abs(default.Width / default.Height - ratio) < SCALE_EPSILON
+		end
+		assert(table.find(scale.Heights, default.Height) ~= nil and isRatio, `the default body scale isn't offered`)
+	end
+end
+
 Module.MAX_NAME_LENGTH = EDITOR.MaxNameLength
 Module.MAX_BACKSTORY_LENGTH = EDITOR.MaxBackstoryLength
+Module.SCALE_EPSILON = SCALE_EPSILON
+-- nil in a game without body sizes
+Module.SCALE = EDITOR.Scale
+-- what a pattern picker offers, nil in a game without patterns
+Module.PATTERN_CHOICES = EDITOR.PatternChoices
+-- nil in a game whose powers are colored by a pick of their own
+Module.POWER_COLOR_SOURCE = EDITOR.PowerColorSource
 Module.DETAIL_TEXTURE_GROUP_KEY = EditorPageDefinition.DETAIL_TEXTURE_GROUP_KEY
 
 Module.DEFINITION = EDITOR.Root
