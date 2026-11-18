@@ -12,7 +12,7 @@ local CombatFeedback =
 local CurrencyPopup =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CurrencyPopup")
 local EdgeHUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/EdgeHUD")
-local Intro = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Intro")
+local FlyIn = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/FlyIn")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
 local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
@@ -31,7 +31,8 @@ local REGISTRY: Registry = {
 	BOOT_PHASES = {
 		Loading = Loading,
 		ModeSelect = ModeSelect,
-		Intro = Intro,
+		-- its intro is a flight along other way-points, with a screen that's told other things
+		Intro = FlyIn,
 	},
 	SCREENS = {
 		CharacterSelect = CharacterSelect,
