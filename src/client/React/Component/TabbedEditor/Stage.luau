@@ -75,10 +75,9 @@ return function(_: Properties): React.ReactNode
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local worldModelRef: { current: WorldModel? } = React.useRef(nil :: WorldModel?)
 	local cameraRef: { current: Camera? } = React.useRef(nil :: Camera?)
-	local turnDeg, setTurnDeg = React.useState(0)
-	-- how far the pair has turned so far, it trails the turn that was asked for
+	-- how far the pair was asked to turn + how far it has so far, which trails behind
+	local turnDegRef = React.useRef(0)
 	local shownDegRef = React.useRef(0)
-	local isTurningRef = React.useRef(false)
 	local heroScene = useScene(HeroSceneTemplate)
 	local secretScene = useScene(SecretSceneTemplate)
 	-- ahead of the appearances: a rig is in the world by the time it gets dressed
@@ -112,9 +111,18 @@ return function(_: Properties): React.ReactNode
 		return function() end
 	end, { cameraMount :: any, frontAnchor })
 
+	-- a rig that's dressed in another size is left standing where its old body stood, so the pair is put on its spots
+	-- every frame rather than only when one of them moves
 	React.useEffect(function()
-		local function place()
-			local turn = CFrame.Angles(0, math.rad(shownDegRef.current), 0)
+		local connection = RunService.RenderStepped:Connect(function(dt: number)
+			local shownDeg, turnDeg = shownDegRef.current, turnDegRef.current
+			if shownDeg ~= turnDeg then
+				local step = math.min(math.abs(turnDeg - shownDeg), TURN_SPEED_DEG * dt)
+				shownDeg += math.sign(turnDeg - shownDeg) * step
+				shownDegRef.current = shownDeg
+			end
+			-- the two swap spots at once, only a turn is eased
+			local turn = CFrame.Angles(0, math.rad(shownDeg), 0)
 			local heroAnchor = if isHeroFocus then frontAnchor else backAnchor
 			local secretAnchor = if isHeroFocus then backAnchor else frontAnchor
 			if heroRig and heroAnchor then
@@ -123,35 +131,16 @@ return function(_: Properties): React.ReactNode
 			if secretRig and secretAnchor then
 				RigUtil.moveTo(secretRig, secretAnchor.CFrame * turn)
 			end
-		end
-		-- the two swap spots at once, only a turn is eased
-		place()
-		if shownDegRef.current == turnDeg then
-			isTurningRef.current = false
-			return function() end
-		end
-		isTurningRef.current = true
-		local connection: RBXScriptConnection
-		connection = RunService.RenderStepped:Connect(function(dt: number)
-			local shownDeg = shownDegRef.current
-			local step = math.min(math.abs(turnDeg - shownDeg), TURN_SPEED_DEG * dt)
-			shownDegRef.current = shownDeg + math.sign(turnDeg - shownDeg) * step
-			place()
-			if shownDegRef.current == turnDeg then
-				isTurningRef.current = false
-				connection:Disconnect()
-			end
 		end)
 		return function()
 			connection:Disconnect()
 		end
-	end, { turnDeg :: any, isHeroFocus, heroRig, secretRig, frontAnchor, backAnchor })
+	end, { isHeroFocus :: any, heroRig, secretRig, frontAnchor, backAnchor })
 
 	-- a press isn't taken while the pair is still turning
 	local function turn(direction: number)
-		if not isTurningRef.current then
-			isTurningRef.current = true
-			setTurnDeg(turnDeg + direction * CONSTANTS.TURN_STEP_DEG)
+		if shownDegRef.current == turnDegRef.current then
+			turnDegRef.current += direction * CONSTANTS.TURN_STEP_DEG
 		end
 	end
 
