@@ -1,7 +1,9 @@
 --!strict
 -- Services
 -- Packages
+local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 -- Components
 -- Hooks
 -- Contexts
@@ -9,38 +11,21 @@
 local AppTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Types")
 type Registry = AppTypes.Registry
 -- Constants
-local REGISTRY: Registry = {
-	BOOT_PHASES = {
-		Loading = require("@self/Loading"),
-		ModeSelect = require("@self/ModeSelect"),
-		ServerBrowser = require("@self/ServerBrowser"),
-		Intro = require("@self/Intro"),
-	},
-	SCREENS = {
-		CharacterSelect = require("@self/CharacterSelect"),
-		CharacterEditor = require("@self/CharacterEditor"),
-		ArtifactMenu = require("@self/ArtifactMenu"),
-	},
-	PANELS = {
-		Music = require("@self/Music"),
-		Actions = require("@self/Actions"),
-		Database = require("@self/Database"),
-		Shop = require("@self/Shop"),
-		Build = require("@self/Build"),
-	},
-	OVERLAYS = {
-		QuestBanner = require("@self/QuestBanner"),
-		CurrencyPopup = require("@self/CurrencyPopup"),
-		DailyReward = require("@self/DailyReward"),
-		NameTag = require("@self/NameTag"),
-		CombatFeedback = require("@self/CombatFeedback"),
-		ServerId = require("@self/ServerId"),
-	},
-	TOP_OVERLAYS = {
-		-- the captain has a word to say about the mode screen as well
-		Tutorial = require("@self/Tutorial"),
-	},
-}
+-- which container fills which slot is the game's own. what another game mounts is never required, so whatever its
+-- containers wait on doesn't have to be in the place
+local REGISTRY: Registry = GameDefinition.pick({
+	shl1 = function(): Registry
+		error(`shl1 has no registry yet`)
+	end,
+	shl2 = function(): Registry
+		return require("@self/SHL2")
+	end,
+	shl3 = function(): Registry
+		error(`shl3 has no registry yet`)
+	end,
+})
+assert(AppTypes.Registry(REGISTRY))
+TableUtil.deepFreeze(REGISTRY)
 -- Variables
 -- References
 -- Private Functions

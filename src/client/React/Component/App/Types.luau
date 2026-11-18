@@ -2,13 +2,18 @@
 -- Services
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 -- Types
 local ShellType = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell/Types")
 type BootPhase = ShellType.BootPhase
 type ScreenType = ShellType.ScreenType
 type PanelId = ShellType.PanelId
+local Types = {}
+
 export type Container = (props: {}) -> React.ReactNode
+Types.Container = Type.callback
+-- the checker doesn't look into the slots, a container under a name there isn't would never be mounted
 export type Registry = {
 	BOOT_PHASES: { [BootPhase]: Container },
 	SCREENS: { [ScreenType]: Container },
@@ -18,10 +23,17 @@ export type Registry = {
 	-- the same, but drawn over the boot phases as well
 	TOP_OVERLAYS: { [string]: Container },
 }
+Types.Registry = Type.strictInterface({
+	BOOT_PHASES = Type.map(ShellType.BootPhase, Types.Container),
+	SCREENS = Type.map(ShellType.ScreenType, Types.Container),
+	PANELS = Type.map(ShellType.PanelId, Types.Container),
+	OVERLAYS = Type.map(Type.string, Types.Container),
+	TOP_OVERLAYS = Type.map(Type.string, Types.Container),
+})
 export type Layer = "BootPhase" | "Screen" | "Panel" | "Overlay" | "TopOverlay"
 -- Constants
 -- Variables
 -- References
 -- Private Functions
 -- Class
-return {}
+return Types
