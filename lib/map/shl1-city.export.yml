@@ -1,0 +1,223 @@
+# how shl1-city, the map of the first superhero life, comes out of its legacy place file. run from the root of the
+# repo:
+#   lune run scripts/util/export-map.lune.luau lib/map/shl1-city.export.yml
+# the place file is never opened in studio + never edited (it carries backdoor scripts), so whatever the map needs
+# that the place doesn't have is said here + applied again by every export
+#
+# the legacy place has no map container, its pieces sit loose in the workspace, so each one is named here. left in
+# the place on purpose:
+#   Workspace/Terrain            the real terrain, it's empty. lib/terrain/shl1-city stands in for it
+#   Workspace/Spawns             9 spawn pads sealed in under the streets. a character only stood on one until the
+#                                server moved it to the garden, the spawns of this map are the 4 points by the garden
+#   Workspace/TriggeredREEEEE    the bait of ServerScriptService/WeatherScript, which shut the server down when an
+#                                exploiter touched it, the sky or the ambient light. neither is brought over
+#   Workspace/ColorFunction      a remote nothing called
+#   Workspace/Camera
+place: Superhero Life.rbxl
+
+# every script under what's exported is left behind. each one was read first: the table lists them by the hash of
+# their source next to what they did, one that isn't on it stops the export
+known_scripts: lib/map/shl1-city.scripts.tsv
+
+exports:
+  # 2 flats on the 104 floor are furnished
+  - from: Workspace/Apartments
+    to: lib/map/shl1-city/buildings/Apartments.rbxm
+  - from: Workspace/Bank
+    to: lib/map/shl1-city/buildings/Bank.rbxm
+  # the hero headquarters
+  - from: Workspace/Base
+    to: lib/map/shl1-city/buildings/Base.rbxm
+  - from: Workspace/Newspaper
+    to: lib/map/shl1-city/buildings/Newspaper.rbxm
+  - from: Workspace/School
+    to: lib/map/shl1-city/buildings/School.rbxm
+  # the tallest tower, it stands on the lower floor
+  - from: Workspace/Building Shell
+    to: lib/map/shl1-city/buildings/Building Shell.rbxm
+  - from: Workspace/Lower Floor
+    to: lib/map/shl1-city/buildings/Lower Floor.rbxm
+  - from: Workspace/Generic Stone Building Shell
+    to: lib/map/shl1-city/buildings/Generic Stone Building Shell.rbxm
+  # 9 empty towers, 8 of them by the same name. the 80 chairs under "Shell Building" stand inside of the school
+  - from: Workspace/Building Shells
+    to: lib/map/shl1-city/buildings/Building Shells.rbxm
+  # 307 of them, whatever the name says. what's many times the same thing stays one file
+  - from: Workspace/310 lamps
+    to: lib/map/shl1-city/decorations/StreetLights.rbxm
+  - from: Workspace/Stoplights
+    to: lib/map/shl1-city/decorations/Stoplights.rbxm
+  - from: Workspace/Trees
+    to: lib/map/shl1-city/decorations/Trees.rbxm
+  # an unseen slab under the road that only holds a light
+  - from: Workspace/Misc/Part
+    to: lib/map/shl1-city/decorations/DeckLight.rbxm
+  - from: Workspace/Garden
+    to: lib/map/shl1-city/garden.rbxm
+  # the streets, the sidewalks + the sea walls. the legacy place calls this model "Terrain" as well, it's the second
+  # child of the workspace by that name. it's the ground here so it can never be taken for the real one
+  - from: Workspace/Terrain#2
+    to: lib/map/shl1-city/ground.rbxm
+  - from: Workspace/Misc/Ocean
+    to: lib/map/shl1-city/ocean.rbxm
+  - from: Workspace/Door
+    to: lib/map/shl1-city/door.rbxm
+  # the 4 sides of the garden, where a character is put down
+  - from: Workspace/Coordinates
+    to: lib/map/shl1-city/spawns.rbxm
+  # a glowing hull around each tower but the school's, ServerScriptService/Day_Night showed them from 18:15 to 6:15
+  - from: Workspace/NightLights
+    to: lib/map/shl1-city/windows.rbxm
+  # the 24 booths a character is made in + the box around them, 6,500 studs out from the city
+  - from: Workspace/ViewingRooms
+    to: lib/map/shl1-city/viewing-rooms/ViewingRooms.rbxm
+  - from: Workspace/Shield
+    to: lib/map/shl1-city/viewing-rooms/Shield.rbxm
+
+# the box of the city an avatar may be sent to is lib/map/shl1-city/PlayArea.model.json. it's written by hand: this
+# place has no map to add it to, every piece is a file of its own
+
+# `at` is a path into the place. a name stands for every sibling of that name, "*" for every child, "**" for
+# everything below + "Name#2" for the second of them. `count` is how many the path finds today: a place that changed
+# stops the export instead of losing a mark without a word. what a rule can say is listed at the Rule type of the
+# tool. the numbers are the ones the legacy scripts ran on
+rules:
+  # --- where players show up
+  # a character is put down on one of the 4 at random, the first time + after every death
+  - at: Workspace/Coordinates
+    count: 1
+    persistent: true
+  - at: Workspace/Coordinates/Part
+    count: 4
+    tags: [Spawn]
+
+  # --- a tag the services of superhero life 2 already read (src/server/Definition/Map.luau)
+  # the hulls came on all at once at 18:15 at a transparency of 0.3 + went out at 6:15. to the windows of SHL2 each
+  # hull is a room of one pane. there's no palette among them, so they keep the color they have
+  - at: Workspace/NightLights
+    count: 1
+    tags: [NightWindows]
+  - at: Workspace/NightLights/Union
+    count: 15
+  # the part that holds the spot light of a lamp. the legacy lamps are on day + night + the part is never seen, which
+  # isn't what a StreetLamp of SHL2 does: that one is switched + restyled by the clock. so they're only counted, a
+  # `tags: [StreetLamp]` here is all it takes the day they should switch
+  - at: Workspace/310 lamps/Lamp/Light
+    count: 307
+
+  # --- the elevators
+  # whoever touches a pad stands at the exit of the same id, 2 to 3 studs above it + up to a stud off to any side,
+  # then the pad is dead for 3 seconds. a pad + its exit share a model, which is persistent so neither end is ever
+  # missing
+  - at: Workspace/Apartments/Apartment Shell/Model#7/Teles#1
+    count: 1
+    persistent: true
+  - at: Workspace/Apartments/Apartment Shell/Model#7/Teles#1/teleporter4c
+    count: 1
+    tags: [Telepad]
+    attributes: { TelepadId: apartments-up }
+  - at: Workspace/Apartments/Apartment Shell/Model#7/Teles#1/teleporter4d
+    count: 1
+    tags: [TelepadExit]
+    attributes: { TelepadId: apartments-up }
+  - at: Workspace/Apartments/Apartment Shell/Model#7/Teles#2
+    count: 1
+    persistent: true
+  - at: Workspace/Apartments/Apartment Shell/Model#7/Teles#2/teleporter4c
+    count: 1
+    tags: [Telepad]
+    attributes: { TelepadId: apartments-down }
+  - at: Workspace/Apartments/Apartment Shell/Model#7/Teles#2/teleporter4d
+    count: 1
+    tags: [TelepadExit]
+    attributes: { TelepadId: apartments-down }
+  # the apartments have a second model of teles (Model#1), a pad without a landing + a landing without a pad. the
+  # legacy pad did nothing, they're left as they are
+  - at: Workspace/Newspaper/Newspaper Shell/Model/Teles#1
+    count: 1
+    persistent: true
+  - at: Workspace/Newspaper/Newspaper Shell/Model/Teles#1/teleporter4c
+    count: 1
+    tags: [Telepad]
+    attributes: { TelepadId: newspaper-up }
+  - at: Workspace/Newspaper/Newspaper Shell/Model/Teles#1/teleporter4d
+    count: 1
+    tags: [TelepadExit]
+    attributes: { TelepadId: newspaper-up }
+  - at: Workspace/Newspaper/Newspaper Shell/Model/Teles#2
+    count: 1
+    persistent: true
+  - at: Workspace/Newspaper/Newspaper Shell/Model/Teles#2/teleporter4c
+    count: 1
+    tags: [Telepad]
+    attributes: { TelepadId: newspaper-down }
+  - at: Workspace/Newspaper/Newspaper Shell/Model/Teles#2/teleporter4d
+    count: 1
+    tags: [TelepadExit]
+    attributes: { TelepadId: newspaper-down }
+
+  # --- the door of the hero base
+  # a click on either of its "Open" buttons fades its "Door" out, lets it be walked through + fades it back in. it's
+  # not a Gate: those are stepped on + move
+  - at: Workspace/Door
+    count: 1
+    tags: [ClickDoor]
+    persistent: true
+    attributes: { FadeDuration: 0.7, OpenDuration: 3, OpenTransparency: 0.8 }
+
+  # --- the gags
+  # a part that's marked Spin turns around an axis of its own (X, Y or Z), in radians a second. the legacy loops took
+  # their step every 0.05 seconds on paper: 0.0025 for the globe of the base, 0.075 for the spouts of the fountain,
+  # one ring against the other
+  - at: Workspace/Base/Earth
+    count: 1
+    tags: [Spin]
+    attributes: { SpinAxis: Y, SpinRate: 0.05 }
+  - at: Workspace/Garden/Fountain/Fountain/F1/WaterSpout
+    count: 4
+    tags: [Spin]
+    attributes: { SpinAxis: Z, SpinRate: 1.5 }
+  - at: Workspace/Garden/Fountain/Fountain/F2/WaterSpout
+    count: 4
+    tags: [Spin]
+    attributes: { SpinAxis: Z, SpinRate: -1.5 }
+  # a click on the screen of a tv shows static on its left face: the two images take turns for 3 seconds. a key is a
+  # file under asset/image, as asset/legacy-ids.tsv names it. these are still staged (the shl1-gag batch)
+  - at: Workspace/Apartments/Furniture/houseInteriorTV/Screen
+    count: 2
+    tags: [ImageCycle]
+    attributes:
+      ImageKeys: shl1/gag/tv-static-2.png,shl1/gag/tv-static-1.png
+      ImageFace: Left
+      ImageInterval: 0.2
+      ImageDuration: 3
+  # whoever sits down on a toilet wears one of these faces until they get up
+  - at: Workspace/Apartments/Furniture/houseInteriorToilet/Seat
+    count: 2
+    tags: [FaceSwap]
+    attributes:
+      ImageKeys: shl1/gag/toilet-face-1.png,shl1/gag/toilet-face-2.png,shl1/gag/toilet-face-3.png,shl1/gag/toilet-face-4.png,shl1/gag/toilet-face-5.png,shl1/gag/toilet-face-6.png,shl1/gag/toilet-face-7.png
+
+  # --- seats
+  # every seat is the engine's own + sat on as it is, there's nothing to mark. this only keeps count of them
+  - at: Workspace/*/**
+    count: 136
+    where: { class: Seat }
+
+  # --- the booths a character is made in
+  # nobody is ever near them, so they + the box that lights them are persistent
+  - at: Workspace/ViewingRooms/ViewingRoom
+    count: 24
+    tags: [ViewingRoom]
+    persistent: true
+  - at: Workspace/Shield
+    count: 1
+    persistent: true
+
+  # --- the safe of the bank
+  # roblox doesn't hand out the image of its bills any longer (2466803), the bill of the third game's money bag
+  # stands in for it
+  - at: Workspace/Bank/Safe/Cash/**
+    count: 32
+    where: { class: Texture }
+    contents: { TextureContent: "rbxassetid://16658163" }

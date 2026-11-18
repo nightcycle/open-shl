@@ -1,0 +1,70 @@
+{
+  "ClassName": "Model",
+  "Properties": {
+    "ModelStreamingMode": {
+      "Enum": 2
+    }
+  },
+  "Children": [
+    {
+      "Name": "City",
+      "ClassName": "Part",
+      "Properties": {
+        "Anchored": {
+          "Bool": true
+        },
+        "CFrame": {
+          "CFrame": {
+            "position": [
+              0,
+              181.75,
+              0
+            ],
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ]
+          }
+        },
+        "CanCollide": {
+          "Bool": false
+        },
+        "CanQuery": {
+          "Bool": false
+        },
+        "CanTouch": {
+          "Bool": false
+        },
+        "CastShadow": {
+          "Bool": false
+        },
+        "Size": {
+          "Vector3": [
+            512,
+            276.5,
+            512
+          ]
+        },
+        "Tags": [
+          "PlayArea"
+        ],
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    }
+  ]
+}
