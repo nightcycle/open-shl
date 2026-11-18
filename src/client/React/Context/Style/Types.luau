@@ -3,7 +3,9 @@
 -- Packages
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local Types = {}
 
 -- a colour by the part it plays, so a widget asks for what it draws + not for a blue
@@ -191,12 +193,42 @@ Types.ServerIdLook = Type.strictInterface({
 	TextYAlignment = Type.optional(Type.enum(Enum.TextYAlignment)),
 })
 
+export type BalanceCounterLook = {
+	BackgroundColor3: Color3,
+	BorderColor3: Color3,
+	BorderSizePixel: number,
+	-- what a balance is written in, every currency has one
+	TextColors: {
+		Credits: Color3,
+		Gems: Color3,
+		[PseudoEnum.Currency]: Color3,
+	},
+	TextStrokeTransparency: number?, -- left out, the text has no outline
+	TextXAlignment: Enum.TextXAlignment?, -- left out, it's centered the way the engine does it
+}
+Types.BalanceCounterLook = Type.strictInterface({
+	BackgroundColor3 = Type.Color3,
+	BorderColor3 = Type.Color3,
+	BorderSizePixel = Type.numberMin(0),
+	TextColors = Type.intersection(
+		Type.strictInterface({
+			Credits = Type.Color3,
+			Gems = Type.Color3,
+		}),
+		Type.map(EconomyType.Currency, Type.Color3)
+	),
+	TextStrokeTransparency = Type.optional(Type.numberConstrained(0, 1)),
+	TextXAlignment = Type.optional(Type.enum(Enum.TextXAlignment)),
+})
+
 -- what a widget of the kit doesn't share with the rest of it, under the name of its component
 export type Widgets = {
+	BalanceCounter: BalanceCounterLook,
 	ExitButton: ExitButtonLook,
 	ServerId: ServerIdLook,
 }
 Types.Widgets = Type.strictInterface({
+	BalanceCounter = Types.BalanceCounterLook,
 	ExitButton = Types.ExitButtonLook,
 	ServerId = Types.ServerIdLook,
 })

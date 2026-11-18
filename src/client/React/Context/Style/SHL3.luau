@@ -9,6 +9,7 @@ type Style = StyleTypes.Style
 -- Constants
 local WHITE = Color3.new(1, 1, 1)
 local ACCENT_COLOR = Color3.fromRGB(20, 166, 230)
+local FIELD_ALT_COLOR = Color3.fromRGB(232, 232, 232)
 local HEADING_FONT =
 	Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 local BODY_FONT = Font.new("rbxasset://fonts/families/ComicNeueAngular.json")
@@ -20,7 +21,7 @@ local STYLE: Style = {
 		Accent = ACCENT_COLOR,
 		AccentLight = Color3.fromRGB(57, 187, 234),
 		Field = WHITE,
-		FieldAlt = Color3.fromRGB(232, 232, 232),
+		FieldAlt = FIELD_ALT_COLOR,
 		Text = Color3.fromRGB(126, 126, 126),
 		TextStrong = Color3.fromRGB(57, 57, 57),
 		TextOnAccent = WHITE,
@@ -59,6 +60,17 @@ local STYLE: Style = {
 		Close = TweenInfo.new(0.2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
 	},
 	Widgets = {
+		-- it never drew a balance, the credits were a column of the player list. this one is a cell of its fields with
+		-- the blue its headings are written in
+		BalanceCounter = {
+			BackgroundColor3 = FIELD_ALT_COLOR,
+			BorderColor3 = ACCENT_COLOR,
+			BorderSizePixel = 0,
+			TextColors = {
+				Credits = ACCENT_COLOR,
+				Gems = ACCENT_COLOR,
+			},
+		},
 		ExitButton = {
 			Image = Image.shl3.ui.common["exit.png"],
 			Size = UDim2.fromOffset(40, 40),

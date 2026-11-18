@@ -58,6 +58,17 @@ local STYLE: Style = {
 		Close = SLIDE_TWEEN_INFO,
 	},
 	Widgets = {
+		BalanceCounter = {
+			BackgroundColor3 = WHITE,
+			BorderColor3 = WHITE,
+			BorderSizePixel = 2,
+			TextColors = {
+				Credits = Color3.fromRGB(0, 170, 0),
+				Gems = Color3.fromRGB(255, 0, 0),
+			},
+			TextStrokeTransparency = 0,
+			TextXAlignment = Enum.TextXAlignment.Right,
+		},
 		ExitButton = {
 			Image = Image.ui["exit.png"],
 			Size = UDim2.fromOffset(40, 40),
