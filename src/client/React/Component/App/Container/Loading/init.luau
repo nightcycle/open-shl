@@ -10,11 +10,13 @@ local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
-local LoadingScreen = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/LoadingScreen")
 -- Hooks
 local useSignalState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useSignalState")
 -- Contexts
 -- Types
+local LoadingScreenTypes =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/LoadingScreen/Types")
+type Layout = LoadingScreenTypes.Component
 export type Properties = {}
 -- a folder of asset/image: its files by name, its folders the same way. the checker has no type that takes both in
 -- one table, so it's held to that when it's picked
@@ -26,7 +28,23 @@ local SESSION_SHARE = 0.2
 -- an image that never loads or a server that never answers doesn't keep the player here
 local TIME_CAP = 15
 -- how long the full bar stays up
-local HOLD_DURATION = 1
+local HOLD_DURATION = GameDefinition.tune(1, {
+	-- its screen takes 0.8 s to start leaving + 1 s to be gone, the next one comes a quarter of a second after
+	shl3 = 2.05,
+})
+-- how the wait is drawn is the game's own, the layout of another game is never required
+local Layout: Layout = GameDefinition.pick({
+	shl1 = function(): Layout
+		error(`shl1 has no loading screen yet`)
+	end,
+	shl2 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/LoadingScreen")
+	end,
+	shl3 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Preload")
+	end,
+})
+assert(LoadingScreenTypes.Component(Layout))
 -- what's loaded ahead is the art of the game that's built, the groups of another game are never required
 local IMAGE_GROUPS: { ImageGroup } = GameDefinition.pick({
 	shl1 = function(): { ImageGroup }
@@ -74,6 +92,9 @@ return function(): React.ReactNode
 	local images = React.useMemo(listImages, {})
 	local loadedCount, setLoadedCount = React.useState(0)
 	local isTimedOut, setIsTimedOut = React.useState(false)
+	-- the images that are left are given up on, the session is still waited for. the loop reads it between two renders
+	local isSkipped, setIsSkipped = React.useState(false)
+	local isSkippedRef = React.useRef(false)
 	React.useEffect(function()
 		local isDead = false
 		task.spawn(function()
@@ -83,7 +104,7 @@ return function(): React.ReactNode
 				local success, msg = pcall(function()
 					ContentProvider:PreloadAsync(batch)
 				end)
-				if isDead then
+				if isDead or isSkippedRef.current then
 					return
 				end
 				if not success then
@@ -102,7 +123,7 @@ return function(): React.ReactNode
 		end
 	end, {})
 
-	local isComplete = isTimedOut or (isSessionLoaded and loadedCount >= #images)
+	local isComplete = isTimedOut or (isSessionLoaded and (isSkipped or loadedCount >= #images))
 	local progress = 1
 	if not isComplete then
 		progress = (1 - SESSION_SHARE) * loadedCount / math.max(#images, 1)
@@ -126,10 +147,16 @@ return function(): React.ReactNode
 	end, { isComplete })
 
 	return e(
-		LoadingScreen,
+		Layout,
 		{
 			Size = UDim2.fromScale(1, 1),
 			Progress = progress,
-		} :: LoadingScreen.Properties
+			OnAction = function(action: LoadingScreenTypes.ActionInfo)
+				if action.Type == "Skip" then
+					isSkippedRef.current = true
+					setIsSkipped(true)
+				end
+			end,
+		} :: LoadingScreenTypes.Properties
 	)
 end
