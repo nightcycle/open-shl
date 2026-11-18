@@ -12,6 +12,7 @@ local DEFINITIONS: { ServerDefinition } = table.freeze({
 	require("@game/ServerScriptService/Server/Ability/Library/BasicMelee/DualKatana"),
 	require("@game/ServerScriptService/Server/Ability/Library/BasicMelee/MartialArts"),
 	require("@game/ServerScriptService/Server/Ability/Library/Ranged/LaserRay"),
+	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Flight"),
 })
 -- Variables
 -- References

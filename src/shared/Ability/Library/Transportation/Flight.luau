@@ -5,10 +5,13 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/AbilityCondition")
 local AbilityTrigger = require("@game/ReplicatedStorage/Shared/Constructor/AbilityTrigger")
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 local VFXBinding = require("@game/ReplicatedStorage/Shared/Constructor/VFXBinding")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
+local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
 type EventBinding = AbilityType.EventBinding
 type StateBinding = AbilityType.StateBinding
 type ServerSignal<T> = AbilityType.ServerSignal<T>
@@ -23,7 +26,11 @@ export type Bindings = {
 }
 -- what both halves of the flight have to agree on
 export type Config = {
-	Sound: VFXAssetDefinition.SoundKey, -- the wind around whoever is up
+	Height: number, -- studs the avatar rises as it takes off
+	Power: number, -- studs ahead of itself the avatar is pulled to
+	Sound: VFXAssetDefinition.SoundKey?, -- the wind around whoever is up, it's quiet up there without
+	FieldOfView: ClientVFXType.FieldOfView?, -- how the view of whoever is pulled along widens, it stays as it is without
+	Wake: ClientVFXType.Wake?, -- what whoever is up leaves behind, in the colors of the character. nothing without
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -33,6 +40,11 @@ export type Ability = {
 local ID = "transportation_flight"
 -- seconds the avatar gets to ease into + out of how it holds itself in the air
 local EASE_DURATION = 0.1
+local CONFIG: Config = {
+	Height = 10,
+	Power = 35,
+	Sound = "Wind",
+}
 -- Variables
 -- References
 -- Private Functions
@@ -63,10 +75,19 @@ local bindings: Bindings = {
 		{ To = "Grounded", Duration = EASE_DURATION }
 	),
 }
+-- being up is the same in every game, how hard it pulls + what's seen + heard of it isn't
 local ability: Ability = table.freeze({
 	Layout = VFXBinding.layout(ID, "Grounded", true, bindings),
-	Config = table.freeze({
-		Sound = "Wind" :: VFXAssetDefinition.SoundKey,
+	Config = GameDefinition.tune(table.freeze(CONFIG), {
+		shl3 = FreezeUtil.delta(CONFIG, function(config: Config): Config
+			config.Height = 10
+			-- nearly twice the pull, in silence
+			config.Power = 65
+			config.Sound = nil
+			config.FieldOfView = { FieldOfView = 100, Duration = 0.5 }
+			config.Wake = { Lifetime = 0.2, Depth = 0.5 }
+			return config
+		end),
 	}),
 })
 
