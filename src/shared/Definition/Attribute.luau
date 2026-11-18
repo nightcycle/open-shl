@@ -29,8 +29,8 @@ export type Attribute<V> = {
 -- Constants
 local MAX_HEALTH = 100
 local MAX_ENERGY = 200
-local ENTITLEMENT_KEYS: { EntitlementKey } =
-	table.freeze({ "FifthPower" :: EntitlementKey, "ExtraCharacterSlots", "MultiHair" })
+-- only what the game's own passes hand out, the keys of another game are never set on a player
+local ENTITLEMENT_KEYS: { EntitlementKey } = ProductDefinition.listEntitlements()
 local OWNER_CLASS_NAMES: { [Owner]: string } = table.freeze({
 	Player = "Player",
 	Character = "Model",
@@ -90,6 +90,8 @@ Module.PowerLimit = new(
 Module.HasFifthPower = new("Player", "HasFifthPower", Type.boolean, false) :: Attribute<boolean>
 Module.HasExtraCharacterSlots = new("Player", "HasExtraCharacterSlots", Type.boolean, false) :: Attribute<boolean>
 Module.HasMultiHair = new("Player", "HasMultiHair", Type.boolean, false) :: Attribute<boolean>
+Module.HasExtraPowers = new("Player", "HasExtraPowers", Type.boolean, false) :: Attribute<boolean>
+Module.HasAdvancedRoleplay = new("Player", "HasAdvancedRoleplay", Type.boolean, false) :: Attribute<boolean>
 -- "" until the server picked one
 Module.ActiveCharacterId = new("Player", "ActiveCharacterId", Type.string, "") :: Attribute<string>
 Module.IsTutorialEnabled = new("Player", "IsTutorialEnabled", Type.boolean, true) :: Attribute<boolean>
@@ -124,8 +126,15 @@ Module.fromEntitlement = function(key: EntitlementKey): Attribute<boolean>
 		return Module.HasFifthPower
 	elseif key == "ExtraCharacterSlots" then
 		return Module.HasExtraCharacterSlots
+	elseif key == "MultiHair" then
+		return Module.HasMultiHair
+	elseif key == "ExtraPowers" then
+		return Module.HasExtraPowers
+	elseif key == "AdvancedRoleplay" then
+		return Module.HasAdvancedRoleplay
 	end
-	return Module.HasMultiHair
+	-- a key that's added without an attribute is one the checker lets through
+	error(`no attribute for the "{key}" entitlement`)
 end
 
 Module.fix = function<V>(attribute: Attribute<V>, value: unknown): V

@@ -32,8 +32,9 @@ Types.Balances = Type.intersection(
 export type ShopTab = "Credits" | "Gems" | "Gamepasses"
 Types.ShopTab = Type.literal("Credits", "Gems", "Gamepasses")
 
-export type EntitlementKey = "FifthPower" | "ExtraCharacterSlots" | "MultiHair"
-Types.EntitlementKey = Type.literal("FifthPower", "ExtraCharacterSlots", "MultiHair")
+-- of every game. which of them a game hands out is up to the passes it sells
+export type EntitlementKey = "FifthPower" | "ExtraCharacterSlots" | "MultiHair" | "ExtraPowers" | "AdvancedRoleplay"
+Types.EntitlementKey = Type.literal("FifthPower", "ExtraCharacterSlots", "MultiHair", "ExtraPowers", "AdvancedRoleplay")
 
 export type ProductGrant =
 	{

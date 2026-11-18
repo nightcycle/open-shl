@@ -5,6 +5,8 @@
 local IconDefinitionConstructor = require("@game/ReplicatedStorage/Shared/Constructor/IconDefinition")
 local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Types
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
+type EntitlementKey = EconomyType.EntitlementKey
 local PowerType = require("@game/ReplicatedStorage/Shared/Type/Power")
 type PowerCatalogue = PowerType.PowerCatalogue
 type PowerDefinition = PowerType.PowerDefinition
@@ -12,6 +14,7 @@ type PowerGroup = PowerType.PowerGroup
 -- Constants
 local DEFAULT_LIMIT = 4
 local PASS_LIMIT = 5
+local PASS_ENTITLEMENT: EntitlementKey = "FifthPower"
 -- the order the editor lists the groups in
 local GROUPS: { PowerGroup } =
 	table.freeze({ "basic-melee" :: PowerGroup, "advanced-melee", "ranged", "transportation", "special" })
@@ -481,6 +484,7 @@ local CATALOGUE: PowerCatalogue = {
 	Definitions = DEFINITIONS,
 	DefaultLimit = DEFAULT_LIMIT,
 	PassLimit = PASS_LIMIT,
+	PassEntitlement = PASS_ENTITLEMENT,
 }
 -- Variables
 -- References

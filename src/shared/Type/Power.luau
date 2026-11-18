@@ -7,7 +7,9 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Components
 -- Hooks
 -- Types
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
+type EntitlementKey = EconomyType.EntitlementKey
 type IconDefinition = MiscType.IconDefinition
 
 local Types = {}
@@ -49,19 +51,23 @@ Types.PowerDefinition = Type.strictInterface({
 	}),
 })
 
--- what a game offers + how many of them a character carries, without the pass + with it. the groups are in the order
--- the editor lists them
+-- what a game offers + how many of them a character carries, without the pass + with it, and which entitlement that
+-- pass hands out. the groups are in the order the editor lists them
 export type PowerCatalogue = {
 	Groups: { PowerGroup },
 	Definitions: { PowerDefinition },
+	Upcoming: { PowerDefinition }?, -- the ones whose ability isn't built yet, nobody is offered one of them
 	DefaultLimit: number,
 	PassLimit: number,
+	PassEntitlement: EntitlementKey,
 }
 Types.PowerCatalogue = Type.strictInterface({
 	Groups = Type.array(Types.PowerGroup),
 	Definitions = Type.array(Types.PowerDefinition),
+	Upcoming = Type.optional(Type.array(Types.PowerDefinition)),
 	DefaultLimit = Type.intersection(Type.integer, Type.numberPositive),
 	PassLimit = Type.intersection(Type.integer, Type.numberPositive),
+	PassEntitlement = EconomyType.EntitlementKey,
 })
 
 return Types

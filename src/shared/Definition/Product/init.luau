@@ -60,7 +60,9 @@ Module.getCurrencyName = function(currency: PseudoEnum.Currency): string
 end
 
 Module.getPowerLimit = function(entitlements: { EntitlementKey }): number
-	return if table.find(entitlements, "FifthPower") then PowerDefinition.PASS_LIMIT else PowerDefinition.DEFAULT_LIMIT
+	return if table.find(entitlements, PowerDefinition.PASS_ENTITLEMENT)
+		then PowerDefinition.PASS_LIMIT
+		else PowerDefinition.DEFAULT_LIMIT
 end
 
 Module.getCharacterSlotCount = function(entitlements: { EntitlementKey }): number
@@ -72,6 +74,19 @@ end
 
 Module.getIfGamePass = function(definition: ProductDefinition): boolean
 	return definition.Grant.Type == "Entitlement"
+end
+
+-- what the game's passes hand out, in the order they're sold in
+Module.listEntitlements = function(): { EntitlementKey }
+	local out: { EntitlementKey } = {}
+	for _, definition in DEFINITIONS do
+		local grant = definition.Grant
+		if grant.Type == "Entitlement" and table.find(out, grant.Key) == nil then
+			table.insert(out, grant.Key)
+		end
+	end
+	table.freeze(out)
+	return out
 end
 
 Module.get = function(id: string): Result<ProductDefinition, string>

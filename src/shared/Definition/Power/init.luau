@@ -27,15 +27,17 @@ local CATALOGUE: PowerCatalogue = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): PowerCatalogue
-		error(`shl3 has no powers yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(PowerType.PowerCatalogue(CATALOGUE))
 TableUtil.deepFreeze(CATALOGUE)
 local GROUPS = CATALOGUE.Groups
 local DEFINITIONS = CATALOGUE.Definitions
+local UPCOMING: { PowerDefinition } = CATALOGUE.Upcoming or table.freeze({})
 local DEFAULT_LIMIT = CATALOGUE.DefaultLimit
 local PASS_LIMIT = CATALOGUE.PassLimit
+local PASS_ENTITLEMENT = CATALOGUE.PassEntitlement
 -- Variables
 local DefinitionsById: { [string]: PowerDefinition? } = {}
 local DefinitionsByGroup: { [PowerGroup]: { PowerDefinition } } = {}
@@ -58,9 +60,26 @@ end
 for _, group: PowerGroup in GROUPS do
 	table.freeze(DefinitionsByGroup[group])
 end
+do
+	-- an upcoming power is held to what every row is, so all it takes once its ability is there is moving the row. until
+	-- then no id of theirs is answered for: it isn't listed, picked, saved or handed out
+	local upcomingIds: { [string]: true } = {}
+	for _, definition in UPCOMING do
+		local keys = definition.Id:split(ID_DELIMITER)
+		assert(#keys == 2 and keys[1] == definition.Group and keys[2] ~= "", `bad power id "{definition.Id}"`)
+		assert(table.find(GROUPS, definition.Group) ~= nil, `"{definition.Id}" is of a group the game doesn't list`)
+		assert(
+			DefinitionsById[definition.Id] == nil and not upcomingIds[definition.Id],
+			`duplicate power id "{definition.Id}"`
+		)
+		upcomingIds[definition.Id] = true
+	end
+end
 
 Module.DEFAULT_LIMIT = DEFAULT_LIMIT
 Module.PASS_LIMIT = PASS_LIMIT
+-- what a player holds once they bought the pass that raises the limit
+Module.PASS_ENTITLEMENT = PASS_ENTITLEMENT
 Module.TOOL_ID_ATTRIBUTE = TOOL_ID_ATTRIBUTE
 
 Module.get = function(id: string): Result<PowerDefinition, string>
