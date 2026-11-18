@@ -39,6 +39,8 @@ local LEAVE_DELAY = 0.8
 -- pixels between the edge of the bar + what fills it
 local FILL_INSET = 5
 local MIN_PERCENT = 1
+-- pixels between the bar + the line under it
+local LABEL_OFFSET = 10
 -- from here on the player doesn't have to wait for the rest
 local SKIP_PERCENT = 31
 -- a shade off the light accent of the palette
@@ -240,7 +242,7 @@ return function(props: Properties): React.ReactNode
 						AnchorPoint = Vector2.new(0.5, 0),
 						BackgroundTransparency = 1,
 						FontFace = style.Fonts.Body,
-						Position = UDim2.new(0.5, 0, 1, 2 * FILL_INSET),
+						Position = UDim2.new(0.5, 0, 1, LABEL_OFFSET),
 						Size = UDim2.fromScale(1, 0.6),
 						Text = if isSkippable then `{percent}% loaded. Click to skip` else `{percent}% loaded.`,
 						TextColor3 = BAR_COLOR,
