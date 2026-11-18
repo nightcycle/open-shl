@@ -1,25 +1,61 @@
 --!strict
 --!native
 -- Services
+local MarketplaceService = game:GetService("MarketplaceService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
+local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
+local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
+local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
-local CharacterSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterSelect")
 -- Hooks
 local useIsMounted = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsMounted")
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
 -- Types
+local CharacterSelectTypes =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterSelect/Types")
+type Layout = CharacterSelectTypes.Component
+type ProductDefinition = ProductDefinition.ProductDefinition
 export type Properties = {}
 -- Constants
 local ERROR_DURATION = 4
+-- a pass is free in studio, the server hands it over. anywhere else it's paid for through the prompt of the engine
+local IS_STUDIO = RunService:IsStudio()
+-- how the screen is laid out is the game's own, the layout of another game is never required
+local Layout: Layout = GameDefinition.pick({
+	shl1 = function(): Layout
+		error(`shl1 has no character select yet`)
+	end,
+	shl2 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterSelect")
+	end,
+	shl3 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/SuitManager")
+	end,
+})
+assert(CharacterSelectTypes.Component(Layout))
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
+
+-- the pass that adds slots, a game that sells none has nothing to ask for
+local function getSlotPass(): ProductDefinition?
+	for _, definition in ProductDefinition.list() do
+		local grant = definition.Grant
+		if grant.Type == "Entitlement" and grant.Key == "ExtraCharacterSlots" then
+			return definition
+		end
+	end
+	return nil
+end
 -- Class
 return function(): React.ReactNode
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
@@ -27,13 +63,14 @@ return function(): React.ReactNode
 	local errorMessage: string?, setErrorMessage: (string?) -> () = useTimedState(ERROR_DURATION)
 	local isMountedRef = useIsMounted()
 	local isBusyRef = React.useRef(false)
+	local isBuyingRef = React.useRef(false)
 
 	return e(
-		CharacterSelect,
+		Layout,
 		{
 			Size = UDim2.fromScale(1, 1),
 			ErrorMessage = errorMessage,
-			OnAction = function(action: CharacterSelect.ActionInfo)
+			OnAction = function(action: CharacterSelectTypes.ActionInfo)
 				if action.Type == "Select" then
 					if isBusyRef.current then
 						return
@@ -61,10 +98,47 @@ return function(): React.ReactNode
 					if screenRes.IsErr then
 						setErrorMessage(screenRes.Value)
 					end
+				elseif action.Type == "BuySlots" then
+					local definition = getSlotPass()
+					if not definition then
+						setErrorMessage(`no pass adds a slot`)
+						return
+					end
+					if IS_STUDIO then
+						-- one purchase at a time, a button that's hammered doesn't pile them up
+						if isBuyingRef.current then
+							return
+						end
+						assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+						isBuyingRef.current = true
+						task.spawn(function()
+							local purchaseRes = NetworkService:Invoke(RemoteDefinition.PurchaseProduct, definition.Id)
+							isBuyingRef.current = false
+							if not isMountedRef.current then
+								return
+							end
+							if purchaseRes.IsErr then
+								setErrorMessage(purchaseRes.Value)
+							else
+								setErrorMessage(nil)
+							end
+						end)
+						return
+					end
+					-- what was paid for isn't the business of the client: the server is told by the engine + the slots
+					-- show up once the pass is granted
+					local isPrompted = pcall(function()
+						MarketplaceService:PromptGamePassPurchase(Players.LocalPlayer, definition.LegacyId)
+					end)
+					if isPrompted then
+						setErrorMessage(nil)
+					else
+						setErrorMessage(`"{definition.Name}" can't be bought right now`)
+					end
 				elseif action.Type == "Exit" then
 					ShellService:CloseScreen()
 				end
 			end,
-		} :: CharacterSelect.Properties
+		} :: CharacterSelectTypes.Properties
 	)
 end
