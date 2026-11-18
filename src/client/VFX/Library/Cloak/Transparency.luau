@@ -50,4 +50,33 @@ Module.hold = function(inst: Fadable, amount: number): () -> ()
 	end
 end
 
+-- the same hold for an effect that eases in + out: the second thing handed back changes how much of it the hold
+-- takes away for as long as it's on
+Module.holdEased = function(inst: Fadable, amount: number): (() -> (), (amount: number) -> ())
+	local fadable: any = inst
+	local entry: Entry = Entries[inst] or { Original = fadable.Transparency, Amounts = {} }
+	Entries[inst] = entry
+	local key = {}
+	entry.Amounts[key] = amount
+	apply(inst, entry)
+	local function release()
+		if entry.Amounts[key] == nil then
+			return
+		end
+		entry.Amounts[key] = nil
+		if next(entry.Amounts) == nil then
+			Entries[inst] = nil
+		end
+		apply(inst, entry)
+	end
+	local function set(newAmount: number)
+		if entry.Amounts[key] == nil then
+			return
+		end
+		entry.Amounts[key] = newAmount
+		apply(inst, entry)
+	end
+	return release, set
+end
+
 return Module

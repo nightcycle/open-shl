@@ -221,9 +221,13 @@ Types.EnergyWarning = Type.strictInterface({})
 -- makes the avatar harder to see
 export type Cloak = {
 	Transparency: number, -- 1 is gone altogether
+	FadeDuration: number?, -- seconds the avatar takes to go + to come back, it's there + gone at once without
+	IsUnlit: boolean?, -- the lights the avatar carries go out for as long as it's on, they stay lit without
 }
 Types.Cloak = Type.strictInterface({
 	Transparency = Type.numberConstrained(0, 1),
+	FadeDuration = Type.optional(Type.numberConstrained(0, 5)),
+	IsUnlit = Type.optional(Type.boolean),
 })
 
 -- every part of the avatar in one material + color
