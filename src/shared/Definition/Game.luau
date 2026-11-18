@@ -26,6 +26,10 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Jobs = false,
 		Props = false,
 		PrivateServerToggle = false,
+		Roleplay = false,
+		ModeSelect = false,
+		DayNight = false,
+		Fixtures = false,
 	}),
 	-- the game all of it was written for: what's on is what ran before there was a second one
 	shl2 = table.freeze({
@@ -39,18 +43,29 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Jobs = false,
 		Props = false,
 		PrivateServerToggle = false,
+		Roleplay = true,
+		ModeSelect = true,
+		DayNight = true,
+		Fixtures = true,
 	}),
+	-- what it boots with so far, the rest goes on as each of them is built for it
 	shl3 = table.freeze({
-		Residences = true,
+		Residences = false,
 		Quests = false,
 		Tutorial = false,
 		Music = false,
-		Uniforms = true,
+		Uniforms = false,
 		CustomServers = false,
-		Teams = true,
-		Jobs = true,
-		Props = true,
-		PrivateServerToggle = true,
+		Teams = false,
+		Jobs = false,
+		Props = false,
+		PrivateServerToggle = false,
+		-- its faces have no expressions yet
+		Roleplay = false,
+		ModeSelect = true,
+		-- its day is another clock's to run
+		DayNight = false,
+		Fixtures = true,
 	}),
 })
 -- Variables

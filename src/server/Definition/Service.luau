@@ -35,6 +35,7 @@ local ENTRIES: { Entry } = {
 	-- a client makes up its mind about the mode screen as soon as it's in, so this is on before the saves are
 	{
 		Name = "ModeSelect",
+		IsFeatured = FEATURES.ModeSelect,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/ModeSelect")
 			assert(not service.IsInitialized, `the mode select service is already initialized`)
@@ -99,6 +100,7 @@ local ENTRIES: { Entry } = {
 	},
 	{
 		Name = "Roleplay",
+		IsFeatured = FEATURES.Roleplay,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Roleplay")
 			assert(not service.IsInitialized, `the roleplay service is already initialized`)
@@ -141,6 +143,7 @@ local ENTRIES: { Entry } = {
 	},
 	{
 		Name = "DayNight",
+		IsFeatured = FEATURES.DayNight,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/DayNight")
 			assert(not service.IsInitialized, `the day night service is already initialized`)
@@ -149,6 +152,7 @@ local ENTRIES: { Entry } = {
 	},
 	{
 		Name = "Beacon",
+		IsFeatured = FEATURES.Fixtures,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Beacon")
 			assert(not service.IsInitialized, `the beacon service is already initialized`)
@@ -157,6 +161,7 @@ local ENTRIES: { Entry } = {
 	},
 	{
 		Name = "Colorizer",
+		IsFeatured = FEATURES.Fixtures,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Colorizer")
 			assert(not service.IsInitialized, `the colorizer service is already initialized`)
@@ -165,6 +170,7 @@ local ENTRIES: { Entry } = {
 	},
 	{
 		Name = "Rebuild",
+		IsFeatured = FEATURES.Fixtures,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Rebuild")
 			assert(not service.IsInitialized, `the rebuild service is already initialized`)
@@ -173,6 +179,7 @@ local ENTRIES: { Entry } = {
 	},
 	{
 		Name = "Gate",
+		IsFeatured = FEATURES.Fixtures,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Gate")
 			assert(not service.IsInitialized, `the gate service is already initialized`)
@@ -181,6 +188,7 @@ local ENTRIES: { Entry } = {
 	},
 	{
 		Name = "Hazard",
+		IsFeatured = FEATURES.Fixtures,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Hazard")
 			assert(not service.IsInitialized, `the hazard service is already initialized`)
@@ -189,6 +197,7 @@ local ENTRIES: { Entry } = {
 	},
 	{
 		Name = "Reactor",
+		IsFeatured = FEATURES.Fixtures,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Reactor")
 			assert(not service.IsInitialized, `the reactor service is already initialized`)

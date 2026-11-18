@@ -26,6 +26,10 @@ export type Features = {
 	Jobs: boolean,
 	Props: boolean,
 	PrivateServerToggle: boolean,
+	Roleplay: boolean, -- masks, cuffs + expressions
+	ModeSelect: boolean, -- the pick between its places on the way in
+	DayNight: boolean, -- a clock that lights the lamps + the windows
+	Fixtures: boolean, -- what a map tags for the server to run: beacons, gates, hazards, a reactor + what's put back up
 }
 Types.Features = Type.strictInterface({
 	Residences = Type.boolean,
@@ -38,6 +42,10 @@ Types.Features = Type.strictInterface({
 	Jobs = Type.boolean,
 	Props = Type.boolean,
 	PrivateServerToggle = Type.boolean,
+	Roleplay = Type.boolean,
+	ModeSelect = Type.boolean,
+	DayNight = Type.boolean,
+	Fixtures = Type.boolean,
 })
 
 -- a way to get a value for every game. only the one of the game that's built is ever called, so what another's needs
