@@ -20,6 +20,9 @@ type LegacyImportServiceImpl = {
 export type LegacyImportService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
+		-- whether there's a game before this one to ask. where there isn't no save is ever marked as asked for, so
+		-- every one of them is still due the day the game gets its importer
+		HasImporter: boolean,
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
 	},
@@ -50,11 +53,9 @@ LegacyImportService.__index = LegacyImportService
 
 -- yields. a user the old stores hold nothing of gets an empty patch, an error means they couldn't be asked
 function LegacyImportService:Import(userId: number): Result<SavePatch, string>
-	-- with no game before this one there's nothing anybody could have had in it
+	-- with no game before this one there's nobody to ask. an empty patch would say they were asked + had nothing
 	if not IMPORTER then
-		local patch: SavePatch = {}
-		table.freeze(patch)
-		return Result.ok(patch)
+		return Result.err(`{GameDefinition.ID} has no game before it to import from`)
 	end
 	return IMPORTER.Import(userId)
 end
@@ -63,6 +64,7 @@ return ServiceLocker(function(): LegacyImportService
 	assert(DataService.IsInitialized, `the data service isn't initialized`)
 	local self = setmetatable({
 		IsInitialized = true :: true,
+		HasImporter = IMPORTER ~= nil,
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, LegacyImportService)

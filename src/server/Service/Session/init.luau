@@ -208,6 +208,11 @@ local function load(userId: number, getIfCanceled: () -> boolean): Result<Player
 	if saveRes.IsErr or saveRes.Value.IsLegacyImported then
 		return saveRes
 	end
+	-- a game that takes over from nothing has nobody to ask, its saves are left unmarked: the day it's given an
+	-- importer every one of them is still due
+	if LegacyImportService.IsInitialized and not LegacyImportService.HasImporter then
+		return saveRes
+	end
 	local patchRes: Result<SavePatch, string> = Result.err(`the legacy import service isn't initialized`)
 	if LegacyImportService.IsInitialized then
 		patchRes = LegacyImportService:Import(userId)
