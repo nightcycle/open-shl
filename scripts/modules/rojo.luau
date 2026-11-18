@@ -30,6 +30,8 @@ export type ProjectNode =
 export type ProjectJSON = {
 	name: string,
 	tree: ProjectNode,
+	-- a file or a folder that matches one of these isn't built. each is a glob that starts at the folder of the project
+	globIgnorePaths: { string }?,
 	[string]: nil, -- I'll add the other properties as I need them
 }
 export type MetaJSON = {

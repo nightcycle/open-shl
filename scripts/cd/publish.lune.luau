@@ -22,6 +22,9 @@ type Build = {
 -- Constants
 local BUILD_PATH = "build"
 local DEFAULT_VERSION_TYPE = "published"
+-- nobody opens a story in a place that's live, so what's built here goes without them. a place that wants them all the
+-- same says so in the env of its config
+local DEFAULT_STORIES_ENABLED = "false"
 -- Variables
 -- References
 -- Private Functions
@@ -74,6 +77,7 @@ do
 			local rbxlPath = `{BUILD_PATH}/{universeName}/{placeName}.rbxl`
 			local env = deploy.getBuildEnv(universe, place)
 			env.PROJECT = projectPath
+			env.STORIES_ENABLED = env.STORIES_ENABLED or DEFAULT_STORIES_ENABLED
 
 			print(`\nbuilding {universeName}/{placeName}`)
 			fs.writeDir(`{BUILD_PATH}/{universeName}`)

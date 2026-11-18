@@ -12,6 +12,9 @@
 # its universe. on top of that every build is handed UNIVERSE_ID, PLACE_ID + the id of each place of its universe as
 # <NAME>_PLACE_ID, so one place can send players to another without any of them being written down twice. a terminal
 # gets all of it for one place from scripts/proj/env.lune.luau
+#
+# what's built here goes without the stories + the specs of the code, nobody opens one in a place that's live. a place
+# that wants them all the same has STORIES_ENABLED: true in its `env`
 universes:
   shl2:
     universe_id: 197125125

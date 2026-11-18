@@ -19,9 +19,21 @@ local MAP = process.env["MAP"] or "roblox-city"
 -- the code is the same in every game, where its data, its items + its scenes come from isn't
 local GAME: game.GameId = game.getId(process.env["GAME"])
 local CONTENT = game.getContent(GAME)
+-- what a story, a storybook + a spec are named, wherever in the code they sit. what wally installs is left as it came
+local STORY_GLOBS = { "src/**/*.story.luau", "src/**/*.storybook.luau" }
+local SPEC_GLOBS = { "src/**/*.spec.luau" }
 -- Variables
 -- References
 -- Private Functions
+-- a .env file leaves a variable unset by giving it no value, so an empty string counts as unset
+local function getFlag(name: string, default: boolean): boolean
+	local value = process.env[name]
+	if value == nil or value == "" then
+		return default
+	end
+	assert(value == "true" or value == "false", `{name} must be "true" or "false", received "{value}"`)
+	return value == "true"
+end
 -- Class
 do -- write in a do block now to make it easier to copy to other things later / turn into function / keep header more separate
 	local project: rojo.ProjectJSON = {
@@ -139,6 +151,17 @@ do -- write in a do block now to make it easier to copy to other things later / 
 	project.tree["Lighting"] = {
 		["$path"] = `lib/lighting/{MAP}`,
 	}
+
+	-- ui labs reads the stories + a server that's told to runs the specs, neither is there for a player. a build has
+	-- both unless it says otherwise, which the pipeline does for what it publishes. a server that runs its specs
+	-- keeps them either way
+	if not getFlag("STORIES_ENABLED", true) then
+		local globs = table.clone(STORY_GLOBS)
+		if not getFlag("TESTS_ENABLED", false) then
+			table.move(SPEC_GLOBS, 1, #SPEC_GLOBS, #globs + 1, globs)
+		end
+		project.globIgnorePaths = globs
+	end
 
 	fs.writeFile(PROJECT_PATH, serde.encode("json", project, true))
 end
