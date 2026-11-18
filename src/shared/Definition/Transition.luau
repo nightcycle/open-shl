@@ -4,6 +4,7 @@
 local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
 local Animation = require("@game/ReplicatedStorage/Generated/Animation")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local TransitionType = require("@game/ReplicatedStorage/Shared/Type/Transition")
@@ -28,6 +29,14 @@ local FLINCH = table.freeze({
 local SWAP_COOLDOWN = 1
 local DEFAULT_TRANSFORMATION_STYLE: PseudoEnum.TransformationStyle = PseudoEnum.TransformationStyle.Spin
 local DEFAULT_DEATH_STYLE: PseudoEnum.DeathStyle = PseudoEnum.DeathStyle.FallForward
+local SPIN: TransformationDefinition = {
+	Style = PseudoEnum.TransformationStyle.Spin,
+	Name = "Spin",
+	AnimationId = SPIN_ANIMATION_ID,
+	AnimationLength = 1,
+	SwapDelay = 0.4,
+	LockDuration = 0.4 + SWAP_COOLDOWN,
+}
 -- the delays are timed so the costume changes behind the animation + its effect
 local TRANSFORMATIONS: { [PseudoEnum.TransformationStyle]: TransformationDefinition } = {
 	Ascension = {
@@ -38,14 +47,19 @@ local TRANSFORMATIONS: { [PseudoEnum.TransformationStyle]: TransformationDefinit
 		SwapDelay = 1.5,
 		LockDuration = 1.5 + SWAP_COOLDOWN,
 	},
-	Spin = {
-		Style = PseudoEnum.TransformationStyle.Spin,
-		Name = "Spin",
-		AnimationId = SPIN_ANIMATION_ID,
-		AnimationLength = 1,
-		SwapDelay = 0.4,
-		LockDuration = 0.4 + SWAP_COOLDOWN,
-	},
+	-- the one every character starts out with, so it's the one a game without a choice of them swaps by
+	Spin = GameDefinition.tune(SPIN, {
+		-- its own turn on the spot, the costume changes half a second in. how long its switch stays faded for is
+		-- the hud's to say
+		shl3 = {
+			Style = PseudoEnum.TransformationStyle.Spin,
+			Name = "Spin",
+			AnimationId = Animation.shl3.transition["spin.rbxm"],
+			AnimationLength = 1,
+			SwapDelay = 0.5,
+			LockDuration = 0.5 + SWAP_COOLDOWN,
+		},
+	}),
 	Fire = {
 		Style = PseudoEnum.TransformationStyle.Fire,
 		Name = "Fire",
