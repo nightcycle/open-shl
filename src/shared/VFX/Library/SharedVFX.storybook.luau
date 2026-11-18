@@ -11,5 +11,6 @@ local Library = script.Parent
 -- Class
 return {
 	name = "VFX (Shared)",
-	storyRoots = { Library },
+	-- an effect keeps its story in its own folder, rooting at each of those leaves one flat list
+	storyRoots = Library:GetChildren(),
 }

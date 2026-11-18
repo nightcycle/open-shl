@@ -70,67 +70,72 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 	local power = powerRes.Value
 	-- as many as a client that's on time can have out at once + one to spare, a made up launch doesn't add to them
 	local maxShotCount = math.ceil((shared.Lifetime + WORD_DELAY) / shared.Duration) + 1
-	local builder = AbilityBuilder.newServer(layout)
-
-	builder:Guard(bindings.Cast, function(context: ServerContext): boolean
-		return context.VFX.fire(SpendEnergy, { Amount = power.EnergyCost })
-	end)
-	builder:On(bindings.Release, function(context: ServerContext)
-		context.Record[IS_LOADED_KEY] = true
-	end)
-
-	-- a cast lets one shot fly, from where the server has its avatar
-	builder:Guard(bindings.Launch, function(context: ServerContext): boolean
-		local launch = context.read(bindings.Launch)
-		if not launch or not context.Record[IS_LOADED_KEY] then
-			return false
-		end
-		local count = 0
-		for _ in getShots(context, shared.Lifetime) do
-			count += 1
-		end
-		return count < maxShotCount and context.VFX.fire(Reach, { Position = launch.Origin, Range = ORIGIN_RANGE })
-	end)
-	builder:On(bindings.Launch, function(context: ServerContext)
-		local launch = context.read(bindings.Launch)
-		if launch then
-			context.Record[IS_LOADED_KEY] = nil
-			getShots(context, shared.Lifetime)[launch.Id] = {
-				Origin = launch.Origin,
-				Direction = launch.Direction.Unit,
-				LaunchTime = os.clock(),
-			}
-		end
-	end)
-	-- the player's own machine shows them their shot right away, this is for everybody else. whoever it can get to
-	-- has to see it coming
-	builder:FireClient(bindings.Launch, ClientVFXDefinition.Bolt, function(context: ServerContext): ClientVFXType.Bolt
-		return ShotFactory.getBolt(shared, context.read(bindings.Launch) :: ShotFactory.Launch, context.Color)
-	end, { Audience = "Others", Range = shared.Speed * shared.Lifetime })
-
-	builder:Guard(bindings.Hit, function(context: ServerContext): boolean
-		local hit = context.read(bindings.Hit)
-		local shot = if hit then getShots(context, shared.Lifetime)[hit.ShotId] else nil
-		if not hit or not shot then
-			return false
-		end
-		local target = hit.Target
-		if target == context.Character or not target:FindFirstChildWhichIsA("Humanoid") then
-			return false
-		end
-		local age = math.min(os.clock() - shot.LaunchTime + FLIGHT_TOLERANCE, shared.Lifetime)
-		return getPathDistance(shot, target:GetPivot().Position, shared.Speed * age) <= PATH_TOLERANCE
-	end)
-	-- a shot is spent on whoever it ran into first
-	builder:On(bindings.Hit, function(context: ServerContext)
-		local hit = context.read(bindings.Hit)
-		if hit then
-			getShots(context, shared.Lifetime)[hit.ShotId] = nil
-			context.VFX.fire(Attack, { Target = hit.Target, Amount = power.Damage })
-		end
-	end)
-
-	return builder
+	return AbilityBuilder
+		.newServer(layout)
+		:Guard(bindings.Cast, function(context: ServerContext): boolean
+			return context.VFX.fire(SpendEnergy, { Amount = power.EnergyCost })
+		end)
+		:On(bindings.Release, function(context: ServerContext)
+			context.Record[IS_LOADED_KEY] = true
+		end)
+		-- a cast lets one shot fly, from where the server has its avatar
+		:Guard(
+			bindings.Launch,
+			function(context: ServerContext): boolean
+				local launch = context.read(bindings.Launch)
+				if not launch or not context.Record[IS_LOADED_KEY] then
+					return false
+				end
+				local count = 0
+				for _ in getShots(context, shared.Lifetime) do
+					count += 1
+				end
+				return count < maxShotCount
+					and context.VFX.fire(Reach, { Position = launch.Origin, Range = ORIGIN_RANGE })
+			end
+		)
+		:On(bindings.Launch, function(context: ServerContext)
+			local launch = context.read(bindings.Launch)
+			if launch then
+				context.Record[IS_LOADED_KEY] = nil
+				getShots(context, shared.Lifetime)[launch.Id] = {
+					Origin = launch.Origin,
+					Direction = launch.Direction.Unit,
+					LaunchTime = os.clock(),
+				}
+			end
+		end)
+		-- the player's own machine shows them their shot right away, this is for everybody else. whoever it can get to
+		-- has to see it coming
+		:FireClient(
+			bindings.Launch,
+			ClientVFXDefinition.Bolt,
+			function(context: ServerContext): ClientVFXType.Bolt
+				return ShotFactory.getBolt(shared, context.read(bindings.Launch) :: ShotFactory.Launch, context.Color)
+			end,
+			{ Audience = "Others", Range = shared.Speed * shared.Lifetime }
+		)
+		:Guard(bindings.Hit, function(context: ServerContext): boolean
+			local hit = context.read(bindings.Hit)
+			local shot = if hit then getShots(context, shared.Lifetime)[hit.ShotId] else nil
+			if not hit or not shot then
+				return false
+			end
+			local target = hit.Target
+			if target == context.Character or not target:FindFirstChildWhichIsA("Humanoid") then
+				return false
+			end
+			local age = math.min(os.clock() - shot.LaunchTime + FLIGHT_TOLERANCE, shared.Lifetime)
+			return getPathDistance(shot, target:GetPivot().Position, shared.Speed * age) <= PATH_TOLERANCE
+		end)
+		-- a shot is spent on whoever it ran into first
+		:On(bindings.Hit, function(context: ServerContext)
+			local hit = context.read(bindings.Hit)
+			if hit then
+				getShots(context, shared.Lifetime)[hit.ShotId] = nil
+				context.VFX.fire(Attack, { Target = hit.Target, Amount = power.Damage })
+			end
+		end)
 end
 
 return Module

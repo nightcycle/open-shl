@@ -13,6 +13,7 @@ type Replication = VFXType.Replication
 type Layout = AbilityType.Layout<any>
 type ClientContext = AbilityType.ClientContext
 type ServerContext = AbilityType.ServerContext
+type Definition = AbilityType.Definition<any>
 type EventHook = AbilityType.EventHook<any>
 type StateHook = AbilityType.StateHook<any>
 -- any binding that fires + any that's held, whatever sets it off
@@ -20,8 +21,9 @@ type Event = { Kind: "Event", Name: string }
 type State = { Kind: "State", Name: string }
 -- one half of an ability, put together a hook at a time: what this side does at the bindings of the layout. how far
 -- an effect is shown + to whom is said here, with the binding it's hooked onto, never by the effect. a binding
--- nothing is hooked onto still moves the machine. a factory hands one of these out, so what it made can be cleared,
--- changed + built onto before it's built
+-- nothing is hooked onto still moves the machine. a builder never changes: every method hands back a new one with the
+-- hook on top, so what a factory hands out can be cleared, changed + built onto without touching what anybody else
+-- got from it
 export type ClientBuilder = {
 	-- fires one effect as the binding does
 	Fire: <P, R>(
@@ -95,150 +97,140 @@ export type ServerBuilder = {
 	Clear: (self: ServerBuilder, binding: Event | State) -> ServerBuilder,
 	Build: (self: ServerBuilder) -> AbilityType.ServerDefinition,
 }
-type BuilderImpl = {
-	__index: BuilderImpl,
-	[string]: any,
-}
--- the one builder both of the typed ones are: what a hook is run with differs by side, how it's filed doesn't
-type Builder = typeof(setmetatable(
-	{} :: {
-		_Layout: Layout,
-		_EventHooks: { [string]: { EventHook } },
-		_StateHooks: { [string]: { StateHook } },
-		_Relays: { [string]: Reach },
-	},
-	{} :: BuilderImpl
-))
 -- Constants
 local DEFAULT_REACH: Reach = table.freeze({})
 -- Variables
 -- References
 -- Private Functions
-local function check(self: Builder, binding: Event | State)
-	assert(self._Layout.Bindings[binding.Name] == binding, `"{binding.Name}" isn't a binding of "{self._Layout.Id}"`)
-end
-
-local function addEvent(self: Builder, binding: Event, hook: EventHook): Builder
-	check(self, binding)
-	local hooks = self._EventHooks[binding.Name] or {}
-	self._EventHooks[binding.Name] = hooks
-	table.insert(hooks, table.freeze(hook))
-	return self
-end
-
-local function addState(self: Builder, binding: State, hook: StateHook): Builder
-	check(self, binding)
-	local hooks = self._StateHooks[binding.Name] or {}
-	self._StateHooks[binding.Name] = hooks
-	table.insert(hooks, hook)
-	return self
-end
--- Class
-local Builder = {} :: BuilderImpl
-Builder.__index = Builder
-
-function Builder.Fire(
-	self: Builder,
-	binding: Event,
-	vfx: any,
-	getProps: (context: any) -> any,
-	options: ClientOptions?
-): Builder
-	return addEvent(self, binding, {
-		Run = function(context: any)
-			context.VFX.fire(vfx, getProps(context), options)
-		end,
-	})
-end
-
-function Builder.Run(
-	self: Builder,
-	binding: State,
-	vfx: any,
-	getProps: (context: any) -> any,
-	options: ClientOptions?
-): Builder
-	return addState(self, binding, function(context: any, swap: Swap?): Cleanup
-		return context.VFX.start(vfx, getProps(context), swap, options).Stop
-	end)
-end
-
-function Builder.FireClient(
-	self: Builder,
-	binding: Event,
-	vfx: any,
-	getProps: (context: any) -> any,
-	replication: Replication?
-): Builder
-	return addEvent(self, binding, {
-		Run = function(context: any)
-			context.VFX.fireClient(vfx, getProps(context), replication)
-		end,
-	})
-end
-
-function Builder.RunClient(
-	self: Builder,
-	binding: State,
-	vfx: any,
-	getProps: (context: any) -> any,
-	replication: Replication?
-): Builder
-	return addState(self, binding, function(context: any, swap: Swap?): Cleanup
-		return context.VFX.startClient(vfx, getProps(context), swap, replication).Stop
-	end)
-end
-
-function Builder.On(self: Builder, binding: Event, run: (context: any) -> ()): Builder
-	return addEvent(self, binding, { Run = run })
-end
-
-function Builder.While(self: Builder, binding: State, start: StateHook): Builder
-	return addState(self, binding, start)
-end
-
-function Builder.Guard(self: Builder, binding: Event, guard: (context: any) -> boolean): Builder
-	return addEvent(self, binding, { Guard = guard })
-end
-
-function Builder.Relay(self: Builder, vfx: { Name: string }, reach: Reach?): Builder
-	self._Relays[vfx.Name] = reach or DEFAULT_REACH
-	return self
-end
-
-function Builder.Clear(self: Builder, binding: Event | State): Builder
-	check(self, binding)
-	self._EventHooks[binding.Name] = nil
-	self._StateHooks[binding.Name] = nil
-	return self
-end
-
-function Builder.Build(self: Builder): any
-	local eventHooks: { [string]: { EventHook } } = {}
-	for name, hooks in self._EventHooks do
-		eventHooks[name] = table.freeze(table.clone(hooks))
+-- the hooks of one binding swapped out, everything else is shared with what it was copied from
+local function setHooks<H>(hooksByName: { [string]: { H } }, name: string, hooks: { H }?): { [string]: { H } }
+	local out = table.clone(hooksByName)
+	out[name] = nil
+	if hooks then
+		out[name] = table.freeze(hooks)
 	end
-	local stateHooks: { [string]: { StateHook } } = {}
-	for name, hooks in self._StateHooks do
-		stateHooks[name] = table.freeze(table.clone(hooks))
+	return table.freeze(out)
+end
+
+-- the one builder both of the typed ones are: what a hook is run with differs by side, how it's filed doesn't
+local function builder(definition: Definition): any
+	local layout = definition.Layout
+
+	local function check(binding: Event | State)
+		assert(layout.Bindings[binding.Name] == binding, `"{binding.Name}" isn't a binding of "{layout.Id}"`)
 	end
+
+	local function addEvent(binding: Event, hook: EventHook): any
+		check(binding)
+		local hooks = table.clone(definition.EventHooks[binding.Name] or {})
+		table.insert(hooks, table.freeze(hook))
+		return builder(table.freeze({
+			Layout = layout,
+			EventHooks = setHooks(definition.EventHooks, binding.Name, hooks),
+			StateHooks = definition.StateHooks,
+			Relays = definition.Relays,
+		}))
+	end
+
+	local function addState(binding: State, hook: StateHook): any
+		check(binding)
+		local hooks = table.clone(definition.StateHooks[binding.Name] or {})
+		table.insert(hooks, hook)
+		return builder(table.freeze({
+			Layout = layout,
+			EventHooks = definition.EventHooks,
+			StateHooks = setHooks(definition.StateHooks, binding.Name, hooks),
+			Relays = definition.Relays,
+		}))
+	end
+
 	return table.freeze({
-		Layout = self._Layout,
-		EventHooks = table.freeze(eventHooks),
-		StateHooks = table.freeze(stateHooks),
-		Relays = table.freeze(table.clone(self._Relays)),
+		Fire = function(
+			_: any,
+			binding: Event,
+			vfx: any,
+			getProps: (context: any) -> any,
+			options: ClientOptions?
+		): any
+			return addEvent(binding, {
+				Run = function(context: any)
+					context.VFX.fire(vfx, getProps(context), options)
+				end,
+			})
+		end,
+		Run = function(_: any, binding: State, vfx: any, getProps: (context: any) -> any, options: ClientOptions?): any
+			return addState(binding, function(context: any, swap: Swap?): Cleanup
+				return context.VFX.start(vfx, getProps(context), swap, options).Stop
+			end)
+		end,
+		FireClient = function(
+			_: any,
+			binding: Event,
+			vfx: any,
+			getProps: (context: any) -> any,
+			replication: Replication?
+		): any
+			return addEvent(binding, {
+				Run = function(context: any)
+					context.VFX.fireClient(vfx, getProps(context), replication)
+				end,
+			})
+		end,
+		RunClient = function(
+			_: any,
+			binding: State,
+			vfx: any,
+			getProps: (context: any) -> any,
+			replication: Replication?
+		): any
+			return addState(binding, function(context: any, swap: Swap?): Cleanup
+				return context.VFX.startClient(vfx, getProps(context), swap, replication).Stop
+			end)
+		end,
+		On = function(_: any, binding: Event, run: (context: any) -> ()): any
+			return addEvent(binding, { Run = run })
+		end,
+		While = function(_: any, binding: State, start: StateHook): any
+			return addState(binding, start)
+		end,
+		Guard = function(_: any, binding: Event, guard: (context: any) -> boolean): any
+			return addEvent(binding, { Guard = guard })
+		end,
+		Relay = function(_: any, vfx: { Name: string }, reach: Reach?): any
+			local relays = table.clone(definition.Relays)
+			relays[vfx.Name] = reach or DEFAULT_REACH
+			return builder(table.freeze({
+				Layout = layout,
+				EventHooks = definition.EventHooks,
+				StateHooks = definition.StateHooks,
+				Relays = table.freeze(relays),
+			}))
+		end,
+		Clear = function(_: any, binding: Event | State): any
+			check(binding)
+			return builder(table.freeze({
+				Layout = layout,
+				EventHooks = setHooks(definition.EventHooks, binding.Name, nil),
+				StateHooks = setHooks(definition.StateHooks, binding.Name, nil),
+				Relays = definition.Relays,
+			}))
+		end,
+		-- what a builder holds is frozen all the way down, so it's handed out as it is
+		Build = function(_: any): Definition
+			return definition
+		end,
 	})
 end
 
 local function new(layout: Layout): any
-	return setmetatable({
-		_Layout = layout,
-		_EventHooks = {},
-		_StateHooks = {},
-		_Relays = {},
-	}, Builder)
+	return builder(table.freeze({
+		Layout = layout,
+		EventHooks = table.freeze({}),
+		StateHooks = table.freeze({}),
+		Relays = table.freeze({}),
+	}))
 end
-
+-- Class
 return {
 	-- the half of an ability that runs on the client of the character it belongs to
 	newClient = function(layout: Layout): ClientBuilder

@@ -22,21 +22,26 @@ local bindings = layout.Bindings
 local powerRes = PowerDefinition.get(layout.Id)
 assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 local energyCost = powerRes.Value.EnergyCost
-local builder = AbilityBuilder.newClient(layout)
-
--- the server has the last word on the energy, a wall it's sure to turn down isn't started on
-builder:Guard(bindings.Cast, function(context: ClientContext): boolean
-	local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
-	if BUILD_CONFIG.ENERGY_ENABLED and energy < energyCost then
-		context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
-		return false
-	end
-	return true
-end)
-
--- the wall itself is the server's to make, what it sounds like doesn't have to wait for it
-builder:Fire(bindings.Rise, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
-	return { Sound = ForceField.Sound }
-end)
-
-return builder:Build()
+return AbilityBuilder
+	.newClient(layout)
+	-- the server has the last word on the energy, a wall it's sure to turn down isn't started on
+	:Guard(
+		bindings.Cast,
+		function(context: ClientContext): boolean
+			local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
+			if BUILD_CONFIG.ENERGY_ENABLED and energy < energyCost then
+				context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
+				return false
+			end
+			return true
+		end
+	)
+	-- the wall itself is the server's to make, what it sounds like doesn't have to wait for it
+	:Fire(
+		bindings.Rise,
+		ClientVFXDefinition.Sound,
+		function(): ClientVFXType.Sound
+			return { Sound = ForceField.Sound }
+		end
+	)
+	:Build()

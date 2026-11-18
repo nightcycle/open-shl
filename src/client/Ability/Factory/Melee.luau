@@ -37,55 +37,59 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 	local powerRes = PowerDefinition.get(layout.Id)
 	assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 	local energyCost = powerRes.Value.EnergyCost
-	local builder = AbilityBuilder.newClient(layout)
+	local builder = AbilityBuilder
+		.newClient(layout)
+		:Run(bindings.Hold, ClientVFXDefinition.Prop, function(context: ClientContext): ClientVFXType.Prop
+			local prop = table.clone(shared.Prop)
+			prop.Color = context.Color or prop.Color
+			return prop
+		end)
+		-- the server has the last word on the energy, a swing it's sure to turn down isn't started on
+		:Guard(
+			bindings.Swing,
+			function(context: ClientContext): boolean
+				local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
+				if BUILD_CONFIG.ENERGY_ENABLED and energy < energyCost then
+					context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
+					return false
+				end
+				return true
+			end
+		)
+		:Fire(bindings.Swing, ClientVFXDefinition.AnimationOnce, function(): ClientVFXType.AnimationOnce
+			return { Animation = config.SwingAnimations[Rng:NextInteger(1, #config.SwingAnimations)] }
+		end)
+		:While(bindings.Sweep, function(context: ClientContext)
+			local limb = context.Character:FindFirstChild(shared.Prop.Limb)
+			if not limb or not limb:IsA("BasePart") then
+				return function() end
+			end
+			return context.VFX.start(Hitbox, {
+				Part = limb,
+				Size = shared.HitboxSize,
+				Offset = shared.HitboxOffset,
+				OnHit = function(target: Model)
+					context.raise(bindings.Hit, { Target = target })
+				end,
+			}).Stop
+		end)
 
-	builder:Run(bindings.Hold, ClientVFXDefinition.Prop, function(context: ClientContext): ClientVFXType.Prop
-		local prop = table.clone(shared.Prop)
-		prop.Color = context.Color or prop.Color
-		return prop
-	end)
+	-- not every weapon is drawn with a flourish or heard as it's swung
 	local drawAnimation = config.DrawAnimation
 	if drawAnimation then
 		local function getProps(): ClientVFXType.AnimationOnce
 			return { Animation = drawAnimation :: AnimationKey }
 		end
-		builder:Fire(bindings.Draw, ClientVFXDefinition.AnimationOnce, getProps)
-		builder:Fire(bindings.Sheathe, ClientVFXDefinition.AnimationOnce, getProps)
+		builder = builder
+			:Fire(bindings.Draw, ClientVFXDefinition.AnimationOnce, getProps)
+			:Fire(bindings.Sheathe, ClientVFXDefinition.AnimationOnce, getProps)
 	end
-
-	-- the server has the last word on the energy, a swing it's sure to turn down isn't started on
-	builder:Guard(bindings.Swing, function(context: ClientContext): boolean
-		local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
-		if BUILD_CONFIG.ENERGY_ENABLED and energy < energyCost then
-			context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
-			return false
-		end
-		return true
-	end)
-	builder:Fire(bindings.Swing, ClientVFXDefinition.AnimationOnce, function(): ClientVFXType.AnimationOnce
-		return { Animation = config.SwingAnimations[Rng:NextInteger(1, #config.SwingAnimations)] }
-	end)
 	local swingSound = shared.SwingSound
 	if swingSound then
-		builder:Fire(bindings.Swing, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+		builder = builder:Fire(bindings.Swing, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
 			return { Sound = swingSound :: VFXAssetDefinition.SoundKey }
 		end)
 	end
-
-	builder:While(bindings.Sweep, function(context: ClientContext)
-		local limb = context.Character:FindFirstChild(shared.Prop.Limb)
-		if not limb or not limb:IsA("BasePart") then
-			return function() end
-		end
-		return context.VFX.start(Hitbox, {
-			Part = limb,
-			Size = shared.HitboxSize,
-			Offset = shared.HitboxOffset,
-			OnHit = function(target: Model)
-				context.raise(bindings.Hit, { Target = target })
-			end,
-		}).Stop
-	end)
 
 	return builder
 end

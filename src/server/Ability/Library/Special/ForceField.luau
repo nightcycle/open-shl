@@ -49,31 +49,37 @@ local power = powerRes.Value
 local colorOpt = PowerDefinition.getColor(power, nil)
 assert(colorOpt.IsSome, `"{layout.Id}" has no color to fall back on`)
 local defaultColor = colorOpt.Value
-local builder = AbilityBuilder.newServer(layout)
-
-builder:Guard(bindings.Cast, function(context: ServerContext): boolean
-	return context.VFX.fire(SpendEnergy, { Amount = power.EnergyCost })
-end)
-
--- the wall goes where the pointer was as the button went down. that's the client's word: a spot out of range is
--- turned down + the cast ends without a wall
-builder:Guard(bindings.Rise, function(context: ServerContext): boolean
-	local aim = context.Aim
-	return aim ~= nil and context.VFX.fire(Reach, { Position = aim.Position, Range = MAX_RANGE })
-end)
-builder:Fire(bindings.Rise, Barrier, function(context: ServerContext): Barrier.Properties
-	local aim = context.Aim :: AbilityType.Aim
-	return {
-		CFrame = getWallCFrame(context.Character, aim.Position),
-		Size = WALL_SIZE,
-		Color = context.Color or defaultColor,
-		Lifetime = WALL_LIFETIME,
-		FadeDuration = WALL_FADE_DURATION,
-	}
-end)
--- the player's own machine lets them hear it right away, this is for everybody else
-builder:FireClient(bindings.Rise, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
-	return { Sound = ForceField.Sound }
-end, { Audience = "Others", Range = SOUND_RANGE })
-
-return builder:Build()
+return AbilityBuilder
+	.newServer(layout)
+	:Guard(bindings.Cast, function(context: ServerContext): boolean
+		return context.VFX.fire(SpendEnergy, { Amount = power.EnergyCost })
+	end)
+	-- the wall goes where the pointer was as the button went down. that's the client's word: a spot out of range is
+	-- turned down + the cast ends without a wall
+	:Guard(
+		bindings.Rise,
+		function(context: ServerContext): boolean
+			local aim = context.Aim
+			return aim ~= nil and context.VFX.fire(Reach, { Position = aim.Position, Range = MAX_RANGE })
+		end
+	)
+	:Fire(bindings.Rise, Barrier, function(context: ServerContext): Barrier.Properties
+		local aim = context.Aim :: AbilityType.Aim
+		return {
+			CFrame = getWallCFrame(context.Character, aim.Position),
+			Size = WALL_SIZE,
+			Color = context.Color or defaultColor,
+			Lifetime = WALL_LIFETIME,
+			FadeDuration = WALL_FADE_DURATION,
+		}
+	end)
+	-- the player's own machine lets them hear it right away, this is for everybody else
+	:FireClient(
+		bindings.Rise,
+		ClientVFXDefinition.Sound,
+		function(): ClientVFXType.Sound
+			return { Sound = ForceField.Sound }
+		end,
+		{ Audience = "Others", Range = SOUND_RANGE }
+	)
+	:Build()

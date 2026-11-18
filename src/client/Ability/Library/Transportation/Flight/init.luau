@@ -28,34 +28,33 @@ assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 local energyCost = powerRes.Value.EnergyCost
 -- the client half of the flight: the avatar is the player's own to move, so what holds it up + pulls it along is
 -- all here, everybody else sees where it ends up
-local builder = AbilityBuilder.newClient(layout)
-
--- the server has the last word on the energy, a flight it's sure to end right away isn't started on
-builder:Guard(bindings.TakeOff, function(context: ClientContext): boolean
-	local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
-	if BUILD_CONFIG.ENERGY_ENABLED and energy < energyCost then
-		context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
-		return false
-	end
-	return true
-end)
-
-builder:Run(bindings.Aloft, ClientVFXDefinition.Hover, function(): ClientVFXType.Hover
-	return { Height = HEIGHT }
-end)
-builder:Run(bindings.Aloft, ClientVFXDefinition.SoundLoop, function(): ClientVFXType.SoundLoop
-	return { Sound = Flight.Config.Sound }
-end)
-
-builder:Run(bindings.Idle, ClientVFXDefinition.Animation, function(): ClientVFXType.Animation
-	return { Animation = "FlightIdle" }
-end)
-
-builder:Run(bindings.Thrust, ClientVFXDefinition.Thrust, function(): ClientVFXType.Thrust
-	return { Power = POWER }
-end)
-builder:Run(bindings.Thrust, ClientVFXDefinition.Animation, function(): ClientVFXType.Animation
-	return { Animation = "FlightMovement" }
-end)
-
-return builder:Build()
+return AbilityBuilder
+	.newClient(layout)
+	-- the server has the last word on the energy, a flight it's sure to end right away isn't started on
+	:Guard(
+		bindings.TakeOff,
+		function(context: ClientContext): boolean
+			local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
+			if BUILD_CONFIG.ENERGY_ENABLED and energy < energyCost then
+				context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
+				return false
+			end
+			return true
+		end
+	)
+	:Run(bindings.Aloft, ClientVFXDefinition.Hover, function(): ClientVFXType.Hover
+		return { Height = HEIGHT }
+	end)
+	:Run(bindings.Aloft, ClientVFXDefinition.SoundLoop, function(): ClientVFXType.SoundLoop
+		return { Sound = Flight.Config.Sound }
+	end)
+	:Run(bindings.Idle, ClientVFXDefinition.Animation, function(): ClientVFXType.Animation
+		return { Animation = "FlightIdle" }
+	end)
+	:Run(bindings.Thrust, ClientVFXDefinition.Thrust, function(): ClientVFXType.Thrust
+		return { Power = POWER }
+	end)
+	:Run(bindings.Thrust, ClientVFXDefinition.Animation, function(): ClientVFXType.Animation
+		return { Animation = "FlightMovement" }
+	end)
+	:Build()
