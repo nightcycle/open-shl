@@ -59,6 +59,7 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 		:While(bindings.Sweep, function(context: ClientContext)
 			-- somebody two of the boxes run into is still only told of once
 			local targets: { [Model]: true } = {}
+			local targetCount = 0
 			local handles: { VFXType.Handle } = {}
 			for _, hitbox in shared.Hitboxes do
 				local limb = context.Character:FindFirstChild(hitbox.Limb)
@@ -72,8 +73,10 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 						Size = hitbox.Size,
 						Offset = hitbox.Offset,
 						OnHit = function(target: Model)
-							if not targets[target] then
+							-- a swing that's had its fill of them goes through whoever else is in the way
+							if not targets[target] and targetCount < (shared.MaxTargets or math.huge) then
 								targets[target] = true
+								targetCount += 1
 								context.raise(bindings.Hit, { Target = target })
 							end
 						end,
@@ -93,6 +96,16 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 			ClientVFXDefinition.Prop,
 			function(context: ClientContext): ClientVFXType.Prop
 				return MeleeFactory.getProp(prop, context.Color)
+			end
+		)
+	end
+	local streaks: { ClientVFXType.Streak } = shared.Streaks or {}
+	for _, streak in streaks do
+		builder = builder:Run(
+			bindings.Hold,
+			ClientVFXDefinition.Streak,
+			function(context: ClientContext): ClientVFXType.Streak
+				return MeleeFactory.getStreak(streak, context.Color)
 			end
 		)
 	end

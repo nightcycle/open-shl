@@ -46,6 +46,16 @@ Module.new = function(ability: MeleeFactory.Ability): AbilityBuilder.ServerBuild
 			if not hit or targets[hit.Target] or not hit.Target:FindFirstChildWhichIsA("Humanoid") then
 				return false
 			end
+			-- a swing that's had its fill of them takes no more, whatever the client makes of it
+			if shared.MaxTargets then
+				local targetCount = 0
+				for _ in targets do
+					targetCount += 1
+				end
+				if targetCount >= shared.MaxTargets then
+					return false
+				end
+			end
 			targets[hit.Target] = true
 			return context.VFX.fire(Reach, {
 				Position = hit.Target:GetPivot().Position,
@@ -66,6 +76,17 @@ Module.new = function(ability: MeleeFactory.Ability): AbilityBuilder.ServerBuild
 			ClientVFXDefinition.Prop,
 			function(context: ServerContext): ClientVFXType.Prop
 				return MeleeFactory.getProp(prop, context.Color)
+			end,
+			{ Audience = "Others" }
+		)
+	end
+	local streaks: { ClientVFXType.Streak } = shared.Streaks or {}
+	for _, streak in streaks do
+		builder = builder:RunClient(
+			bindings.Hold,
+			ClientVFXDefinition.Streak,
+			function(context: ServerContext): ClientVFXType.Streak
+				return MeleeFactory.getStreak(streak, context.Color)
 			end,
 			{ Audience = "Others" }
 		)

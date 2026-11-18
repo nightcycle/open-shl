@@ -16,6 +16,7 @@ type ClientSignal<T> = AbilityType.ClientSignal<T>
 type Layout<B> = AbilityType.Layout<B>
 type SoundKey = VFXAssetDefinition.SoundKey
 type Prop = ClientVFXType.Prop
+type Streak = ClientVFXType.Streak
 -- what the client saw its weapon run into
 export type Hit = {
 	Target: Model,
@@ -49,6 +50,11 @@ export type Config = {
 	-- seconds into the draw the weapon is in the hand, it's seen + heard from then on. at once without
 	DrawDelay: number?,
 	SheatheDelay: number?, -- seconds the weapon stays in the hand once it's put away, none without
+	-- seconds into a swing the weapon starts to count, it's heard then too. at once without
+	SwingDelay: number?,
+	MaxTargets: number?, -- how many a swing hits at most, everybody it runs into without
+	-- the ribbons the limbs leave behind for as long as the weapon is out, each in the color of the weapon. none without
+	Streaks: { Streak }?,
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -68,6 +74,11 @@ local Module = {}
 -- whoever it runs into on the way is hit once
 Module.new = function(id: string, config: Config): Ability
 	local equipped = AbilityCondition.equipped(id)
+	-- a weapon that starts to count late is on its way for what's left of the swing
+	local swingDelay = config.SwingDelay
+	local sweep = if swingDelay
+		then AbilityTrigger.all(AbilityTrigger.always(), AbilityTrigger.active(AbilityCondition.elapsed(swingDelay)))
+		else AbilityTrigger.always()
 	local bindings: Bindings = {
 		Hold = VFXBinding.state({ "Idle", "Swinging" }, AbilityTrigger.active(equipped)),
 		Draw = VFXBinding.event({ "Idle" }, AbilityTrigger.started(equipped)),
@@ -77,7 +88,7 @@ Module.new = function(id: string, config: Config): Ability
 			AbilityTrigger.during(AbilityTrigger.started(AbilityCondition.PRIMARY), AbilityTrigger.active(equipped)),
 			{ To = "Swinging" }
 		),
-		Sweep = VFXBinding.state({ "Swinging" }, AbilityTrigger.always()),
+		Sweep = VFXBinding.state({ "Swinging" }, sweep),
 		Hit = VFXBinding.signal({ "Swinging" }, "Client", isHit) :: ClientSignal<Hit>,
 		Recover = VFXBinding.event({ "Swinging" }, AbilityTrigger.after(config.Duration), { To = "Idle" }),
 	}
@@ -90,6 +101,17 @@ Module.new = function(id: string, config: Config): Ability
 		table.insert(props, table.freeze(timedProp))
 	end
 	out.Props = table.freeze(props)
+	-- what a weapon leaves behind is there for as long as the weapon is
+	if config.Streaks then
+		local streaks: { Streak } = {}
+		for _, streak in config.Streaks do
+			local timedStreak = table.clone(streak)
+			timedStreak.Delay = config.DrawDelay
+			timedStreak.Linger = config.SheatheDelay
+			table.insert(streaks, table.freeze(timedStreak))
+		end
+		out.Streaks = table.freeze(streaks)
+	end
 	out.Hitboxes = table.freeze(table.clone(config.Hitboxes))
 	return table.freeze({
 		Layout = VFXBinding.layout(id, "Idle", true, bindings),
@@ -104,7 +126,15 @@ Module.getProp = function(prop: Prop, color: Color3?): Prop
 	return out
 end
 
--- what's heard at which binding, for the ones the ability has a sound for. the draw is heard as the weapon shows
+-- one of the ribbons as every machine shows it: in the color the character wears the ability in
+Module.getStreak = function(streak: Streak, color: Color3?): Streak
+	local out = table.clone(streak)
+	out.Color = color or streak.Color
+	return out
+end
+
+-- what's heard at which binding, for the ones the ability has a sound for. the draw is heard as the weapon shows + the
+-- swing as it starts to count
 Module.getSounds = function(ability: Ability): { [EventBinding]: ClientVFXType.Sound }
 	local bindings = ability.Layout.Bindings
 	local config = ability.Config
@@ -116,7 +146,7 @@ Module.getSounds = function(ability: Ability): { [EventBinding]: ClientVFXType.S
 		sounds[bindings.Sheathe] = table.freeze({ Sound = config.SheatheSound })
 	end
 	if config.SwingSound then
-		sounds[bindings.Swing] = table.freeze({ Sound = config.SwingSound })
+		sounds[bindings.Swing] = table.freeze({ Sound = config.SwingSound, Delay = config.SwingDelay })
 	end
 	return sounds
 end
