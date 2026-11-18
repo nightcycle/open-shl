@@ -10,12 +10,19 @@ local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 export type Properties = {
 	Target: Model,
 	Velocity: Vector3, -- studs a second it's sent off at
+	Duration: number?, -- seconds it's kept at that pace, a push that's over at once without
+	MaxForce: Vector3?, -- what keeps it at that pace may push with, along every axis. as much as it takes without
+	Power: number?, -- how hard what keeps it at that pace goes after it, the mover's own without
 }
 -- Constants
 local isProperties = Type.strictInterface({
 	Target = Type.instanceIsA("Model"),
 	Velocity = AbilityType.FiniteVector3,
+	Duration = Type.optional(Type.numberConstrained(0, 5)),
+	MaxForce = Type.optional(AbilityType.FiniteVector3),
+	Power = Type.optional(Type.numberPositive),
 })
+local VELOCITY_NAME = "ShoveVelocity"
 -- seconds a story slides the target for + seconds until it's put back
 local STORY_SLIDE_DURATION = 0.25
 local STORY_RESET_DELAY = 1
@@ -52,6 +59,21 @@ return ServerVFX.newEvent("Shove", isProperties, function(props: Properties): ni
 		end)
 		return nil
 	end
-	rootPart.AssemblyLinearVelocity = props.Velocity
+	local duration = props.Duration
+	if not duration or duration <= 0 then
+		rootPart.AssemblyLinearVelocity = props.Velocity
+		return nil
+	end
+	-- a mover that's deprecated on purpose, as the one that hoists is: made by the server + worked out by whoever
+	-- moves the character, so it carries a player off just the same
+	local bodyVelocity = Instance.new("BodyVelocity")
+	bodyVelocity.Name = VELOCITY_NAME
+	bodyVelocity.MaxForce = props.MaxForce or Vector3.one * math.huge
+	bodyVelocity.P = props.Power or bodyVelocity.P
+	bodyVelocity.Velocity = props.Velocity
+	bodyVelocity.Parent = rootPart
+	task.delay(duration, function()
+		bodyVelocity:Destroy()
+	end)
 	return nil
 end)
