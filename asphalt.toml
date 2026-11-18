@@ -266,3 +266,4 @@ output_path = "Generated"
 "shl3/ability/right-slash.rbxm" = { id = 2119738227 }
 "shl3/ability/sheathing.rbxm" = { id = 2119712753 }
 "shl3/ability/strike.rbxm" = { id = 2219387164 }
+"shl3/transition/spin.rbxm" = { id = 2219394134 }
