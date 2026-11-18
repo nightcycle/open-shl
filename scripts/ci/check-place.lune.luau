@@ -1,12 +1,13 @@
 --!strict
--- reads a built place for what should never ship in one. whether it boots is checked by hand in studio, this only goes
--- by what's in the file
+-- reads a built place for what should never ship in one + for what its map has to hold. whether it boots is checked
+-- by hand in studio, this only goes by what's in the file
 -- Services
 local fs = require("@lune/fs")
 local process = require("@lune/process")
 local roblox = require("@lune/roblox")
 -- Packages
 -- Modules
+local game = require("../modules/game")
 -- Types
 type SourceRule = { name: string, pattern: string }
 -- Constants
@@ -39,6 +40,18 @@ local SOURCE_RULES: { SourceRule } = {
 	{ name = "getfenv", pattern = "%f[%w_]getfenv%f[^%w_]" },
 	{ name = "loadstring", pattern = "%f[%w_]loadstring%f[^%w_]" },
 }
+-- where a place says which game it is + which tags of its map the server runs, each with the class that wears it
+local BUILD_CONFIG_PATH = "ReplicatedStorage/Generated/BUILD_CONFIG"
+local GAME_PATTERN = '%f[%w_]GAME%s*=%s*"([^"]*)"'
+local MAP_DEFINITION_PATH = "ServerScriptService/Server/Definition/Map"
+local TAG_PATTERN = 'newTag%(%s*"([^"]+)"%s*,%s*"([^"]+)"%s*%)'
+-- the tags the map of a game can't go without. one that lost them all still builds + boots, whatever they ran is just
+-- not there. a game that isn't built yet has none
+local NEEDED_TAGS: { [game.GameId]: { string } } = {
+	shl1 = {},
+	shl2 = { "StreetLamp", "NightWindows", "Uniform", "Hazard", "Beacon", "Gate", "Reactor", "Colorizer", "Rebuilt" },
+	shl3 = {},
+}
 -- Variables
 -- References
 -- Private Functions
@@ -64,6 +77,21 @@ local function getIfInside(fullName: string, paths: { string }): boolean
 		end
 	end
 	return false
+end
+
+local function getSource(place: roblox.DataModel, path: string): string?
+	local current: roblox.Instance = place
+	for _, name in path:split(PATH_DELIMITER) do
+		local child = current:FindFirstChild(name)
+		if child == nil then
+			return nil
+		end
+		current = child
+	end
+	if not current:IsA("LuaSourceContainer") then
+		return nil
+	end
+	return (current :: any).Source
 end
 
 -- a service can be renamed, its class can't
@@ -110,6 +138,55 @@ local function getMapFailures(place: roblox.DataModel): { string }
 	end
 	return {}
 end
+
+-- the server finds what it runs in a map by its tags. one on the wrong class is skipped with a warning + one that's
+-- on nothing at all is never missed, so neither shows up in a boot
+local function getTagFailures(place: roblox.DataModel): { string }
+	local gameId = (getSource(place, BUILD_CONFIG_PATH) or ""):match(GAME_PATTERN)
+	local neededTags: { string }? = nil
+	for id, tags in NEEDED_TAGS do
+		if id == gameId then
+			neededTags = tags
+		end
+	end
+	if gameId == nil or neededTags == nil then
+		return { `"{BUILD_CONFIG_PATH}" doesn't say which game this is` }
+	end
+	local classNames: { [string]: string } = {}
+	for name, className in (getSource(place, MAP_DEFINITION_PATH) or ""):gmatch(TAG_PATTERN) do
+		classNames[name] = className
+	end
+	if next(classNames) == nil then
+		return { `"{MAP_DEFINITION_PATH}" doesn't say which tags the server runs` }
+	end
+
+	local failures: { string } = {}
+	local isWorn: { [string]: true } = {}
+	local workspace = place:FindFirstChildOfClass("Workspace")
+	local descendants: { roblox.Instance } = if workspace then workspace:GetDescendants() else {}
+	for _, desc in descendants do
+		for _, tag in desc:GetTags() do
+			local className = classNames[tag]
+			if className == nil then
+				continue
+			end
+			if desc:IsA(className) then
+				isWorn[tag] = true
+			else
+				local fullName = getFullName(place, desc)
+				table.insert(failures, `{desc.ClassName} "{fullName}" is tagged "{tag}" but isn't a {className}`)
+			end
+		end
+	end
+	for _, tag in neededTags do
+		if classNames[tag] == nil then
+			table.insert(failures, `{gameId} needs the tag "{tag}", which "{MAP_DEFINITION_PATH}" doesn't have`)
+		elseif not isWorn[tag] then
+			table.insert(failures, `{gameId} needs the tag "{tag}", which nothing in the workspace wears`)
+		end
+	end
+	return failures
+end
 -- Class
 do
 	local placePath = parseArgs(process.args)
@@ -117,7 +194,8 @@ do
 	local place = roblox.deserializePlace(fs.readFile(placePath))
 
 	local count = 0
-	for _, failures in { getCSGFailures(place), getScriptFailures(place), getMapFailures(place) } do
+	local checks = { getCSGFailures(place), getScriptFailures(place), getMapFailures(place), getTagFailures(place) }
+	for _, failures in checks do
 		for _, failure in failures do
 			count += 1
 			print(failure)
