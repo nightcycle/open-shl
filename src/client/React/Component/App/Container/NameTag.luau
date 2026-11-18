@@ -114,6 +114,8 @@ local function useIsBioShown(character: Model?, bio: string): boolean
 	local isSeenRef = React.useRef(false)
 	React.useEffect(function()
 		local timing = BIO_TIMING
+		-- whatever was being read was on the avatar before this one
+		setIsShown(false)
 		if not timing or not character or bio == "" then
 			return function() end
 		end
@@ -145,7 +147,6 @@ local function useIsBioShown(character: Model?, bio: string): boolean
 			if swapThread then
 				task.cancel(swapThread)
 			end
-			setIsShown(false)
 		end
 	end, { character :: any, bio })
 	return isShown
