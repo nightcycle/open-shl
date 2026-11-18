@@ -1,0 +1,101 @@
+--!strict
+-- Services
+-- Packages
+-- Modules
+local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+-- Types
+local GameType = require("@game/ReplicatedStorage/Shared/Type/Game")
+export type GameId = GameType.GameId
+export type Features = GameType.Features
+export type Loaders<V> = GameType.Loaders<V>
+export type Tuning<V> = GameType.Tuning<V>
+-- Constants
+-- every place is this code built for one game, which one is baked in the way its mode is
+local ID: GameId = BUILD_CONFIG.GAME
+assert(GameType.GameId(ID))
+-- a game that isn't built yet has the row that's planned for it
+local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freeze({
+	shl1 = table.freeze({
+		Residences = false,
+		Quests = false,
+		Tutorial = false,
+		Music = false,
+		Uniforms = false,
+		CustomServers = false,
+		Teams = false,
+		Jobs = false,
+		Props = false,
+		PrivateServerToggle = false,
+	}),
+	-- the game all of it was written for: what's on is what ran before there was a second one
+	shl2 = table.freeze({
+		Residences = true,
+		Quests = true,
+		Tutorial = true,
+		Music = true,
+		Uniforms = true,
+		CustomServers = true,
+		Teams = false,
+		Jobs = false,
+		Props = false,
+		PrivateServerToggle = false,
+	}),
+	shl3 = table.freeze({
+		Residences = true,
+		Quests = false,
+		Tutorial = false,
+		Music = false,
+		Uniforms = true,
+		CustomServers = false,
+		Teams = true,
+		Jobs = true,
+		Props = true,
+		PrivateServerToggle = true,
+	}),
+})
+-- Variables
+-- References
+-- Private Functions
+-- the checker takes a field that's looked up by the id for anything at all, so the three are spelt out
+local function get<V>(shl1: V, shl2: V, shl3: V): V
+	if ID == "shl1" then
+		return shl1
+	elseif ID == "shl2" then
+		return shl2
+	elseif ID == "shl3" then
+		return shl3
+	end
+	error(`no game "{ID}"`)
+end
+-- Class
+-- the id is in from the start, as a field that's assigned afterwards the checker only knows it for a string
+local Module = {
+	ID = ID,
+}
+
+for id, features in FEATURES :: { [string]: Features } do
+	assert(GameType.GameId(id))
+	assert(GameType.Features(features))
+end
+
+-- what the game this place is built for runs
+Module.FEATURES = get(FEATURES.shl1, FEATURES.shl2, FEATURES.shl3)
+
+-- the entry of the game this place is built for. what the other games have is never required, so none of it runs +
+-- nothing of theirs waits on a library this place doesn't mount. a game that's left out is a type error
+Module.pick = function<V>(loaders: Loaders<V>): V
+	-- a game there isn't is one the checker lets through
+	assert(GameType.Loaders(loaders))
+	local load = get(loaders.shl1, loaders.shl2, loaders.shl3)
+	return load()
+end
+
+-- a value every game shares unless it has one of its own
+Module.tune = function<V>(default: V, own: Tuning<V>): V
+	-- every field is optional, so the checker lets a misspelt game through
+	assert(GameType.Tuning(own))
+	local value = get(own.shl1, own.shl2, own.shl3)
+	return if value ~= nil then value else default
+end
+
+return Module
