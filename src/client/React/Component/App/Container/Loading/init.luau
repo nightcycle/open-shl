@@ -4,8 +4,9 @@
 local ContentProvider = game:GetService("ContentProvider")
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
+local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
-local Image = require("@game/ReplicatedStorage/Generated/Image")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
@@ -15,6 +16,9 @@ local useSignalState = require("@game/StarterPlayer/StarterPlayerScripts/Client/
 -- Contexts
 -- Types
 export type Properties = {}
+-- a folder of asset/image: its files by name, its folders the same way. the checker has no type that takes both in
+-- one table, so it's held to that when it's picked
+type ImageGroup = { [string]: any }
 -- Constants
 local BATCH_SIZE = 8
 -- how much of the bar belongs to the session, the images share the rest
@@ -23,12 +27,25 @@ local SESSION_SHARE = 0.2
 local TIME_CAP = 15
 -- how long the full bar stays up
 local HOLD_DURATION = 1
+-- what's loaded ahead is the art of the game that's built, the groups of another game are never required
+local IMAGE_GROUPS: { ImageGroup } = GameDefinition.pick({
+	shl1 = function(): { ImageGroup }
+		error(`shl1 has no images yet`)
+	end,
+	shl2 = function(): { ImageGroup }
+		return require("@self/SHL2")
+	end,
+	shl3 = function(): { ImageGroup }
+		error(`shl3 has no images yet`)
+	end,
+})
+assert(Type.array(Type.map(Type.string, Type.union(Type.string, Type.table)))(IMAGE_GROUPS))
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
 
-local function insertImages(out: { string }, group: { [string]: any })
+local function insertImages(out: { string }, group: ImageGroup)
 	for _, value in group do
 		if type(value) == "string" then
 			table.insert(out, value)
@@ -40,7 +57,9 @@ end
 
 local function listImages(): { string }
 	local out: { string } = {}
-	insertImages(out, Image :: any)
+	for _, group in IMAGE_GROUPS do
+		insertImages(out, group)
+	end
 	table.sort(out)
 	table.freeze(out)
 	return out
