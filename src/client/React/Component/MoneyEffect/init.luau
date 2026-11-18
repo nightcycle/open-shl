@@ -19,7 +19,7 @@ export type Properties = CurrencyPopupTypes.Properties
 type Gain = {
 	Id: number,
 	Amount: number,
-	Offset: Vector2, -- how far off the middle of the screen it comes up, in scale of it
+	Position: UDim2, -- where it comes up: off the middle of the screen by a little
 	Rotation: number, -- the tilt it comes up at, in degrees
 	Spin: number, -- how much further it turns on its way out
 }
@@ -96,7 +96,8 @@ local function gainLabel(props: {
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 1,
 		FontFace = props.FontFace,
-		Position = UDim2.fromScale(0.5 + gain.Offset.X, 0.5 + gain.Offset.Y),
+		-- the same value on every render, one that's made anew could put it back where it started
+		Position = gain.Position,
 		Rotation = gain.Rotation,
 		Size = UDim2.fromOffset(10, 10),
 		Text = `${gain.Amount}`,
@@ -130,7 +131,10 @@ return function(props: Properties): React.ReactNode
 		local gain: Gain = table.freeze({
 			Id = nextIdRef.current,
 			Amount = credits - baseline,
-			Offset = Vector2.new(getRandom(random, MAX_OFFSET) / 100, getRandom(random, MAX_OFFSET) / 100),
+			Position = UDim2.fromScale(
+				0.5 + getRandom(random, MAX_OFFSET) / 100,
+				0.5 + getRandom(random, MAX_OFFSET) / 100
+			),
 			Rotation = getRandom(random, MAX_ROTATION),
 			Spin = getRandom(random, MAX_SPIN),
 		})
