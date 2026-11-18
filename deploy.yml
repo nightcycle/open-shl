@@ -41,3 +41,23 @@ universes:
         env:
           MODE: private-server
 
+  shl3:
+    universe_id: 0 # built with the rest, published by none until its saves can be brought over
+    api_key_env: PUBLISH_ROBLOX_API_KEY
+    env:
+      GAME: shl3
+      PROJECT_NAME: superhero-life-3
+      MAP: valor-city
+      # this game has no energy + no quests, a power only ever waits out its cooldown
+      ENERGY_ENABLED: false
+      QUESTS_ENABLED: false
+    places:
+      # the place players land in. a private server is roblox's own here, there's no third place for one
+      root: # the legacy game had it at 2015093382
+        place_id: 0
+        env:
+          MODE: combat
+      roleplay: # the legacy game had it at 2466832220
+        place_id: 0
+        env:
+          MODE: roleplay
