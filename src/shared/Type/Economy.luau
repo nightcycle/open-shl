@@ -75,6 +75,37 @@ Types.ProductDefinition = Type.strictInterface({
 	LegacyPriceText = Type.string,
 })
 
+-- what a player is handed for coming back, the interval is the seconds between two of them
+export type DailyReward = {
+	Currency: Currency,
+	Amount: number,
+	Interval: number,
+}
+Types.DailyReward = Type.strictInterface({
+	Currency = Types.Currency,
+	Amount = Type.intersection(Type.integer, Type.numberPositive),
+	Interval = Type.numberPositive,
+})
+
+-- what a game sells + what it gives away: its products, what its currencies go by, how many characters a player keeps
+-- without the pass + how many more with it, what a new player starts on
+export type ProductCatalogue = {
+	Definitions: { ProductDefinition },
+	CurrencyNames: { [Currency]: string },
+	DefaultCharacterSlotCount: number,
+	ExtraCharacterSlotCount: number,
+	StartingBalances: Balances,
+	DailyReward: DailyReward,
+}
+Types.ProductCatalogue = Type.strictInterface({
+	Definitions = Type.array(Types.ProductDefinition),
+	CurrencyNames = Type.map(Types.Currency, Type.string),
+	DefaultCharacterSlotCount = Type.intersection(Type.integer, Type.numberPositive),
+	ExtraCharacterSlotCount = Type.intersection(Type.integer, Type.numberMin(0)),
+	StartingBalances = Types.Balances,
+	DailyReward = Types.DailyReward,
+})
+
 -- what the engine hands the server once a developer product is paid for, only the fields that are read
 export type Receipt = {
 	PurchaseId: string,

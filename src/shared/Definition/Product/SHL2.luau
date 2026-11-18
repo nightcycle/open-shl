@@ -1,19 +1,14 @@
 --!strict
 -- Services
 -- Packages
-local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
-local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
-local Result = TypeUnionLib.Result
 -- Modules
-local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
-type Result<V, E> = TypeUnionLib.Result<V, E>
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
-export type ProductDefinition = EconomyType.ProductDefinition
-export type ShopTab = EconomyType.ShopTab
-export type EntitlementKey = EconomyType.EntitlementKey
 type Balances = EconomyType.Balances
+type DailyReward = EconomyType.DailyReward
+type ProductCatalogue = EconomyType.ProductCatalogue
+type ProductDefinition = EconomyType.ProductDefinition
 -- Constants
 -- ids are from the old place, swap once the products are re-created
 local LEGACY_DEVELOPER_PRODUCT_IDS = table.freeze({
@@ -45,10 +40,10 @@ local STARTING_BALANCES: Balances = table.freeze({
 	Credits = 500,
 	Gems = 0,
 })
-local DAILY_REWARD = table.freeze({
-	CURRENCY = PseudoEnum.Currency.Gems,
-	AMOUNT = 5,
-	INTERVAL = 24 * 60 * 60,
+local DAILY_REWARD: DailyReward = table.freeze({
+	Currency = PseudoEnum.Currency.Gems,
+	Amount = 5,
+	Interval = 24 * 60 * 60,
 })
 -- the price text is what a card shows until the live price is known
 local DEFINITIONS: { ProductDefinition } = {
@@ -173,66 +168,16 @@ local DEFINITIONS: { ProductDefinition } = {
 		LegacyPriceText = "300 R$",
 	},
 }
-TableUtil.deepFreeze(DEFINITIONS)
+local CATALOGUE: ProductCatalogue = {
+	Definitions = DEFINITIONS,
+	CurrencyNames = CURRENCY_NAMES,
+	DefaultCharacterSlotCount = DEFAULT_CHARACTER_SLOT_COUNT,
+	ExtraCharacterSlotCount = EXTRA_CHARACTER_SLOT_COUNT,
+	StartingBalances = STARTING_BALANCES,
+	DailyReward = DAILY_REWARD,
+}
 -- Variables
 -- References
 -- Private Functions
 -- Class
-local Module = {}
-
-Module.STARTING_BALANCES = STARTING_BALANCES
-Module.DAILY_REWARD = DAILY_REWARD
-
-Module.getCurrencyName = function(currency: PseudoEnum.Currency): string
-	return CURRENCY_NAMES[currency]
-end
-
-Module.getPowerLimit = function(entitlements: { EntitlementKey }): number
-	return if table.find(entitlements, "FifthPower") then PowerDefinition.PASS_LIMIT else PowerDefinition.DEFAULT_LIMIT
-end
-
-Module.getCharacterSlotCount = function(entitlements: { EntitlementKey }): number
-	if table.find(entitlements, "ExtraCharacterSlots") then
-		return DEFAULT_CHARACTER_SLOT_COUNT + EXTRA_CHARACTER_SLOT_COUNT
-	end
-	return DEFAULT_CHARACTER_SLOT_COUNT
-end
-
-Module.getIfGamePass = function(definition: ProductDefinition): boolean
-	return definition.Grant.Type == "Entitlement"
-end
-
-Module.get = function(id: string): Result<ProductDefinition, string>
-	for _, definition in DEFINITIONS do
-		if definition.Id == id then
-			return Result.ok(definition)
-		end
-	end
-	return Result.err(`no product "{id}"`)
-end
-
--- a game pass + a developer product can carry the same number, so which of the two is meant comes with it
-Module.getFromLegacyId = function(legacyId: number, isGamePass: boolean): Result<ProductDefinition, string>
-	for _, definition in DEFINITIONS do
-		if definition.LegacyId == legacyId and Module.getIfGamePass(definition) == isGamePass then
-			return Result.ok(definition)
-		end
-	end
-	return Result.err(`no {if isGamePass then "game pass" else "developer product"} {legacyId}`)
-end
-
-Module.list = function(tab: ShopTab?): { ProductDefinition }
-	local out = {}
-	for _, definition in DEFINITIONS do
-		if tab ~= nil then
-			if tab ~= definition.Tab then
-				continue
-			end
-		end
-		table.insert(out, definition)
-	end
-	table.freeze(out)
-	return out
-end
-
-return Module
+return CATALOGUE
