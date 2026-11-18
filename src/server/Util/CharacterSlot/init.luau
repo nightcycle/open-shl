@@ -3,7 +3,6 @@
 local HttpService = game:GetService("HttpService")
 -- Packages
 -- Modules
-local CharacterConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 -- Types
@@ -13,6 +12,8 @@ type Character = CharacterType.Character
 type Starters = {
 	-- each the way it's kept, under an id everybody would share
 	List: () -> { Character },
+	-- what a slot that's added later holds, under an id everybody would share
+	New: () -> Character,
 }
 -- Constants
 -- what a new player starts out with is the game's own. the starters of another game are never required, so the data
@@ -25,7 +26,7 @@ local STARTERS: Starters = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): Starters
-		error(`shl3 has no starter characters yet`)
+		return require("@self/SHL3")
 	end,
 })
 -- Variables
@@ -39,7 +40,7 @@ end
 local Util = {}
 
 function Util.newBlank(): Character
-	return FreezeUtil.delta(CharacterConstructor.new(), function(t: Character): Character
+	return FreezeUtil.delta(STARTERS.New(), function(t: Character): Character
 		t.Id = newId()
 		return t
 	end)

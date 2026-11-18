@@ -1,0 +1,104 @@
+{
+	"Primaries": [
+		{ "Name": "Red", "Color": [196, 40, 28], "Opposite": "Green" },
+		{ "Name": "Gold", "Color": [239, 184, 56], "Opposite": "Violet" },
+		{ "Name": "Green", "Color": [75, 151, 75], "Opposite": "Red" },
+		{ "Name": "Blue", "Color": [13, 105, 172], "Opposite": "Gold" },
+		{ "Name": "Violet", "Color": [107, 50, 124], "Opposite": "Gold" },
+		{ "Name": "Dark", "Color": [16, 16, 16], "Opposite": "Light" },
+		{ "Name": "Light", "Color": [245, 245, 245], "Opposite": "Dark" }
+	],
+	"HairColors": [
+		{ "Name": "Blonde", "Color": [253, 234, 141], "Weight": 2 },
+		{ "Name": "Brunette", "Color": [86, 66, 54], "Weight": 4 },
+		{ "Name": "Black", "Color": [27, 42, 53], "Weight": 3 },
+		{ "Name": "Ginger", "Color": [213, 115, 61], "Weight": 1 }
+	],
+	"SkinColors": [
+		{ "Name": "europe", "Color": [255, 194, 158], "Weight": 3 },
+		{ "Name": "africa", "Color": [63, 48, 39], "Weight": 1 },
+		{ "Name": "south america", "Color": [165, 125, 102], "Weight": 2 },
+		{ "Name": "asia", "Color": [255, 216, 183], "Weight": 1 }
+	],
+	"EyeColors": [
+		{ "Name": "Dark Brown", "Color": [52, 32, 20], "Weight": 3 },
+		{ "Name": "Brown", "Color": [105, 64, 40], "Weight": 3 },
+		{ "Name": "Blue", "Color": [13, 105, 172], "Weight": 3 },
+		{ "Name": "Green", "Color": [75, 151, 75], "Weight": 2 },
+		{ "Name": "Red", "Color": [255, 0, 0], "Weight": 1 }
+	],
+	"PantsColors": [
+		{ "Name": "Beige", "Color": [188, 155, 93] },
+		{ "Name": "Black", "Color": [27, 27, 27] },
+		{ "Name": "Blue", "Color": [0, 32, 96] }
+	],
+	"DetailColors": [
+		{ "Name": "Black", "Color": [17, 17, 17] },
+		{ "Name": "Brown", "Color": [108, 88, 75] },
+		{ "Name": "White", "Color": [231, 231, 236] }
+	],
+	"ShirtColors": [
+		{ "Name": "White", "Color": [0, 0, 0] },
+		{ "Name": "Grey", "Color": [0, 0, 0] },
+		{ "Name": "Black", "Color": [0, 0, 0] },
+		{ "Name": "Red", "Color": [0, 0, 0] },
+		{ "Name": "Green", "Color": [0, 0, 0] }
+	],
+	"Chances": {
+		"OppositeSecondary": 0.49,
+		"FacialHair": 0.15,
+		"Emblem": 0.5,
+		"HeadPiece": 0.25,
+		"Cape": 0.5,
+		"Glasses": 0.15,
+		"Hat": 0.1,
+		"HyphenatedLastName": 0.1,
+		"Title": 0.2,
+		"Suffix": 0.05,
+		"ColorAlias": 0.29
+	},
+	"NeverRolled": ["clothing_shirts_spaghetti-strap-top", "clothing_hats_fedora"],
+	"ForcedPowers": [
+		{ "ItemId": "costume_capes_regular-cape", "PowerId": "transportation_flight" },
+		{ "ItemId": "costume_capes_jetpack", "PowerId": "transportation_flight" },
+		{ "ItemId": "costume_capes_wings", "PowerId": "transportation_flight" },
+		{ "ItemId": "costume_capes_quiver", "PowerId": "ranged_hitscan-bow" }
+	],
+	"PowerKinds": [
+		{ "Name": "Attacks", "Groups": ["basic-melee", "ranged"], "Count": 2 },
+		{ "Name": "Effects", "Groups": ["transportation", "special"], "Count": 2 }
+	],
+	"StarterPowerIds": [
+		"basic-melee_martial-arts",
+		"ranged_hitscan-bow",
+		"basic-melee_claws",
+		"ranged_laser-ray",
+		"ranged_minigun",
+		"basic-melee_dual-katana",
+		"transportation_flight",
+		"transportation_super-speed",
+		"transportation_grapple",
+		"transportation_super-jump"
+	],
+	"FirstNames": ["Alex", "Casey", "Charlie", "Dakota", "Drew", "Dylan", "Erin", "Francis", "Hayden", "Jamie", "Jesse", "Jordan", "Kennedy", "Morgan", "Peyton", "Quinn", "Reagan", "Robin", "Taylor", "Tory", "Val"],
+	"LastNames": ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor", "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin", "Thompson", "Jackson", "White", "Harris", "Martin", "Thompson", "Garcia", "Martinez", "Robinson", "Clark", "Rodriguez", "Lewis", "Lee", "Walker", "Hall", "Allen", "Young", "Hernandez", "King", "Wright", "Lopez", "Hill", "Scott", "Green", "Adams"],
+	"Titles": ["Captain", "Doctor", "Professor", "Their Magesty,", "The"],
+	"Suffixes": ["Esquire", "II", "III", "Sr.", "Jr."],
+	"AliasAdjectives": ["Big", "Captain", "Doctor", "Agent", "Night", "Twilight", "Morning", "Royal", "Solar", "Lunar"],
+	"AliasNouns": ["Avenger", "Crusader", "One", "Ghost", "Spirit", "Titan", "Sparrow", "Assassin", "Wizard", "Eagle", "Spider", "Hawk", "Shadow", "Stranger", "Vindicator", "Slayer", "Phoenix", "Spectre", "Wraith", "Marauder", "Falcon"],
+	"Origins": [
+		"They were sent here from their home planet as a child, and adopted by two Syndicorp Scientists.",
+		"They were born to a wealthy family, and grew up with a silver spoon.",
+		"They were born to a loving family, and had a happy childhood.",
+		"They were born in a war-zone, escaping with their family to the island of Valor City.",
+		"They were created by a Syndicorp scientists as the most advanced human AI yet.",
+		"They were raised by wolves until the age of 10, when they were rescued and brought into human society.",
+		"As a kid they loved to make games on Roblox."
+	],
+	"Motivations": [
+		"Then they sat on a banana and of course that changed their life.",
+		"Then one day they were exposed to a supposedly lethal dose of radiation after stumbling into a Syndicorp Lab.",
+		"Then their brother was oofed by a villain on their birthday.",
+		"Then they were framed for causing an explosion by Syndicorp when one of their experiments went wrong."
+	]
+}

@@ -3,6 +3,7 @@
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 -- Modules
+local CharacterConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character")
 local LegacyDataMigration = require("@game/ServerScriptService/Server/Util/LegacyDataMigration")
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
@@ -36,4 +37,6 @@ end
 -- Class
 return table.freeze({
 	List = list,
+	-- a slot that's added later is an empty one
+	New = CharacterConstructor.new,
 })
