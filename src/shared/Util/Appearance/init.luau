@@ -5,6 +5,7 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 local Future = TypeUnionLib.Future
 -- Modules
+local BodyUtil = require("@self/Body")
 local FaceUtil = require("@self/Face")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local HumanoidDescriptionBuilder = require("@game/ReplicatedStorage/Shared/Builder/HumanoidDescription")
@@ -59,7 +60,7 @@ local function getIfHairShows(appearance: Appearance): boolean
 end
 
 local function clear(rig: Model, skinColor: Color3?, getIfCanceled: () -> boolean): boolean
-	local builder = HumanoidDescriptionBuilder.new()
+	local builder = BodyUtil.describe(HumanoidDescriptionBuilder.new())
 	if skinColor then
 		builder = builder:addBodyColor(skinColor)
 	end
