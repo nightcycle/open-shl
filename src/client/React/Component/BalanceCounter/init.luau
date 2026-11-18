@@ -10,35 +10,31 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 -- Hooks
 -- Contexts
+local StyleContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style")
 -- Types
 export type Properties = RobloxComponents.TextLabelProperties & {
 	Currency: PseudoEnum.Currency,
 	Balance: number,
 }
 -- Constants
-local TEXT_COLORS: { [PseudoEnum.Currency]: Color3 } = table.freeze({
-	Credits = Color3.fromRGB(0, 170, 0),
-	Gems = Color3.fromRGB(255, 0, 0),
-})
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
 -- Class
 return function(props: Properties)
+	local style = React.useContext(StyleContext)
+	local look = style.Widgets.BalanceCounter
+
 	return e(RobloxComponents.TextLabel({
-		BackgroundColor3 = Color3.new(1, 1, 1),
-		BorderColor3 = Color3.new(1, 1, 1),
-		BorderSizePixel = 2,
-		FontFace = Font.new(
-			"rbxasset://fonts/families/SourceSansPro.json",
-			Enum.FontWeight.Bold,
-			Enum.FontStyle.Normal
-		),
+		BackgroundColor3 = look.BackgroundColor3,
+		BorderColor3 = look.BorderColor3,
+		BorderSizePixel = look.BorderSizePixel,
+		FontFace = style.Fonts.Heading,
 		Text = `{props.Balance} {ProductDefinition.getCurrencyName(props.Currency)}`,
-		TextColor3 = TEXT_COLORS[props.Currency],
+		TextColor3 = look.TextColors[props.Currency],
 		TextScaled = true,
-		TextStrokeTransparency = 0,
-		TextXAlignment = Enum.TextXAlignment.Right,
+		TextStrokeTransparency = look.TextStrokeTransparency,
+		TextXAlignment = look.TextXAlignment,
 	}, props))
 end
