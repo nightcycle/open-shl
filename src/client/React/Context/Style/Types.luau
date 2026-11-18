@@ -269,15 +269,25 @@ Types.NameTagLook = Type.strictInterface({
 	})),
 })
 
+export type DialogLook = {
+	-- the bar a button of it is drawn on. left out, a button is a box with the border of the look
+	ButtonImage: string?,
+}
+Types.DialogLook = Type.strictInterface({
+	ButtonImage = Type.optional(Type.string),
+})
+
 -- what a widget of the kit doesn't share with the rest of it, under the name of its component
 export type Widgets = {
 	BalanceCounter: BalanceCounterLook,
+	Dialog: DialogLook,
 	ExitButton: ExitButtonLook,
 	NameTag: NameTagLook,
 	ServerId: ServerIdLook,
 }
 Types.Widgets = Type.strictInterface({
 	BalanceCounter = Types.BalanceCounterLook,
+	Dialog = Types.DialogLook,
 	ExitButton = Types.ExitButtonLook,
 	NameTag = Types.NameTagLook,
 	ServerId = Types.ServerIdLook,

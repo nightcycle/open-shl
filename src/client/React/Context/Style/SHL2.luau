@@ -69,6 +69,8 @@ local STYLE: Style = {
 			TextStrokeTransparency = 0,
 			TextXAlignment = Enum.TextXAlignment.Right,
 		},
+		-- it never had one, what's asked in it stands in a box like any of its panels
+		Dialog = {},
 		ExitButton = {
 			Image = Image.ui["exit.png"],
 			Size = UDim2.fromOffset(40, 40),

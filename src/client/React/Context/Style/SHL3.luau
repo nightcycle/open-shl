@@ -71,6 +71,10 @@ local STYLE: Style = {
 				Gems = ACCENT_COLOR,
 			},
 		},
+		-- the grey bar its yes, no + okay were written on
+		Dialog = {
+			ButtonImage = Image.shl3.ui.common["button-template-3.png"],
+		},
 		ExitButton = {
 			Image = Image.shl3.ui.common["exit.png"],
 			Size = UDim2.fromOffset(40, 40),
