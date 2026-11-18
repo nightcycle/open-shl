@@ -12,6 +12,8 @@ local ToggleFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/To
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 type ClientContext = AbilityType.ClientContext
 -- Constants
+-- what an ability keeps of when it was last turned off
+local FINISH_TIME_KEY = "FinishTime"
 -- Variables
 -- References
 -- Private Functions
@@ -26,7 +28,20 @@ Module.new = function(ability: ToggleFactory.Ability): AbilityBuilder.ClientBuil
 	local powerRes = PowerDefinition.get(layout.Id)
 	assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 	local energyCost = powerRes.Value.EnergyCost
-	return AbilityBuilder.newClient(layout):Guard(bindings.Cast, function(context: ClientContext): boolean
+	local builder = AbilityBuilder.newClient(layout)
+	-- one that has to wait before it's turned on again isn't started on early, the server would only turn it down
+	local cooldown = ability.Config.Cooldown
+	if cooldown then
+		builder = builder
+			:On(bindings.Finish, function(context: ClientContext)
+				context.Record[FINISH_TIME_KEY] = os.clock()
+			end)
+			:Guard(bindings.Cast, function(context: ClientContext): boolean
+				local finishTime = context.Record[FINISH_TIME_KEY] :: number?
+				return finishTime == nil or os.clock() - finishTime >= cooldown
+			end)
+	end
+	return builder:Guard(bindings.Cast, function(context: ClientContext): boolean
 		local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
 		if ModeDefinition.getIfEnergyEnabled() and energy < energyCost then
 			context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
