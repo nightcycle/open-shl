@@ -4,6 +4,7 @@
 -- Modules
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local HumanoidDescriptionBuilder = require("@game/ReplicatedStorage/Shared/Builder/HumanoidDescription")
@@ -15,6 +16,12 @@ type Build = {
 	BodyType: number,
 	Proportion: number,
 }
+-- the color of a body that's bare + the parts of it each category of clothing puts skin on
+type Bare = {
+	Color: Color3,
+	Group: AppearanceType.ItemGroup,
+	Parts: { [string]: { Enum.BodyPart } },
+}
 -- Constants
 local HEAD_NAME = "Head"
 -- the pieces of a game are fitted to the body it builds. a game that names no build has the one a description comes
@@ -22,6 +29,18 @@ local HEAD_NAME = "Head"
 local BUILD: Build? = GameDefinition.tune(nil :: Build?, {
 	-- the plain block body: next to it the one a description comes with has arms a quarter + legs nearly a third longer
 	shl3 = table.freeze({ BodyType = 0, Proportion = 0 }),
+})
+-- where a body with nothing on is a mannequin: its torso + arms are only skin under a shirt, its legs under pants. a
+-- game that names no such color has skin all over
+local BARE: Bare? = GameDefinition.tune(nil :: Bare?, {
+	shl3 = table.freeze({
+		Color = Color3.fromRGB(159, 161, 172),
+		Group = "clothing" :: AppearanceType.ItemGroup,
+		Parts = table.freeze({
+			shirts = table.freeze({ Enum.BodyPart.Torso, Enum.BodyPart.LeftArm, Enum.BodyPart.RightArm }),
+			pants = table.freeze({ Enum.BodyPart.LeftLeg, Enum.BodyPart.RightLeg }),
+		}),
+	}),
 })
 -- the sizes a body can have are the game's own, in a game without any every body is the size it comes in
 local SCALE = CharacterEditorDefinition.SCALE
@@ -53,6 +72,20 @@ local function getScale(appearance: Appearance?): Scale?
 	return SCALE.Default
 end
 
+local function getIfWorn(appearance: Appearance, group: AppearanceType.ItemGroup, category: string): boolean
+	for _, item in appearance.Items do
+		local itemDefIndexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
+		if
+			itemDefIndexRes.IsOk
+			and itemDefIndexRes.Value.Group == group
+			and itemDefIndexRes.Value.Category == category
+		then
+			return true
+		end
+	end
+	return false
+end
+
 -- a head grows with the height of its body + all but keeps its size as the body broadens
 local function getHeadScale(scale: Scale): number
 	return scale.Height * (scale.Width - 0.05) * (0.925 / scale.Width ^ 1.075)
@@ -73,6 +106,23 @@ function Util.describe(builder: Builder, appearance: Appearance?): Builder
 			-- a body is as deep as it's broad
 			:addScale(scale.Width, "Depth")
 			:addScale(getHeadScale(scale), "Head")
+	end
+	return builder
+end
+
+-- the color of a bare body onto the parts of a description no clothing of the look puts skin on. a suit covers them
+-- anyway, the head is skin whatever is worn
+function Util.describeBare(builder: Builder, appearance: Appearance): Builder
+	if not BARE then
+		return builder
+	end
+	for category, bodyParts in BARE.Parts do
+		if getIfWorn(appearance, BARE.Group, category) then
+			continue
+		end
+		for _, bodyPart in bodyParts do
+			builder = builder:addBodyColor(BARE.Color, bodyPart)
+		end
 	end
 	return builder
 end

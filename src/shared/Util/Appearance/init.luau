@@ -65,6 +65,9 @@ local function clear(rig: Model, skinColor: Color3?, appearance: Appearance?, ge
 	if skinColor then
 		builder = builder:addBodyColor(skinColor)
 	end
+	if appearance then
+		builder = BodyUtil.describeBare(builder, appearance)
+	end
 	local desc = builder:build()
 	local f = Future.awaitUntil(RigUtil.applyDescription(rig, desc), getIfCanceled)
 	if f.IsCanceled then
