@@ -62,7 +62,7 @@ local PLAYER: Spec<PlayerSave> = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): Spec<PlayerSave>
-		error(`shl3 has no save yet`)
+		return require("@self/SHL3")
 	end,
 })
 -- Variables
