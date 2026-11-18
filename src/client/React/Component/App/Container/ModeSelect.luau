@@ -6,22 +6,40 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
 local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local ServerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Server")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
-local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ModeSelect")
 -- Hooks
 local useIsMounted = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsMounted")
 -- Contexts
 -- Types
+local ModeSelectTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ModeSelect/Types")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Mode = ServerDefinition.Mode
+type Layout = ModeSelectTypes.Component
 export type Properties = {}
 -- Constants
+-- how the choice is drawn is the game's own, the layout of another game is never required
+local Layout: Layout = GameDefinition.pick({
+	shl1 = function(): Layout
+		error(`shl1 has no mode select yet`)
+	end,
+	shl2 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ModeSelect")
+	end,
+	shl3 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ModePicker")
+	end,
+})
+assert(ModeSelectTypes.Component(Layout))
 -- how long the buttons take to slide off, the choice is acted on once they're gone
-local LEAVE_DURATION = 1
+local LEAVE_DURATION = GameDefinition.tune(1, {
+	-- its cards don't slide anywhere
+	shl3 = 0,
+})
 -- Variables
 -- References
 -- Private Functions
@@ -61,6 +79,11 @@ return function(): React.ReactNode
 		end
 		isBusyRef.current = true
 		setNotice(nil)
+		-- with nothing to wait out the mode of this place is played before anything is drawn as leaving
+		if LEAVE_DURATION == 0 and mode == BUILD_CONFIG.MODE then
+			ShellService:FinishBootPhase("ModeSelect")
+			return
+		end
 		setIsLeaving(true)
 		task.delay(LEAVE_DURATION, function()
 			if not isMountedRef.current then
@@ -101,13 +124,13 @@ return function(): React.ReactNode
 	end
 
 	return e(
-		ModeSelect,
+		Layout,
 		{
 			Size = UDim2.fromScale(1, 1),
 			IsLeaving = isLeaving,
 			Notice = notice,
 			IdNotice = idNotice,
-			OnAction = function(action: ModeSelect.ActionInfo)
+			OnAction = function(action: ModeSelectTypes.ActionInfo)
 				if action.Type == "ModePressed" then
 					selectMode(action.Mode)
 				elseif action.Type == "IdEntered" then
@@ -118,6 +141,6 @@ return function(): React.ReactNode
 					end
 				end
 			end,
-		} :: ModeSelect.Properties
+		} :: ModeSelectTypes.Properties
 	)
 end
