@@ -32,6 +32,8 @@ local isSize = function(value: unknown): (boolean, string?)
 	end
 	return true
 end
+-- studs a line through the world runs at most, nothing an ability lets go gets further
+local MAX_LENGTH = 1000
 
 -- held on the avatar until it's stopped
 export type Animation = {
@@ -328,6 +330,44 @@ Types.Ripple = Type.strictInterface({
 	Lifetime = Type.numberConstrained(0.05, 10),
 	Velocity = Type.optional(isFiniteVector3),
 })
+
+-- a straight line between two spots of the world that's there for a moment
+export type Beam = {
+	Origin: Vector3,
+	Position: Vector3, -- where its far end is
+	Thickness: number,
+	Color: Color3,
+	Material: Enum.Material?, -- it glows without
+	Transparency: number?, -- solid without
+	Lifetime: number, -- seconds until it's gone
+	IsFading: boolean?, -- it thins out over its life, it's there + then it isn't without
+	-- one that's drawn under the key of another of its character takes the place of that one + is gone when it would
+	-- have been: how a beam the server found to end somewhere else is put right
+	Key: string?,
+}
+local isBeam = Type.strictInterface({
+	Origin = isFiniteVector3,
+	Position = isFiniteVector3,
+	Thickness = Type.numberConstrained(0.05, 4),
+	Color = Type.Color3,
+	Material = Type.optional(Type.enum(Enum.Material)),
+	Transparency = Type.optional(Type.numberConstrained(0, 1)),
+	Lifetime = Type.numberConstrained(0.05, 5),
+	IsFading = Type.optional(Type.boolean),
+	Key = Type.optional(Type.string),
+})
+Types.Beam = function(value: unknown): (boolean, string?)
+	local success, msg = isBeam(value)
+	if not success then
+		return false, msg
+	end
+	local beam = value :: Beam
+	local length = (beam.Position - beam.Origin).Magnitude
+	if length > MAX_LENGTH then
+		return false, `a beam within {MAX_LENGTH} studs expected, got one of {length}`
+	end
+	return true
+end
 
 -- limbs of the avatar let bolts fly for as long as it's on, a round of one each at a time
 export type Spray = {

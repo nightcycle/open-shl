@@ -11,6 +11,7 @@ type Implementation = ClientVFX.Implementation
 local IMPLEMENTATIONS: { Implementation } = {
 	require("@self/Animation"),
 	require("@self/AnimationOnce"),
+	require("@self/Beam"),
 	require("@self/Bolt"),
 	require("@self/Cloak"),
 	require("@self/Coat"),
