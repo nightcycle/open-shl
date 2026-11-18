@@ -197,6 +197,11 @@ rules:
     count: 25
     name_attribute: PropId
     tags: [PropPad]
+  # the boombox names a mesh as its texture, which roblox turns down with a warning on every client that gets to see
+  # it. it was never drawn with one, so it goes without
+  - at: Workspace/Map/Items/Boombox/Mesh
+    count: 1
+    contents: { TextureContent: "" }
   - at: Workspace/Map/Jobs/*
     count: 4
     name_attribute: JobId
