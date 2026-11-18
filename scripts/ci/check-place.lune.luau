@@ -40,17 +40,18 @@ local SOURCE_RULES: { SourceRule } = {
 	{ name = "getfenv", pattern = "%f[%w_]getfenv%f[^%w_]" },
 	{ name = "loadstring", pattern = "%f[%w_]loadstring%f[^%w_]" },
 }
--- where a place says which game it is + which tags of its map the server runs, each with the class that wears it
+-- where a place says which game it is + which tags of its map the game runs, each with the class that wears it. the
+-- ones both sides read are declared apart from the ones only the server runs
 local BUILD_CONFIG_PATH = "ReplicatedStorage/Generated/BUILD_CONFIG"
 local GAME_PATTERN = '%f[%w_]GAME%s*=%s*"([^"]*)"'
-local MAP_DEFINITION_PATH = "ServerScriptService/Server/Definition/Map"
+local MAP_DEFINITION_PATHS = { "ReplicatedStorage/Shared/Definition/Map", "ServerScriptService/Server/Definition/Map" }
 local TAG_PATTERN = 'newTag%(%s*"([^"]+)"%s*,%s*"([^"]+)"%s*%)'
 -- the tags the map of a game can't go without. one that lost them all still builds + boots, whatever they ran is just
 -- not there. a game that isn't built yet has none
 local NEEDED_TAGS: { [game.GameId]: { string } } = {
 	shl1 = {},
 	shl2 = { "StreetLamp", "NightWindows", "Uniform", "Hazard", "Beacon", "Gate", "Reactor", "Colorizer", "Rebuilt" },
-	shl3 = { "Beacon" },
+	shl3 = { "Beacon", "Spawn", "PlayArea", "Water", "IntroCamera" },
 }
 -- where a game lists the halves of its abilities, each side in a module that goes by the name of the game. the two
 -- lists are kept by hand + neither side can see the other's, so only a read of both tells that they agree
@@ -171,11 +172,15 @@ local function getTagFailures(place: roblox.DataModel): { string }
 		return { `"{BUILD_CONFIG_PATH}" doesn't say which game this is` }
 	end
 	local classNames: { [string]: string } = {}
-	for name, className in (getSource(place, MAP_DEFINITION_PATH) or ""):gmatch(TAG_PATTERN) do
-		classNames[name] = className
-	end
-	if next(classNames) == nil then
-		return { `"{MAP_DEFINITION_PATH}" doesn't say which tags the server runs` }
+	for _, path in MAP_DEFINITION_PATHS do
+		local count = 0
+		for name, className in (getSource(place, path) or ""):gmatch(TAG_PATTERN) do
+			classNames[name] = className
+			count += 1
+		end
+		if count == 0 then
+			return { `"{path}" doesn't say which tags the game runs` }
+		end
 	end
 
 	local failures: { string } = {}
@@ -198,7 +203,7 @@ local function getTagFailures(place: roblox.DataModel): { string }
 	end
 	for _, tag in neededTags do
 		if classNames[tag] == nil then
-			table.insert(failures, `{gameId} needs the tag "{tag}", which "{MAP_DEFINITION_PATH}" doesn't have`)
+			table.insert(failures, `{gameId} needs the tag "{tag}", which no map definition has`)
 		elseif not isWorn[tag] then
 			table.insert(failures, `{gameId} needs the tag "{tag}", which nothing in the workspace wears`)
 		end
