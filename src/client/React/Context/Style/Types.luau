@@ -92,6 +92,18 @@ Types.Area = Type.strictInterface({
 	Size = Type.UDim2,
 })
 
+-- where a part of a widget is on it, in scale of it
+export type Placement = {
+	AnchorPoint: Vector2?, -- left out, it's put by its top left corner
+	Position: UDim2,
+	Size: UDim2,
+}
+Types.Placement = Type.strictInterface({
+	AnchorPoint = Type.optional(Type.Vector2),
+	Position = Type.UDim2,
+	Size = Type.UDim2,
+})
+
 -- what a panel is drawn as when it has no art of its own: a box, or one picture laid over the frame that carries it
 export type PanelLook =
 	{
@@ -221,15 +233,53 @@ Types.BalanceCounterLook = Type.strictInterface({
 	TextXAlignment = Type.optional(Type.enum(Enum.TextXAlignment)),
 })
 
+export type NameTagLook = {
+	FontFace: Font,
+	TextColor3: Color3,
+	TextSize: number?, -- left out, it's scaled to its box
+	TextStrokeColor3: Color3?, -- left out, it's the black the engine outlines a text in
+	TextStrokeTransparency: number,
+	MaxDistance: number?, -- how many studs off it's still read from. left out, there's no end to that
+	Name: Placement,
+	-- where what somebody tells about themselves is read in place of their name. left out, a tag only ever names
+	Bio: Placement?,
+	-- what's read on somebody who has no name yet. left out, it's what roblox knows them as
+	Placeholder: string?,
+	-- the sign over the head of somebody who's in a menu. left out, they're tagged like anybody else
+	Away: {
+		Text: string,
+		FontFace: Font,
+		TextColor3: Color3,
+	}?,
+}
+Types.NameTagLook = Type.strictInterface({
+	FontFace = Type.Font,
+	TextColor3 = Type.Color3,
+	TextSize = Type.optional(Type.numberPositive),
+	TextStrokeColor3 = Type.optional(Type.Color3),
+	TextStrokeTransparency = Type.numberConstrained(0, 1),
+	MaxDistance = Type.optional(Type.numberPositive),
+	Name = Types.Placement,
+	Bio = Type.optional(Types.Placement),
+	Placeholder = Type.optional(Type.string),
+	Away = Type.optional(Type.strictInterface({
+		Text = Type.string,
+		FontFace = Type.Font,
+		TextColor3 = Type.Color3,
+	})),
+})
+
 -- what a widget of the kit doesn't share with the rest of it, under the name of its component
 export type Widgets = {
 	BalanceCounter: BalanceCounterLook,
 	ExitButton: ExitButtonLook,
+	NameTag: NameTagLook,
 	ServerId: ServerIdLook,
 }
 Types.Widgets = Type.strictInterface({
 	BalanceCounter = Types.BalanceCounterLook,
 	ExitButton = Types.ExitButtonLook,
+	NameTag = Types.NameTagLook,
 	ServerId = Types.ServerIdLook,
 })
 

@@ -75,6 +75,27 @@ local STYLE: Style = {
 			Image = Image.shl3.ui.common["exit.png"],
 			Size = UDim2.fromOffset(40, 40),
 		},
+		-- the label every character had over its head: read from up close only, the name gives way to the backstory
+		-- for a while + nobody is marked as away
+		NameTag = {
+			FontFace = NOTE_FONT,
+			TextColor3 = WHITE,
+			TextSize = 22,
+			TextStrokeColor3 = WHITE,
+			TextStrokeTransparency = 0.6,
+			MaxDistance = 42,
+			Name = {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0.13),
+				Size = UDim2.fromScale(2, 0.2),
+			},
+			Bio = {
+				AnchorPoint = Vector2.new(0.5, 0.55),
+				Position = UDim2.fromScale(0.5, 0.11),
+				Size = UDim2.fromScale(2.5, 0.4),
+			},
+			Placeholder = "Choosing Suit",
+		},
 		-- the version label it had in the corner
 		ServerId = {
 			FontFace = HEADING_FONT,

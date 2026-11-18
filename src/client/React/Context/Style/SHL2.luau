@@ -73,6 +73,24 @@ local STYLE: Style = {
 			Image = Image.ui["exit.png"],
 			Size = UDim2.fromOffset(40, 40),
 		},
+		NameTag = {
+			FontFace = BODY_FONT,
+			TextColor3 = WHITE,
+			TextStrokeTransparency = 0,
+			Name = {
+				Position = UDim2.fromScale(0, 0.135),
+				Size = UDim2.fromScale(1, 0.15),
+			},
+			Away = {
+				Text = "AFK",
+				FontFace = Font.new(
+					"rbxasset://fonts/families/Arial.json",
+					Enum.FontWeight.Bold,
+					Enum.FontStyle.Normal
+				),
+				TextColor3 = Color3.fromRGB(223, 60, 60),
+			},
+		},
 		ServerId = {
 			Backing = {
 				BackgroundColor3 = BLACK,
