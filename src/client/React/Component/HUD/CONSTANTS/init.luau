@@ -19,7 +19,7 @@ local BUTTONS: Buttons = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): Buttons
-		error(`shl3 has no hud buttons yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(HUDTypes.Buttons(BUTTONS))
@@ -31,7 +31,11 @@ TableUtil.deepFreeze(BUTTONS)
 do
 	-- a button is drawn under the name of its menu, so the second of a pair would take the place of the first
 	local menuIds: { [PseudoEnum.MenuId]: true } = {}
-	for _, buttonInfos in { BUTTONS.LEFT, BUTTONS.RIGHT, { BUTTONS.BUILD } } do
+	local columns: { { ButtonInfo } } = { BUTTONS.LEFT, BUTTONS.RIGHT }
+	if BUTTONS.BUILD then
+		table.insert(columns, { BUTTONS.BUILD })
+	end
+	for _, buttonInfos in columns do
 		for _, buttonInfo in buttonInfos do
 			assert(not menuIds[buttonInfo.MenuId], `the "{buttonInfo.MenuId}" button is on the hud twice`)
 			menuIds[buttonInfo.MenuId] = true

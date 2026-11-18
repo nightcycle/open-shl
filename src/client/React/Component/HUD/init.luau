@@ -28,6 +28,7 @@ local e = React.createElement
 -- Class
 return function(props: Properties): React.ReactNode
 	local isCameraMode = props.IsCameraMode == true
+	local buildInfo = CONSTANTS.BUTTONS.BUILD
 	local isBuildVisible = props.IsBuildVisible == true and not isCameraMode
 
 	local buildRef: { current: ImageButton? } = React.useRef(nil :: ImageButton?)
@@ -133,7 +134,7 @@ return function(props: Properties): React.ReactNode
 					Buttons = e(React.Fragment, {}, rightButtons),
 				}
 			),
-			Build = e(
+			Build = buildInfo and e(
 				"ImageButton",
 				{
 					ref = buildRef,
@@ -142,13 +143,13 @@ return function(props: Properties): React.ReactNode
 					Position = initialBuildPositionRef.current,
 					SizeConstraint = Enum.SizeConstraint.RelativeYY,
 					BorderSizePixel = 1,
-					BackgroundColor3 = CONSTANTS.BUTTONS.BUILD.BackgroundColor3,
-					ImageContent = Content.fromUri(CONSTANTS.BUTTONS.BUILD.Image),
+					BackgroundColor3 = buildInfo.BackgroundColor3,
+					ImageContent = Content.fromUri(buildInfo.Image),
 					Active = isBuildVisible,
 					Interactable = isBuildVisible,
 					Visible = not isCameraMode,
 					[React.Event.Activated] = function()
-						props.OnClick(CONSTANTS.BUTTONS.BUILD.MenuId)
+						props.OnClick(buildInfo.MenuId)
 					end,
 				} :: RobloxComponents.ImageButtonProperties
 			),
