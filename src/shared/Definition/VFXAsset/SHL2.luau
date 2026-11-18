@@ -1,103 +1,23 @@
 --!strict
 -- Services
 -- Packages
-local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
-local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local Animation = require("@game/ReplicatedStorage/Generated/Animation")
 local Audio = require("@game/ReplicatedStorage/Generated/Audio")
 local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Types
--- an effect names what it plays by key rather than by url, so nothing a client sends can make others load
--- something the game doesn't ship
-export type SoundKey =
-	"Boom"
-	| "Bow"
-	| "ForceWhoosh"
-	| "GunShot"
-	| "Impact"
-	| "Morph"
-	| "MorphReset"
-	| "PewPew"
-	| "Platforming"
-	| "PortalShot"
-	| "Sheath"
-	| "Shock"
-	| "Slash"
-	| "Transwarp"
-	| "Unsheath"
-	| "WindGust"
-	| "Wind"
-export type SoundDefinition = {
-	Url: string,
-	Volume: number,
-	PlaybackSpeed: number,
-}
-export type AnimationKey =
-	"KnifeSlash"
-	| "KnifeJab"
-	| "Sheathing"
-	| "RightSlash"
-	| "LeftSlash"
-	| "ClawSheathing"
-	| "PowerPunch"
-	| "Strike"
-	| "RightFootKick"
-	| "ForcePush"
-	| "ForceExplosion"
-	| "IceSpin"
-	| "PowerShot"
-	| "HeadShot"
-	| "GunShooting"
-	| "GunHolding"
-	| "BowShooting"
-	| "BowHolding"
-	| "WallClimbing"
-	| "FlightIdle"
-	| "FlightMovement"
-export type AnimationDefinition = {
-	Url: string,
-	Length: number, -- seconds until whatever it's the wind-up of is over
-}
-export type MeshKey =
-	"Sword"
-	| "ThrowingStar"
-	| "Claw"
-	| "Hammer"
-	| "Katana"
-	| "Knife"
-	| "Trident"
-	| "Rifle"
-	| "Handgun"
-	| "Bow"
-	| "Arrow"
-	| "Icicle"
-export type MeshDefinition = {
-	MeshUrl: string,
-	TextureUrl: string,
-}
-export type ParticleKey = "LightningLeft" | "LightningRight" | "Tornado"
--- how an emitter gives off one kind of particle
-export type ParticleDefinition = {
-	TextureUrl: string,
-	Rate: number, -- a second
-	Lifetime: NumberRange,
-	Size: number,
-	Rotation: NumberRange,
-	Speed: number,
-	LightEmission: number,
-	IsLockedToPart: boolean, -- they go where what gives them off goes
-	Color: ColorSequence?, -- over their life, white without
-	EndSize: number?, -- what they've grown or shrunk to by the end of their life, the size they start at without
-	RotationSpeed: number?, -- degrees a second they turn at, they don't without
-	SpreadAngle: number?, -- degrees they're given off at either side of straight up, none without
-	Transparency: NumberSequence?, -- over their life, they're there until they're gone without
-	VelocityInheritance: number?, -- how much of the pace of what gives them off they set out with, none without
-}
-export type DecalKey = "PsychicWave" | "Shockwave"
-export type DecalDefinition = {
-	TextureUrl: string,
-}
+local VFXAssetType = require("@game/ReplicatedStorage/Shared/Type/VFXAsset")
+type SoundKey = VFXAssetType.SoundKey
+type SoundDefinition = VFXAssetType.SoundDefinition
+type AnimationKey = VFXAssetType.AnimationKey
+type AnimationDefinition = VFXAssetType.AnimationDefinition
+type MeshKey = VFXAssetType.MeshKey
+type MeshDefinition = VFXAssetType.MeshDefinition
+type ParticleKey = VFXAssetType.ParticleKey
+type ParticleDefinition = VFXAssetType.ParticleDefinition
+type DecalKey = VFXAssetType.DecalKey
+type DecalDefinition = VFXAssetType.DecalDefinition
+type VFXAssetCatalogue = VFXAssetType.VFXAssetCatalogue
 -- Constants
 local SOUNDS: { [SoundKey]: SoundDefinition } = {
 	Boom = { Url = "rbxasset://sounds/Rocket shot.wav", Volume = 0.7, PlaybackSpeed = 1 },
@@ -118,7 +38,6 @@ local SOUNDS: { [SoundKey]: SoundDefinition } = {
 	WindGust = { Url = Audio.ability["wind-gust.ogg"], Volume = 0.5, PlaybackSpeed = 1 },
 	Wind = { Url = Audio.ability["wind.ogg"], Volume = 0.3, PlaybackSpeed = 0.8 },
 }
-TableUtil.deepFreeze(SOUNDS)
 local ANIMATIONS: { [AnimationKey]: AnimationDefinition } = {
 	KnifeSlash = { Url = Animation.ability["knife-slash.rbxm"], Length = 0.8 },
 	KnifeJab = { Url = Animation.ability["knife-jab.rbxm"], Length = 0.8 },
@@ -142,7 +61,6 @@ local ANIMATIONS: { [AnimationKey]: AnimationDefinition } = {
 	FlightIdle = { Url = Animation.ability["flight-idle.rbxm"], Length = 4.5 },
 	FlightMovement = { Url = Animation.ability["flight-movement.rbxm"], Length = 4.5 },
 }
-TableUtil.deepFreeze(ANIMATIONS)
 local MESHES: { [MeshKey]: MeshDefinition } = {
 	Sword = { MeshUrl = "rbxasset://fonts/sword.mesh", TextureUrl = "" },
 	ThrowingStar = { MeshUrl = "rbxassetid://11376946", TextureUrl = "" },
@@ -157,7 +75,6 @@ local MESHES: { [MeshKey]: MeshDefinition } = {
 	Arrow = { MeshUrl = "rbxassetid://1036682", TextureUrl = "" },
 	Icicle = { MeshUrl = "rbxassetid://20518365", TextureUrl = Image.mesh["icicle.png"] },
 }
-TableUtil.deepFreeze(MESHES)
 local PARTICLES: { [ParticleKey]: ParticleDefinition } = {
 	LightningLeft = {
 		TextureUrl = Image.fx["lightning-left.png"],
@@ -204,49 +121,19 @@ local PARTICLES: { [ParticleKey]: ParticleDefinition } = {
 		VelocityInheritance = 2,
 	},
 }
-TableUtil.deepFreeze(PARTICLES)
 local DECALS: { [DecalKey]: DecalDefinition } = {
 	PsychicWave = { TextureUrl = Image.fx["shockwave.png"] },
 	Shockwave = { TextureUrl = Image.fx["psychic-boom.png"] },
 }
-TableUtil.deepFreeze(DECALS)
+local CATALOGUE: VFXAssetCatalogue = {
+	Sounds = SOUNDS,
+	Animations = ANIMATIONS,
+	Meshes = MESHES,
+	Particles = PARTICLES,
+	Decals = DECALS,
+}
 -- Variables
 -- References
 -- Private Functions
-local function isKey(definitions: { [any]: any }): (value: unknown) -> (boolean, string?)
-	local keys: { string } = {}
-	for key in definitions do
-		table.insert(keys, key)
-	end
-	return Type.literal(table.unpack(keys))
-end
 -- Class
-local Module = {}
-
-Module.SoundKey = isKey(SOUNDS)
-Module.AnimationKey = isKey(ANIMATIONS)
-Module.MeshKey = isKey(MESHES)
-Module.ParticleKey = isKey(PARTICLES)
-Module.DecalKey = isKey(DECALS)
-
-Module.getSound = function(key: SoundKey): SoundDefinition
-	return SOUNDS[key]
-end
-
-Module.getAnimation = function(key: AnimationKey): AnimationDefinition
-	return ANIMATIONS[key]
-end
-
-Module.getMesh = function(key: MeshKey): MeshDefinition
-	return MESHES[key]
-end
-
-Module.getParticle = function(key: ParticleKey): ParticleDefinition
-	return PARTICLES[key]
-end
-
-Module.getDecal = function(key: DecalKey): DecalDefinition
-	return DECALS[key]
-end
-
-return Module
+return CATALOGUE

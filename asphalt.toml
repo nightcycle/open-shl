@@ -203,12 +203,19 @@ output_path = "Generated"
 "shl3/ui/team-change/open.png" = { id = 2564676227 }
 "shl3/ui/team-change/panel.png" = { id = 2564814060 }
 
+# as with the images: a folder of a legacy game (asset/audio/shl3) is left out of the path + every file of it has a
+# line in the table below naming the upload its legacy game made of it. a new folder of sounds has to be added here
 [inputs.Audio]
-path = "asset/audio/**"
+path = "asset/audio/{ability,music,ui}/**"
 output_path = "Generated"
 
+[inputs.Audio.web]
+"shl3/ability/bow.ogg" = { id = 16211030 }
+"shl3/ability/gun-shot.ogg" = { id = 210112900 }
+
+# the same goes for asset/animation/shl3, its lines are at the end of the table below
 [inputs.Animation]
-path = "asset/animation/**"
+path = "asset/animation/{ability,emote,transition}/**"
 output_path = "Generated"
 
 # an animation only plays for whoever owns it, so a file here counts once `asphalt sync cloud` has uploaded it for the
@@ -250,3 +257,12 @@ output_path = "Generated"
 "transition/flinch-2.rbxm" = { id = 938919081 }
 "transition/smoke.rbxm" = { id = 601428872 }
 "transition/spin.rbxm" = { id = 601411837 }
+"shl3/ability/flight-idle.rbxm" = { id = 2074840040 }
+"shl3/ability/flight-movement.rbxm" = { id = 2074837109 }
+"shl3/ability/gun-shooting.rbxm" = { id = 2119726929 }
+"shl3/ability/left-slash.rbxm" = { id = 2119734637 }
+"shl3/ability/power-punch.rbxm" = { id = 2123643855 }
+"shl3/ability/right-foot-kick.rbxm" = { id = 2219382215 }
+"shl3/ability/right-slash.rbxm" = { id = 2119738227 }
+"shl3/ability/sheathing.rbxm" = { id = 2119712753 }
+"shl3/ability/strike.rbxm" = { id = 2219387164 }
