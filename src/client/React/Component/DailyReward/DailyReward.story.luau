@@ -18,9 +18,11 @@ type BootPhase = AppBootPhaseContext.BootPhase
 type DailyReward = ParentComponent.DailyReward
 -- Constants
 local BOOT_PHASES: { BootPhase } = { "Playing", "Loading", "Intro" }
+-- only a game that hands one out has it to show
+local DAILY_REWARD = assert(ProductDefinition.DAILY_REWARD, `this game has no daily reward`)
 local REWARD: DailyReward = table.freeze({
-	Currency = ProductDefinition.DAILY_REWARD.CURRENCY,
-	Amount = ProductDefinition.DAILY_REWARD.AMOUNT,
+	Currency = DAILY_REWARD.CURRENCY,
+	Amount = DAILY_REWARD.AMOUNT,
 })
 -- Variables
 -- References

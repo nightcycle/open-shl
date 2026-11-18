@@ -89,14 +89,15 @@ Types.DailyReward = Type.strictInterface({
 })
 
 -- what a game sells + what it gives away: its products, what its currencies go by, how many characters a player keeps
--- without the pass + how many more with it, what a new player starts on
+-- without the pass + how many more with it, what a new player starts on. a game that hands nothing out for coming back
+-- has no daily reward
 export type ProductCatalogue = {
 	Definitions: { ProductDefinition },
 	CurrencyNames: { [Currency]: string },
 	DefaultCharacterSlotCount: number,
 	ExtraCharacterSlotCount: number,
 	StartingBalances: Balances,
-	DailyReward: DailyReward,
+	DailyReward: DailyReward?,
 }
 Types.ProductCatalogue = Type.strictInterface({
 	Definitions = Type.array(Types.ProductDefinition),
@@ -104,7 +105,7 @@ Types.ProductCatalogue = Type.strictInterface({
 	DefaultCharacterSlotCount = Type.intersection(Type.integer, Type.numberPositive),
 	ExtraCharacterSlotCount = Type.intersection(Type.integer, Type.numberMin(0)),
 	StartingBalances = Types.Balances,
-	DailyReward = Types.DailyReward,
+	DailyReward = Type.optional(Types.DailyReward),
 })
 
 -- what the engine hands the server once a developer product is paid for, only the fields that are read

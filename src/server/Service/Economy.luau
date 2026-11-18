@@ -311,11 +311,13 @@ local function grantDailyReward(player: Player)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
 	local now = os.time()
-	if sessionOpt.IsNone or now - sessionOpt.Value.Save.LastDailyRewardAt < DAILY_REWARD.INTERVAL then
+	-- a game without one hands nothing out
+	local reward = DAILY_REWARD
+	if reward == nil or sessionOpt.IsNone or now - sessionOpt.Value.Save.LastDailyRewardAt < reward.INTERVAL then
 		return
 	end
 	local grantRes = update(player, function(save: PlayerSave): PlayerSave?
-		save.Balances[DAILY_REWARD.CURRENCY] += DAILY_REWARD.AMOUNT
+		save.Balances[reward.CURRENCY] += reward.AMOUNT
 		save.LastDailyRewardAt = now
 		return save
 	end)
@@ -324,8 +326,8 @@ local function grantDailyReward(player: Player)
 		return
 	end
 	NetworkService:Fire(RemoteDefinition.DailyRewardGranted, player, {
-		Currency = DAILY_REWARD.CURRENCY,
-		Amount = DAILY_REWARD.AMOUNT,
+		Currency = reward.CURRENCY,
+		Amount = reward.AMOUNT,
 	})
 end
 
@@ -335,10 +337,12 @@ local function add(self: EconomyService, player: Player)
 	end
 	self._PurchasedPassKeys[player] = {}
 	task.spawn(checkPasses, self, player)
-	self._DailyRewardThreads[player] = task.delay(DAILY_REWARD_DELAY, function()
-		self._DailyRewardThreads[player] = nil
-		grantDailyReward(player)
-	end)
+	if DAILY_REWARD ~= nil then
+		self._DailyRewardThreads[player] = task.delay(DAILY_REWARD_DELAY, function()
+			self._DailyRewardThreads[player] = nil
+			grantDailyReward(player)
+		end)
+	end
 end
 
 local function remove(self: EconomyService, player: Player)

@@ -26,7 +26,7 @@ local CATALOGUE: ProductCatalogue = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): ProductCatalogue
-		error(`shl3 has no products yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(EconomyType.ProductCatalogue(CATALOGUE))
@@ -36,11 +36,14 @@ local CURRENCY_NAMES = CATALOGUE.CurrencyNames
 local DEFAULT_CHARACTER_SLOT_COUNT = CATALOGUE.DefaultCharacterSlotCount
 local EXTRA_CHARACTER_SLOT_COUNT = CATALOGUE.ExtraCharacterSlotCount
 local STARTING_BALANCES = CATALOGUE.StartingBalances
-local DAILY_REWARD = table.freeze({
-	CURRENCY = CATALOGUE.DailyReward.Currency,
-	AMOUNT = CATALOGUE.DailyReward.Amount,
-	INTERVAL = CATALOGUE.DailyReward.Interval,
-})
+-- nil in a game that has none
+local DAILY_REWARD = if CATALOGUE.DailyReward
+	then table.freeze({
+		CURRENCY = CATALOGUE.DailyReward.Currency,
+		AMOUNT = CATALOGUE.DailyReward.Amount,
+		INTERVAL = CATALOGUE.DailyReward.Interval,
+	})
+	else nil
 -- Variables
 -- References
 -- Private Functions
