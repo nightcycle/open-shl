@@ -38,6 +38,8 @@ type ItemTextureBinding = CharacterEditorType.ItemTextureBinding
 type Identity = IdentityType.Identity
 type Appearance = AppearanceType.Appearance
 type Item = AppearanceType.Item
+type Scale = AppearanceType.Scale
+type ScaleAxis = CharacterEditorType.ScaleAxis
 type TextureGroup = AppearanceType.TextureGroup
 type TextureGroupKey = AppearanceType.TextureGroupKey
 type HiddenTag = AppearanceType.HiddenTag
@@ -52,6 +54,7 @@ type Preview = {
 local DETAIL_TEXTURE_GROUP_KEY: TextureGroupKey = CharacterEditorDefinition.DETAIL_TEXTURE_GROUP_KEY :: TextureGroupKey
 -- a header bound to the power limit spells the limit out
 local NUMBER_WORDS: { string } = table.freeze({ "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight" })
+local NO_PATTERN_CHOICES: { CharacterEditorType.PatternChoice } = table.freeze({})
 -- Variables
 -- the scene re-dresses the rig on a new appearance table, so a state keeps the very same preview
 local PreviewCache: { [EditorState]: Character } = {}
@@ -144,6 +147,67 @@ local function setItemTexture(
 		return Result.err(`"{ItemUtil.getName(itemDef.Id)}" has nothing to change there`)
 	end
 	return ItemUtil.setTextureGroup(state, itemDef, key, fn)
+end
+
+-- a new color or material keeps the pattern that's drawn over it
+local function setTexture(group: TextureGroup, color: Color3, material: Enum.Material): TextureGroup
+	local out = TextureGroupConstructor.new(color, material, group.Transparency)
+	local pattern = group.Pattern
+	if pattern == nil then
+		return out
+	end
+	return FreezeUtil.delta(out, function(t: TextureGroup): TextureGroup
+		t.Pattern = pattern
+		return t
+	end)
+end
+
+-- the height or the build that's picked: a body that was never sized is the game's default one
+local function getScaleChoice(state: EditorState, axis: ScaleAxis): number?
+	local scaleDef = CharacterEditorDefinition.SCALE
+	if not scaleDef then
+		return nil
+	end
+	local scale: Scale = StateUtil.getIdentity(state).Appearance.Scale or scaleDef.Default
+	local value = if axis == "Height" then scale.Height else scale.Width / scale.Height
+	local choices: { number } = if axis == "Height" then scaleDef.Heights else scaleDef.WidthRatios
+	for _, choice in choices do
+		if math.abs(choice - value) < CharacterEditorDefinition.SCALE_EPSILON then
+			return choice
+		end
+	end
+	return nil
+end
+
+-- a width is kept as how broad the body is for its height, so a new height carries the build along
+local function setScaleChoice(state: EditorState, axis: ScaleAxis, value: unknown): Result<EditorState, string>
+	local scaleDef = CharacterEditorDefinition.SCALE
+	if not scaleDef then
+		return Result.err(`the game has no body sizes`)
+	end
+	if type(value) ~= "number" then
+		return Result.err(`"{tostring(value)}" isn't a body size`)
+	end
+	local height = if axis == "Height" then value else getScaleChoice(state, "Height") or scaleDef.Default.Height
+	local ratio = if axis == "Width"
+		then value
+		else getScaleChoice(state, "Width") or scaleDef.Default.Width / scaleDef.Default.Height
+	local scale: Scale = table.freeze({
+		Height = height,
+		Width = height * ratio,
+	})
+	-- a body is the character's, whichever identity is out
+	return Result.ok(StateUtil.editIdentities(state, function(identity: Identity): Identity
+		local current = identity.Appearance.Scale
+		if current and current.Height == scale.Height and current.Width == scale.Width then
+			return identity
+		end
+		-- a size isn't worn, the items next to it stay the very same tables
+		local appearance = table.clone(identity.Appearance)
+		appearance.Scale = scale
+		table.freeze(appearance)
+		return StateUtil.setAppearance(identity, appearance)
+	end))
 end
 
 local function getIfFiltered<V>(filtered: { V }?, value: V): boolean
@@ -375,8 +439,9 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 			value = ProfileUtil.getAlignment(state, binding.Axis)
 		elseif binding.Type == "Transition" then
 			value = getTransitionStyle(StateUtil.getIdentity(state).Appearance, binding.TransitionType)
+		else
+			value = getScaleChoice(state, binding.Axis)
 		end
-		-- stub: a body size isn't read off the draft yet, none of its choices shows as the one that's picked
 		out = { Type = "Choice", Value = value }
 	elseif field.Type == "ChoiceList" then
 		out = {
@@ -433,11 +498,27 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		elseif binding.Type == "Transition" then
 			return setTransitionStyle(state, binding.TransitionType, edit.Value)
 		end
-		-- stub: a body size isn't written to the draft yet, the pick is taken + changes nothing
-		return Result.ok(state)
+		return setScaleChoice(state, binding.Axis, edit.Value)
 	elseif field.Type == "Pattern" and edit.Type == "Pattern" then
-		-- stub: a pattern isn't written to the draft yet, the pick is taken + changes nothing
-		return Result.ok(state)
+		-- only the looks the game's picker offers, a material + the image that goes with it
+		local material, pattern = edit.Material, edit.Pattern
+		local isChoice = false
+		for _, choice in CharacterEditorDefinition.PATTERN_CHOICES or NO_PATTERN_CHOICES do
+			isChoice = isChoice or (choice.Material == material and choice.Pattern == pattern)
+		end
+		if not isChoice then
+			return Result.err(`that pattern isn't offered here`)
+		end
+		return setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
+			local out = TextureGroupConstructor.new(group.Color, material, group.Transparency)
+			if pattern == nil then
+				return out
+			end
+			return FreezeUtil.delta(out, function(t: TextureGroup): TextureGroup
+				t.Pattern = pattern
+				return t
+			end)
+		end)
 	elseif field.Type == "ChoiceList" and edit.Type == "Power" then
 		return PowerUtil.setSelected(state, field.Binding.Group, edit.Id, edit.IsSelected)
 	elseif field.Type == "ChoiceList" and edit.Type == "PowerColor" then
@@ -452,7 +533,7 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 			return setSkinColor(state, color)
 		end
 		return setItemTexture(state, binding, function(group: TextureGroup): TextureGroup
-			return TextureGroupConstructor.new(color, group.Material, group.Transparency)
+			return setTexture(group, color, group.Material)
 		end)
 	elseif field.Type == "Material" and edit.Type == "Material" then
 		local material = edit.Material
@@ -460,7 +541,7 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 			return Result.err(`that material isn't offered here`)
 		end
 		return setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
-			return TextureGroupConstructor.new(group.Color, material, group.Transparency)
+			return setTexture(group, group.Color, material)
 		end)
 	elseif field.Type == "Toggle" and edit.Type == "Toggle" then
 		return Util.setTag(state, field.Focus, edit.IsSelected)

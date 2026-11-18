@@ -37,7 +37,10 @@ local IDENTITY_NAMES: { [IdentityKey]: string } = table.freeze({
 -- References
 -- Private Functions
 local function getIfSameTextureGroup(a: TextureGroup, b: TextureGroup): boolean
-	return a.Color == b.Color and a.Material == b.Material and a.Transparency == b.Transparency
+	return a.Color == b.Color
+		and a.Material == b.Material
+		and a.Transparency == b.Transparency
+		and a.Pattern == b.Pattern
 end
 
 -- the worn item when it's worn, the one that's tried on otherwise
