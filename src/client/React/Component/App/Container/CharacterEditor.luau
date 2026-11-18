@@ -4,10 +4,10 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
-local CharacterEditor = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor")
 -- Hooks
 local useIsMounted = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsMounted")
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
@@ -17,11 +17,25 @@ local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Clien
 local SessionCharactersContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Characters")
 -- Types
+local EditorTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor/Types")
 type Character = SessionService.Character
-type FilteredText = CharacterEditor.FilteredText
+type FilteredText = EditorTypes.FilteredText
+type Layout = EditorTypes.Component
 export type Properties = {}
 -- Constants
 local ERROR_DURATION = 4
+-- how the editor is laid out is the game's own, the layout of another game is never required
+local CharacterEditor: Layout = GameDefinition.pick({
+	shl1 = function(): Layout
+		error(`shl1 has no character editor yet`)
+	end,
+	shl2 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor")
+	end,
+	shl3 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/TabbedEditor")
+	end,
+})
 -- Variables
 -- References
 -- Private Functions
@@ -80,7 +94,7 @@ return function(): React.ReactNode
 				ErrorMessage = errorMessage,
 				IsSaving = isSaving,
 				FilteredText = filteredText,
-				OnAction = function(action: CharacterEditor.ActionInfo)
+				OnAction = function(action: EditorTypes.ActionInfo)
 					if action.Type == "Save" then
 						if isBusyRef.current then
 							return
@@ -132,7 +146,7 @@ return function(): React.ReactNode
 						end
 					end
 				end,
-			} :: CharacterEditor.Properties
+			} :: EditorTypes.Properties
 		),
 	})
 end
