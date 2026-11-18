@@ -1,10 +1,13 @@
 --!strict
 -- Services
 -- Packages
+local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 -- Types
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+type Character = CharacterType.Character
 type IdentityKey = CharacterType.IdentityKey
 type ProfileKey = CharacterEditorType.ProfileKey
 export type TextFilter = {
@@ -17,6 +20,33 @@ export type FilteredText = {
 	Filter: TextFilter,
 	Text: string, -- what the text reads like once it's filtered
 }
+export type ActionInfo =
+	{
+		Type: "Save",
+		Character: Character,
+	}
+	| {
+		Type: "FilterText",
+		Filter: TextFilter,
+	}
+	| {
+		Type: "Back",
+	}
+	| {
+		Type: "Exit",
+	}
+	| {
+		Type: "Randomize", -- asks for the draft to be rolled all over again
+	}
+-- what the app hands the editor of every game, however that game lays it out
+export type Properties = RobloxComponents.FrameProperties & {
+	ErrorMessage: string?,
+	IsSaving: boolean?,
+	IsRandomizable: boolean?, -- a layout with a button for it only shows it when there's something to roll the draft
+	FilteredText: FilteredText?,
+	OnAction: (ActionInfo) -> (),
+}
+export type Component = (props: Properties) -> React.ReactNode
 -- Constants
 -- Variables
 -- References

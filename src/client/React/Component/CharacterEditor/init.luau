@@ -23,27 +23,8 @@ local EditorTypes = require("@self/Types")
 export type Character = CharacterType.Character
 type TextFilter = EditorTypes.TextFilter
 export type FilteredText = EditorTypes.FilteredText
-export type ActionInfo =
-	{
-		Type: "Save",
-		Character: Character,
-	}
-	| {
-		Type: "FilterText",
-		Filter: TextFilter,
-	}
-	| {
-		Type: "Back",
-	}
-	| {
-		Type: "Exit",
-	}
-export type Properties = RobloxComponents.FrameProperties & {
-	ErrorMessage: string?,
-	IsSaving: boolean?,
-	FilteredText: FilteredText?,
-	OnAction: (ActionInfo) -> (),
-}
+export type ActionInfo = EditorTypes.ActionInfo
+export type Properties = EditorTypes.Properties
 -- Constants
 local BUTTON_FONT = Font.new("rbxasset://fonts/families/SourceSansPro.json")
 -- Variables
