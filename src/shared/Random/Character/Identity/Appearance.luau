@@ -41,7 +41,7 @@ Module.HiddenTag = function(seed: number?): AppearanceType.HiddenTag
 end
 
 Module.FaceSlot = function(seed: number?): AppearanceType.FaceSlot
-	return RandomMisc.literal(seed, { "Eyebrows", "Eyes", "Mouth" }) :: AppearanceType.FaceSlot
+	return RandomMisc.literal(seed, ItemDefinition.listFaceSlots()) :: AppearanceType.FaceSlot
 end
 
 Module.SkinColor = function(seed: number?): Color3

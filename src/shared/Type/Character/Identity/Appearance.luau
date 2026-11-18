@@ -47,19 +47,23 @@ Types.ItemDefinitionTag = Type.union(Type.literal("IsMask"), Types.HiddenTag)
 export type FaceSlot = "Eyebrows" | "Eyes" | "Mouth"
 Types.FaceSlot = Type.literal("Eyebrows", "Eyes", "Mouth")
 
--- the faces a game draws: its slots in the order they're listed, the category + the images of each, and the names of
--- the ones that don't go by their image's
+-- the faces a game draws: its slots in the order they're listed, which is from the top of a face down, the category +
+-- the images of each, and the names of the ones that don't go by their image's
 export type FaceCatalogue = {
 	Slots: { FaceSlot },
 	Categories: { [FaceSlot]: string },
 	Images: { [FaceSlot]: { [string]: string } },
 	Names: { [string]: string },
+	Defaults: { [FaceSlot]: string }, -- the image a slot shows with nothing worn in it, a slot without one stays bare
+	Tints: { [FaceSlot]: Color3 }, -- the slots that take a color + the one each is drawn in until it's given another
 }
 Types.FaceCatalogue = Type.strictInterface({
 	Slots = Type.array(Types.FaceSlot),
 	Categories = Type.map(Types.FaceSlot, Type.string),
 	Images = Type.map(Types.FaceSlot, Type.map(Type.string, Type.string)),
 	Names = Type.map(Type.string, Type.string),
+	Defaults = Type.map(Types.FaceSlot, Type.string),
+	Tints = Type.map(Types.FaceSlot, Type.Color3),
 })
 
 -- both variants point at the same list types, otherwise a list read off the union can't be iterated

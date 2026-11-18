@@ -30,6 +30,8 @@ table.freeze(TEXTURE_GROUP_KEYS)
 -- face items have no template in the library, they are images sorted into a folder per slot
 local FACE_GROUP: ItemGroup = "cosmetics"
 local FACE_IMAGE_EXTENSION = ".png"
+-- the one group a face item of a tinted slot lists, its color is what the image is drawn in
+local FACE_TINT_GROUP_KEY: TextureGroupKey = "Primary"
 -- which slots a face has + the images of each are the game's own, the faces of another game are never required
 local FACES: FaceCatalogue = GameDefinition.pick({
 	shl1 = function(): FaceCatalogue
@@ -39,7 +41,7 @@ local FACES: FaceCatalogue = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): FaceCatalogue
-		error(`shl3 has no faces yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(AppearanceType.FaceCatalogue(FACES))
@@ -48,6 +50,8 @@ local FACE_SLOTS = FACES.Slots
 local FACE_CATEGORIES = FACES.Categories
 local FACE_IMAGES = FACES.Images
 local FACE_NAMES = FACES.Names
+local FACE_DEFAULTS = FACES.Defaults
+local FACE_TINTS = FACES.Tints
 -- Variables
 local DefinitionIndexCache: { [string]: ItemDefinitionIndex? } = {}
 local TemplateCache: { [string]: Instance? } = {}
@@ -106,12 +110,25 @@ local function getFaceName(slot: FaceSlot, id: string, key: string): string
 end
 
 -- Class
-local Module = {}
+-- the key is in from the start, as a field that's assigned afterwards the checker only knows it for a string
+local Module = {
+	FACE_TINT_GROUP_KEY = FACE_TINT_GROUP_KEY,
+}
 
 for _, slot: FaceSlot in FACE_SLOTS do
 	-- a slot that's listed without them is one the checker lets through
 	assert(FACE_CATEGORIES[slot] ~= nil, `the "{slot}" face slot has no category`)
 	assert(FACE_IMAGES[slot] ~= nil, `the "{slot}" face slot has no images`)
+	local defaultKey = FACE_DEFAULTS[slot]
+	assert(
+		defaultKey == nil or FACE_IMAGES[slot][`{defaultKey}{FACE_IMAGE_EXTENSION}`] ~= nil,
+		`the "{slot}" face slot has no "{defaultKey}" image to fall back on`
+	)
+end
+
+-- from the top of a face down
+Module.listFaceSlots = function(): { FaceSlot }
+	return FACE_SLOTS
 end
 
 Module.getIndex = function(id: string): Result<ItemDefinitionIndex, string>
@@ -156,6 +173,17 @@ end
 
 Module.getFaceId = function(slot: FaceSlot, key: string): string
 	return table.concat({ FACE_GROUP, FACE_CATEGORIES[slot], key }, ID_DELIMITER)
+end
+
+-- what a slot shows with nothing worn in it, nil for a slot that stays bare
+Module.getDefaultFaceId = function(slot: FaceSlot): string?
+	local key = FACE_DEFAULTS[slot]
+	return if key then Module.getFaceId(slot, key) else nil
+end
+
+-- the color the images of a slot are drawn in until an item brings its own, nil for a slot that isn't tinted
+Module.getFaceTint = function(slot: FaceSlot): Color3?
+	return FACE_TINTS[slot]
 end
 
 Module.getTemplate = function(id: string): Result<Instance, string>
@@ -206,7 +234,7 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 			Id = id,
 			Name = getFaceName(faceSlot, id, indexRes.Value.Key),
 			Tags = {},
-			TextureGroups = {},
+			TextureGroups = if FACE_TINTS[faceSlot] then { FACE_TINT_GROUP_KEY } else {},
 			Slot = faceSlot,
 			Image = image,
 		}
@@ -239,6 +267,15 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 end
 
 Module.getDefaultTextureGroup = function(id: string, key: TextureGroupKey): Result<TextureGroup, string>
+	do
+		-- a face item has no template to read a color off
+		local indexRes = Module.getIndex(id)
+		local faceSlot: FaceSlot? = if indexRes.IsOk then getFaceSlot(indexRes.Value) else nil
+		local tint: Color3? = if faceSlot then FACE_TINTS[faceSlot] else nil
+		if tint and key == FACE_TINT_GROUP_KEY then
+			return Result.ok(TextureGroupConstructor.new(tint))
+		end
+	end
 	local templateRes = Module.getTemplate(id)
 	if templateRes.IsErr then
 		return Result.err(`default "{key}" of "{id}" failed: {templateRes.Value}`)

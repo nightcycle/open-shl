@@ -22,11 +22,20 @@ local FACE_IMAGES: { [FaceSlot]: { [string]: string } } = table.freeze({
 local FACE_NAMES: { [string]: string } = table.freeze({
 	cosmetics_eyebrows_worried = "Sad Eyebrows",
 })
+local FACE_DEFAULTS: { [FaceSlot]: string } = table.freeze({
+	Eyebrows = "neutral",
+	Eyes = "neutral",
+	Mouth = "neutral",
+})
+-- every face is drawn the way its image is
+local FACE_TINTS: { [FaceSlot]: Color3 } = table.freeze({})
 local FACES: FaceCatalogue = table.freeze({
 	Slots = FACE_SLOTS,
 	Categories = FACE_CATEGORIES,
 	Images = FACE_IMAGES,
 	Names = FACE_NAMES,
+	Defaults = FACE_DEFAULTS,
+	Tints = FACE_TINTS,
 })
 -- Variables
 -- References
