@@ -7,7 +7,7 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
-local Image = require("@game/ReplicatedStorage/Generated/Image")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local TextureGroupConstructor =
 	require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item/TextureGroup")
@@ -21,6 +21,7 @@ type ItemGroup = AppearanceType.ItemGroup
 type TextureGroupKey = AppearanceType.TextureGroupKey
 type TextureGroup = AppearanceType.TextureGroup
 type FaceSlot = AppearanceType.FaceSlot
+type FaceCatalogue = AppearanceType.FaceCatalogue
 -- Constants
 local ID_DELIMITER = "_"
 local PATH_DELIMITER = "/"
@@ -29,20 +30,24 @@ table.freeze(TEXTURE_GROUP_KEYS)
 -- face items have no template in the library, they are images sorted into a folder per slot
 local FACE_GROUP: ItemGroup = "cosmetics"
 local FACE_IMAGE_EXTENSION = ".png"
-local FACE_SLOTS: { FaceSlot } = table.freeze({ "Eyebrows" :: FaceSlot, "Eyes", "Mouth" })
-local FACE_CATEGORIES: { [FaceSlot]: string } = table.freeze({
-	Eyebrows = "eyebrows",
-	Eyes = "eyes",
-	Mouth = "mouth",
+-- which slots a face has + the images of each are the game's own, the faces of another game are never required
+local FACES: FaceCatalogue = GameDefinition.pick({
+	shl1 = function(): FaceCatalogue
+		error(`shl1 has no faces yet`)
+	end,
+	shl2 = function(): FaceCatalogue
+		return require("@self/SHL2")
+	end,
+	shl3 = function(): FaceCatalogue
+		error(`shl3 has no faces yet`)
+	end,
 })
-local FACE_IMAGES: { [FaceSlot]: { [string]: string } } = table.freeze({
-	Eyebrows = Image.face.eyebrows,
-	Eyes = Image.face.eyes,
-	Mouth = Image.face.mouth,
-})
-local FACE_NAMES: { [string]: string } = table.freeze({
-	cosmetics_eyebrows_worried = "Sad Eyebrows",
-})
+assert(AppearanceType.FaceCatalogue(FACES))
+-- a game freezes its own faces, from in here that would reach into the asset table its images are part of
+local FACE_SLOTS = FACES.Slots
+local FACE_CATEGORIES = FACES.Categories
+local FACE_IMAGES = FACES.Images
+local FACE_NAMES = FACES.Names
 -- Variables
 local DefinitionIndexCache: { [string]: ItemDefinitionIndex? } = {}
 local TemplateCache: { [string]: Instance? } = {}
@@ -102,6 +107,12 @@ end
 
 -- Class
 local Module = {}
+
+for _, slot: FaceSlot in FACE_SLOTS do
+	-- a slot that's listed without them is one the checker lets through
+	assert(FACE_CATEGORIES[slot] ~= nil, `the "{slot}" face slot has no category`)
+	assert(FACE_IMAGES[slot] ~= nil, `the "{slot}" face slot has no images`)
+end
 
 Module.getIndex = function(id: string): Result<ItemDefinitionIndex, string>
 	do
