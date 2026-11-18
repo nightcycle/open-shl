@@ -14,6 +14,7 @@ local AppBootPhaseContext = require("@game/StarterPlayer/StarterPlayerScripts/Cl
 local SessionCreditsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Credits")
 local SessionGemsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Gems")
 -- Types
+local CurrencyPopupTypes = require("@self/Types")
 type BootPhase = AppBootPhaseContext.BootPhase
 type Balances = { [PseudoEnum.Currency]: number }
 type Gain = {
@@ -21,9 +22,7 @@ type Gain = {
 	Currency: PseudoEnum.Currency,
 	Amount: number,
 }
-export type Properties = RobloxComponents.FrameProperties & {
-	IsLoaded: boolean, -- balances that land before this aren't gains
-}
+export type Properties = CurrencyPopupTypes.Properties
 -- Constants
 local CONSTANTS = require("@self/CONSTANTS")
 local REST_POSITION = UDim2.fromScale(-0.5, 0.2)
