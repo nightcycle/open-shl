@@ -15,8 +15,10 @@ local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
+local MapDefinition = require("@game/ServerScriptService/Server/Definition/Map")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
+local SpawnDefinition = require("@game/ServerScriptService/Server/Definition/Spawn")
 local TransitionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Transition")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
@@ -62,6 +64,8 @@ local DRESS_TIMEOUT = 20
 local EFFECT_NAME = "TransformationEffect"
 -- nil in a game whose powers are colored by a pick of their own
 local POWER_COLOR_SOURCE = CharacterEditorDefinition.POWER_COLOR_SOURCE
+-- nil in a game where an avatar comes back as whoever it was
+local SPAWN_IDENTITY_KEY: IdentityKey? = SpawnDefinition.IDENTITY_KEY
 -- Variables
 -- References
 -- Private Functions
@@ -177,7 +181,36 @@ local function onCharacter(self: AvatarService, player: Player, character: Model
 		humanoid.HealthDisplayDistance = 0
 	end
 	setInMenu(player, character, SessionService:GetIfInMenu(player))
+	-- a game can have an avatar come back as one identity whoever it went down as. a session that's told to change
+	-- who is out has the avatar dressed for it, which is the dress this one was about to get
+	local sessionOpt = SessionService:Get(player)
+	local isAnotherOut = sessionOpt.IsSome and sessionOpt.Value.ActiveIdentityKey ~= SPAWN_IDENTITY_KEY
+	if SPAWN_IDENTITY_KEY and isAnotherOut then
+		local identityRes = SessionService:SetActiveIdentity(player, SPAWN_IDENTITY_KEY)
+		if identityRes.IsOk then
+			return
+		end
+		warn(`spawn err: {identityRes.Value}`)
+	end
 	self:Dress(player)
+end
+
+-- the spots a game has its avatars come in at hand out the force field of the engine for as long as the game says
+local function setSpawns()
+	local tag, shieldDuration = SpawnDefinition.TAG, SpawnDefinition.SHIELD_DURATION
+	if not tag then
+		return
+	end
+	local spots = MapDefinition.list(tag)
+	-- the engine would drop everybody at the middle of the world instead
+	if #spots == 0 then
+		warn(`the map marks no spot for an avatar to come in at`)
+	end
+	if shieldDuration then
+		for _, spot in spots do
+			spot.Duration = shieldDuration
+		end
+	end
 end
 
 local function add(self: AvatarService, player: Player)
@@ -349,6 +382,8 @@ return ServiceLocker(function(): AvatarService
 		addedConnection:Disconnect()
 		removingConnection:Disconnect()
 	end)
+	-- before anybody is added: an avatar that's in already came in by what the map says
+	setSpawns()
 	for _, player in Players:GetPlayers() do
 		if SessionService:Get(player).IsSome then
 			add(self, player)
