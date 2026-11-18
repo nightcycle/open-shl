@@ -29,12 +29,14 @@ export type TextureGroup = {
 	Transparency: number,
 	Color: Color3,
 	Material: Enum.Material,
+	Pattern: string?, -- the key of one of the game's pattern images, drawn over the color
 }
 
 Types.TextureGroup = Type.strictInterface({
 	Transparency = Type.numberConstrained(0, 1),
 	Color = Type.Color3,
 	Material = Type.enum(Enum.Material),
+	Pattern = Type.optional(Type.string),
 })
 export type HiddenTag = "Hood" | "Mask" | "MouthCover" | "Hair"
 Types.HiddenTag = Type.literal("Hood", "Mask", "MouthCover", "Hair")
@@ -133,10 +135,22 @@ Types.TransformationTransition = Type.strictInterface({
 export type Transition = DeathTransition | TransformationTransition
 Types.Transition = Type.union(Types.DeathTransition, Types.TransformationTransition)
 
--- a missing transition plays the default, a missing face slot shows the neutral image
+-- how tall + how broad the body is built, against the rig as it comes. which sizes there are is the game's own
+export type Scale = {
+	Height: number,
+	Width: number,
+}
+Types.Scale = Type.strictInterface({
+	Height = Type.numberPositive,
+	Width = Type.numberPositive,
+})
+
+-- a missing transition plays the default, a missing face slot shows the neutral image. a game without body sizes
+-- leaves the scale out
 export type Appearance = {
 	Items: { Item },
 	SkinColor: Color3,
+	Scale: Scale?,
 	Transitions: {
 		Death: DeathTransition?,
 		Transformation: TransformationTransition?,
@@ -147,6 +161,7 @@ export type Appearance = {
 Types.Appearance = Type.strictInterface({
 	Items = Type.array(Types.Item),
 	SkinColor = Type.Color3,
+	Scale = Type.optional(Types.Scale),
 	Transitions = Type.strictInterface({
 		Death = Type.optional(Types.DeathTransition),
 		Transformation = Type.optional(Types.TransformationTransition),
