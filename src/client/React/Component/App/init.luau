@@ -9,7 +9,6 @@ local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local Boundary = require("@self/Boundary")
-local HUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/HUD")
 -- Hooks
 -- Contexts
 local AppBootPhaseContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/BootPhase")
@@ -24,6 +23,7 @@ local AppPanelContext = require("@game/StarterPlayer/StarterPlayerScripts/Client
 local AppScreenContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/Screen")
 -- Types
 local AppTypes = require("@self/Types")
+local HUDTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/HUD/Types")
 type BootPhase = AppBootPhaseContext.BootPhase
 type PanelId = AppPanelContext.PanelId
 export type Container = AppTypes.Container
@@ -123,7 +123,7 @@ return function(props: Properties)
 		props,
 		{
 			HUD = isGameplayHudVisible and e(
-				HUD,
+				registry.HUD,
 				{
 					Size = UDim2.fromScale(1, 1),
 					ZIndex = 1,
@@ -138,7 +138,7 @@ return function(props: Properties)
 							MenuId = menuId,
 						})
 					end,
-				} :: HUD.Properties
+				} :: HUDTypes.Properties
 			),
 			Panels = e(layer, {
 				ZIndex = 2,

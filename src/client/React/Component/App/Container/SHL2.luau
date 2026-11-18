@@ -17,6 +17,7 @@ local CurrencyPopup =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CurrencyPopup")
 local DailyReward = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/DailyReward")
 local Database = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Database")
+local HUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/HUD")
 local Intro = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Intro")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
 local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
@@ -35,6 +36,7 @@ local AppTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/
 type Registry = AppTypes.Registry
 -- Constants
 local REGISTRY: Registry = {
+	HUD = HUD,
 	BOOT_PHASES = {
 		Loading = Loading,
 		ModeSelect = ModeSelect,

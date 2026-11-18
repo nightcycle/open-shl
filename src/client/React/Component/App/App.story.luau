@@ -10,6 +10,7 @@ local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
+local HUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/HUD")
 local ParentComponent = require(".")
 -- Hooks
 -- Contexts
@@ -130,6 +131,7 @@ return UILabs.CreateReactStory({
 			end
 		end
 		return {
+			HUD = HUD,
 			BOOT_PHASES = {
 				Loading = newCover("Loading"),
 				ModeSelect = newCover("ModeSelect"),

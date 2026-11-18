@@ -10,14 +10,8 @@ local StatBars = require("@self/StatBars")
 -- Hooks
 local useTween = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTween")
 -- Types
-export type Properties = RobloxComponents.FrameProperties & {
-	OnClick: (PseudoEnum.MenuId) -> (),
-	IsBuildVisible: boolean?,
-	IsCameraMode: boolean?, -- only the faded camera button is left, it's the way back out
-	IsCameraHidden: boolean?,
-	IsHealthVisible: boolean?,
-	IsEnergyVisible: boolean?,
-}
+local HUDTypes = require("@self/Types")
+export type Properties = HUDTypes.Properties
 -- Constants
 local CONSTANTS = require("@self/CONSTANTS")
 local BUTTON_SIZE = 0.08

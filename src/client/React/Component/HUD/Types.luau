@@ -1,6 +1,8 @@
 --!strict
 -- Services
 -- Packages
+local React = require("@game/ReplicatedStorage/Packages/React")
+local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
@@ -29,6 +31,19 @@ Types.Buttons = Type.strictInterface({
 	RIGHT = Type.array(Types.ButtonInfo),
 	BUILD = Types.ButtonInfo,
 })
+
+-- what the app tells whatever draws the hud of its game
+export type Properties = RobloxComponents.FrameProperties & {
+	OnClick: (PseudoEnum.MenuId) -> (),
+	IsBuildVisible: boolean?,
+	IsCameraMode: boolean?, -- only the faded camera button is left, it's the way back out
+	IsCameraHidden: boolean?,
+	IsHealthVisible: boolean?,
+	IsEnergyVisible: boolean?,
+}
+-- a layout that takes all of that as it is, or a container around a layout that asks for something else
+export type Component = (props: Properties) -> React.ReactNode
+Types.Component = Type.callback
 -- Constants
 -- Variables
 -- References
