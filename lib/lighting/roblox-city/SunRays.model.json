@@ -1,0 +1,14 @@
+{
+  "ClassName": "SunRaysEffect",
+  "Properties": {
+    "Enabled": {
+      "Bool": true
+    },
+    "Intensity": {
+      "Float32": 0.4320000112056732
+    },
+    "Spread": {
+      "Float32": 0
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "ClassName": "Clouds",
+  "Properties": {
+    "Color": {
+      "Color3": [
+        1,
+        1,
+        1
+      ]
+    },
+    "Cover": {
+      "Float32": 0.6169999837875366
+    },
+    "Density": {
+      "Float32": 1
+    },
+    "Enabled": {
+      "Bool": true
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "ClassName": "DepthOfFieldEffect",
+  "Properties": {
+    "Enabled": {
+      "Bool": true
+    },
+    "FarIntensity": {
+      "Float32": 1
+    },
+    "FocusDistance": {
+      "Float32": 0
+    },
+    "InFocusRadius": {
+      "Float32": 300
+    },
+    "NearIntensity": {
+      "Float32": 0.3779999911785126
+    }
+  }
+}

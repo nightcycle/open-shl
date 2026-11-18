@@ -94,7 +94,16 @@ do -- write in a do block now to make it easier to copy to other things later / 
 		node["Map"] = {
 			["$path"] = `lib/map/{MAP}`,
 		}
+		-- nothing is sculpted, it's only there to hold the clouds of the map
+		node["Terrain"] = {
+			["$path"] = `lib/terrain/{MAP}`,
+		}
 	end)
+
+	-- the sky + the look of the light are tuned for a map, so they're swapped out along with it
+	project.tree["Lighting"] = {
+		["$path"] = `lib/lighting/{MAP}`,
+	}
 
 	fs.writeFile(PROJECT_PATH, serde.encode("json", project, true))
 end

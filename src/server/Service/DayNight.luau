@@ -22,8 +22,6 @@ export type DayNightService = typeof(setmetatable(
 	{} :: DayNightServiceImpl
 ))
 -- Constants
-local MINUTES_PER_HOUR = 60
-local MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR
 -- Variables
 -- References
 -- Private Functions
@@ -41,22 +39,18 @@ local function setLamps(lamps: { BasePart }, isLit: boolean)
 end
 
 -- a pane that's on its own is a room, the panes of a model are the windows of one room + light up together
-local function getRooms(windows: Model): { { BasePart } }
-	local rooms: { { BasePart } } = {}
-	for _, child in windows:GetChildren() do
-		if child:IsA("BasePart") then
-			table.insert(rooms, { child })
-		elseif child:IsA("Model") then
-			local panes: { BasePart } = {}
-			for _, pane in child:GetChildren() do
-				if pane:IsA("BasePart") then
-					table.insert(panes, pane)
-				end
+local function getPanes(room: Instance): { BasePart }
+	local panes: { BasePart } = {}
+	if room:IsA("BasePart") then
+		table.insert(panes, room)
+	elseif room:IsA("Model") then
+		for _, pane in room:GetChildren() do
+			if pane:IsA("BasePart") then
+				table.insert(panes, pane)
 			end
-			table.insert(rooms, panes)
 		end
 	end
-	return rooms
+	return panes
 end
 
 local function getPalette(windows: Model): { BrickColor }
@@ -74,21 +68,46 @@ local function getPalette(windows: Model): { BrickColor }
 	return palette
 end
 
+local function getLitTransparency(rng: Random): number
+	local tenths = DayNightDefinition.LIT_WINDOW_TENTHS
+	return rng:NextInteger(tenths.Min, tenths.Max) / 10
+end
+
+-- every room picks its color the moment the night falls. a pane that's on its own is lit right then as well, the
+-- rooms of several stay dark until it's their turn
+local function colorWindows(windows: Model, rng: Random)
+	local palette = getPalette(windows)
+	if #palette == 0 then
+		return
+	end
+	for _, room in windows:GetChildren() do
+		local panes = getPanes(room)
+		if #panes == 0 then
+			continue
+		end
+		local color = palette[rng:NextInteger(1, #palette)]
+		for _, pane in panes do
+			pane.BrickColor = color
+		end
+		if room:IsA("BasePart") then
+			room.Transparency = getLitTransparency(rng)
+		end
+	end
+end
+
 -- yields. a building doesn't switch all at once, its rooms follow one another until the last one is done
 local function switchWindows(windows: Model, isLit: boolean)
 	local rng = Random.new()
-	local rooms = getRooms(windows)
-	local palette = getPalette(windows)
-	local range = DayNightDefinition.LIT_WINDOW_TRANSPARENCY
-	for _, panes in rooms do
+	if isLit then
+		colorWindows(windows, rng)
+	end
+	-- the palette sits among the rooms + takes a turn like one, it's what the pace of a building is counted by
+	local rooms = windows:GetChildren()
+	for _, room in rooms do
 		task.wait(DayNightDefinition.WINDOW_SWITCH_DURATION / #rooms)
-		local color = if isLit and #palette > 0 then palette[rng:NextInteger(1, #palette)] else nil
-		local transparency = if isLit then rng:NextNumber(range.Min, range.Max) else 1
-		for _, pane in panes do
+		local transparency = if isLit then getLitTransparency(rng) else 1
+		for _, pane in getPanes(room) do
 			pane.Transparency = transparency
-			if color then
-				pane.BrickColor = color
-			end
 		end
 	end
 end
@@ -113,21 +132,24 @@ end
 
 -- yields for as long as the service lives
 local function run(self: DayNightService)
-	local minute = DayNightDefinition.START_TIME * MINUTES_PER_HOUR
-	local isNight = DayNightDefinition.getIfNight(minute / MINUTES_PER_HOUR)
+	local clockTick = DayNightDefinition.START_TICK
+	local isNight = DayNightDefinition.getIfNight(clockTick)
 	setLamps(self._Lamps, isNight)
 	while true do
-		local clockTime = minute / MINUTES_PER_HOUR
-		if DayNightDefinition.getIfNight(clockTime) ~= isNight then
+		if DayNightDefinition.getIfNight(clockTick) ~= isNight then
 			isNight = not isNight
 			setLamps(self._Lamps, isNight)
 			switchAllWindows(self, isNight)
 		end
 		-- the lighting replicates, so every client sees the sun where the server has it
+		local clockTime = DayNightDefinition.getClockTime(clockTick)
 		Lighting.ClockTime = clockTime
-		Lighting.Brightness = DayNightDefinition.getBrightness(clockTime)
-		task.wait(DayNightDefinition.getMinuteDuration(isNight))
-		minute = (minute + 1) % MINUTES_PER_DAY
+		local brightness = DayNightDefinition.getBrightness(clockTime)
+		if brightness then
+			Lighting.Brightness = brightness
+		end
+		task.wait(DayNightDefinition.getTickDuration(isNight))
+		clockTick = DayNightDefinition.getNextTick(clockTick)
 	end
 end
 -- Class

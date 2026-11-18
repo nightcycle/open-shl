@@ -1,0 +1,95 @@
+{
+  "className": "Lighting",
+  "properties": {
+    "Ambient": {
+      "Color3": [
+        0,
+        0,
+        0
+      ]
+    },
+    "Attributes": {
+      "Attributes": {
+        "RBX_LightingTechnologyUnifiedMigration": {
+          "Bool": true
+        },
+        "RBX_OriginalTechnologyOnFileLoad": {
+          "Int32": 1
+        }
+      }
+    },
+    "Brightness": {
+      "Float32": 2
+    },
+    "ColorShift_Bottom": {
+      "Color3": [
+        0,
+        0,
+        0
+      ]
+    },
+    "ColorShift_Top": {
+      "Color3": [
+        0.7882353663444519,
+        0.874509871006012,
+        1
+      ]
+    },
+    "EnvironmentDiffuseScale": {
+      "Float32": 1
+    },
+    "EnvironmentSpecularScale": {
+      "Float32": 0.25
+    },
+    "ExposureCompensation": {
+      "Float32": 0
+    },
+    "ExtendLightRangeTo120": {
+      "Enum": 0
+    },
+    "FogColor": {
+      "Color3": [
+        0.48235297203063965,
+        0.7490196228027344,
+        1
+      ]
+    },
+    "FogEnd": {
+      "Float32": 5000000
+    },
+    "FogStart": {
+      "Float32": 1000
+    },
+    "GeographicLatitude": {
+      "Float32": 41.733001708984375
+    },
+    "GlobalShadows": {
+      "Bool": true
+    },
+    "LightingStyle": {
+      "Enum": 0
+    },
+    "OutdoorAmbient": {
+      "Color3": [
+        0.6784313917160034,
+        0.8117647767066956,
+        1
+      ]
+    },
+    "Outlines": {
+      "Bool": false
+    },
+    "PrioritizeLightingQuality": {
+      "Bool": true
+    },
+    "ShadowSoftness": {
+      "Float32": 0.8999999761581421
+    },
+    "Technology": {
+      "Enum": 1
+    },
+    "TimeOfDay": {
+      "String": "14:00:00"
+    }
+  }
+}

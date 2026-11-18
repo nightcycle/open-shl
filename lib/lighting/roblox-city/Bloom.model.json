@@ -1,0 +1,17 @@
+{
+  "ClassName": "BloomEffect",
+  "Properties": {
+    "Enabled": {
+      "Bool": true
+    },
+    "Intensity": {
+      "Float32": 0.4000000059604645
+    },
+    "Size": {
+      "Float32": 27
+    },
+    "Threshold": {
+      "Float32": 1.0460000038146973
+    }
+  }
+}
