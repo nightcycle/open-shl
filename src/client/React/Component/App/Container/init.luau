@@ -20,7 +20,6 @@ local REGISTRY: Registry = {
 		CharacterSelect = require("@self/CharacterSelect"),
 		CharacterEditor = require("@self/CharacterEditor"),
 		ArtifactMenu = require("@self/ArtifactMenu"),
-		ArtifactUnlock = require("@self/ArtifactUnlock"),
 	},
 	PANELS = {
 		Music = require("@self/Music"),

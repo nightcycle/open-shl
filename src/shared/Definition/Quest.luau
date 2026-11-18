@@ -54,16 +54,8 @@ local DEFINITIONS: { [PseudoEnum.QuestType]: QuestDefinition } = {
 TableUtil.deepFreeze(DEFINITIONS)
 -- out of a hundred
 local REWARD_BALLOTS = table.freeze({
-	ARTIFACT = 10,
 	GEMS = 20,
-	CREDITS = 70,
-})
-local ARTIFACT_RARITY_BALLOTS: { [PseudoEnum.Rarity]: number } = table.freeze({
-	VeryCommon = 490,
-	Common = 300,
-	Uncommon = 160,
-	Rare = 50,
-	Legendary = 6,
+	CREDITS = 80,
 })
 local DIALOG = table.freeze({
 	GREETING = "I have a mission for you, are you up for it?",
@@ -137,40 +129,17 @@ Module.getFindItemName = function(instanceName: string): Option<string>
 	return Option.some(name)
 end
 
-Module.rollArtifactRarity = function(rng: Random): PseudoEnum.Rarity
-	local rarities = PseudoEnum.getEnumItems("Rarity")
-	local ballotCount = 0
-	for _, rarity: PseudoEnum.Rarity in rarities do
-		ballotCount += ARTIFACT_RARITY_BALLOTS[rarity]
-	end
-	local ballot = rng:NextInteger(1, ballotCount)
-	for _, rarity: PseudoEnum.Rarity in rarities do
-		ballot -= ARTIFACT_RARITY_BALLOTS[rarity]
-		if ballot <= 0 then
-			return rarity
-		end
-	end
-	return rarities[#rarities]
-end
-
 Module.rollReward = function(questType: PseudoEnum.QuestType, rng: Random): QuestReward
 	local definition = DEFINITIONS[questType]
-	local ballot = rng:NextInteger(1, REWARD_BALLOTS.ARTIFACT + REWARD_BALLOTS.GEMS + REWARD_BALLOTS.CREDITS)
+	local ballot = rng:NextInteger(1, REWARD_BALLOTS.GEMS + REWARD_BALLOTS.CREDITS)
 	local out: QuestReward
-	if ballot <= REWARD_BALLOTS.ARTIFACT then
+	if ballot <= REWARD_BALLOTS.GEMS then
 		out = {
-			Type = "Artifact",
-			Rarity = Module.rollArtifactRarity(rng),
-		}
-	elseif ballot <= REWARD_BALLOTS.ARTIFACT + REWARD_BALLOTS.GEMS then
-		out = {
-			Type = "Currency",
 			Currency = PseudoEnum.Currency.Gems,
 			Amount = definition.Gems,
 		}
 	else
 		out = {
-			Type = "Currency",
 			Currency = PseudoEnum.Currency.Credits,
 			Amount = definition.Credits,
 		}

@@ -26,6 +26,8 @@ end
 return MeleeFactory.new("basic-melee_dual-katana", {
 	Duration = 0.8,
 	Reach = 9,
+	DrawDelay = 0.6,
+	SheatheDelay = 0.6,
 	Props = { newKatana("LeftHand"), newKatana("RightHand") },
 	Hitboxes = {
 		{

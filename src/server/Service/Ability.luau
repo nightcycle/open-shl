@@ -165,6 +165,21 @@ local function newMachine(
 				)
 			end
 		end,
+		-- the client went ahead with it, it has to hear that it stands alone
+		OnRefused = function(binding: EventBinding)
+			if NetworkService.IsInitialized then
+				NetworkService:Fire(
+					RemoteDefinition.AbilityUpdated,
+					player,
+					table.freeze({
+						Type = "Refused" :: "Refused",
+						AbilityId = id,
+						Name = binding.Name,
+						StateId = machine.StateId,
+					})
+				)
+			end
+		end,
 	})
 	return machine
 end
@@ -187,7 +202,15 @@ local function onReported(self: AbilityService, player: Player, report: Report)
 	-- the machine drops what isn't the client's to say or doesn't carry what the binding takes, the server half of
 	-- the binding checks the rest
 	local machine = loadout.Machines[report.AbilityId]
-	if machine and not isBusy then
+	if not machine then
+		return
+	end
+	-- a binding that leads back to where the ability rests lets go of something, it gets through like a button
+	-- that's let go of does
+	local layout = machine.Definition.Layout
+	local binding: Binding? = layout.Bindings[report.Name]
+	local isLettingGo = binding ~= nil and binding.Kind == "Event" and binding.To == layout.InitialStateId
+	if not isBusy or isLettingGo then
 		machine:Fire(report.Name, report.Payload, report.Aim)
 	end
 end

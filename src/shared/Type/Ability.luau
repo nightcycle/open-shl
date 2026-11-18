@@ -177,6 +177,8 @@ export type Stimulus = {
 export type EventHook<C> = {
 	Guard: ((context: C) -> boolean)?,
 	Run: ((context: C) -> ())?,
+	-- puts right what the half did at the binding once the other side turned it down
+	Undo: ((context: C) -> ())?,
 }
 export type StateHook<C> = (context: C, swap: Swap?) -> Cleanup
 
@@ -279,6 +281,13 @@ export type Update =
 		Payload: unknown,
 	}
 	| {
+		-- a binding the client had the say on + the server didn't go along with, and the state the server is in
+		Type: "Refused",
+		AbilityId: string,
+		Name: string,
+		StateId: string,
+	}
+	| {
 		Type: "Custom",
 		Name: string,
 		IsActive: boolean,
@@ -293,6 +302,12 @@ Types.Update = Type.union(
 		AbilityId = Type.string,
 		Name = Type.string,
 		Payload = Type.optional(Type.any),
+	}),
+	Type.strictInterface({
+		Type = Type.literal("Refused"),
+		AbilityId = Type.string,
+		Name = Type.string,
+		StateId = Type.string,
 	}),
 	Type.strictInterface({
 		Type = Type.literal("Custom"),

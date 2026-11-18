@@ -71,7 +71,6 @@ export type ShellService = typeof(setmetatable(
 		_IsCameraModeAvailable: boolean, -- the free camera is flown with a keyboard
 		_IsBackpackEnabled: boolean,
 		_HasHudShown: boolean,
-		_PendingArtifactIds: { string },
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
 	},
@@ -106,21 +105,6 @@ local function getNextBootPhase(bootPhase: BootPhase): BootPhase
 		return "Intro"
 	end
 	return "Playing"
-end
-
--- an unlock that was granted while something else was up plays once the hud is back
-local function openPendingUnlock(self: ShellService)
-	if not self._State.IsGameplayHudVisible then
-		return
-	end
-	local definitionId = table.remove(self._PendingArtifactIds, 1)
-	if not definitionId then
-		return
-	end
-	self:OpenScreen({
-		Type = "ArtifactUnlock",
-		DefinitionId = definitionId,
-	})
 end
 
 -- the only place the state changes. a signal hands out what's current by the time it fires
@@ -183,8 +167,6 @@ local function setState(self: ShellService, state: State)
 	if previous.Panel ~= state.Panel and state.Panel == "Build" then
 		self:FireTutorialTrigger("BuildPressed")
 	end
-
-	openPendingUnlock(self)
 end
 -- Class
 local ShellService = {} :: ShellServiceImpl
@@ -396,7 +378,6 @@ return ServiceLocker(function(): ShellService
 		_IsCameraModeAvailable = UserInputService.KeyboardEnabled,
 		_IsBackpackEnabled = false,
 		_HasHudShown = false,
-		_PendingArtifactIds = {},
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, ShellService)
@@ -412,13 +393,6 @@ return ServiceLocker(function(): ShellService
 		end)
 	)
 
-	local artifactConnection = SessionService.ArtifactGranted:Connect(function(definitionId: string)
-		table.insert(self._PendingArtifactIds, definitionId)
-		openPendingUnlock(self)
-	end)
-	table.insert(self._CleanUpCallbacks, function()
-		artifactConnection:Disconnect()
-	end)
 	table.insert(self._CleanUpCallbacks, function()
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
 	end)

@@ -208,7 +208,7 @@ local SECTIONS: { [SectionId]: SectionDefinition } = {
 		Home = "Hud",
 		Steps = {
 			newTalkStep(CENTER_STAGE, "Idle", "Right", "Congratulations on choosing your first quest!"),
-			newTalkStep(CENTER_STAGE, "Idle", "Right", "If you succeed you may recieve an artifact, gems, or credits!"),
+			newTalkStep(CENTER_STAGE, "Idle", "Right", "If you succeed you may recieve gems or credits!"),
 			newTalkStep(CENTER_STAGE, "Idle", "Right", "Different quests give you different sized rewards!"),
 			newTalkStep(CENTER_STAGE, "Idle", "Right", "So be sure to try them all!"),
 			newTalkStep(CENTER_STAGE, "Idle", "Right", "Good luck on the quest!"),
@@ -222,14 +222,7 @@ local SECTIONS: { [SectionId]: SectionDefinition } = {
 		Steps = {
 			newTalkStep(CENTER_STAGE, "Idle", "Right", "Welcome to the Artifact Manager!"),
 			newTalkStep(CENTER_STAGE, "PointLeft", "Right", "Here is a list of all the artifacts available"),
-			newTalkStep(
-				CENTER_STAGE,
-				"PointLeft",
-				"Right",
-				"The ones you own are in green and can be worn on your character"
-			),
-			newTalkStep(CENTER_STAGE, "Idle", "Right", "A random artifact can be bought in the shop GUI"),
-			newTalkStep(CENTER_STAGE, "Idle", "Right", "But there is a small chance you are awarded one for a quest"),
+			newTalkStep(CENTER_STAGE, "PointLeft", "Right", "All of them can be worn on your character"),
 			newTalkStep(CENTER_STAGE, "Idle", "Right", "People who wear artifacts are almost as cool as me! *Almost*"),
 		},
 	},

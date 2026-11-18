@@ -9,7 +9,6 @@ local MeleeFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Mel
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local Reach = require("@game/ReplicatedStorage/Shared/VFX/Library/Reach")
 local SpendEnergy = require("@game/ServerScriptService/Server/VFX/Library/SpendEnergy")
-local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
@@ -73,7 +72,7 @@ Module.new = function(ability: MeleeFactory.Ability): AbilityBuilder.ServerBuild
 	end
 	for binding, sound in MeleeFactory.getSounds(ability) do
 		builder = builder:FireClient(binding, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
-			return { Sound = sound :: VFXAssetDefinition.SoundKey }
+			return sound
 		end, { Audience = "Others", Range = SOUND_RANGE })
 	end
 

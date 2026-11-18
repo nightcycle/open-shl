@@ -46,6 +46,13 @@ local isEnumItemValue = Type.strictArray(Type.string, Type.string)
 local isVersioned = Type.interface({
 	Version = Type.intersection(Type.integer, Type.numberMin(1)),
 })
+local PLAYER_MIGRATIONS: { Migration } = table.freeze({
+	-- a version 1 save listed the artifacts its player owned, every artifact is anybody's to wear since
+	function(document: { [string]: any }): { [string]: any }
+		document.ArtifactIds = nil
+		return document
+	end,
+})
 -- Variables
 local StoreNames: { string } = {}
 -- References
@@ -162,7 +169,6 @@ local function newPlayerSave(): PlayerSave
 		Characters = characters,
 		ActiveCharacterId = characters[1].Id,
 		Balances = ProductDefinition.STARTING_BALANCES,
-		ArtifactIds = {},
 		Inventory = BaseConstructor.newInventory(),
 		Entitlements = {},
 		BaseLayout = BaseConstructor.new(),
@@ -213,7 +219,7 @@ end
 
 Module.Player = Module.new("PlayerSave", function(userId: number): string
 	return `Player_{userId}`
-end, SaveType.CURRENT_VERSION, SaveType.PlayerSave, newPlayerSave, {}) :: Store<PlayerSave>
+end, SaveType.CURRENT_VERSION, SaveType.PlayerSave, newPlayerSave, PLAYER_MIGRATIONS) :: Store<PlayerSave>
 
 -- nothing is stored that the validator of its store turns down
 Module.encode = function<V>(store: Store<V>, value: V): Result<unknown, string>

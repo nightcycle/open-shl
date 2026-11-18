@@ -660,7 +660,7 @@ return {
 		["Fire"] = "Fire",
 		["Smoke"] = "Smoke",
 	},
-	-- an artifact is owned + worn by the name the old game gave it, these three go by another one now
+	-- an artifact is worn by the name the old game gave it, these three go by another one now
 	ARTIFACT_ALIASES = {
 		["C.H.R.I.S."] = "costume_artifacts_c.h.r.i.s",
 		["Ice-Nine Dronehelm"] = "costume_artifacts_ice-nine-dronehelm",

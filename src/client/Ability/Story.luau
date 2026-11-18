@@ -84,6 +84,11 @@ local function newRig(stage: Stage, client: ClientDefinition, server: ServerDefi
 				clientMachine:Fire(binding.Name, stimulus.Payload, nil)
 			end
 		end,
+		OnRefused = function(binding: EventBinding)
+			if clientMachine then
+				clientMachine:Refuse(binding.Name, serverMachine.StateId)
+			end
+		end,
 	})
 	clientMachine = Machine.new(client, {
 		Realm = "Client",

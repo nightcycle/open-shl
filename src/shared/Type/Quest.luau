@@ -26,27 +26,14 @@ Types.QuestState = Type.strictInterface({
 	Status = Types.QuestStatus,
 })
 
-export type QuestReward =
-	{
-		Type: "Currency",
-		Currency: PseudoEnum.Currency,
-		Amount: number,
-	}
-	| {
-		Type: "Artifact",
-		Rarity: PseudoEnum.Rarity,
-	}
-Types.QuestReward = Type.union(
-	Type.strictInterface({
-		Type = Type.literal("Currency"),
-		Currency = Type.literal(table.unpack(PseudoEnum.getEnumItems("Currency"))),
-		Amount = Type.numberMin(0),
-	}),
-	Type.strictInterface({
-		Type = Type.literal("Artifact"),
-		Rarity = Type.literal(table.unpack(PseudoEnum.getEnumItems("Rarity"))),
-	})
-)
+export type QuestReward = {
+	Currency: PseudoEnum.Currency,
+	Amount: number,
+}
+Types.QuestReward = Type.strictInterface({
+	Currency = Type.literal(table.unpack(PseudoEnum.getEnumItems("Currency"))),
+	Amount = Type.numberMin(0),
+})
 
 export type QuestDefinition = {
 	Type: PseudoEnum.QuestType,

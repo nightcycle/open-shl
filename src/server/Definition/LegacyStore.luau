@@ -40,9 +40,6 @@ Module.Credits = StoreDefinition.newReadOnly("Credits", getKey, Type.number) :: 
 
 Module.Gems = StoreDefinition.newReadOnly("Gems", getKey, Type.number) :: ReadOnlyStore<number>
 
--- json: the name of every artifact that was unlocked
-Module.Artifacts = StoreDefinition.newReadOnly("Artifacts", getKey, Type.string) :: ReadOnlyStore<string>
-
 Module.WornArtifact =
 	StoreDefinition.newReadOnly("LastArtifact2", getKey, isWornArtifact) :: ReadOnlyStore<WornArtifact>
 

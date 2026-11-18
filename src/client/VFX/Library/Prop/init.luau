@@ -74,18 +74,49 @@ return ClientVFX.state(ClientVFXDefinition.Prop, function(props: Properties, sco
 	weld.Part1 = limb
 	weld.C0 = offset
 	weld.Parent = part
-	part.Parent = character
-	if not slideOffset then
-		return function()
-			part:Destroy()
+	local isShown = false
+	local stopSlide: (() -> ())? = nil
+	local function show()
+		isShown = true
+		part.Parent = character
+		if slideOffset then
+			stopSlide = slide(weld, props.Offset, slideDuration)
 		end
 	end
-	local stop = slide(weld, props.Offset, slideDuration)
-	return function()
-		stop()
+	local function hide()
+		if stopSlide then
+			stopSlide()
+		end
+		if not slideOffset then
+			part:Destroy()
+			return
+		end
 		-- it goes back the way it came before it's gone
 		slide(weld, slideOffset, slideDuration, function()
 			part:Destroy()
 		end)
+	end
+	local delay = props.Delay or 0
+	local showThread: thread? = nil
+	if delay > 0 then
+		showThread = task.delay(delay, show)
+	else
+		show()
+	end
+	return function()
+		-- one that's put away before it was out never shows
+		if not isShown then
+			if showThread then
+				task.cancel(showThread)
+			end
+			part:Destroy()
+			return
+		end
+		local linger = props.Linger or 0
+		if linger > 0 then
+			task.delay(linger, hide)
+		else
+			hide()
+		end
 	end
 end)

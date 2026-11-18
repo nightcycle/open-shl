@@ -299,6 +299,11 @@ local function onUpdated(self: AbilityService, update: Update)
 		if machine then
 			machine:Fire(update.Name, update.Payload, nil)
 		end
+	elseif update.Type == "Refused" then
+		local machine = loadout.Machines[update.AbilityId]
+		if machine then
+			machine:Refuse(update.Name, update.StateId)
+		end
 	else
 		loadout.Store:Set(AbilityCondition.custom(update.Name).Key, update.IsActive)
 	end

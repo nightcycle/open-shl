@@ -46,6 +46,9 @@ export type Config = {
 	DrawSound: SoundKey?,
 	SheatheSound: SoundKey?,
 	SwingSound: SoundKey?,
+	-- seconds into the draw the weapon is in the hand, it's seen + heard from then on. at once without
+	DrawDelay: number?,
+	SheatheDelay: number?, -- seconds the weapon stays in the hand once it's put away, none without
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -79,7 +82,14 @@ Module.new = function(id: string, config: Config): Ability
 		Recover = VFXBinding.event({ "Swinging" }, AbilityTrigger.after(config.Duration), { To = "Idle" }),
 	}
 	local out: Config = table.clone(config)
-	out.Props = table.freeze(table.clone(config.Props))
+	local props: { Prop } = {}
+	for _, prop in config.Props do
+		local timedProp = table.clone(prop)
+		timedProp.Delay = config.DrawDelay
+		timedProp.Linger = config.SheatheDelay
+		table.insert(props, table.freeze(timedProp))
+	end
+	out.Props = table.freeze(props)
 	out.Hitboxes = table.freeze(table.clone(config.Hitboxes))
 	return table.freeze({
 		Layout = VFXBinding.layout(id, "Idle", true, bindings),
@@ -94,19 +104,19 @@ Module.getProp = function(prop: Prop, color: Color3?): Prop
 	return out
 end
 
--- what's heard at which binding, for the ones the ability has a sound for
-Module.getSounds = function(ability: Ability): { [EventBinding]: SoundKey }
+-- what's heard at which binding, for the ones the ability has a sound for. the draw is heard as the weapon shows
+Module.getSounds = function(ability: Ability): { [EventBinding]: ClientVFXType.Sound }
 	local bindings = ability.Layout.Bindings
 	local config = ability.Config
-	local sounds: { [EventBinding]: SoundKey } = {}
+	local sounds: { [EventBinding]: ClientVFXType.Sound } = {}
 	if config.DrawSound then
-		sounds[bindings.Draw] = config.DrawSound
+		sounds[bindings.Draw] = table.freeze({ Sound = config.DrawSound, Delay = config.DrawDelay })
 	end
 	if config.SheatheSound then
-		sounds[bindings.Sheathe] = config.SheatheSound
+		sounds[bindings.Sheathe] = table.freeze({ Sound = config.SheatheSound })
 	end
 	if config.SwingSound then
-		sounds[bindings.Swing] = config.SwingSound
+		sounds[bindings.Swing] = table.freeze({ Sound = config.SwingSound })
 	end
 	return sounds
 end

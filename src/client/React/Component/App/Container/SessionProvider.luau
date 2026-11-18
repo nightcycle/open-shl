@@ -15,8 +15,6 @@ local SessionActiveCharacterIdContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ActiveCharacterId")
 local SessionActiveIdentityKeyContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ActiveIdentityKey")
-local SessionArtifactIdsContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ArtifactIds")
 local SessionCharactersContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Characters")
 local SessionCreditsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Credits")
@@ -52,9 +50,6 @@ return function(props: Properties): React.ReactNode
 	local activeIdentityKey = useSignalState(SessionService.ActiveCharacterChanged, function(): IdentityKey
 		return SessionService:GetActiveIdentityKey()
 	end)
-	local artifactIds = useSignalState(SessionService.ArtifactIdsChanged, function(): { string }
-		return SessionService:GetArtifactIds()
-	end)
 	local inventory = useSignalState(SessionService.InventoryChanged, function(): BaseInventory
 		return SessionService:GetInventory()
 	end)
@@ -89,25 +84,21 @@ return function(props: Properties): React.ReactNode
 			ActiveIdentityKey = e(SessionActiveIdentityKeyContext.Provider, {
 				value = activeIdentityKey,
 			}, {
-				ArtifactIds = e(SessionArtifactIdsContext.Provider, {
-					value = artifactIds,
+				Inventory = e(SessionInventoryContext.Provider, {
+					value = inventory,
 				}, {
-					Inventory = e(SessionInventoryContext.Provider, {
-						value = inventory,
+					Credits = e(SessionCreditsContext.Provider, {
+						value = credits,
 					}, {
-						Credits = e(SessionCreditsContext.Provider, {
-							value = credits,
+						Gems = e(SessionGemsContext.Provider, {
+							value = gems,
 						}, {
-							Gems = e(SessionGemsContext.Provider, {
-								value = gems,
+							PowerLimit = e(SessionPowerLimitContext.Provider, {
+								value = powerLimit,
 							}, {
-								PowerLimit = e(SessionPowerLimitContext.Provider, {
-									value = powerLimit,
-								}, {
-									Entitlements = e(SessionEntitlementsContext.Provider, {
-										value = entitlements,
-									}, props.children),
-								}),
+								Entitlements = e(SessionEntitlementsContext.Provider, {
+									value = entitlements,
+								}, props.children),
 							}),
 						}),
 					}),

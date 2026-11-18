@@ -1,5 +1,6 @@
 --!strict
 -- Services
+local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
@@ -99,6 +100,8 @@ local PAD_HIDDEN_TRANSPARENCY = 1
 local SHELF_SLIDE_DISTANCE = 3.8
 local SHELF_SLIDE_DURATION = 0.76
 local SHELF_OPEN_DURATION = 10
+-- what the rooms are lit by on top of their own fittings
+local INDOOR_AMBIENT = Color3.fromRGB(140, 140, 140)
 -- Variables
 -- References
 local FrameTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/base/frame") :: Model
@@ -513,6 +516,15 @@ return {
 		furnish(self, state)
 		-- everything is in place by the time the world sees any of it
 		inst.Parent = parent
+		-- no daylight gets in + the fittings of an interior only reach the spot under them, which leaves the rest of
+		-- it black. whoever is inside sees by a light of their own for as long as they are
+		if RunService:IsRunning() then
+			local ambient = Lighting.Ambient
+			Lighting.Ambient = INDOOR_AMBIENT
+			table.insert(self._CleanUpCallbacks, function()
+				Lighting.Ambient = ambient
+			end)
+		end
 		return Result.ok(self)
 	end,
 }

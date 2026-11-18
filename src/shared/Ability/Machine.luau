@@ -35,11 +35,14 @@ export type Options = {
 	Leniency: number?,
 	-- told of every binding this side has the say on as it fires, from the very first one
 	OnFired: ((binding: EventBinding, stimulus: Stimulus) -> ())?,
+	-- told of every binding the other side went ahead with + this one turned down
+	OnRefused: ((binding: EventBinding) -> ())?,
 }
 type MachineImpl = {
 	__index: MachineImpl,
 	Raise: (self: Machine, name: string, payload: unknown, aim: Aim?) -> (),
 	Fire: (self: Machine, name: string, payload: unknown, aim: Aim?) -> (),
+	Refuse: (self: Machine, name: string, stateId: string) -> (),
 	SetStateId: (self: Machine, stateId: string) -> (),
 	Destroy: (self: Machine) -> (),
 }
@@ -55,6 +58,8 @@ export type Machine = typeof(setmetatable(
 		StateChanged: Signal<string, string>, -- the state it's in now, the one it left
 		-- a binding this side has the say on fired, the other side is waiting to hear of it
 		Fired: Signal<EventBinding, Stimulus>,
+		-- the other side fired a binding that moves the machine + this side didn't go along with it
+		Refused: Signal<EventBinding>,
 		_NewContext: (stimulus: Stimulus?, memory: Memory, record: Memory) -> any,
 		_Leniency: number,
 		_Bindings: { [string]: { Binding } }, -- by state, in the order of their names
@@ -65,6 +70,10 @@ export type Machine = typeof(setmetatable(
 		_Epoch: number, -- goes up with every state, a timer of an earlier one finds it moved on
 		_Cleanups: { [StateBinding]: { Cleanup } },
 		_Queue: { Stimulus },
+		-- the state a stimulus was made for, one that's still queued as the machine moves on is dropped
+		_Epochs: { [Stimulus]: number },
+		-- how many stimuli of time that had already passed were dealt with on the spot since the queue last ran dry
+		_DueCount: number,
 		_IsFlushing: boolean,
 		_CleanUpCallbacks: { () -> () },
 	},
@@ -74,6 +83,8 @@ export type Machine = typeof(setmetatable(
 local CURRENT_KEY = AbilityCondition.current().Key
 -- what a stimulus that's meant for one binding goes by, no condition is stored under it
 local BINDING_KEY = "Binding"
+-- two states that send the machine back + forth on time that has already passed would never let go of the frame
+local MAX_DUE_COUNT = 16
 -- Variables
 -- References
 -- Private Functions
@@ -162,7 +173,12 @@ local function getIfSetOff(self: Machine, binding: EventBinding, stimulus: Stimu
 		end
 		-- the other side only gets to fire what's its to decide, this one only raises what's waiting for it
 		if stimulus.IsRemote then
-			return binding.Authority ~= "Both" and binding.Authority ~= self.Realm
+			if binding.Authority == "Both" or binding.Authority == self.Realm then
+				return false
+			end
+			-- the server is taken at its word. a client only says what set its binding off, whatever else the binding
+			-- hangs on the server sees for itself
+			return self.Realm == "Client" or binding.Trigger == nil or getIfHolds(self, binding.Trigger.Requirements)
 		end
 		return binding.Trigger == nil and binding.Authority == self.Realm
 	end
@@ -180,6 +196,7 @@ end
 local function fire(self: Machine, stimulus: Stimulus): EventBinding?
 	local id = self.Definition.Layout.Id
 	local leadingBinding: EventBinding? = nil
+	local hasFired = false
 	for _, binding in self._Bindings[self.StateId] do
 		if binding.Kind ~= "Event" or not getIfSetOff(self, binding, stimulus) then
 			continue
@@ -210,6 +227,7 @@ local function fire(self: Machine, stimulus: Stimulus): EventBinding?
 		if not isAllowed then
 			continue
 		end
+		hasFired = true
 		for _, hook in hooks do
 			if hook.Run then
 				task.spawn(hook.Run, context)
@@ -221,6 +239,13 @@ local function fire(self: Machine, stimulus: Stimulus): EventBinding?
 		-- one that leads to the state it's in starts that state over
 		if binding.To and not leadingBinding then
 			leadingBinding = binding
+		end
+	end
+	-- the other side has moved on with it already, it's owed the word that this one hasn't
+	if stimulus.IsRemote and stimulus.BindingName and not hasFired then
+		local binding: Binding? = self.Definition.Layout.Bindings[stimulus.BindingName]
+		if binding and binding.Kind == "Event" and binding.To then
+			self.Refused:Fire(binding)
 		end
 	end
 	return leadingBinding
@@ -260,14 +285,32 @@ local function enter(self: Machine, stateId: string, swap: Swap?)
 			end
 		end
 	end
+	local dueDurations: { number } = {}
 	for duration, key in keys do
-		task.delay(math.max(0, duration - self._Leniency), function()
+		local delay = duration - self._Leniency
+		if delay <= 0 and self._DueCount < MAX_DUE_COUNT then
+			table.insert(dueDurations, duration)
+			continue
+		end
+		task.delay(math.max(0, delay), function()
 			if self.IsAlive and self._Epoch == epoch then
 				push(self, table.freeze({ Key = key, IsActive = true }))
 			end
 		end)
 	end
 	push(self, table.freeze({ Key = CURRENT_KEY, IsActive = true }))
+	-- time that has passed already isn't waited for: a state that's over the moment it began is left within the
+	-- frame, so whatever comes in right behind what led into it finds the machine where it'll be
+	table.sort(dueDurations)
+	for _, duration in dueDurations do
+		if not self.IsAlive or self._Epoch ~= epoch then
+			break
+		end
+		local stimulus: Stimulus = table.freeze({ Key = keys[duration], IsActive = true })
+		self._DueCount += 1
+		self._Epochs[stimulus] = epoch
+		push(self, stimulus)
+	end
 	if previousId ~= stateId then
 		self.StateChanged:Fire(stateId, previousId)
 	end
@@ -291,6 +334,11 @@ local function flush(self: Machine)
 	self._IsFlushing = true
 	while self.IsAlive and #self._Queue > 0 do
 		local nextStimulus = table.remove(self._Queue, 1) :: Stimulus
+		local epoch = self._Epochs[nextStimulus]
+		self._Epochs[nextStimulus] = nil
+		if epoch and epoch ~= self._Epoch then
+			continue
+		end
 		local binding = fire(self, nextStimulus)
 		local stateId = binding and binding.To
 		if binding and stateId then
@@ -307,6 +355,7 @@ local function flush(self: Machine)
 			refresh(self, nil)
 		end
 	end
+	self._DueCount = 0
 	self._IsFlushing = false
 end
 
@@ -346,6 +395,30 @@ function Machine:Fire(name: string, payload: unknown, aim: Aim?)
 	end
 end
 
+-- for the other side: it turned down a binding this side had the say on + went ahead with. whatever this half did
+-- at the binding is put right + the machine goes where the other side still is
+function Machine:Refuse(name: string, stateId: string)
+	local binding: Binding? = self.Definition.Layout.Bindings[name]
+	-- by the time the word is here the machine may have left the state the binding led to by itself
+	if
+		not self.IsAlive
+		or not binding
+		or binding.Kind ~= "Event"
+		or binding.To ~= self.StateId
+		or stateId == self.StateId
+		or not self._Bindings[stateId]
+	then
+		return
+	end
+	local hooks: { EventHook } = self.Definition.EventHooks[name] or {}
+	for _, hook in hooks do
+		if hook.Undo then
+			task.spawn(hook.Undo, newContext(self, nil))
+		end
+	end
+	self:SetStateId(stateId)
+end
+
 -- puts the machine where it's told to be, no questions asked
 function Machine:SetStateId(stateId: string)
 	if not self.IsAlive or self.StateId == stateId then
@@ -382,7 +455,9 @@ function Machine:Destroy()
 	self.Store:Set(AbilityCondition.abilityState(self.Definition.Layout.Id, self.StateId).Key, false)
 	self.StateChanged:Destroy()
 	self.Fired:Destroy()
+	self.Refused:Destroy()
 	table.clear(self._Queue)
+	table.clear(self._Epochs)
 end
 
 return {
@@ -410,6 +485,7 @@ return {
 			StateId = layout.InitialStateId,
 			StateChanged = Signal.new(),
 			Fired = Signal.new(),
+			Refused = Signal.new(),
 			_NewContext = options.NewContext,
 			_Leniency = options.Leniency or 0,
 			_Bindings = bindings,
@@ -420,11 +496,16 @@ return {
 			_Epoch = 0,
 			_Cleanups = {},
 			_Queue = {},
+			_Epochs = {},
+			_DueCount = 0,
 			_IsFlushing = false,
 			_CleanUpCallbacks = {},
 		}, Machine)
 		if options.OnFired then
 			self.Fired:Connect(options.OnFired)
+		end
+		if options.OnRefused then
+			self.Refused:Connect(options.OnRefused)
 		end
 		local connection = options.Store.Changed:Connect(function(stimulus: Stimulus)
 			push(self, stimulus)

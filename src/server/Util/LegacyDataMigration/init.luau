@@ -710,7 +710,6 @@ end
 local function convertPiece(
 	raw: unknown,
 	inventory: BaseInventory,
-	artifactIds: { string },
 	id: string,
 	changes: { string }
 ): Result<PlacedFurniture, string>
@@ -765,11 +764,10 @@ local function convertPiece(
 		piece.CharacterId = shown
 	elseif table.find(PEDESTAL_NAMES, name) then
 		local artifactId: string? = ArtifactIds[shown]
-		-- on a pedestal an artifact takes owning it as much as on a hero
-		if artifactId and table.find(artifactIds, artifactId) then
+		if artifactId then
 			piece.ArtifactId = artifactId
 		else
-			table.insert(changes, `the {describe(shown)} it showed isn't owned`)
+			table.insert(changes, `the {describe(shown)} it showed isn't an artifact`)
 		end
 	end
 	return Result.ok(piece)
@@ -827,29 +825,9 @@ Module.toCharacters = function(slots: { [number]: unknown }): ({ Character }, { 
 	return characters, problems
 end
 
-Module.toArtifactIds = function(names: { [number]: unknown }): ({ string }, { string })
-	local artifactIds: { string } = {}
-	local problems: { string } = {}
-	for index = 1, getLength(names) do
-		local name = names[index]
-		local artifactId: string? = if type(name) == "string" then ArtifactIds[name] else nil
-		if not artifactId then
-			table.insert(problems, `artifact {index}: {describe(name)} isn't an artifact`)
-		-- the old game could grant an artifact twice
-		elseif not table.find(artifactIds, artifactId) then
-			table.insert(artifactIds, artifactId)
-		end
-	end
-	return artifactIds, problems
-end
-
 -- the old game kept one worn artifact per player + put it on whichever hero they played. here an artifact is an item
 -- of a hero, so it's handed the one that should wear it
-Module.wearArtifact = function(
-	character: Character,
-	wornArtifact: WornArtifact,
-	artifactIds: { string }
-): Result<Character, string>
+Module.wearArtifact = function(character: Character, wornArtifact: WornArtifact): Result<Character, string>
 	local name = wornArtifact[1] :: string
 	if name == NOTHING then
 		return Result.ok(character)
@@ -857,10 +835,6 @@ Module.wearArtifact = function(
 	local artifactId: string? = ArtifactIds[name]
 	if not artifactId then
 		return Result.err(`{describe(name)} isn't an artifact`)
-	end
-	-- the old game let anybody wear any artifact, here it takes owning it
-	if not table.find(artifactIds, artifactId) then
-		return Result.err(`"{name}" isn't owned`)
 	end
 	return Result.ok(FreezeUtil.delta(character, function(t: Character): Character
 		local appearance = t.Identities.Main.Appearance
@@ -900,13 +874,9 @@ Module.toInventory = function(names: { string }): (BaseInventory, { string })
 	return inventory, problems
 end
 
--- entries holds the name of the theme, a title that was never used + every piece that was placed. the inventory + the
--- artifacts are what the player owns here, the old game didn't ask if a theme, a piece or what it showed was owned
-Module.toBaseLayout = function(
-	entries: { [number]: unknown },
-	inventory: BaseInventory,
-	artifactIds: { string }
-): (BaseLayout, { string })
+-- entries holds the name of the theme, a title that was never used + every piece that was placed. the inventory is
+-- what the player owns here, the old game didn't ask if a theme or a piece was owned
+Module.toBaseLayout = function(entries: { [number]: unknown }, inventory: BaseInventory): (BaseLayout, { string })
 	local problems: { string } = {}
 	local layout = FreezeUtil.delta(BaseConstructor.new(), function(t: BaseLayout): BaseLayout
 		local themeName = entries[1]
@@ -918,8 +888,7 @@ Module.toBaseLayout = function(
 		end
 		for index = 3, getLength(entries) do
 			local changes: { string } = {}
-			local pieceRes =
-				convertPiece(entries[index], inventory, artifactIds, `imported-{#t.Furniture + 1}`, changes)
+			local pieceRes = convertPiece(entries[index], inventory, `imported-{#t.Furniture + 1}`, changes)
 			if pieceRes.IsErr then
 				table.insert(problems, `piece {index - 2}: {pieceRes.Value}`)
 			elseif #t.Furniture >= PLACEMENT.MAX_PLACED then

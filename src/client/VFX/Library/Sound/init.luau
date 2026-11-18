@@ -18,14 +18,21 @@ local MAX_DURATION = 20
 -- Private Functions
 -- Class
 return ClientVFX.event(ClientVFXDefinition.Sound, function(props: Properties, scope: ClientScope)
-	local sound = Emitter.play(scope.Character, props.Sound, false)
-	if not sound then
-		return
+	local function play()
+		local sound = Emitter.play(scope.Character, props.Sound, false)
+		if not sound then
+			return
+		end
+		sound.Ended:Once(function()
+			sound:Destroy()
+		end)
+		task.delay(MAX_DURATION, function()
+			sound:Destroy()
+		end)
 	end
-	sound.Ended:Once(function()
-		sound:Destroy()
-	end)
-	task.delay(MAX_DURATION, function()
-		sound:Destroy()
-	end)
+	if props.Delay and props.Delay > 0 then
+		task.delay(props.Delay, play)
+	else
+		play()
+	end
 end)

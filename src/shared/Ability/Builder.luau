@@ -51,6 +51,9 @@ export type ClientBuilder = {
 	) -> ClientBuilder,
 	-- gets a say in whether the binding fires on this side at all
 	Guard: (self: ClientBuilder, binding: Event, guard: (context: ClientContext) -> boolean) -> ClientBuilder,
+	-- puts right what this half did at a binding the client has the say on, once the server turned it down. the
+	-- machine goes back to where the server is by itself, this is for what a state doesn't hold: a jump, a push
+	Undo: (self: ClientBuilder, binding: Event, undo: (context: ClientContext) -> ()) -> ClientBuilder,
 	-- drops whatever this half hooked onto the binding so far
 	Clear: (self: ClientBuilder, binding: Event | State) -> ClientBuilder,
 	Build: (self: ClientBuilder) -> AbilityType.ClientDefinition,
@@ -195,6 +198,9 @@ local function builder(definition: Definition): any
 		end,
 		Guard = function(_: any, binding: Event, guard: (context: any) -> boolean): any
 			return addEvent(binding, { Guard = guard })
+		end,
+		Undo = function(_: any, binding: Event, undo: (context: any) -> ()): any
+			return addEvent(binding, { Undo = undo })
 		end,
 		Relay = function(_: any, vfx: { Name: string }, reach: Reach?): any
 			local relays = table.clone(definition.Relays)

@@ -10,7 +10,6 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
-local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
 local ShopMenu = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ShopMenu")
@@ -32,7 +31,6 @@ local e = React.createElement
 -- Class
 return function(): React.ReactNode
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	assert(ShellService.IsInitialized, `the shell service isn't initialized`)
 	local errorMessage: string?, setErrorMessage: (string?) -> () = useTimedState(ERROR_DURATION)
 	local isMountedRef = useIsMounted()
@@ -110,16 +108,6 @@ return function(): React.ReactNode
 							end
 						end)
 						return
-					end
-					-- the server has nothing to hand over for a tier that's owned, it'd be paid for only to be paid back
-					local grant = definition.Grant
-					if grant.Type == "Artifact" then
-						local artifactIdsRes =
-							ProductDefinition.listUnownedArtifactIds(grant.Rarity, SessionService:GetArtifactIds())
-						if artifactIdsRes.IsErr then
-							setErrorMessage(artifactIdsRes.Value)
-							return
-						end
 					end
 					purchasingRef.current = definition
 					-- a prompt that never opened never ends either

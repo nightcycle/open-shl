@@ -20,11 +20,7 @@ export type Screen =
 	| {
 		Type: "ArtifactMenu",
 	}
-	| {
-		Type: "ArtifactUnlock",
-		DefinitionId: string, -- the artifact the cut-scene is about
-	}
-export type ScreenType = "None" | "CharacterSelect" | "CharacterEditor" | "ArtifactMenu" | "ArtifactUnlock"
+export type ScreenType = "None" | "CharacterSelect" | "CharacterEditor" | "ArtifactMenu"
 -- a menu over the gameplay hud, one at most is open
 export type PanelId = "Music" | "Actions" | "Database" | "Shop" | "Build"
 -- Constants

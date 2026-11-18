@@ -20,8 +20,6 @@ local ItemDefSelection =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Selection/AppearanceItemDefinition")
 local PreviewCharacterContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Preview")
-local SessionArtifactIdsContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ArtifactIds")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
@@ -47,9 +45,7 @@ local e = React.createElement
 return UILabs.CreateReactStory({
 	react = React,
 	reactRoblox = ReactRoblox,
-	controls = {
-		OwnsEverything = UILabs.Boolean(false),
-	},
+	controls = {},
 }, function(props)
 	local appliedArtifact: Item?, setAppliedArtifact: (Item?) -> () = React.useState(nil :: Item?)
 	local hiddenTags: { HiddenTag }, setHiddenTags: ({ HiddenTag }) -> () = React.useState({} :: { HiddenTag })
@@ -82,17 +78,6 @@ return UILabs.CreateReactStory({
 		out.Identities.Main.Appearance.HiddenTags = table.clone(hiddenTags)
 		return out
 	end, { baseCharacter :: any, selectedItemDef, hiddenTags })
-	-- every other artifact stays locked, unless the control hands them all out
-	local artifactIds = React.useMemo(function(): { string }
-		local out: { string } = {}
-		for i, itemDef in ItemAppearanceDefinition.list("costume", "artifacts") do
-			if props.controls.OwnsEverything or i % 2 == 1 then
-				table.insert(out, itemDef.Id)
-			end
-		end
-		table.freeze(out)
-		return out
-	end, { props.controls.OwnsEverything })
 
 	return e(CharacterContext.Provider, {
 		value = character,
@@ -103,36 +88,32 @@ return UILabs.CreateReactStory({
 			ItemDefSelection = e(ItemDefSelection.Provider, {
 				value = selectedItemDef,
 			}, {
-				ArtifactIds = e(SessionArtifactIdsContext.Provider, {
-					value = artifactIds,
-				}, {
-					Menu = e(ParentComponent, {
-						AnchorPoint = Vector2.new(0.5, 0.5),
-						Position = UDim2.fromScale(0.5, 0.5),
-						Size = UDim2.fromScale(1, 1),
-						OnAction = function(action: ParentComponent.ActionInfo)
-							if action.Type == "AddItem" then
-								setAppliedArtifact(ItemConstructor.new(action.ItemDefinition.Id))
-							elseif action.Type == "RemoveItem" then
-								setAppliedArtifact(nil)
-								setHiddenTags({})
-							elseif action.Type == "SetTagVisibility" then
-								local newHiddenTags = table.clone(hiddenTags)
-								local index = table.find(newHiddenTags, action.Tag)
-								if action.IsVisible and index then
-									table.remove(newHiddenTags, index)
-								elseif not action.IsVisible and not index then
-									table.insert(newHiddenTags, action.Tag)
-								end
-								setHiddenTags(newHiddenTags)
-							elseif action.Type == "SelectItem" then
-								setSelectedItemDef(action.ItemDefinition)
-							elseif action.Type == "Exit" then
-								setSelectedItemDef(nil)
+				Menu = e(ParentComponent, {
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Position = UDim2.fromScale(0.5, 0.5),
+					Size = UDim2.fromScale(1, 1),
+					OnAction = function(action: ParentComponent.ActionInfo)
+						if action.Type == "AddItem" then
+							setAppliedArtifact(ItemConstructor.new(action.ItemDefinition.Id))
+						elseif action.Type == "RemoveItem" then
+							setAppliedArtifact(nil)
+							setHiddenTags({})
+						elseif action.Type == "SetTagVisibility" then
+							local newHiddenTags = table.clone(hiddenTags)
+							local index = table.find(newHiddenTags, action.Tag)
+							if action.IsVisible and index then
+								table.remove(newHiddenTags, index)
+							elseif not action.IsVisible and not index then
+								table.insert(newHiddenTags, action.Tag)
 							end
-						end,
-						SizeConstraint = Enum.SizeConstraint.RelativeXY,
-					}),
+							setHiddenTags(newHiddenTags)
+						elseif action.Type == "SelectItem" then
+							setSelectedItemDef(action.ItemDefinition)
+						elseif action.Type == "Exit" then
+							setSelectedItemDef(nil)
+						end
+					end,
+					SizeConstraint = Enum.SizeConstraint.RelativeXY,
 				}),
 			}),
 		}),

@@ -63,7 +63,7 @@ return AbilityBuilder.newClient(layout)
 		end))
 	end)
 	:Run(bindings.Climb, ClientVFXDefinition.Lift, function(): ClientVFXType.Lift
-		return { Speed = CLIMB_SPEED }
+		return { Speed = CLIMB_SPEED, Clearance = RELEASE_DISTANCE }
 	end)
 	:Run(bindings.Climb, ClientVFXDefinition.Animation, function(): ClientVFXType.Animation
 		return { Animation = "WallClimbing" }

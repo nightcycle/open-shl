@@ -129,7 +129,6 @@ local function newSnapshot(session: Session): Snapshot
 		Characters = save.Characters,
 		ActiveCharacterId = save.ActiveCharacterId,
 		ActiveIdentityKey = session.ActiveIdentityKey,
-		ArtifactIds = save.ArtifactIds,
 		Inventory = save.Inventory,
 		Quest = session.Quest,
 	}
@@ -158,12 +157,6 @@ local function replicate(player: Player, save: PlayerSave, priorSave: PlayerSave
 	if not getIfEqual(save.Inventory, priorSave.Inventory) then
 		NetworkService:Fire(RemoteDefinition.InventoryChanged, player, save.Inventory)
 	end
-	-- an artifact is never taken away again, a new one plays its unlock on the client
-	for _, artifactId in save.ArtifactIds do
-		if not table.find(priorSave.ArtifactIds, artifactId) then
-			NetworkService:Fire(RemoteDefinition.ArtifactGranted, player, artifactId)
-		end
-	end
 end
 
 -- every piece of a session is frozen by the time it gets here, so a new session is a clone with pieces swapped out
@@ -190,7 +183,6 @@ local function import(save: PlayerSave, patch: SavePatch): PlayerSave
 		t.Characters = patch.Characters or t.Characters
 		t.ActiveCharacterId = patch.ActiveCharacterId or t.ActiveCharacterId
 		t.Balances = patch.Balances or t.Balances
-		t.ArtifactIds = patch.ArtifactIds or t.ArtifactIds
 		t.Inventory = patch.Inventory or t.Inventory
 		t.BaseLayout = patch.BaseLayout or t.BaseLayout
 		t.LastDailyRewardAt = patch.LastDailyRewardAt or t.LastDailyRewardAt

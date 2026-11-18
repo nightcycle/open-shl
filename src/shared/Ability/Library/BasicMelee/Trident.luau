@@ -14,6 +14,8 @@ local TILT = 0.16 * math.pi
 return MeleeFactory.new("basic-melee_trident", {
 	Duration = 0.8,
 	Reach = 9.5,
+	DrawDelay = 0.3,
+	SheatheDelay = 0.25,
 	Props = {
 		{
 			Limb = "RightHand",

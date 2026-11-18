@@ -17,6 +17,8 @@ type ClientContext = AbilityType.ClientContext
 -- Constants
 -- the middle of the avatar ends up this far off the spot, so it stands on it rather than in it
 local STANDING_OFFSET = Vector3.new(0, 3, 0)
+-- where the avatar stood as it jumped, a jump the server turns down is taken back to it
+local ORIGIN_KEY = "Origin"
 -- Variables
 -- References
 -- Private Functions
@@ -54,10 +56,19 @@ return AbilityBuilder
 				and context.VFX.fire(Reach, { Position = position, Range = config.Range })
 		end
 	)
+	:On(bindings.Cast, function(context: ClientContext)
+		context.Record[ORIGIN_KEY] = context.Character:GetPivot().Position
+	end)
 	:Fire(bindings.Cast, ClientVFXDefinition.Warp, function(context: ClientContext): ClientVFXType.Warp
 		return { Position = (context.Aim or context.getAim()).Position + STANDING_OFFSET }
 	end)
 	:Fire(bindings.Cast, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
 		return { Sound = config.Sound }
+	end)
+	:Undo(bindings.Cast, function(context: ClientContext)
+		local origin = context.Record[ORIGIN_KEY]
+		if typeof(origin) == "Vector3" then
+			context.VFX.fire(ClientVFXDefinition.Warp, { Position = origin })
+		end
 	end)
 	:Build()

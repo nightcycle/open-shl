@@ -29,8 +29,8 @@ Types.Balances = Type.intersection(
 	Type.map(Types.Currency, Types.Balance)
 )
 
-export type ShopTab = "Credits" | "Gems" | "Artifacts" | "Gamepasses"
-Types.ShopTab = Type.literal("Credits", "Gems", "Artifacts", "Gamepasses")
+export type ShopTab = "Credits" | "Gems" | "Gamepasses"
+Types.ShopTab = Type.literal("Credits", "Gems", "Gamepasses")
 
 export type EntitlementKey = "FifthPower" | "ExtraCharacterSlots" | "MultiHair"
 Types.EntitlementKey = Type.literal("FifthPower", "ExtraCharacterSlots", "MultiHair")
@@ -42,10 +42,6 @@ export type ProductGrant =
 		Amount: number,
 	}
 	| {
-		Type: "Artifact",
-		Rarity: PseudoEnum.Rarity,
-	}
-	| {
 		Type: "Entitlement",
 		Key: EntitlementKey,
 	}
@@ -54,10 +50,6 @@ Types.ProductGrant = Type.union(
 		Type = Type.literal("Currency"),
 		Currency = Types.Currency,
 		Amount = Type.intersection(Type.integer, Type.numberPositive),
-	}),
-	Type.strictInterface({
-		Type = Type.literal("Artifact"),
-		Rarity = Type.literal(table.unpack(PseudoEnum.getEnumItems("Rarity"))),
 	}),
 	Type.strictInterface({
 		Type = Type.literal("Entitlement"),

@@ -70,7 +70,6 @@ return function(props: Properties)
 
 	local tabs: { [string]: React.ReactNode } = {}
 	local cards: { [string]: React.ReactNode } = {}
-	local note: React.ReactNode = nil
 	for i, tabInfo in CONSTANTS.TABS do
 		local isSelected = tabInfo.Tab == currentTab
 		tabs[`{tabInfo.Tab}Button`] = e(
@@ -125,26 +124,6 @@ return function(props: Properties)
 				} :: ProductCard.Properties
 			)
 		end
-
-		local notePosition = tabInfo.RowPositions[#productDefinitions + 1]
-		if tabInfo.Note and notePosition then
-			note = e("Frame", {
-				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0, notePosition),
-				Size = UDim2.fromScale(1, 0.14),
-			}, {
-				TextLabel = e("TextLabel", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundTransparency = 1,
-					FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-					Position = UDim2.fromScale(0.5, 0.375),
-					Size = UDim2.fromScale(0.95, 0.95),
-					Text = tabInfo.Note,
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-				}),
-			})
-		end
 	end
 
 	return e(RobloxComponents.Frame(
@@ -185,7 +164,6 @@ return function(props: Properties)
 				Size = UDim2.fromScale(1, 1),
 			}, {
 				Cards = e(React.Fragment, {}, cards),
-				Note = note,
 			}),
 			ErrorMessage = props.ErrorMessage and e("TextLabel", {
 				BackgroundColor3 = Color3.fromRGB(151, 75, 75),

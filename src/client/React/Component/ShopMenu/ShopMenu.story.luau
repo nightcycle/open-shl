@@ -105,8 +105,6 @@ return UILabs.CreateReactStory({
 										table.freeze(out)
 										setEntitlements(out)
 										setErrorMessage(nil)
-									else
-										setErrorMessage(`every {grant.Rarity} artifact is already owned`)
 									end
 								elseif action.Type == "Exit" then
 									setErrorMessage(nil)

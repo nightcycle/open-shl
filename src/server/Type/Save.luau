@@ -19,7 +19,7 @@ type EntitlementKey = EconomyType.EntitlementKey
 local Types = {}
 
 -- goes up whenever the shape below changes, along with a migration that takes the saves of the version before it there
-Types.CURRENT_VERSION = 1
+Types.CURRENT_VERSION = 2
 
 -- everything that's kept of a player between visits, it's one document so that it's read + written as a whole
 export type PlayerSave = {
@@ -27,7 +27,6 @@ export type PlayerSave = {
 	Characters: { Character }, -- every slot, in slot order
 	ActiveCharacterId: string,
 	Balances: Balances,
-	ArtifactIds: { string }, -- the definition ids of the artifacts the player owns
 	Inventory: BaseInventory, -- the furniture + themes the player owns
 	Entitlements: { EntitlementKey }, -- only what was handed out for good, a game pass is asked for with every visit
 	BaseLayout: BaseLayout,
@@ -43,7 +42,6 @@ do -- Types.PlayerSave
 		Characters = Type.array(CharacterType.Character),
 		ActiveCharacterId = Type.string,
 		Balances = EconomyType.Balances,
-		ArtifactIds = Type.array(Type.string),
 		Inventory = BaseType.BaseInventory,
 		Entitlements = Type.array(EconomyType.EntitlementKey),
 		BaseLayout = BaseType.BaseLayout,

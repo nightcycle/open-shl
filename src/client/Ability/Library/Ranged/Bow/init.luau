@@ -6,8 +6,7 @@ local Bow = require("@game/ReplicatedStorage/Shared/Ability/Library/Ranged/Bow")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local GunFactory = require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Factory/Gun")
 -- Types
-local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
-type ClientContext = AbilityType.ClientContext
+local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
 -- Constants
 -- seconds the arrow is gone for by the time the string is heard
 local SOUND_DELAY = 0.2
@@ -19,9 +18,7 @@ return GunFactory.new(Bow, {
 	CastAnimation = "BowShooting",
 	HoldAnimation = "BowHolding",
 })
-	:On(Bow.Layout.Bindings.Launch, function(context: ClientContext)
-		task.delay(SOUND_DELAY, function()
-			context.VFX.fire(ClientVFXDefinition.Sound, { Sound = "Bow" })
-		end)
+	:Fire(Bow.Layout.Bindings.Launch, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+		return { Sound = "Bow", Delay = SOUND_DELAY }
 	end)
 	:Build()

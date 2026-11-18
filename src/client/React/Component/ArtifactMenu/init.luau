@@ -16,8 +16,6 @@ local useTween = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/
 -- Contexts
 local ItemDefSelection =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Selection/AppearanceItemDefinition")
-local SessionArtifactIdsContext =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ArtifactIds")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 export type ItemDefinition = AppearanceType.ItemDefinition
@@ -56,7 +54,6 @@ local e = React.createElement
 -- Class
 return function(props: Properties)
 	local selectedItemDef: ItemDefinition? = React.useContext(ItemDefSelection)
-	local artifactIds = React.useContext(SessionArtifactIdsContext)
 	local itemDefinitions = React.useMemo(function(): { ItemDefinition }
 		return ItemAppearanceDefinition.list("costume", "artifacts")
 	end, {})
@@ -126,7 +123,6 @@ return function(props: Properties)
 						ConfigurePanel,
 						{
 							SelectedItemDefinition = selectedItemDef,
-							IsOwned = table.find(artifactIds, selectedItemDef.Id) ~= nil,
 							AnchorPoint = Vector2.new(1, 0.5),
 							BorderColor3 = Color3.fromRGB(27, 42, 53),
 							Position = UDim2.fromScale(0.95, 0.5),
@@ -156,7 +152,6 @@ return function(props: Properties)
 						ItemList,
 						{
 							SelectedItemDefinition = selectedItemDef,
-							OwnedDefinitionIds = artifactIds,
 							AnchorPoint = Vector2.new(0, 0.5),
 							Position = UDim2.fromScale(0.05, 0.5),
 							Size = UDim2.fromScale(0.3, 0.8),
@@ -175,18 +170,6 @@ return function(props: Properties)
 							end,
 						} :: ItemList.Properties
 					),
-					Hint = e("TextLabel", {
-						AnchorPoint = Vector2.new(0.5, 0),
-						BackgroundColor3 = Color3.new(),
-						BackgroundTransparency = 0.3,
-						BorderColor3 = Color3.fromRGB(27, 42, 53),
-						FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-						Position = UDim2.fromScale(0.5, 0.1),
-						Size = UDim2.fromScale(0.15, 0.1),
-						Text = "Artifacts are available for purchase in the Shop",
-						TextColor3 = Color3.new(1, 1, 1),
-						TextScaled = true,
-					}),
 					Exit = e("TextButton", {
 						AnchorPoint = Vector2.new(0.5, 1),
 						BackgroundColor3 = Color3.new(),

@@ -108,7 +108,7 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 	end
 	for binding, sound in MeleeFactory.getSounds(ability) do
 		builder = builder:Fire(binding, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
-			return { Sound = sound :: VFXAssetDefinition.SoundKey }
+			return sound
 		end)
 	end
 	if config.IsRooted then

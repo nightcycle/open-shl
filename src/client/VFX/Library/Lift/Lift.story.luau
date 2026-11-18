@@ -18,6 +18,10 @@ local VFXStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/St
 -- the user rises for as long as the effect is on + is put back down as it stops
 return VFXStory.newStateStory({
 	Speed = UILabs.Slider(15, 0, 60, 1),
+	Clearance = UILabs.Slider(2, 0, 10, 0.5),
 }, function(stage: VFXStory.Stage, controls)
-	return stage.ClientScope.start(ClientVFXDefinition.Lift, { Speed = controls.Speed }).Stop
+	return stage.ClientScope.start(ClientVFXDefinition.Lift, {
+		Speed = controls.Speed,
+		Clearance = controls.Clearance,
+	}).Stop
 end)

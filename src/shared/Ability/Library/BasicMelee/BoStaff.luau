@@ -12,6 +12,8 @@ local MeleeFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Mel
 return MeleeFactory.new("basic-melee_bo-staff", {
 	Duration = 0.8,
 	Reach = 8.5,
+	DrawDelay = 0.3,
+	SheatheDelay = 0.25,
 	Props = {
 		{
 			Limb = "RightHand",

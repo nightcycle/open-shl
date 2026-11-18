@@ -35,7 +35,6 @@ type SessionServiceImpl = {
 	GetActiveCharacterId: (self: SessionService) -> string,
 	GetActiveIdentityKey: (self: SessionService) -> IdentityKey,
 	GetActiveCharacter: (self: SessionService) -> Option<Character>,
-	GetArtifactIds: (self: SessionService) -> { string },
 	GetInventory: (self: SessionService) -> BaseInventory,
 	GetQuest: (self: SessionService) -> QuestState?,
 	GetProfiles: (self: SessionService) -> { PublicProfile },
@@ -52,17 +51,14 @@ export type SessionService = typeof(setmetatable(
 		Loaded: Signal<>, -- the snapshot arrived
 		CharactersChanged: Signal<{ Character }>,
 		ActiveCharacterChanged: Signal<string, IdentityKey>, -- the slot or the identity changed
-		ArtifactIdsChanged: Signal<{ string }>,
 		InventoryChanged: Signal<BaseInventory>,
 		QuestChanged: Signal<QuestState?>,
-		ArtifactGranted: Signal<string>, -- the definition id
 		ProfilesChanged: Signal<{ PublicProfile }>,
 		DailyRewardGranted: Signal<DailyReward>,
 		_IsLoaded: boolean,
 		_Characters: { Character },
 		_ActiveCharacterId: string,
 		_ActiveIdentityKey: IdentityKey,
-		_ArtifactIds: { string },
 		_Inventory: BaseInventory,
 		_Quest: QuestState?,
 		_Profiles: { PublicProfile },
@@ -106,11 +102,6 @@ local function setActive(self: SessionService, id: string, identityKey: Identity
 	self.ActiveCharacterChanged:Fire(id, identityKey)
 end
 
-local function setArtifactIds(self: SessionService, artifactIds: { string })
-	self._ArtifactIds = artifactIds
-	self.ArtifactIdsChanged:Fire(artifactIds)
-end
-
 local function setInventory(self: SessionService, inventory: BaseInventory)
 	self._Inventory = inventory
 	self.InventoryChanged:Fire(inventory)
@@ -131,7 +122,6 @@ local function setSnapshot(self: SessionService, snapshot: Snapshot)
 	self._IsLoaded = true
 	setCharacters(self, snapshot.Characters)
 	setActive(self, snapshot.ActiveCharacterId, snapshot.ActiveIdentityKey)
-	setArtifactIds(self, snapshot.ArtifactIds)
 	setInventory(self, snapshot.Inventory)
 	setQuest(self, snapshot.Quest)
 	self.Loaded:Fire()
@@ -168,10 +158,6 @@ end
 
 function SessionService:GetActiveCharacter(): Option<Character>
 	return self:GetCharacter(self._ActiveCharacterId)
-end
-
-function SessionService:GetArtifactIds(): { string }
-	return self._ArtifactIds
 end
 
 function SessionService:GetInventory(): BaseInventory
@@ -235,17 +221,14 @@ return ServiceLocker(function(): SessionService
 		Loaded = Signal.new(),
 		CharactersChanged = Signal.new(),
 		ActiveCharacterChanged = Signal.new(),
-		ArtifactIdsChanged = Signal.new(),
 		InventoryChanged = Signal.new(),
 		QuestChanged = Signal.new(),
-		ArtifactGranted = Signal.new(),
 		ProfilesChanged = Signal.new(),
 		DailyRewardGranted = Signal.new(),
 		_IsLoaded = false,
 		_Characters = table.freeze({}),
 		_ActiveCharacterId = AttributeDefinition.get(player, AttributeDefinition.ActiveCharacterId),
 		_ActiveIdentityKey = AttributeDefinition.get(player.Character, AttributeDefinition.IdentityKey),
-		_ArtifactIds = table.freeze({}),
 		_Inventory = BaseConstructor.newInventory(),
 		_Quest = nil :: QuestState?,
 		_Profiles = table.freeze({}),
@@ -270,19 +253,6 @@ return ServiceLocker(function(): SessionService
 		self._Connections,
 		NetworkService:Connect(RemoteDefinition.QuestChanged, function(quest: QuestState)
 			setQuest(self, quest)
-		end)
-	)
-	table.insert(
-		self._Connections,
-		NetworkService:Connect(RemoteDefinition.ArtifactGranted, function(definitionId: string)
-			if table.find(self._ArtifactIds, definitionId) then
-				return
-			end
-			local artifactIds = table.clone(self._ArtifactIds)
-			table.insert(artifactIds, definitionId)
-			table.freeze(artifactIds)
-			setArtifactIds(self, artifactIds)
-			self.ArtifactGranted:Fire(definitionId)
 		end)
 	)
 	table.insert(
@@ -387,10 +357,8 @@ end, function(self: SessionService)
 	self.Loaded:Destroy()
 	self.CharactersChanged:Destroy()
 	self.ActiveCharacterChanged:Destroy()
-	self.ArtifactIdsChanged:Destroy()
 	self.InventoryChanged:Destroy()
 	self.QuestChanged:Destroy()
-	self.ArtifactGranted:Destroy()
 	self.ProfilesChanged:Destroy()
 	self.DailyRewardGranted:Destroy()
 	table.clear(self :: any)

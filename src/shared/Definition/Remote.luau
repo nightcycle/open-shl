@@ -80,8 +80,10 @@ local FOLDER_NAME = "Remotes"
 local INPUT_LIMIT: RateLimit = table.freeze({ Count = 60, Duration = 10 })
 -- an answer the server has to work for
 local REQUEST_LIMIT: RateLimit = table.freeze({ Count = 30, Duration = 10 })
--- every press + release of an ability, as well as what the effects of a player's own avatar pass on
-local ABILITY_LIMIT: RateLimit = table.freeze({ Count = 150, Duration = 10 })
+-- every press + release of an ability, what its client half claims + what the effects of a player's own avatar pass
+-- on. a rifle is four of these a shot + takes as many shots as a player can click, with room to spare so a release
+-- is never the one that's dropped
+local ABILITY_LIMIT: RateLimit = table.freeze({ Count = 600, Duration = 10 })
 -- the text filter is a web call
 local FILTER_LIMIT: RateLimit = table.freeze({ Count = 10, Duration = 10 })
 -- a teleport is a web call as well, and every try at a custom server is a guess at its entry code
@@ -212,7 +214,6 @@ Module.PurchaseFurniture =
 Module.PurchaseTheme =
 	newClientFunction("PurchaseTheme", Type.string, Type.literal(true), REQUEST_LIMIT) :: ClientFunction<true, string>
 Module.InventoryChanged = newServerEvent("InventoryChanged", BaseType.BaseInventory) :: ServerEvent<BaseInventory>
-Module.ArtifactGranted = newServerEvent("ArtifactGranted", Type.string) :: ServerEvent<string>
 Module.DailyRewardGranted = newServerEvent("DailyRewardGranted", SessionType.DailyReward) :: ServerEvent<DailyReward>
 
 -- residences

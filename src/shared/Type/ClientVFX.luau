@@ -52,14 +52,20 @@ Types.AnimationOnce = Types.Animation
 -- played once from the avatar
 export type Sound = {
 	Sound: SoundKey,
+	Delay: number?, -- seconds until it's heard, at once without
 }
 Types.Sound = Type.strictInterface({
 	Sound = VFXAssetDefinition.SoundKey,
+	Delay = Type.optional(Type.numberConstrained(0, 5)),
 })
 
 -- looped from the avatar until it's stopped
-export type SoundLoop = Sound
-Types.SoundLoop = Types.Sound
+export type SoundLoop = {
+	Sound: SoundKey,
+}
+Types.SoundLoop = Type.strictInterface({
+	Sound = VFXAssetDefinition.SoundKey,
+})
 
 -- a part held by a limb of the avatar
 export type Prop = {
@@ -75,6 +81,8 @@ export type Prop = {
 	-- where it comes out from + goes back to as it's put away, it's there + gone at once without
 	SlideOffset: CFrame?,
 	SlideDuration: number?, -- seconds it takes either way
+	Delay: number?, -- seconds until it's there, the time a hand takes to reach for it
+	Linger: number?, -- seconds it stays once it's put away, the time a hand takes to let go of it
 }
 Types.Prop = Type.strictInterface({
 	Limb = Type.string,
@@ -88,6 +96,8 @@ Types.Prop = Type.strictInterface({
 	Shape = Type.optional(Type.enum(Enum.PartType)),
 	SlideOffset = Type.optional(Type.CFrame),
 	SlideDuration = Type.optional(Type.numberConstrained(0, 2)),
+	Delay = Type.optional(Type.numberConstrained(0, 2)),
+	Linger = Type.optional(Type.numberConstrained(0, 2)),
 })
 
 -- a glowing shot on its way through the world
@@ -224,9 +234,11 @@ Types.Skim = Type.strictInterface({
 -- carries the avatar straight up, where it goes sideways is left to its player
 export type Lift = {
 	Speed: number, -- studs a second
+	Clearance: number, -- studs ahead of the avatar something has to be within for it to count as up against it
 }
 Types.Lift = Type.strictInterface({
 	Speed = Type.numberConstrained(0, 200),
+	Clearance = Type.numberConstrained(0, 50),
 })
 
 -- pulls the avatar to a spot in a straight line, turned the way it was as the pull began

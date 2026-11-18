@@ -28,7 +28,6 @@ export type SavePatch = {
 	Characters: { CharacterType.Character }?,
 	ActiveCharacterId: string?,
 	Balances: EconomyType.Balances?,
-	ArtifactIds: { string }?,
 	Inventory: BaseType.BaseInventory?,
 	BaseLayout: BaseType.BaseLayout?,
 	IsTutorialEnabled: boolean?,
@@ -40,7 +39,6 @@ type Stored = {
 	LastCharacterId: string?,
 	Credits: number?,
 	Gems: number?,
-	Artifacts: string?,
 	WornArtifact: LegacyDataMigration.WornArtifact?,
 	Furniture: { string }?,
 	BaseLayout: string?,
@@ -94,10 +92,6 @@ local function readStores(userId: number): Result<Stored, string>
 	if gemsRes.IsErr then
 		return gemsRes
 	end
-	local artifactsRes = read(LegacyStoreDefinition.Artifacts, userId)
-	if artifactsRes.IsErr then
-		return artifactsRes
-	end
 	local wornArtifactRes = read(LegacyStoreDefinition.WornArtifact, userId)
 	if wornArtifactRes.IsErr then
 		return wornArtifactRes
@@ -123,7 +117,6 @@ local function readStores(userId: number): Result<Stored, string>
 		LastCharacterId = lastCharacterIdRes.Value.Value,
 		Credits = creditsRes.Value.Value,
 		Gems = gemsRes.Value.Value,
-		Artifacts = artifactsRes.Value.Value,
 		WornArtifact = wornArtifactRes.Value.Value,
 		Furniture = furnitureRes.Value.Value,
 		BaseLayout = baseLayoutRes.Value.Value,
@@ -217,15 +210,6 @@ function LegacyImportService:Import(userId: number): Result<SavePatch, string>
 	local stored = storedRes.Value
 	local patch: SavePatch = {}
 
-	local artifactIds: { string } = {}
-	local artifactNames = decodeList(userId, LegacyStoreDefinition.Artifacts, stored.Artifacts)
-	if artifactNames then
-		local problems: { string }
-		artifactIds, problems = LegacyDataMigration.toArtifactIds(artifactNames)
-		report(userId, LegacyStoreDefinition.Artifacts, problems)
-		patch.ArtifactIds = artifactIds
-	end
-
 	local characters: { Character } = {}
 	local slots = decodeList(userId, LegacyStoreDefinition.Characters, stored.Characters)
 	if slots then
@@ -243,7 +227,7 @@ function LegacyImportService:Import(userId: number): Result<SavePatch, string>
 			end
 		end
 		if stored.WornArtifact then
-			local wornRes = LegacyDataMigration.wearArtifact(characters[activeIndex], stored.WornArtifact, artifactIds)
+			local wornRes = LegacyDataMigration.wearArtifact(characters[activeIndex], stored.WornArtifact)
 			if wornRes.IsOk then
 				characters[activeIndex] = wornRes.Value
 			else
@@ -273,7 +257,7 @@ function LegacyImportService:Import(userId: number): Result<SavePatch, string>
 	end
 	local baseEntries = decodeList(userId, LegacyStoreDefinition.BaseLayout, stored.BaseLayout)
 	if baseEntries then
-		local baseLayout, problems = LegacyDataMigration.toBaseLayout(baseEntries, inventory, artifactIds)
+		local baseLayout, problems = LegacyDataMigration.toBaseLayout(baseEntries, inventory)
 		report(userId, LegacyStoreDefinition.BaseLayout, problems)
 		patch.BaseLayout = baseLayout
 	end

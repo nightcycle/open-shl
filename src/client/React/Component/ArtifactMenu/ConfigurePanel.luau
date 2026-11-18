@@ -17,7 +17,6 @@ type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
 export type Properties = RobloxComponents.FrameProperties & {
 	SelectedItemDefinition: ItemDefinition,
-	IsOwned: boolean,
 	SetVisibility: (tag: AppearanceType.HiddenTag, toVisibility: boolean) -> (),
 	OnWear: (itemDef: ItemDefinition) -> (),
 	OnRemove: (itemDef: ItemDefinition) -> (),
@@ -102,7 +101,6 @@ local function buttonGroup(props: {
 end
 local function wearButton(props: {
 	SelectedItemDefinition: ItemDefinition,
-	IsOwned: boolean,
 	OnWear: (itemDef: ItemDefinition) -> (),
 	OnRemove: (itemDef: ItemDefinition) -> (),
 }): React.ReactNode
@@ -116,20 +114,6 @@ local function wearButton(props: {
 		end
 		return false
 	end, { characterAppearance.Items :: any, props.SelectedItemDefinition })
-
-	-- whatever is on can always come off, only putting one on takes owning it
-	if not isWearing and not props.IsOwned then
-		return e("TextLabel", {
-			AnchorPoint = Vector2.new(0.5, 0),
-			BackgroundTransparency = 1,
-			FontFace = BUTTON_FONT,
-			Position = UDim2.fromScale(0.5, 0.85),
-			Size = UDim2.fromScale(0.9, 0.12),
-			Text = "Available for purchase in the Shop",
-			TextColor3 = Color3.new(1, 1, 1),
-			TextScaled = true,
-		})
-	end
 
 	return e("TextButton", {
 		AnchorPoint = Vector2.new(0.5, 0),
@@ -224,7 +208,6 @@ return function(props: Properties)
 
 			Wear = e(wearButton, {
 				SelectedItemDefinition = props.SelectedItemDefinition,
-				IsOwned = props.IsOwned,
 				OnWear = props.OnWear,
 				OnRemove = props.OnRemove,
 			}),

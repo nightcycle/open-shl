@@ -39,12 +39,10 @@ type EconomyServiceImpl = {
 		currency: PseudoEnum.Currency,
 		amount: number
 	) -> Result<true, string>,
-	GrantArtifact: (self: EconomyService, player: Player, rarity: PseudoEnum.Rarity) -> Result<string, string>,
 }
 export type EconomyService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
-		_Random: Random,
 		_DailyRewardThreads: { [Player]: thread },
 		-- the passes of everyone with a session that the engine is being asked about because a prompt ended on paid
 		-- for, one call per pass at a time
@@ -228,37 +226,16 @@ local function checkPurchasedPass(
 	end
 end
 
-local function drawArtifact(self: EconomyService, save: PlayerSave, rarity: PseudoEnum.Rarity): Result<string, string>
-	local artifactIdsRes = ProductDefinition.listUnownedArtifactIds(rarity, save.ArtifactIds)
-	if artifactIdsRes.IsErr then
-		return artifactIdsRes
-	end
-	local artifactIds = artifactIdsRes.Value
-	return Result.ok(artifactIds[self._Random:NextInteger(1, #artifactIds)])
-end
-
 -- what a product hands over + the receipt it was paid with go into the save in one write, a save never holds one
 -- without the other. a product that was handed over for free has no receipt
-local function grantProduct(
-	self: EconomyService,
-	player: Player,
-	definition: ProductDefinition,
-	purchaseId: string?
-): Result<true, string>
+local function grantProduct(player: Player, definition: ProductDefinition, purchaseId: string?): Result<true, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
 	if sessionOpt.IsNone then
 		return Result.err(`{player.Name} has no session`)
 	end
 	local grant = definition.Grant
-	local artifactId: string? = nil
-	if grant.Type == "Artifact" then
-		local artifactRes = drawArtifact(self, sessionOpt.Value.Save, grant.Rarity)
-		if artifactRes.IsErr then
-			return artifactRes
-		end
-		artifactId = artifactRes.Value
-	elseif grant.Type == "Entitlement" and table.find(SessionService:GetEntitlements(player), grant.Key) then
+	if grant.Type == "Entitlement" and table.find(SessionService:GetEntitlements(player), grant.Key) then
 		return Result.err(`"{definition.Name}" is already owned`)
 	end
 	return update(player, function(save: PlayerSave): PlayerSave?
@@ -266,8 +243,6 @@ local function grantProduct(
 			save.Balances[grant.Currency] += grant.Amount
 		elseif grant.Type == "Entitlement" then
 			table.insert(save.Entitlements, grant.Key)
-		elseif artifactId then
-			table.insert(save.ArtifactIds, artifactId)
 		end
 		if purchaseId then
 			table.insert(save.PurchaseIds, purchaseId)
@@ -322,7 +297,7 @@ local function processReceipt(self: EconomyService, value: unknown): Enum.Produc
 	if table.find(sessionOpt.Value.Save.PurchaseIds, receipt.PurchaseId) then
 		return Enum.ProductPurchaseDecision.PurchaseGranted
 	end
-	local grantRes = grantProduct(self, player, definitionRes.Value, receipt.PurchaseId)
+	local grantRes = grantProduct(player, definitionRes.Value, receipt.PurchaseId)
 	if grantRes.IsErr then
 		warn(`receipt err: "{definitionRes.Value.Name}" of {player.Name}: {grantRes.Value}`)
 		return Enum.ProductPurchaseDecision.NotProcessedYet
@@ -389,35 +364,11 @@ function EconomyService:Grant(player: Player, currency: PseudoEnum.Currency, amo
 	end)
 end
 
--- draws an artifact of the rarity the player doesn't own yet + answers with its definition id. the player owns it
--- by the time their client hears of it, the unlock cut-scene it plays is only for show
-function EconomyService:GrantArtifact(player: Player, rarity: PseudoEnum.Rarity): Result<string, string>
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local sessionOpt = SessionService:Get(player)
-	if sessionOpt.IsNone then
-		return Result.err(`{player.Name} has no session`)
-	end
-	local artifactRes = drawArtifact(self, sessionOpt.Value.Save, rarity)
-	if artifactRes.IsErr then
-		return artifactRes
-	end
-	local artifactId = artifactRes.Value
-	local grantRes = update(player, function(save: PlayerSave): PlayerSave?
-		table.insert(save.ArtifactIds, artifactId)
-		return save
-	end)
-	if grantRes.IsErr then
-		return grantRes
-	end
-	return artifactRes
-end
-
 return ServiceLocker(function(): EconomyService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local self = setmetatable({
 		IsInitialized = true :: true,
-		_Random = Random.new(),
 		_DailyRewardThreads = {},
 		_PurchasedPassKeys = {},
 		_CleanUpCallbacks = {},
@@ -435,7 +386,7 @@ return ServiceLocker(function(): EconomyService
 			if definitionRes.IsErr then
 				return definitionRes
 			end
-			return grantProduct(self, player, definitionRes.Value, nil)
+			return grantProduct(player, definitionRes.Value, nil)
 		end
 	)
 	NetworkService:Handle(

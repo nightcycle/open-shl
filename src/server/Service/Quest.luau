@@ -130,17 +130,7 @@ end
 local function pay(player: Player, quest: Quest)
 	assert(EconomyService.IsInitialized, `the economy service isn't initialized`)
 	local reward = quest.Reward
-	local grantRes: Result<true, string>
-	if reward.Type == "Currency" then
-		grantRes = EconomyService:Grant(player, reward.Currency, reward.Amount)
-	else
-		local artifactRes = EconomyService:GrantArtifact(player, reward.Rarity)
-		if artifactRes.IsOk then
-			return
-		end
-		-- nothing of the rarity is left for the player to unlock, so the quest pays its credits instead
-		grantRes = EconomyService:Grant(player, PseudoEnum.Currency.Credits, QuestDefinition.get(quest.Type).Credits)
-	end
+	local grantRes = EconomyService:Grant(player, reward.Currency, reward.Amount)
 	if grantRes.IsErr then
 		warn(`quest reward err: {grantRes.Value}`)
 	end

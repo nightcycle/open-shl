@@ -54,7 +54,6 @@ export type CharacterService = typeof(setmetatable(
 	{} :: CharacterServiceImpl
 ))
 -- Constants
-local ARTIFACT_CATEGORY = "artifacts"
 local HAIR_CATEGORY = "hair"
 local MAX_NAME_LENGTH = CharacterEditorDefinition.MAX_NAME_LENGTH
 local MAX_BACKSTORY_LENGTH = CharacterEditorDefinition.MAX_BACKSTORY_LENGTH
@@ -171,21 +170,6 @@ local function getPowerSkins(identity: Identity, powers: { Power }): { [string]:
 	return out
 end
 
--- artifacts are unlocked, a client can't wear one into a save it was never granted
-local function getUnownedArtifactId(appearance: Appearance, artifactIds: { string }): string?
-	for _, item in appearance.Items do
-		local itemDefIndexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
-		if
-			itemDefIndexRes.IsOk
-			and itemDefIndexRes.Value.Category == ARTIFACT_CATEGORY
-			and not table.find(artifactIds, item.DefinitionId)
-		then
-			return item.DefinitionId
-		end
-	end
-	return nil
-end
-
 local function getIfMultiHair(appearance: Appearance): boolean
 	local count = 0
 	for _, item in appearance.Items do
@@ -201,14 +185,9 @@ local function newIdentity(
 	identity: Identity,
 	profile: Profile,
 	powers: { Power },
-	artifactIds: { string },
 	entitlements: { EntitlementKey }
 ): Result<Identity, string>
 	local appearance = AppearanceConstructor.fix(identity.Appearance)
-	local artifactId = getUnownedArtifactId(appearance, artifactIds)
-	if artifactId then
-		return Result.err(`artifact "{artifactId}" isn't owned`)
-	end
 	if getIfMultiHair(appearance) and not table.find(entitlements, "MultiHair") then
 		return Result.err(`more than one hair needs the multi hair pass`)
 	end
@@ -242,17 +221,16 @@ local function saveCharacter(player: Player, edited: Character): Result<Characte
 	if sessionOpt.IsNone then
 		return Result.err(`no slot holds the character`)
 	end
-	local artifactIds = sessionOpt.Value.Save.ArtifactIds
 	local entitlements = SessionService:GetEntitlements(player)
 	local powersRes = getPowers(edited, ProductDefinition.getPowerLimit(entitlements))
 	if powersRes.IsErr then
 		return powersRes
 	end
-	local mainRes = newIdentity(main, mainProfileRes.Value, powersRes.Value, artifactIds, entitlements)
+	local mainRes = newIdentity(main, mainProfileRes.Value, powersRes.Value, entitlements)
 	if mainRes.IsErr then
 		return mainRes
 	end
-	local secretRes = newIdentity(secret, secretProfileRes.Value, powersRes.Value, artifactIds, entitlements)
+	local secretRes = newIdentity(secret, secretProfileRes.Value, powersRes.Value, entitlements)
 	if secretRes.IsErr then
 		return secretRes
 	end

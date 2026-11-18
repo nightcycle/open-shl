@@ -5,12 +5,10 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
-local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
-local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 export type ProductDefinition = EconomyType.ProductDefinition
 export type ShopTab = EconomyType.ShopTab
@@ -31,11 +29,6 @@ local LEGACY_DEVELOPER_PRODUCT_IDS = table.freeze({
 	GEMS_2500 = 84562829,
 	GEMS_5000 = 84562842,
 	GEMS_25000 = 84562869,
-	ARTIFACT_VERY_COMMON = 84585767,
-	ARTIFACT_COMMON = 84585778,
-	ARTIFACT_UNCOMMON = 84585797,
-	ARTIFACT_RARE = 84585806,
-	ARTIFACT_LEGENDARY = 84585819,
 })
 local LEGACY_GAMEPASS_IDS = table.freeze({
 	FIFTH_POWER = 2777959,
@@ -57,10 +50,6 @@ local DAILY_REWARD = table.freeze({
 	AMOUNT = 5,
 	INTERVAL = 24 * 60 * 60,
 })
-local ARTIFACT_GROUP: AppearanceType.ItemGroup = "costume"
-local ARTIFACT_CATEGORY = "artifacts"
--- the colossal bladepack is a gift, it's never drawn
-local UNDRAWN_ARTIFACT_IDS = table.freeze({ "costume_artifacts_colossal-bladepack" })
 -- the price text is what a card shows until the live price is known
 local DEFINITIONS: { ProductDefinition } = {
 	{
@@ -160,46 +149,6 @@ local DEFINITIONS: { ProductDefinition } = {
 		LegacyPriceText = "6,000 R$",
 	},
 	{
-		Id = "artifacts_very-common",
-		Tab = "Artifacts",
-		Name = "Buy Very Common",
-		Grant = { Type = "Artifact", Rarity = PseudoEnum.Rarity.VeryCommon },
-		LegacyId = LEGACY_DEVELOPER_PRODUCT_IDS.ARTIFACT_VERY_COMMON,
-		LegacyPriceText = "4",
-	},
-	{
-		Id = "artifacts_common",
-		Tab = "Artifacts",
-		Name = "Buy Common",
-		Grant = { Type = "Artifact", Rarity = PseudoEnum.Rarity.Common },
-		LegacyId = LEGACY_DEVELOPER_PRODUCT_IDS.ARTIFACT_COMMON,
-		LegacyPriceText = "90 R$",
-	},
-	{
-		Id = "artifacts_uncommon",
-		Tab = "Artifacts",
-		Name = "Buy Uncommon",
-		Grant = { Type = "Artifact", Rarity = PseudoEnum.Rarity.Uncommon },
-		LegacyId = LEGACY_DEVELOPER_PRODUCT_IDS.ARTIFACT_UNCOMMON,
-		LegacyPriceText = "160 R$",
-	},
-	{
-		Id = "artifacts_rare",
-		Tab = "Artifacts",
-		Name = "Buy Rare",
-		Grant = { Type = "Artifact", Rarity = PseudoEnum.Rarity.Rare },
-		LegacyId = LEGACY_DEVELOPER_PRODUCT_IDS.ARTIFACT_RARE,
-		LegacyPriceText = "700 R$",
-	},
-	{
-		Id = "artifacts_legendary",
-		Tab = "Artifacts",
-		Name = "Buy Legendary",
-		Grant = { Type = "Artifact", Rarity = PseudoEnum.Rarity.Legendary },
-		LegacyId = LEGACY_DEVELOPER_PRODUCT_IDS.ARTIFACT_LEGENDARY,
-		LegacyPriceText = "1,300 R$",
-	},
-	{
 		Id = "gamepasses_fifth-power",
 		Tab = "Gamepasses",
 		Name = "Have a 5th Power",
@@ -270,29 +219,6 @@ Module.getFromLegacyId = function(legacyId: number, isGamePass: boolean): Result
 		end
 	end
 	return Result.err(`no {if isGamePass then "game pass" else "developer product"} {legacyId}`)
-end
-
--- the artifacts of a rarity that can still be drawn for somebody who owns the given ones, an error once there's none
-Module.listUnownedArtifactIds = function(
-	rarity: PseudoEnum.Rarity,
-	ownedArtifactIds: { string }
-): Result<{ string }, string>
-	local out: { string } = {}
-	for _, itemDef in ItemAppearanceDefinition.list(ARTIFACT_GROUP, ARTIFACT_CATEGORY) do
-		if
-			itemDef.Rarity == rarity
-			and not table.find(UNDRAWN_ARTIFACT_IDS, itemDef.Id)
-			and not table.find(ownedArtifactIds, itemDef.Id)
-		then
-			table.insert(out, itemDef.Id)
-		end
-	end
-	if #out == 0 then
-		local rarityName = rarity == PseudoEnum.Rarity.VeryCommon and "Very Common" or rarity
-		return Result.err(`every {rarityName} artifact is already owned`)
-	end
-	table.freeze(out)
-	return Result.ok(out)
 end
 
 Module.list = function(tab: ShopTab?): { ProductDefinition }
