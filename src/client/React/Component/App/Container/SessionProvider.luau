@@ -57,9 +57,12 @@ return function(props: Properties): React.ReactNode
 	local credits = usePlayerAttribute(AttributeDefinition.Credits)
 	local gems = usePlayerAttribute(AttributeDefinition.Gems)
 	local powerLimit = usePlayerAttribute(AttributeDefinition.PowerLimit)
+	-- the passes of every game are listened for, the ones a game doesn't sell are never set on its players
 	local hasFifthPower = usePlayerAttribute(AttributeDefinition.HasFifthPower)
 	local hasExtraCharacterSlots = usePlayerAttribute(AttributeDefinition.HasExtraCharacterSlots)
 	local hasMultiHair = usePlayerAttribute(AttributeDefinition.HasMultiHair)
+	local hasExtraPowers = usePlayerAttribute(AttributeDefinition.HasExtraPowers)
+	local hasAdvancedRoleplay = usePlayerAttribute(AttributeDefinition.HasAdvancedRoleplay)
 	local entitlements = React.useMemo(function(): { EntitlementKey }
 		local out: { EntitlementKey } = {}
 		if hasFifthPower then
@@ -71,9 +74,15 @@ return function(props: Properties): React.ReactNode
 		if hasMultiHair then
 			table.insert(out, "MultiHair")
 		end
+		if hasExtraPowers then
+			table.insert(out, "ExtraPowers")
+		end
+		if hasAdvancedRoleplay then
+			table.insert(out, "AdvancedRoleplay")
+		end
 		table.freeze(out)
 		return out
-	end, { hasFifthPower, hasExtraCharacterSlots, hasMultiHair })
+	end, { hasFifthPower, hasExtraCharacterSlots, hasMultiHair, hasExtraPowers, hasAdvancedRoleplay })
 
 	return e(SessionCharactersContext.Provider, {
 		value = characters,
