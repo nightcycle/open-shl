@@ -198,6 +198,7 @@ export type ClientContext = {
 	Character: Model,
 	Player: Player?,
 	Color: Color3?, -- the one the character wears the ability in
+	SecondaryColor: Color3?, -- the one that goes with it, for an ability that's shown in two
 	-- what came with whatever set the binding off. for one that's set off by time or by the state itself: with
 	-- whatever brought the machine into the state
 	Aim: Aim?,
@@ -215,6 +216,7 @@ export type ServerContext = {
 	Character: Model,
 	Player: Player?,
 	Color: Color3?,
+	SecondaryColor: Color3?,
 	Aim: Aim?,
 	Memory: Memory,
 	Record: Memory,
@@ -229,10 +231,12 @@ export type ServerDefinition = Definition<ServerContext>
 export type Grant = {
 	Id: string,
 	Color: Color3?,
+	SecondaryColor: Color3?,
 }
 Types.Grant = Type.strictInterface({
 	Id = Type.string,
 	Color = Type.optional(Type.Color3),
+	SecondaryColor = Type.optional(Type.Color3),
 })
 
 -- what a client tells the server about the abilities of its own character

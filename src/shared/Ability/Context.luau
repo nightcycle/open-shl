@@ -16,6 +16,7 @@ export type ClientSetup = {
 	Character: Model,
 	Player: Player?,
 	Color: Color3?,
+	SecondaryColor: Color3?,
 	VFX: VFXType.ClientScope,
 	GetAim: () -> Aim,
 	-- has the machine of the half fire the binding
@@ -26,6 +27,7 @@ export type ServerSetup = {
 	Character: Model,
 	Player: Player?,
 	Color: Color3?,
+	SecondaryColor: Color3?,
 	VFX: VFXType.ServerScope,
 	Raise: (name: string, payload: unknown, aim: Aim?) -> (),
 }
@@ -61,6 +63,7 @@ Module.newClient = function(setup: ClientSetup, stimulus: Stimulus?, memory: Mem
 		Character = setup.Character,
 		Player = setup.Player,
 		Color = setup.Color,
+		SecondaryColor = setup.SecondaryColor,
 		Aim = stimulus and stimulus.Aim,
 		Memory = memory,
 		Record = record,
@@ -83,6 +86,7 @@ Module.newServer = function(setup: ServerSetup, stimulus: Stimulus?, memory: Mem
 		Character = setup.Character,
 		Player = setup.Player,
 		Color = setup.Color,
+		SecondaryColor = setup.SecondaryColor,
 		Aim = stimulus and stimulus.Aim,
 		Memory = memory,
 		Record = record,

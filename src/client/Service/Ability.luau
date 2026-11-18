@@ -184,6 +184,7 @@ local function newMachine(character: Model, grant: Grant, definition: ClientDefi
 		Character = character,
 		Player = Players.LocalPlayer,
 		Color = grant.Color,
+		SecondaryColor = grant.SecondaryColor,
 		VFX = VFXService:NewScope(character),
 		GetAim = function(): Aim
 			return Aim.get(character)

@@ -139,6 +139,7 @@ local function newMachine(
 		Character = character,
 		Player = player,
 		Color = grant.Color,
+		SecondaryColor = grant.SecondaryColor,
 		VFX = VFXService:NewScope(player, character),
 		Raise = function(name: string, payload: unknown, aim: Aim?)
 			machine:Raise(name, payload, aim)
