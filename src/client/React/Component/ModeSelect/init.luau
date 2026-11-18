@@ -11,26 +11,10 @@ local Image = require("@game/ReplicatedStorage/Generated/Image")
 local useTween = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTween")
 -- Contexts
 -- Types
-local ServerType = require("@game/ReplicatedStorage/Shared/Type/Server")
-export type Mode = ServerType.Mode
-export type ActionInfo =
-	{
-		Type: "ModePressed",
-		Mode: Mode,
-	}
-	| {
-		Type: "ServersPressed",
-	}
-	| {
-		Type: "IdEntered",
-		Id: string,
-	}
-export type Properties = RobloxComponents.FrameProperties & {
-	IsLeaving: boolean, -- a choice was made: the buttons are off screen, they come back when it turns false
-	Notice: string?, -- why the last choice fell through
-	IdNotice: string?, -- an answer about the id that was entered, it's written into the id box
-	OnAction: (ActionInfo) -> (),
-}
+local ModeSelectTypes = require("@self/Types")
+export type Mode = ModeSelectTypes.Mode
+export type ActionInfo = ModeSelectTypes.ActionInfo
+export type Properties = ModeSelectTypes.Properties
 -- Constants
 local EMPTY_ID_TEXT = "You need to insert an ID first, otherwise click a mode!"
 local LEAVE_TWEEN_INFO = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
