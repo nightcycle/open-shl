@@ -42,7 +42,7 @@ local function buttonGroup(props: {
 	local character = React.useContext(CharacterContext)
 	local characterAppearance = character.Identities.Main.Appearance
 	local hasItem = React.useMemo(function(): boolean
-		for i, item in characterAppearance.Items do
+		for _, item in characterAppearance.Items do
 			local definition = ItemAppearanceDefinition.get(item.DefinitionId)
 			if definition.IsOk then
 				if table.find(definition.Value.Tags, props.HiddenTag) then
@@ -55,7 +55,7 @@ local function buttonGroup(props: {
 		return false
 	end, { characterAppearance.Items :: any, props.HiddenTag })
 	local isWearing = React.useMemo(function(): boolean
-		for i, item in characterAppearance.Items do
+		for _, item in characterAppearance.Items do
 			if item.DefinitionId == props.SelectedItemDefinition.Id then
 				return true
 			end
@@ -107,7 +107,7 @@ local function wearButton(props: {
 	local character = React.useContext(CharacterContext)
 	local characterAppearance = character.Identities.Main.Appearance
 	local isWearing = React.useMemo(function(): boolean
-		for i, item in characterAppearance.Items do
+		for _, item in characterAppearance.Items do
 			if item.DefinitionId == props.SelectedItemDefinition.Id then
 				return true
 			end

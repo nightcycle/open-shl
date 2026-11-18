@@ -43,10 +43,10 @@ function Scene:Destroy()
 		return
 	end
 	self.IsAlive = false :: any
-	for i, v in self._Connections do
+	for _, v in self._Connections do
 		v:Disconnect()
 	end
-	for i, v in self._CleanUpCallbacks do
+	for _, v in self._CleanUpCallbacks do
 		task.spawn(v)
 	end
 	if self.Rig.IsDoing then

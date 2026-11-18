@@ -23,7 +23,7 @@ function Module.array<V>(seed: number?, valueFn: (number?) -> V, len: number?): 
 	assert(len, `bad length`)
 	local out = {}
 	if len > 0 then
-		for i = 1, len do
+		for _ = 1, len do
 			local value = valueFn(RandomUtil.newSeed(rng))
 			if value == nil then
 				continue
@@ -41,7 +41,7 @@ function Module.set<V>(seed: number?, valueFn: (number?) -> V, targetLen: number
 	local out = {}
 	local hits: { [V]: true? } = {}
 	if targetLen > 0 then
-		for i = 1, targetLen do
+		for _ = 1, targetLen do
 			local value = valueFn(RandomUtil.newSeed(rng))
 			if value == nil then
 				continue
@@ -62,7 +62,7 @@ function Module.map<K, V>(seed: number?, keyFn: (number?) -> K, valueFn: (number
 	assert(targetLen, `bad targetLen`)
 	local out: { [K]: V } = {}
 	if targetLen > 0 then
-		for i = 1, targetLen do
+		for _ = 1, targetLen do
 			local key = keyFn(RandomUtil.newSeed(rng))
 			if out[key] ~= nil then
 				continue

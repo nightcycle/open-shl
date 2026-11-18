@@ -1,0 +1,53 @@
+name: cd
+
+# builds + publishes the places of deploy.yml. every push to the production branch goes live in all of them. it can
+# be started by hand as well, for one place or to see that everything builds: from any other branch that's all it does
+on:
+  push:
+    branches:
+      - production
+  workflow_dispatch:
+    inputs:
+      universe:
+        description: the universe of deploy.yml to publish, all of them when left empty
+        required: false
+        default: ""
+      place:
+        description: the place of it to publish, all of them when left empty
+        required: false
+        default: ""
+      dry_run:
+        description: build everything without publishing any of it
+        type: boolean
+        default: false
+
+# two runs at once would overwrite each other's places
+concurrency:
+  group: cd
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    # the tools of rokit.toml are only sure to come with a windows build
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: CompeyDev/setup-rokit@v0.2.1
+      - name: install packages
+        run: wally install
+      - name: generate code
+        run: sh scripts/proj/code-gen.sh
+      - name: resolve assets
+        run: UPLOAD_ASSETS=locked sh scripts/proj/sync.sh
+      - name: publish
+        env:
+          UNIVERSE: ${{ inputs.universe }}
+          PLACE: ${{ inputs.place }}
+          # nothing but the production branch publishes
+          DRY_RUN: ${{ github.ref != 'refs/heads/production' || inputs.dry_run }}
+          # one line per `api_key_env` of deploy.yml
+          PUBLISH_ROBLOX_API_KEY: ${{ secrets.PUBLISH_ROBLOX_API_KEY }}
+        run: lune run scripts/cd/publish.lune.luau

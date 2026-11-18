@@ -1,3 +1,5 @@
-std = "roblox"
+std = "string-require"
 exclude = ["**.story.luau"]
 [lints]
+# selene only takes luau's escapes (\u{...}, \z) from a library that's named roblox, the type checker has them covered
+bad_string_escape = "allow"

@@ -59,7 +59,7 @@ return function(props: Properties)
 	end, {})
 	local groups = React.useMemo(function(): { ItemList.RarityItemGroup }
 		local rarityGroups: { [PseudoEnum.Rarity]: { ItemDefinition } } = {}
-		for i, itemDef in itemDefinitions do
+		for _, itemDef in itemDefinitions do
 			if itemDef.Rarity then
 				local group = rarityGroups[itemDef.Rarity] or {}
 				rarityGroups[itemDef.Rarity] = group

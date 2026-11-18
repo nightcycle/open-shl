@@ -1,0 +1,8 @@
+# the roblox standard library, with a require that takes the string paths luau resolves
+---
+base: roblox
+name: string-require
+globals:
+  require:
+    args:
+      - type: any

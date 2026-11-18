@@ -26,7 +26,7 @@ local SceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/ar
 -- Private Functions
 local e = React.createElement
 -- Class
-return function(props: Properties): React.ReactNode
+return function(_: Properties): React.ReactNode
 	local topInset = React.useContext(AppTopInsetContext)
 	local character = React.useContext(CharacterContext)
 	local previewCharacter = React.useContext(PreviewCharacterContext)

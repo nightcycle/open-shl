@@ -53,7 +53,7 @@ local function useRotation(scene: useScene.Scene?, rotationDeg: number)
 	end, { rotationDeg :: any, scene and scene.IsAlive and scene.Rig.IsDone })
 end
 -- Class
-return function(props: Properties): React.ReactNode
+return function(_: Properties): React.ReactNode
 	local topInset = React.useContext(AppTopInsetContext)
 	local isHeroFocus = React.useContext(IsHeroFocusContext)
 	local character = React.useContext(CharacterContext)

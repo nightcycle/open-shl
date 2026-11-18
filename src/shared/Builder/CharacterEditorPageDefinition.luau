@@ -92,6 +92,7 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
 			local properties = table.clone(definition.Fields or {})
 			table.insert(properties, field)
+			-- selene: allow(if_same_then_else)
 			if definition.Type == "Default" then
 				definition.Fields = properties
 			else
@@ -116,6 +117,7 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
 				local tags: { Tag } = table.clone(definition.ExclusionTags or {})
 				table.insert(tags, tag)
+				-- selene: allow(if_same_then_else)
 				if definition.Type == "Default" then
 					definition.ExclusionTags = tags
 				else

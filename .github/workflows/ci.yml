@@ -1,0 +1,18 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    # the tools of rokit.toml are only sure to come with a windows build
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: CompeyDev/setup-rokit@v0.2.1
+      - name: lint
+        run: sh scripts/ci/lint.sh

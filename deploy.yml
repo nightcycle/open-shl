@@ -1,0 +1,29 @@
+# what the cd pipeline publishes + where to. a universe is one experience on roblox, each of its places is this code
+# built with its own switches. another place is another entry under `places`, another game another under `universes`
+#
+# the ids aren't secrets. the open cloud key that publishes a universe is: `api_key_env` names the env variable it's
+# read from, which is a secret of the workflow (and a line of .env to publish from a terminal)
+#
+# `env` is what the build scripts are run with, the same variables they take from a terminal (MODE, MAP, PROJECT_NAME,
+# any flag of the build config). a place adds its own to those of its universe. on top of that every build is handed
+# UNIVERSE_ID, PLACE_ID + the id of each place of its universe as <NAME>_PLACE_ID, so one place can send players to
+# another without any of them being written down twice
+universes:
+  shl2:
+    universe_id: 0
+    api_key_env: PUBLISH_ROBLOX_API_KEY
+    env:
+      PROJECT_NAME: superhero-life-2
+      MAP: roblox-city
+    places:
+      # the place players land in
+      root:
+        place_id: 0
+        version_type: published # "saved" uploads a version without putting it live
+        env:
+          MODE: combat
+      roleplay:
+        place_id: 0
+        version_type: published
+        env:
+          MODE: roleplay
