@@ -1,0 +1,41 @@
+--!strict
+-- Services
+-- Packages
+local Type = require("@game/ReplicatedStorage/Packages/Type")
+-- Modules
+local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local ServerVFX = require("@game/ServerScriptService/Server/VFX")
+-- Types
+local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
+type ServerScope = VFXType.ServerScope
+export type Properties = {
+	Amount: number,
+}
+-- Constants
+local isProperties = Type.strictInterface({
+	Amount = Type.numberMin(0),
+})
+-- Variables
+-- References
+-- Private Functions
+-- Class
+-- takes energy off the character the effect belongs to. false if there isn't enough of it, which their player is
+-- warned of + nothing is taken
+return ServerVFX.newEvent("SpendEnergy", isProperties, function(props: Properties, scope: ServerScope): boolean
+	local character = scope.Character
+	if not character then
+		return false
+	end
+	if not BUILD_CONFIG.ENERGY_ENABLED then
+		return true
+	end
+	local energy = AttributeDefinition.get(character, AttributeDefinition.Energy)
+	if energy < props.Amount then
+		scope.fireClient(ClientVFXDefinition.EnergyWarning, {}, { Audience = "Owner" })
+		return false
+	end
+	AttributeDefinition.set(character, AttributeDefinition.Energy, energy - props.Amount)
+	return true
+end)

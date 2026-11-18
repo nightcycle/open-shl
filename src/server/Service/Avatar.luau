@@ -10,24 +10,27 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Option = TypeUnionLib.Option
 local Future = TypeUnionLib.Future
 -- Modules
+local AbilityService = require("@game/ServerScriptService/Server/Service/Ability")
 local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local TransitionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Transition")
 -- Types
+local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local IdentityType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity")
 type Option<V> = TypeUnionLib.Option<V>
 type Appearance = AppearanceType.Appearance
-type Power = CharacterType.Power
+type Grant = AbilityType.Grant
 type IdentityKey = CharacterType.IdentityKey
 type EffectDefinition = TransitionDefinition.EffectDefinition
 type Look = {
 	IdentityKey: IdentityKey,
 	PersonaName: string,
 	Appearance: Appearance,
-	Powers: { Power },
+	Grants: { Grant },
 }
 type AvatarServiceImpl = {
 	__index: AvatarServiceImpl,
@@ -55,6 +58,29 @@ local EFFECT_NAME = "TransformationEffect"
 -- Variables
 -- References
 -- Private Functions
+-- an ability comes in the color the identity wears it in
+local function getGrants(powers: { CharacterType.Power }, identity: IdentityType.Identity): { Grant }
+	local grants: { Grant } = {}
+	for _, power in powers do
+		local definitionRes = PowerDefinition.get(power.Id)
+		if definitionRes.IsErr then
+			warn(`power err: {definitionRes.Value}`)
+			continue
+		end
+		local powerSkin = identity.PowerSkins[power.Id]
+		local colorOpt =
+			PowerDefinition.getColor(definitionRes.Value, if powerSkin then powerSkin.ColorGroups.Primary else nil)
+		table.insert(
+			grants,
+			table.freeze({
+				Id = power.Id,
+				Color = if colorOpt.IsSome then colorOpt.Value else nil,
+			})
+		)
+	end
+	return table.freeze(grants)
+end
+
 local function getLook(self: AvatarService, player: Player): Option<Look>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
@@ -72,7 +98,7 @@ local function getLook(self: AvatarService, player: Player): Option<Look>
 		IdentityKey = identityKey,
 		PersonaName = identity.Profile.Name,
 		Appearance = identity.Appearance,
-		Powers = character.Powers,
+		Grants = getGrants(character.Powers, identity),
 	}
 	local secret = character.Identities.Secret
 	if identityKey == "Main" and self._IsUnmasked[player] and secret then
@@ -81,42 +107,6 @@ local function getLook(self: AvatarService, player: Player): Option<Look>
 		look.Appearance = AppearanceUtil.unmask(identity.Appearance, secret.Appearance)
 	end
 	return Option.some(look)
-end
-
--- the tools do nothing yet, they only fill the hotbar in the order the character holds its powers
-local function newTool(definition: PowerDefinition.PowerDefinition): Tool
-	local icon = definition.Icon
-	local tool = Instance.new("Tool")
-	tool.Name = definition.Name
-	tool.ToolTip = definition.Name
-	tool.TextureId = if icon.Type == "Decal" then icon.Url else icon.SheetUrl
-	tool.RequiresHandle = false
-	tool.CanBeDropped = false
-	tool:SetAttribute(PowerDefinition.TOOL_ID_ATTRIBUTE, definition.Id)
-	return tool
-end
-
-local function giveTools(player: Player, character: Model, powers: { Power })
-	local backpack = player:FindFirstChildOfClass("Backpack")
-	if not backpack then
-		warn(`{player.Name} has no backpack to hold their powers`)
-		return
-	end
-	for _, holder: Instance in { backpack :: Instance, character } do
-		for _, v in holder:GetChildren() do
-			if v:IsA("Tool") and v:GetAttribute(PowerDefinition.TOOL_ID_ATTRIBUTE) ~= nil then
-				v:Destroy()
-			end
-		end
-	end
-	for _, power in powers do
-		local definitionRes = PowerDefinition.get(power.Id)
-		if definitionRes.IsErr then
-			warn(`power err: {definitionRes.Value}`)
-			continue
-		end
-		newTool(definitionRes.Value).Parent = backpack
-	end
 end
 
 -- a player inside of a full screen menu isn't looking at their avatar, it stands still until they're back
@@ -202,7 +192,9 @@ function AvatarService:Dress(player: Player)
 	AttributeDefinition.set(character, AttributeDefinition.PersonaName, look.PersonaName)
 	AttributeDefinition.set(character, AttributeDefinition.IdentityKey, look.IdentityKey)
 	AttributeDefinition.set(character, AttributeDefinition.IsMasked, self:GetIfMasked(player))
-	giveTools(player, character, look.Powers)
+	if AbilityService.IsInitialized then
+		AbilityService:Grant(player, character, look.Grants)
+	end
 	-- the description is a web call, whoever asked for the dress can't wait on it
 	task.spawn(function()
 		local f = Future.timeout(AppearanceUtil.apply(character, look.Appearance), DRESS_TIMEOUT)

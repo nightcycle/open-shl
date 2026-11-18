@@ -5,12 +5,14 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
+local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
+local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type Character = CharacterType.Character
 type IdentityKey = CharacterType.IdentityKey
 type BaseInventory = BaseType.BaseInventory
@@ -73,6 +75,8 @@ local FOLDER_NAME = "Remotes"
 local INPUT_LIMIT: RateLimit = table.freeze({ Count = 60, Duration = 10 })
 -- an answer the server has to work for
 local REQUEST_LIMIT: RateLimit = table.freeze({ Count = 30, Duration = 10 })
+-- every press + release of an ability, as well as what the effects of a player's own avatar pass on
+local ABILITY_LIMIT: RateLimit = table.freeze({ Count = 150, Duration = 10 })
 -- the text filter is a web call
 local FILTER_LIMIT: RateLimit = table.freeze({ Count = 10, Duration = 10 })
 local isCharacter = CharacterType.Character
@@ -240,8 +244,16 @@ Module.GetProfiles =
 	newClientFunction("GetProfiles", Type.none, isProfiles, REQUEST_LIMIT) :: ClientFunction<{ PublicProfile }, nil>
 Module.ProfilesChanged = newServerEvent("ProfilesChanged", isProfiles) :: ServerEvent<{ PublicProfile }>
 
--- combat
-Module.InsufficientEnergy = newServerEvent("InsufficientEnergy", Type.none) :: ServerEvent<nil>
+-- abilities
+-- one remote each way, so a press + the claim that follows it arrive in the order they were made in
+Module.AbilityReported =
+	newClientEvent("AbilityReported", AbilityType.Report, ABILITY_LIMIT) :: ClientEvent<AbilityType.Report>
+Module.AbilityUpdated = newServerEvent("AbilityUpdated", AbilityType.Update) :: ServerEvent<AbilityType.Update>
+
+-- effects
+Module.VFXReplicated = newServerEvent("VFXReplicated", VFXType.Message) :: ServerEvent<VFXType.Message>
+-- only for what a player's own machine does to their own avatar, the server passes it on to everybody else
+Module.VFXReported = newClientEvent("VFXReported", VFXType.Message, ABILITY_LIMIT) :: ClientEvent<VFXType.Message>
 
 Module.list = function(): { Remote }
 	return table.freeze(table.clone(Remotes))

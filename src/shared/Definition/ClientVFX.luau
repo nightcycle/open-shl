@@ -1,0 +1,78 @@
+--!strict
+-- Services
+-- Packages
+local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
+local Result = TypeUnionLib.Result
+-- Modules
+-- Types
+local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
+local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
+type Result<V, E> = TypeUnionLib.Result<V, E>
+type Validator = VFXType.Validator
+type VFX = VFXType.VFX
+type ClientEvent<P> = VFXType.ClientEvent<P>
+type ClientState<P> = VFXType.ClientState<P>
+-- Constants
+-- Variables
+local VFXs: { VFX } = {}
+local VFXsByName: { [string]: VFX } = {}
+-- References
+-- Private Functions
+local function register(vfx: VFX): any
+	assert(VFXsByName[vfx.Name] == nil, `duplicate client effect "{vfx.Name}"`)
+	table.freeze(vfx)
+	table.insert(VFXs, vfx)
+	VFXsByName[vfx.Name] = vfx
+	return vfx
+end
+
+local function newEvent(name: string, props: Validator): any
+	return register({
+		Name = name,
+		Realm = "Client",
+		Kind = "Event",
+		IsClientSide = true,
+		Props = props,
+	} :: any)
+end
+
+local function newState(name: string, props: Validator): any
+	return register({
+		Name = name,
+		Realm = "Client",
+		Kind = "State",
+		IsClientSide = true,
+		Props = props,
+	} :: any)
+end
+-- Class
+-- what the server + the clients agree a client effect is called + takes. what it does is client code that's
+-- registered under the same handle, a client that's missing one of them doesn't start. an effect may be made for one
+-- ability, it's still filed here like any other: nothing about it says who uses it, how far it's shown or to whom
+local Module = {}
+
+Module.Animation = newState("Animation", ClientVFXType.Animation) :: ClientState<ClientVFXType.Animation>
+Module.AnimationOnce =
+	newEvent("AnimationOnce", ClientVFXType.AnimationOnce) :: ClientEvent<ClientVFXType.AnimationOnce>
+Module.Sound = newEvent("Sound", ClientVFXType.Sound) :: ClientEvent<ClientVFXType.Sound>
+Module.SoundLoop = newState("SoundLoop", ClientVFXType.SoundLoop) :: ClientState<ClientVFXType.SoundLoop>
+Module.Prop = newState("Prop", ClientVFXType.Prop) :: ClientState<ClientVFXType.Prop>
+Module.Bolt = newEvent("Bolt", ClientVFXType.Bolt) :: ClientEvent<ClientVFXType.Bolt>
+Module.Hover = newState("Hover", ClientVFXType.Hover) :: ClientState<ClientVFXType.Hover>
+Module.Thrust = newState("Thrust", ClientVFXType.Thrust) :: ClientState<ClientVFXType.Thrust>
+Module.EnergyWarning =
+	newEvent("EnergyWarning", ClientVFXType.EnergyWarning) :: ClientEvent<ClientVFXType.EnergyWarning>
+
+Module.get = function(name: string): Result<VFX, string>
+	local vfx = VFXsByName[name]
+	if vfx then
+		return Result.ok(vfx)
+	end
+	return Result.err(`no client effect "{name}"`)
+end
+
+Module.list = function(): { VFX }
+	return table.freeze(table.clone(VFXs))
+end
+
+return Module

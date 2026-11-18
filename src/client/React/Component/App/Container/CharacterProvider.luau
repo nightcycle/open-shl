@@ -6,8 +6,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local CharacterConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character")
-local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
-local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
+local EnergyWarned = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Library/EnergyWarning/Warned")
 -- Components
 -- Hooks
 local useCharacterAttribute =
@@ -52,9 +51,8 @@ return function(props: Properties): React.ReactNode
 	local energy = useCharacterAttribute(AttributeDefinition.Energy)
 	local isEnergyInsufficient, setIsEnergyInsufficient = React.useState(false)
 	React.useEffect(function()
-		assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 		local thread: thread?
-		local connection = NetworkService:Connect(RemoteDefinition.InsufficientEnergy, function()
+		local connection = EnergyWarned:Connect(function()
 			if thread then
 				task.cancel(thread)
 			end

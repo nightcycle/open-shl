@@ -2,6 +2,7 @@
 -- Services
 -- Packages
 -- Modules
+local AbilityService = require("@game/ServerScriptService/Server/Service/Ability")
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local BeaconService = require("@game/ServerScriptService/Server/Service/Beacon")
 local CharacterService = require("@game/ServerScriptService/Server/Service/Character")
@@ -21,6 +22,7 @@ local ResidenceService = require("@game/ServerScriptService/Server/Service/Resid
 local RoleplayService = require("@game/ServerScriptService/Server/Service/Roleplay")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local UniformService = require("@game/ServerScriptService/Server/Service/Uniform")
+local VFXService = require("@game/ServerScriptService/Server/Service/VFX")
 -- Types
 -- Constants
 -- Variables
@@ -40,6 +42,12 @@ table.insert(DestroyCallbacks, LegacyImportService.init())
 
 assert(not SessionService.IsInitialized, `the session service is already initialized`)
 table.insert(DestroyCallbacks, SessionService.init())
+
+assert(not VFXService.IsInitialized, `the vfx service is already initialized`)
+table.insert(DestroyCallbacks, VFXService.init())
+
+assert(not AbilityService.IsInitialized, `the ability service is already initialized`)
+table.insert(DestroyCallbacks, AbilityService.init())
 
 assert(not AvatarService.IsInitialized, `the avatar service is already initialized`)
 table.insert(DestroyCallbacks, AvatarService.init())
