@@ -19,21 +19,11 @@ local SessionEntitlementsContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Entitlements")
 local SessionGemsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Gems")
 -- Types
+local ShopMenuTypes = require("@self/Types")
 export type ProductDefinition = ProductDefinition.ProductDefinition
 export type ShopTab = ProductDefinition.ShopTab
-export type ActionInfo =
-	{
-		Type: "Purchase",
-		ProductId: string,
-	}
-	| {
-		Type: "Exit",
-	}
-
-export type Properties = RobloxComponents.FrameProperties & {
-	ErrorMessage: string?,
-	OnAction: (ActionInfo) -> (),
-}
+export type ActionInfo = ShopMenuTypes.ActionInfo
+export type Properties = ShopMenuTypes.Properties
 -- Constants
 local CONSTANTS = require("@self/CONSTANTS")
 local STRIP_SIZE = 0.075
