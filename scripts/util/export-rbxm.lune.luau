@@ -1,91 +1,72 @@
 --!strict
--- pulls a single instance out of a place file as an rbxm, the output is what unpack-rbxm expects as input
+-- pulls a single instance out of a place file as an rbxm, the output is what unpack-rbxm expects as input. a whole
+-- map comes out through export-map, which does the same for every piece its config lists
 -- Services
 local fs = require("@lune/fs")
 local process = require("@lune/process")
 local roblox = require("@lune/roblox")
 -- Packages
 -- Modules
+local Place = require("../modules/place")
 -- Types
 type Output = { path: string, contents: string }
+type Options = {
+	placePath: string,
+	instPath: string,
+	outPath: string,
+	isSplitByChild: boolean,
+	isScriptStripped: boolean,
+	knownScriptsPath: string?,
+	reportPath: string?,
+}
 -- Constants
 local USAGE = "Usage: lune run scripts/util/export-rbxm.lune.luau <place.rbxl> <Service/Path/To/Instance> "
-	.. "<out.rbxm or directory> [--children | -c] [--strip-scripts | -s]"
-local PATH_DELIMITER = "/"
+	.. "<out.rbxm or directory> [--children | -c] [--strip-scripts | -s] "
+	.. "[--known-scripts <list.tsv>] [--report <stripped.tsv>]\n"
+	.. '       a name that siblings share says which of them it means: "Workspace/Terrain#2". a "/" inside of a name '
+	.. 'is spelled "%2F", a "#" is "%23" and a "%" is "%25"'
+-- the flags that are followed by a path of their own
+local VALUE_FLAGS = { "--known-scripts", "--report" }
 -- Variables
 -- References
 -- Private Functions
-local function parseArgs(args: { string }): (string, string, string, boolean, boolean)
+local function parseArgs(args: { string }): Options
 	local paths: { string } = {}
+	local values: { [string]: string } = {}
 	local isSplitByChild = false
 	local isScriptStripped = false
+	local valueFlag: string? = nil
 	for _, arg in args do
-		if arg == "--children" or arg == "-c" then
+		if valueFlag then
+			values[valueFlag] = (arg:gsub("\\", "/"))
+			valueFlag = nil
+		elseif arg == "--children" or arg == "-c" then
 			isSplitByChild = true
 		elseif arg == "--strip-scripts" or arg == "-s" then
 			isScriptStripped = true
+		elseif table.find(VALUE_FLAGS, arg) then
+			valueFlag = arg
 		else
 			assert(arg:sub(1, 1) ~= "-", `Unknown flag: {arg}\n{USAGE}`)
 			table.insert(paths, (arg:gsub("\\", "/")))
 		end
 	end
+	assert(valueFlag == nil, `Expected a path after {valueFlag}\n{USAGE}`)
 	assert(#paths == 3, `Expected a place, an instance path and an output path\n{USAGE}`)
-	return paths[1], paths[2], paths[3], isSplitByChild, isScriptStripped
-end
-
-local function getFullName(root: roblox.Instance, inst: roblox.Instance): string
-	local names: { string } = {}
-	local current: roblox.Instance? = inst
-	while current do
-		table.insert(names, 1, current.Name)
-		if current == root then
-			break
-		end
-		current = current.Parent
-	end
-	return table.concat(names, PATH_DELIMITER)
-end
-
-local function findInstance(place: roblox.DataModel, instPath: string): roblox.Instance
-	local inst: roblox.Instance? = nil
-	for index, name in instPath:split(PATH_DELIMITER) do
-		-- "game/Workspace/Map" and "Workspace/Map" are the same path
-		if name == "" or (index == 1 and name == "game") then
-			continue
-		end
-		local parent: roblox.Instance = inst or place
-		inst = assert(parent:FindFirstChild(name), `No instance at "{name}" in "{instPath}"`)
-	end
-	return assert(inst, `Expected an instance path\n{USAGE}`)
-end
-
-local function getIfInsideScript(root: roblox.Instance, inst: roblox.Instance): boolean
-	local current: roblox.Instance? = inst.Parent
-	while current and current ~= root do
-		if current:IsA("LuaSourceContainer") then
-			return true
-		end
-		current = current.Parent
-	end
-	return false
-end
-
--- only the instances are wanted, scripts get left behind
-local function stripScripts(root: roblox.Instance)
-	assert(not root:IsA("LuaSourceContainer"), `"{root.Name}" is a script, there would be nothing left to export`)
-	-- a script inside of a script goes down with it + can't be read afterwards, so nothing is destroyed until all are found
-	local scripts: { roblox.Instance } = {}
-	for _, desc in root:GetDescendants() do
-		if desc:IsA("LuaSourceContainer") then
-			print(`stripped {desc.ClassName} "{getFullName(root, desc)}"`)
-			if not getIfInsideScript(root, desc) then
-				table.insert(scripts, desc)
-			end
-		end
-	end
-	for _, inst in scripts do
-		inst:Destroy()
-	end
+	local knownScriptsPath, reportPath = values["--known-scripts"], values["--report"]
+	assert(
+		isScriptStripped or (knownScriptsPath == nil and reportPath == nil),
+		`--known-scripts and --report are about the scripts that --strip-scripts leaves behind\n{USAGE}`
+	)
+	return {
+		placePath = paths[1],
+		instPath = paths[2],
+		outPath = paths[3],
+		isSplitByChild = isSplitByChild,
+		isScriptStripped = isScriptStripped,
+		knownScriptsPath = knownScriptsPath,
+		reportPath = reportPath,
+	}
 end
 
 local function getChildOutputs(dir: string, inst: roblox.Instance): { Output }
@@ -108,36 +89,50 @@ local function getChildOutputs(dir: string, inst: roblox.Instance): { Output }
 		end
 		used[childName:lower()] = true
 		assert(
-			childName ~= "" and childName ~= "." and childName ~= ".." and not childName:find('[/\\:*?"<>|]'),
-			`Invalid filename: {childName}`
+			Place.getIfFileName(childName),
+			`Invalid filename: {childName}\nrojo names an instance after its file, so "{child.Name}" can't be a file `
+				.. `of its own: export "{inst.Name}" whole instead`
 		)
+		if childName ~= child.Name then
+			-- rojo names an instance after its file, the built place will have it under the new name
+			print(`"{child.Name}" shares its name with a sibling, it's exported as "{childName}"`)
+		end
 		table.insert(outputs, {
 			path = `{dir}/{childName}.rbxm`,
-			contents = roblox.serializeModel({ child }),
+			contents = (Place.serialize(child)),
 		})
 	end
 	return outputs
 end
 -- Class
 do
-	local placePath, instPath, outPath, isSplitByChild, isScriptStripped = parseArgs(process.args)
-	assert(fs.isFile(placePath), `No place file found at "{placePath}"`)
-	local inst = findInstance(roblox.deserializePlace(fs.readFile(placePath)), instPath)
-	if isScriptStripped then
-		stripScripts(inst)
+	local options = parseArgs(process.args)
+	assert(fs.isFile(options.placePath), `No place file found at "{options.placePath}"`)
+	local place = roblox.deserializePlace(fs.readFile(options.placePath))
+	local inst = Place.findInstance(place, options.instPath)
+	local refusal = Place.getRefusal(place, inst)
+	assert(refusal == nil, `"{options.instPath}" isn't exported: {refusal}`)
+
+	local stripped: { Place.StrippedScript } = {}
+	if options.isScriptStripped then
+		local knownScriptsPath = options.knownScriptsPath
+		stripped = Place.stripScripts(inst, if knownScriptsPath then Place.readKnownScripts(knownScriptsPath) else nil)
+		for _, strippedScript in stripped do
+			print(`stripped {strippedScript.className} "{inst.Name}/{strippedScript.path}"`)
+		end
 	end
 
 	local outputs: { Output }
 	local dir: string
-	if isSplitByChild then
-		dir = outPath
+	if options.isSplitByChild then
+		dir = options.outPath
 		outputs = getChildOutputs(dir, inst)
-		assert(#outputs > 0, `"{instPath}" has no children to export`)
+		assert(#outputs > 0, `"{options.instPath}" has no children to export`)
 	else
-		assert(outPath:lower():match("%.rbxm$"), `Expected an .rbxm output path: {outPath}`)
-		local parentDir = outPath:match("^(.*)/[^/]+$")
+		assert(options.outPath:lower():match("%.rbxm$"), `Expected an .rbxm output path: {options.outPath}`)
+		local parentDir = options.outPath:match("^(.*)/[^/]+$")
 		dir = if parentDir == "" then "/" else parentDir or "."
-		outputs = { { path = outPath, contents = roblox.serializeModel({ inst }) } }
+		outputs = { { path = options.outPath, contents = (Place.serialize(inst)) } }
 	end
 
 	-- reject collisions before touching the disk
@@ -150,6 +145,18 @@ do
 	for _, output in outputs do
 		fs.writeFile(output.path, output.contents)
 		print(`wrote "{output.path}"`)
+	end
+	if options.isScriptStripped then
+		-- what was written is read back, a script that's still in there is never left for a build to pick up
+		for _, output in outputs do
+			Place.countWritten(output.path)
+		end
+		print(`{#stripped} script(s) stripped, none in the output`)
+	end
+	local reportPath = options.reportPath
+	if reportPath then
+		fs.writeFile(reportPath, Place.getStrippedReport(stripped))
+		print(`wrote "{reportPath}"`)
 	end
 	print("export complete")
 end
