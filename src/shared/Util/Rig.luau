@@ -6,12 +6,16 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Future = TypeUnionLib.Future
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local WeldUtil = require("@game/ReplicatedStorage/Shared/Util/Weld")
 -- Types
 -- Constants
 local IN_PROGRESS_TAG = "IN_PROGRESS"
 local FAKE_HEAD_NAME = "FAKE_HEAD"
 local DATA_MODEL_TIMEOUT = 10
+-- studs the middle of a body of height 1 is over the ground it stands on. the plain block body of shl3 has the
+-- longer hip, at the height of the other bodies its feet would be in the floor
+local STAND_HEIGHT = GameDefinition.tune(2.5, { shl3 = 3 })
 -- Variables
 -- References
 -- Private Functions
@@ -85,7 +89,7 @@ Util.FAKE_HEAD_NAME = FAKE_HEAD_NAME
 
 Util.moveTo = function(rig: Model, ground: CFrame): ()
 	local description = rig:FindFirstChildWhichIsA("HumanoidDescription", true)
-	rig:PivotTo(ground * CFrame.new(0, 2.5 * (description and description.HeightScale or 1), 0))
+	rig:PivotTo(ground * CFrame.new(0, STAND_HEIGHT * (description and description.HeightScale or 1), 0))
 end
 
 Util.applyDescription = function(rig: Model, description: HumanoidDescription, noEdits: true?): TypeUnionLib.ToDo<Model>
