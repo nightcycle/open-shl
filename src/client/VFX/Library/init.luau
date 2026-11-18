@@ -16,6 +16,7 @@ local IMPLEMENTATIONS: { Implementation } = {
 	require("@self/Cloak"),
 	require("@self/Coat"),
 	require("@self/EnergyWarning"),
+	require("@self/FieldOfView"),
 	require("@self/Flame"),
 	require("@self/Hover"),
 	require("@self/Lift"),
@@ -34,6 +35,7 @@ local IMPLEMENTATIONS: { Implementation } = {
 	require("@self/Spray"),
 	require("@self/Streak"),
 	require("@self/Thrust"),
+	require("@self/Wake"),
 	require("@self/WalkSpeed"),
 	require("@self/Warp"),
 }

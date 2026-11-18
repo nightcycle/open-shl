@@ -141,6 +141,20 @@ Types.Streak = Type.strictInterface({
 	Linger = Type.optional(Type.numberConstrained(0, 2)),
 })
 
+-- two ribbons behind every part of the body of the avatar: one as tall as the part, one as wide
+export type Wake = {
+	Color: Color3?, -- of the tall ones, the color of each part itself without
+	SecondaryColor: Color3?, -- of the wide ones
+	Lifetime: number, -- seconds until a stretch of one is gone
+	Depth: number, -- studs behind the middle of a part its ribbons are drawn out from
+}
+Types.Wake = Type.strictInterface({
+	Color = Type.optional(Type.Color3),
+	SecondaryColor = Type.optional(Type.Color3),
+	Lifetime = Type.numberConstrained(0.01, 2),
+	Depth = Type.numberConstrained(0, MAX_SIZE),
+})
+
 -- a glowing shot on its way through the world
 export type Bolt = {
 	Origin: Vector3,
@@ -234,6 +248,18 @@ Types.ScreenFilter = Type.strictInterface({
 	Contrast = Type.numberConstrained(-1, 1),
 	Saturation = Type.numberConstrained(-1, 1),
 	Blur = Type.numberConstrained(0, 56),
+})
+
+-- how wide the camera of whoever shows it takes the world in
+export type FieldOfView = {
+	FieldOfView: number, -- degrees
+	Duration: number, -- seconds the camera takes to get there + to get back
+	IsMoving: boolean?, -- only for as long as the avatar is on the move, all the while without
+}
+Types.FieldOfView = Type.strictInterface({
+	FieldOfView = Type.numberConstrained(1, 120),
+	Duration = Type.numberConstrained(0, 5),
+	IsMoving = Type.optional(Type.boolean),
 })
 
 -- the camera of whoever shows it follows somebody else, picked with the buttons it comes with
