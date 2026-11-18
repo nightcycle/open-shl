@@ -32,6 +32,9 @@ return UILabs.CreateReactStory({
 			Position = UDim2.fromScale(0.5, 0.5),
 			Size = UDim2.fromScale(1, 1),
 			Progress = props.controls.Progress,
+			OnAction = function(action: ParentComponent.ActionInfo)
+				print(`action`, action)
+			end,
 			SizeConstraint = Enum.SizeConstraint.RelativeXY,
 		} :: ParentComponent.Properties
 	)

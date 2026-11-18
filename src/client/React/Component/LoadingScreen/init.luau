@@ -11,9 +11,9 @@ local Image = require("@game/ReplicatedStorage/Generated/Image")
 local useTween = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTween")
 -- Contexts
 -- Types
-export type Properties = RobloxComponents.FrameProperties & {
-	Progress: number, -- from 0 to 1
-}
+local LoadingScreenTypes = require("@self/Types")
+export type ActionInfo = LoadingScreenTypes.ActionInfo
+export type Properties = LoadingScreenTypes.Properties
 -- Constants
 local LOGO_URL = Image.ui["loading-logo.png"]
 local PROMO_TEXT = "Join Deadly Pineapple Games for free gems!"
