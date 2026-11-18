@@ -21,7 +21,8 @@ local GAME: game.GameId = game.getId(process.env["GAME"])
 local CONTENT = game.getContent(GAME)
 -- what a story, a storybook + a spec are named, wherever in the code they sit. what wally installs is left as it came
 local STORY_GLOBS = { "src/**/*.story.luau", "src/**/*.storybook.luau" }
-local SPEC_GLOBS = { "src/**/*.spec.luau" }
+-- a spec that has a walk per game is a folder of that name
+local SPEC_GLOBS = { "src/**/*.spec.luau", "src/**/*.spec", "src/**/*.spec/**" }
 -- Variables
 -- References
 -- Private Functions
