@@ -11,6 +11,7 @@ local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
+local ServerType = require("@game/ReplicatedStorage/Shared/Type/Server")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type Character = CharacterType.Character
@@ -26,6 +27,10 @@ type ResidenceState = SessionType.ResidenceState
 type FurniturePlacement = SessionType.FurniturePlacement
 type FurnitureMove = SessionType.FurnitureMove
 type DailyReward = SessionType.DailyReward
+type Mode = ServerType.Mode
+type ServerListing = ServerType.Listing
+type ServerSettings = ServerType.Settings
+type ServerEntry = ServerType.Entry
 export type Validator = (value: unknown) -> (boolean, string?)
 export type Kind = "Event" | "Function"
 export type Direction = "ClientToServer" | "ServerToClient"
@@ -79,6 +84,8 @@ local REQUEST_LIMIT: RateLimit = table.freeze({ Count = 30, Duration = 10 })
 local ABILITY_LIMIT: RateLimit = table.freeze({ Count = 150, Duration = 10 })
 -- the text filter is a web call
 local FILTER_LIMIT: RateLimit = table.freeze({ Count = 10, Duration = 10 })
+-- a teleport is a web call as well, and every try at a custom server is a guess at its entry code
+local TELEPORT_LIMIT: RateLimit = table.freeze({ Count = 5, Duration = 10 })
 local isCharacter = CharacterType.Character
 -- the character type lets any key into Identities, a client may only hand in the two every character is made of
 local isEditedCharacter = Type.intersection(
@@ -95,6 +102,7 @@ local isMove = SessionType.FurnitureMove
 local isPlaced = BaseType.PlacedFurniture
 local isProfiles = Type.array(ProfileType.PublicProfile)
 local isQuestType = Type.literal(table.unpack(PseudoEnum.getEnumItems("QuestType")))
+local isServerListings = Type.array(ServerType.Listing)
 -- Variables
 local Remotes: { Remote } = {}
 -- References
@@ -254,6 +262,23 @@ Module.AbilityUpdated = newServerEvent("AbilityUpdated", AbilityType.Update) :: 
 Module.VFXReplicated = newServerEvent("VFXReplicated", VFXType.Message) :: ServerEvent<VFXType.Message>
 -- only for what a player's own machine does to their own avatar, the server passes it on to everybody else
 Module.VFXReported = newClientEvent("VFXReported", VFXType.Message, ABILITY_LIMIT) :: ClientEvent<VFXType.Message>
+
+-- servers
+-- each of these ends in a teleport when it works out, an error is why the player stays where they are
+Module.SelectMode =
+	newClientFunction("SelectMode", ServerType.Mode, Type.literal(true), TELEPORT_LIMIT, true) :: ClientFunction<true, Mode>
+-- the id is what the hud of a server shows of it
+Module.JoinServerById =
+	newClientFunction("JoinServerById", Type.string, Type.literal(true), TELEPORT_LIMIT, true) :: ClientFunction<true, string>
+Module.CreateServer =
+	newClientFunction("CreateServer", ServerType.Settings, Type.literal(true), TELEPORT_LIMIT, true) :: ClientFunction<true, ServerSettings>
+Module.JoinServer =
+	newClientFunction("JoinServer", ServerType.Entry, Type.literal(true), TELEPORT_LIMIT, true) :: ClientFunction<true, ServerEntry>
+-- the custom servers a player may join, the ones that suit them best first
+Module.GetServers =
+	newClientFunction("GetServers", Type.none, isServerListings, REQUEST_LIMIT) :: ClientFunction<{ ServerListing }, nil>
+-- a teleport that was let through can still fall over on its way, this is why it did
+Module.TeleportFailed = newServerEvent("TeleportFailed", Type.string) :: ServerEvent<string>
 
 Module.list = function(): { Remote }
 	return table.freeze(table.clone(Remotes))

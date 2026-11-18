@@ -9,8 +9,8 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Types
 local Types = {}
 
-export type SectionId = "Entry" | "Quest" | "Artifact" | "Base" | "Suit"
-Types.SectionId = Type.literal("Entry", "Quest", "Artifact", "Base", "Suit")
+export type SectionId = "Mode" | "Entry" | "Quest" | "Artifact" | "Base" | "Suit"
+Types.SectionId = Type.literal("Mode", "Entry", "Quest", "Artifact", "Base", "Suit")
 
 export type Trigger =
 	"HudShown" -- the gameplay hud is on screen for the first time
@@ -25,6 +25,7 @@ export type Trigger =
 	| "LobbyEntered" -- walked in the front door of the apartment complex
 	| "ApartmentEntered" -- walked in the door of their own apartment
 	| "BaseEntered" -- went through the bookshelf into their base
+	| "ModeSelectShown" -- the mode screen came up
 Types.Trigger = Type.literal(
 	"HudShown",
 	"SwapPressed",
@@ -37,7 +38,8 @@ Types.Trigger = Type.literal(
 	"QuestStarted",
 	"LobbyEntered",
 	"ApartmentEntered",
-	"BaseEntered"
+	"BaseEntered",
+	"ModeSelectShown"
 )
 
 export type Pose = "Fly" | "Idle" | "PointLeft" | "PointRight"
@@ -58,7 +60,8 @@ export type Home =
 	| "Residence" -- the gameplay hud inside of the player's residence, the build button only exists there
 	| "CharacterEditor"
 	| "ArtifactMenu"
-Types.Home = Type.literal("Hud", "Residence", "CharacterEditor", "ArtifactMenu")
+	| "ModeSelect" -- the screen a player picks their mode on, before the game itself
+Types.Home = Type.literal("Hud", "Residence", "CharacterEditor", "ArtifactMenu", "ModeSelect")
 
 export type Advance =
 	{

@@ -26,7 +26,7 @@ type BootPhase = AppBootPhaseContext.BootPhase
 type Screen = AppScreenContext.Screen
 type PanelId = AppPanelContext.PanelId
 -- Constants
-local BOOT_PHASES: { BootPhase } = { "Playing", "Loading", "Intro" }
+local BOOT_PHASES: { BootPhase } = { "Playing", "Loading", "ModeSelect", "ServerBrowser", "Intro" }
 local NO_SCREEN: Screen = table.freeze({
 	Type = "None" :: "None",
 })
@@ -132,6 +132,8 @@ return UILabs.CreateReactStory({
 		return {
 			BOOT_PHASES = {
 				Loading = newCover("Loading"),
+				ModeSelect = newCover("ModeSelect"),
+				ServerBrowser = newCover("ServerBrowser"),
 				Intro = newCover("Intro"),
 			},
 			SCREENS = {
@@ -149,12 +151,22 @@ return UILabs.CreateReactStory({
 				end,
 			},
 			OVERLAYS = {
+				ServerId = function(): React.ReactNode
+					return e(placeholder, {
+						AnchorPoint = Vector2.new(1, 0),
+						Position = UDim2.fromScale(1, 0),
+						Size = UDim2.fromScale(0.15, 0.1),
+						Text = "Overlay",
+					})
+				end,
+			},
+			TOP_OVERLAYS = {
 				Tutorial = function(): React.ReactNode
 					return e(placeholder, {
 						AnchorPoint = Vector2.new(0, 1),
 						Position = UDim2.fromScale(0, 1),
 						Size = UDim2.fromScale(0.15, 0.1),
-						Text = "Overlay",
+						Text = "Top overlay",
 					})
 				end,
 			},

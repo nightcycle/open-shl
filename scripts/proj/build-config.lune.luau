@@ -10,8 +10,10 @@ local process = require("@lune/process")
 -- Types
 -- Constants
 local DEFAULT_BUILD_CONFIG_PATH = "Generated/BUILD_CONFIG.luau"
-local DEFAULT_MODE = "roleplay"
-local COMBAT_FLAGS = { "PVP_ENABLED", "ENERGY_ENABLED", "QUESTS_ENABLED" } -- on in combat, off in roleplay
+-- combat is the place players land in, they pick roleplay from its mode screen
+local DEFAULT_MODE = "combat"
+-- on in combat, off in roleplay
+local COMBAT_FLAGS = { "PVP_ENABLED", "ENERGY_ENABLED", "QUESTS_ENABLED", "MODE_SELECT_ENABLED" }
 -- Variables
 -- References
 -- Private Functions
@@ -31,6 +33,16 @@ local function getFlag(name: string, default: boolean): boolean
 	assert(value == "true" or value == "false", `{name} must be "true" or "false", received "{value}"`)
 	return value == "true"
 end
+-- 0 stands for a place that isn't published yet, whoever teleports there turns the player down instead
+local function getPlaceId(name: string): number
+	local value = getEnv(name)
+	if value == nil then
+		return 0
+	end
+	local placeId = tonumber(value)
+	assert(placeId and placeId > 0 and placeId % 1 == 0, `{name} must be a place id, received "{value}"`)
+	return placeId
+end
 -- Class
 do
 	local mode = getEnv("MODE") or DEFAULT_MODE
@@ -44,6 +56,7 @@ do
 	for _, name in COMBAT_FLAGS do
 		table.insert(lines, `\t{name} = {getFlag(name, mode == "combat")},`)
 	end
+	table.insert(lines, `	ROLEPLAY_PLACE_ID = {getPlaceId("ROLEPLAY_PLACE_ID")},`)
 	table.insert(lines, "})")
 	table.insert(lines, "")
 

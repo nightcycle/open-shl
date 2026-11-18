@@ -100,6 +100,14 @@ do -- write in a do block now to make it easier to copy to other things later / 
 		}
 	end)
 
+	-- a place file that doesn't say which chat it runs falls back to the one the engine dropped, and the commands of a
+	-- custom server only exist in the current one
+	appendService("TextChatService", function(node: rojo.ProjectNode)
+		node["$properties"] = {
+			ChatVersion = "TextChatService",
+		} :: rojo.NodeProperties
+	end)
+
 	-- the sky + the look of the light are tuned for a map, so they're swapped out along with it
 	project.tree["Lighting"] = {
 		["$path"] = `lib/lighting/{MAP}`,

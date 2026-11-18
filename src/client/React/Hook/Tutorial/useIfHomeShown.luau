@@ -5,6 +5,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local TutorialDefinition = require("@game/ReplicatedStorage/Shared/Definition/Tutorial")
 -- Contexts
+local AppBootPhaseContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/BootPhase")
 local AppIsCameraModeContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/IsCameraMode")
 local AppIsGameplayHudVisibleContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/IsGameplayHudVisible")
@@ -13,6 +14,7 @@ local AppIsInResidenceContext =
 local AppScreenContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/Screen")
 local TutorialContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Tutorial")
 -- Types
+type BootPhase = AppBootPhaseContext.BootPhase
 export type Home = TutorialDefinition.Home
 -- Constants
 -- Variables
@@ -21,6 +23,7 @@ export type Home = TutorialDefinition.Home
 -- Class
 return function(): boolean
 	local progress = React.useContext(TutorialContext)
+	local bootPhase: BootPhase = React.useContext(AppBootPhaseContext) :: BootPhase
 	local screen = React.useContext(AppScreenContext)
 	local isGameplayHudVisible = React.useContext(AppIsGameplayHudVisibleContext)
 	local isCameraMode = React.useContext(AppIsCameraModeContext)
@@ -36,7 +39,9 @@ return function(): boolean
 		return isGameplayHudVisible and not isCameraMode and isInResidence
 	elseif home == "CharacterEditor" then
 		return screen.Type == "CharacterEditor"
-	else
+	elseif home == "ArtifactMenu" then
 		return screen.Type == "ArtifactMenu"
+	else
+		return bootPhase == "ModeSelect"
 	end
 end

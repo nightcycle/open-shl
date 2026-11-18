@@ -42,6 +42,8 @@ local RESIZE_DURATION = 1
 local DISABLED_TRANSPARENCY = 0.65
 local CENTER_STAGE = Vector2.new(0.3, 0.5)
 local BASE_STAGE = Vector2.new(0.35, 0.4)
+-- between the two mode buttons, so he can point at either
+local MODE_STAGE = Vector2.new(0.5, 0.45)
 -- each of these leaves him pointing at the thing he talks about
 local SWAP_BUTTON_SPOT = Vector2.new(0.82, 0.45)
 local CHARACTERS_BUTTON_SPOT = Vector2.new(0.82, 0.55)
@@ -50,7 +52,7 @@ local EDITOR_EXPLORER_SPOT = Vector2.new(0.4, 0.4)
 local PVP_CONDITIONS: { Condition } = { "PvpEnabled" }
 local QUEST_CONDITIONS: { Condition } = { "QuestsEnabled" }
 local QUEST_OFFER_CONDITIONS: { Condition } = { "QuestsEnabled", "QuestSectionPending", "NoActiveQuest" }
-local SECTION_IDS: { SectionId } = table.freeze({ "Entry" :: SectionId, "Quest", "Artifact", "Base", "Suit" })
+local SECTION_IDS: { SectionId } = table.freeze({ "Mode" :: SectionId, "Entry", "Quest", "Artifact", "Base", "Suit" })
 -- Variables
 -- References
 -- Private Functions
@@ -119,6 +121,38 @@ Module.EASING_DIRECTION = Enum.EasingDirection.Out
 Module.DISABLED_TRANSPARENCY = DISABLED_TRANSPARENCY
 
 local SECTIONS: { [SectionId]: SectionDefinition } = {
+	Mode = {
+		Id = "Mode",
+		Trigger = "ModeSelectShown",
+		StartDelay = 3,
+		Home = "ModeSelect",
+		Steps = {
+			newTalkStep(MODE_STAGE, "Idle", "Right", "Hello! I am Captain Coolguy"),
+			newTalkStep(MODE_STAGE, "Idle", "Right", "You know what makes me so cool?"),
+			newTalkStep(MODE_STAGE, "Idle", "Right", "Because I help people"),
+			newTalkStep(MODE_STAGE, "Idle", "Right", "Also I got laser toes"),
+			newTalkStep(MODE_STAGE, "Idle", "Right", "But that's not important right now."),
+			newTalkStep(
+				MODE_STAGE,
+				"Idle",
+				"Right",
+				"If you think you know what to do, click me and I'll leave you alone."
+			),
+			newTalkStep(MODE_STAGE, "Idle", "Right", "Let me tell you about SHL II"),
+			newTalkStep(MODE_STAGE, "PointLeft", "Right", "On the left is Combat mode: the full experience."),
+			newTalkStep(
+				MODE_STAGE,
+				"PointLeft",
+				"Right",
+				"In combat mode you can fight other players and complete quests"
+			),
+			newTalkStep(MODE_STAGE, "PointLeft", "Right", "It is also best place to play to earn currency!"),
+			newTalkStep(MODE_STAGE, "PointRight", "Left", "Roleplay mode is like combat mode without all the danger"),
+			newTalkStep(MODE_STAGE, "PointRight", "Left", "However you cannot participate in dangerous quests here."),
+			newTalkStep(MODE_STAGE, "PointRight", "Left", "But you can craft your own legend surrounded by friends!"),
+			newTalkStep(MODE_STAGE, "PointRight", "Left", "Enjoy your time in this game!"),
+		},
+	},
 	Entry = {
 		Id = "Entry",
 		Trigger = "HudShown",

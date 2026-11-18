@@ -110,6 +110,10 @@ return function(props: Properties)
 	for id, container in registry.OVERLAYS do
 		overlays[id] = contain("Overlay", id, container)
 	end
+	local topOverlays: { [string]: React.ReactNode } = {}
+	for id, container in registry.TOP_OVERLAYS do
+		topOverlays[id] = contain("TopOverlay", id, container)
+	end
 
 	return e(RobloxComponents.Frame(
 		{
@@ -148,6 +152,9 @@ return function(props: Properties)
 			BootPhases = e(layer, {
 				ZIndex = 5,
 			}, bootPhases),
+			TopOverlays = e(layer, {
+				ZIndex = 6,
+			}, topOverlays),
 		}
 	))
 end

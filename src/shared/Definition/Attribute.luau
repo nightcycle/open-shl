@@ -89,6 +89,8 @@ Module.HasMultiHair = new("Player", "HasMultiHair", Type.boolean, false) :: Attr
 Module.ActiveCharacterId = new("Player", "ActiveCharacterId", Type.string, "") :: Attribute<string>
 Module.IsTutorialEnabled = new("Player", "IsTutorialEnabled", Type.boolean, true) :: Attribute<boolean>
 Module.IsApartmentLocked = new("Player", "IsApartmentLocked", Type.boolean, true) :: Attribute<boolean>
+-- whoever was sent to this server by the game picked their mode on the way, they aren't asked again
+Module.IsModeChosen = new("Player", "IsModeChosen", Type.boolean, false) :: Attribute<boolean>
 -- nil for as long as the player has no residence
 Module.ResidenceId = new("Player", "ResidenceId", Type.optional(BaseType.ResidenceId), nil) :: Attribute<ResidenceId?>
 

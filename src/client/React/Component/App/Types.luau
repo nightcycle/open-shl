@@ -15,8 +15,10 @@ export type Registry = {
 	PANELS: { [PanelId]: Container },
 	-- always mounted, keyed by the name of their component
 	OVERLAYS: { [string]: Container },
+	-- the same, but drawn over the boot phases as well
+	TOP_OVERLAYS: { [string]: Container },
 }
-export type Layer = "BootPhase" | "Screen" | "Panel" | "Overlay"
+export type Layer = "BootPhase" | "Screen" | "Panel" | "Overlay" | "TopOverlay"
 -- Constants
 -- Variables
 -- References

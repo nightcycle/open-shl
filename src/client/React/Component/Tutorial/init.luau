@@ -121,7 +121,8 @@ return function(props: Properties): React.ReactNode
 		{
 			BackgroundTransparency = 1,
 			Active = false,
-			Visible = bootPhase == "Playing" and not isCameraMode,
+			-- he sits out the rest of the boot, on the mode screen he has a word to say
+			Visible = (bootPhase == "Playing" or bootPhase == "ModeSelect") and not isCameraMode,
 		},
 		props,
 		{

@@ -29,7 +29,7 @@ type SectionId = TutorialDefinition.SectionId
 type Home = TutorialDefinition.Home
 type Progress = TutorialContext.Progress
 -- Constants
-local BOOT_PHASES: { BootPhase } = { "Playing", "Loading", "Intro" }
+local BOOT_PHASES: { BootPhase } = { "Playing", "Loading", "ModeSelect", "Intro" }
 local NO_SCREEN: Screen = table.freeze({
 	Type = "None" :: "None",
 })
@@ -46,6 +46,8 @@ local HOME_SCREENS: { [Home]: Screen } = table.freeze({
 	ArtifactMenu = table.freeze({
 		Type = "ArtifactMenu" :: "ArtifactMenu",
 	}),
+	-- a boot phase rather than a screen, it's picked with the control of that name
+	ModeSelect = NO_SCREEN,
 })
 local SECTION_IDS: { SectionId } = {}
 local MAX_STEP_COUNT = 1

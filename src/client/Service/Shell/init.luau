@@ -11,6 +11,7 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 -- Types
@@ -43,6 +44,7 @@ type ShellServiceImpl = {
 	GetIsInResidence: (self: ShellService) -> boolean,
 	GetIsGameplayHudVisible: (self: ShellService) -> boolean,
 	FinishBootPhase: (self: ShellService, bootPhase: BootPhase) -> (),
+	SetServerBrowserOpen: (self: ShellService, isOpen: boolean) -> (),
 	OpenScreen: (self: ShellService, screen: Screen) -> Result<true, string>,
 	CloseScreen: (self: ShellService) -> (),
 	OpenPanel: (self: ShellService, panelId: PanelId) -> Result<true, string>,
@@ -76,7 +78,6 @@ export type ShellService = typeof(setmetatable(
 	{} :: ShellServiceImpl
 ))
 -- Constants
-local BOOT_PHASES: { BootPhase } = table.freeze({ "Loading" :: BootPhase, "Intro", "Playing" })
 local PANEL_IDS: { [PseudoEnum.MenuId]: PanelId } = table.freeze({
 	Music = "Music",
 	Actions = "Actions",
@@ -92,9 +93,19 @@ local SCREEN_TRIGGERS: { [ScreenType]: Trigger } = table.freeze({
 -- Variables
 -- References
 -- Private Functions
+-- a player the game sent here picked their mode on the way
+local function getIfModeSelectShown(): boolean
+	return BUILD_CONFIG.MODE_SELECT_ENABLED
+		and not AttributeDefinition.get(Players.LocalPlayer, AttributeDefinition.IsModeChosen)
+end
+
 local function getNextBootPhase(bootPhase: BootPhase): BootPhase
-	local index = table.find(BOOT_PHASES, bootPhase) or #BOOT_PHASES
-	return BOOT_PHASES[index + 1] or "Playing"
+	if bootPhase == "Loading" then
+		return if getIfModeSelectShown() then "ModeSelect" else "Intro"
+	elseif bootPhase == "ModeSelect" or bootPhase == "ServerBrowser" then
+		return "Intro"
+	end
+	return "Playing"
 end
 
 -- an unlock that was granted while something else was up plays once the hud is back
@@ -158,6 +169,9 @@ local function setState(self: ShellService, state: State)
 		self.GameplayHudVisibleChanged:Fire(self._State.IsGameplayHudVisible)
 	end
 
+	if previous.BootPhase ~= state.BootPhase and state.BootPhase == "ModeSelect" then
+		self:FireTutorialTrigger("ModeSelectShown")
+	end
 	if state.IsGameplayHudVisible and not self._HasHudShown then
 		self._HasHudShown = true
 		self:FireTutorialTrigger("HudShown")
@@ -210,6 +224,16 @@ function ShellService:FinishBootPhase(bootPhase: BootPhase)
 	end
 	local state = table.clone(self._State)
 	state.BootPhase = getNextBootPhase(bootPhase)
+	setState(self, state)
+end
+
+function ShellService:SetServerBrowserOpen(isOpen: boolean)
+	local from: BootPhase = if isOpen then "ModeSelect" else "ServerBrowser"
+	if self._State.BootPhase ~= from then
+		return
+	end
+	local state = table.clone(self._State)
+	state.BootPhase = if isOpen then "ServerBrowser" else "ModeSelect"
 	setState(self, state)
 end
 

@@ -7,12 +7,14 @@ local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local BeaconService = require("@game/ServerScriptService/Server/Service/Beacon")
 local CharacterService = require("@game/ServerScriptService/Server/Service/Character")
 local ColorizerService = require("@game/ServerScriptService/Server/Service/Colorizer")
+local CustomServerService = require("@game/ServerScriptService/Server/Service/CustomServer")
 local DataService = require("@game/ServerScriptService/Server/Service/Data")
 local DayNightService = require("@game/ServerScriptService/Server/Service/DayNight")
 local EconomyService = require("@game/ServerScriptService/Server/Service/Economy")
 local GateService = require("@game/ServerScriptService/Server/Service/Gate")
 local HazardService = require("@game/ServerScriptService/Server/Service/Hazard")
 local LegacyImportService = require("@game/ServerScriptService/Server/Service/LegacyImport")
+local ModeSelectService = require("@game/ServerScriptService/Server/Service/ModeSelect")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local ProfileService = require("@game/ServerScriptService/Server/Service/Profile")
 local QuestService = require("@game/ServerScriptService/Server/Service/Quest")
@@ -20,6 +22,7 @@ local ReactorService = require("@game/ServerScriptService/Server/Service/Reactor
 local RebuildService = require("@game/ServerScriptService/Server/Service/Rebuild")
 local ResidenceService = require("@game/ServerScriptService/Server/Service/Residence")
 local RoleplayService = require("@game/ServerScriptService/Server/Service/Roleplay")
+local ServerIdService = require("@game/ServerScriptService/Server/Service/ServerId")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local UniformService = require("@game/ServerScriptService/Server/Service/Uniform")
 local VFXService = require("@game/ServerScriptService/Server/Service/VFX")
@@ -33,6 +36,10 @@ local DestroyCallbacks: { () -> () } = {}
 -- a service leans on the ones above it, so they start in this order + stop in the reverse one
 assert(not NetworkService.IsInitialized, `the network service is already initialized`)
 table.insert(DestroyCallbacks, NetworkService.init())
+
+-- a client makes up its mind about the mode screen as soon as it's in, so this is on before the saves are
+assert(not ModeSelectService.IsInitialized, `the mode select service is already initialized`)
+table.insert(DestroyCallbacks, ModeSelectService.init())
 
 assert(not DataService.IsInitialized, `the data service is already initialized`)
 table.insert(DestroyCallbacks, DataService.init())
@@ -93,6 +100,13 @@ table.insert(DestroyCallbacks, ReactorService.init())
 
 assert(not UniformService.IsInitialized, `the uniform service is already initialized`)
 table.insert(DestroyCallbacks, UniformService.init())
+
+-- these two put the server up for others to join, so they start once all of it is there + stop before any of it does
+assert(not ServerIdService.IsInitialized, `the server id service is already initialized`)
+table.insert(DestroyCallbacks, ServerIdService.init())
+
+assert(not CustomServerService.IsInitialized, `the custom server service is already initialized`)
+table.insert(DestroyCallbacks, CustomServerService.init())
 
 game:BindToClose(function()
 	for index = #DestroyCallbacks, 1, -1 do

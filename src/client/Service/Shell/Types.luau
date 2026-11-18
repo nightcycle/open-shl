@@ -3,7 +3,8 @@
 -- Packages
 -- Modules
 -- Types
-export type BootPhase = "Loading" | "Intro" | "Playing"
+-- the browser of custom servers is opened from the mode screen + leads back to it
+export type BootPhase = "Loading" | "ModeSelect" | "ServerBrowser" | "Intro" | "Playing"
 -- a full screen menu, replaces the gameplay hud while open
 export type Screen =
 	{

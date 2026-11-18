@@ -12,6 +12,8 @@ type Registry = AppTypes.Registry
 local REGISTRY: Registry = {
 	BOOT_PHASES = {
 		Loading = require("@self/Loading"),
+		ModeSelect = require("@self/ModeSelect"),
+		ServerBrowser = require("@self/ServerBrowser"),
 		Intro = require("@self/Intro"),
 	},
 	SCREENS = {
@@ -28,12 +30,16 @@ local REGISTRY: Registry = {
 		Build = require("@self/Build"),
 	},
 	OVERLAYS = {
-		Tutorial = require("@self/Tutorial"),
 		QuestBanner = require("@self/QuestBanner"),
 		CurrencyPopup = require("@self/CurrencyPopup"),
 		DailyReward = require("@self/DailyReward"),
 		NameTag = require("@self/NameTag"),
 		CombatFeedback = require("@self/CombatFeedback"),
+		ServerId = require("@self/ServerId"),
+	},
+	TOP_OVERLAYS = {
+		-- the captain has a word to say about the mode screen as well
+		Tutorial = require("@self/Tutorial"),
 	},
 }
 -- Variables
