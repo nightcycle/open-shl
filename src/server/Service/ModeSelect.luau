@@ -12,6 +12,7 @@ local Future = TypeUnionLib.Future
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local ServerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Server")
@@ -295,11 +296,14 @@ return ServiceLocker(function(): ModeSelectService
 	local listCache = self._ListCache
 	handle(RemoteDefinition.SelectMode, selectMode)
 	handle(RemoteDefinition.JoinServerById, joinServerById)
-	handle(RemoteDefinition.CreateServer, createServer)
-	handle(RemoteDefinition.JoinServer, joinServer)
-	handle(RemoteDefinition.GetServers, function(player: Player): Result<{ Listing }, string>
-		return getServers(listCache, player)
-	end)
+	-- a game without custom servers has no list of them to read, to add to or to send anybody into
+	if GameDefinition.FEATURES.CustomServers then
+		handle(RemoteDefinition.CreateServer, createServer)
+		handle(RemoteDefinition.JoinServer, joinServer)
+		handle(RemoteDefinition.GetServers, function(player: Player): Result<{ Listing }, string>
+			return getServers(listCache, player)
+		end)
+	end
 
 	-- the screen that sent a player off is waiting for them to leave, it's told when they won't
 	table.insert(

@@ -9,6 +9,7 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
 local FurnitureDefinition = require("@game/ReplicatedStorage/Shared/Definition/Furniture")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
@@ -393,18 +394,21 @@ return ServiceLocker(function(): EconomyService
 			return grantProduct(player, definitionRes.Value, nil)
 		end
 	)
-	NetworkService:Handle(
-		RemoteDefinition.PurchaseFurniture,
-		function(player: Player, furnitureId: string): Result<true, string>
-			return purchaseFurniture(player, furnitureId)
-		end
-	)
-	NetworkService:Handle(
-		RemoteDefinition.PurchaseTheme,
-		function(player: Player, themeId: string): Result<true, string>
-			return purchaseTheme(player, themeId)
-		end
-	)
+	-- furniture + themes are for a residence, a game without one has nowhere to put what its players would pay for
+	if GameDefinition.FEATURES.Residences then
+		NetworkService:Handle(
+			RemoteDefinition.PurchaseFurniture,
+			function(player: Player, furnitureId: string): Result<true, string>
+				return purchaseFurniture(player, furnitureId)
+			end
+		)
+		NetworkService:Handle(
+			RemoteDefinition.PurchaseTheme,
+			function(player: Player, themeId: string): Result<true, string>
+				return purchaseTheme(player, themeId)
+			end
+		)
+	end
 
 	-- the engine holds on to the callback for as long as the server runs, the service can be gone when it's called
 	MarketplaceService.ProcessReceipt = function(receipt: unknown): Enum.ProductPurchaseDecision
