@@ -4,15 +4,30 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 -- Components
-local CurrencyPopup = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CurrencyPopup")
 -- Hooks
 local useSignalState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useSignalState")
 -- Contexts
 -- Types
+local CurrencyPopupTypes =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CurrencyPopup/Types")
+type Layout = CurrencyPopupTypes.Component
 export type Properties = {}
 -- Constants
+-- how a gain is shown is the game's own, the layout of another game is never required
+local Layout: Layout = GameDefinition.pick({
+	shl1 = function(): Layout
+		error(`shl1 has no currency popup yet`)
+	end,
+	shl2 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CurrencyPopup")
+	end,
+	shl3 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/MoneyEffect")
+	end,
+})
 -- Variables
 -- References
 -- Private Functions
@@ -26,10 +41,10 @@ return function(): React.ReactNode
 	end)
 
 	return e(
-		CurrencyPopup,
+		Layout,
 		{
 			Size = UDim2.fromScale(1, 1),
 			IsLoaded = isLoaded,
-		} :: CurrencyPopup.Properties
+		} :: CurrencyPopupTypes.Properties
 	)
 end
