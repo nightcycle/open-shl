@@ -16,3 +16,64 @@ jobs:
       - uses: CompeyDev/setup-rokit@v0.2.1
       - name: lint
         run: sh scripts/ci/lint.sh
+
+  type-check:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: CompeyDev/setup-rokit@v0.2.1
+      - name: install packages
+        run: wally install
+      - name: generate code
+        run: sh scripts/proj/code-gen.sh
+      # the types only need the asset modules to be there. this writes them with the ids of the lock, which takes no key
+      - name: generate asset code
+        run: asphalt sync debug
+      # a link that wally writes has none of the types of its package
+      - name: export package types
+        run: |
+          lune run scripts/proj/config.lune.luau
+          sh scripts/sourcemap.sh
+          wally-package-types "Packages" --sourcemap sourcemap.json
+          wally-package-types "DevPackages" --sourcemap sourcemap.json
+      - name: type check
+        run: sh scripts/ci/analyze.sh
+
+  # every place of deploy.yml, built the way cd builds it + read through before any of it could go out
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: CompeyDev/setup-rokit@v0.2.1
+      - name: install packages
+        run: wally install
+      - name: generate code
+        run: sh scripts/proj/code-gen.sh
+      - name: resolve assets
+        run: UPLOAD_ASSETS=locked sh scripts/proj/sync.sh
+      # one module per input of asphalt.toml. a place builds without them all the same, then fails at the first require
+      - name: check asset code
+        run: |
+          for name in Animation Audio Image; do
+            if [ ! -f "Generated/$name.luau" ]; then
+              echo "Generated/$name.luau wasn't written by the asset sync"
+              exit 1
+            fi
+          done
+      - name: build
+        env:
+          DRY_RUN: "true"
+        run: lune run scripts/cd/publish.lune.luau
+      - name: check places
+        run: |
+          status=0
+          for place in build/*/*.rbxl; do
+            lune run scripts/ci/check-place.lune.luau "$place" || status=1
+          done
+          exit $status
