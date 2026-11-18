@@ -11,6 +11,7 @@ local Future = TypeUnionLib.Future
 local AppearanceConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance")
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
+local CharacterShareUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Share")
 local CharacterSlotUtil = require("@game/ServerScriptService/Server/Util/CharacterSlot")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
@@ -278,14 +279,15 @@ local function saveCharacter(player: Player, edited: Character): Result<Characte
 	if secretRes.IsErr then
 		return secretRes
 	end
-	local character: Character = {
+	-- whatever the client made of it, what the identities of the game have the same is the hero's
+	local character: Character = CharacterShareUtil.apply({
 		Id = edited.Id,
 		Powers = powersRes.Value,
 		Identities = {
 			Main = mainRes.Value,
 			Secret = secretRes.Value,
 		},
-	}
+	}, "Main")
 	local saveRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
 		for index, other in t.Characters do
 			if other.Id == character.Id then

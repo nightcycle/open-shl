@@ -14,6 +14,7 @@ local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power
 local PowerUtil = require("@self/Power")
 local ProfileUtil = require("@self/Profile")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
+local ShareUtil = require("@self/Share")
 local StateUtil = require("@self/State")
 local TextureGroupConstructor =
 	require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item/TextureGroup")
@@ -162,6 +163,16 @@ local function setTexture(group: TextureGroup, color: Color3, material: Enum.Mat
 	end)
 end
 
+-- what every identity has the same goes to the others as it's edited on the one in focus
+local function share(res: Result<EditorState, string>): Result<EditorState, string>
+	if res.IsErr or not ShareUtil.IS_ANY then
+		return res
+	end
+	local state = res.Value
+	local character = ShareUtil.apply(state.Character, state.IdentityKey)
+	return if character == state.Character then res else Result.ok(StateUtil.setCharacter(state, character))
+end
+
 -- the height or the build that's picked: a body that was never sized is the game's default one
 local function getScaleChoice(state: EditorState, axis: ScaleAxis): number?
 	local scaleDef = CharacterEditorDefinition.SCALE
@@ -300,6 +311,9 @@ function Util.getTags(state: EditorState): Tags
 	end
 	local lensTag: Tag = if hasLenses then "HasLenses" else "HasNoLenses"
 	tags[lensTag] = true
+	if ShareUtil.IS_COLOR_LINKED then
+		tags["IsColorMatched" :: Tag] = true
+	end
 	table.freeze(tags)
 	return tags
 end
@@ -404,7 +418,8 @@ function Util.setTag(state: EditorState, tag: Tag, isSelected: boolean): Result<
 		local isSuper = (tag == "IsSuper") == isSelected
 		return Result.ok(Util.setIdentityKey(state, if isSuper then "Main" else "Secret"))
 	elseif tag == "IsColorMatched" then
-		-- stub: nothing ties the colors of the identities together yet, the press is taken + changes nothing
+		-- stub: the colors of the identities are tied together + nothing takes them apart yet, the press is taken +
+		-- changes nothing
 		return Result.ok(state)
 	end
 	local itemDef = PageUtil.getItemDefinition(state)
@@ -412,7 +427,7 @@ function Util.setTag(state: EditorState, tag: Tag, isSelected: boolean): Result<
 		return Result.err(`no item is selected`)
 	end
 	if tag == "IsItemAdded" then
-		return if isSelected then addItem(state, itemDef.Id) else ItemUtil.remove(state, itemDef.Id)
+		return share(if isSelected then addItem(state, itemDef.Id) else ItemUtil.remove(state, itemDef.Id))
 	elseif tag == "HasLenses" or tag == "HasNoLenses" then
 		return ItemUtil.setLenses(state, itemDef, (tag == "HasLenses") == isSelected)
 	end
@@ -481,7 +496,9 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		return Result.err(`that can't be changed right now`)
 	end
 	if field.Type == "Text" and edit.Type == "Text" then
-		return ProfileUtil.setText(state, field.Binding.Key, edit.Text, field.MaxLength, field.IsMultiLine == true)
+		return share(
+			ProfileUtil.setText(state, field.Binding.Key, edit.Text, field.MaxLength, field.IsMultiLine == true)
+		)
 	elseif field.Type == "GenerateAlias" and edit.Type == "Alias" then
 		return ProfileUtil.setText(state, field.Binding.Key, AliasDefinition.get(edit.Seed), nil, false)
 	elseif field.Type == "Choose" and edit.Type == "Choice" then
@@ -509,7 +526,7 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		if not isChoice then
 			return Result.err(`that pattern isn't offered here`)
 		end
-		return setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
+		return share(setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
 			local out = TextureGroupConstructor.new(group.Color, material, group.Transparency)
 			if pattern == nil then
 				return out
@@ -518,7 +535,7 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 				t.Pattern = pattern
 				return t
 			end)
-		end)
+		end))
 	elseif field.Type == "ChoiceList" and edit.Type == "Power" then
 		return PowerUtil.setSelected(state, field.Binding.Group, edit.Id, edit.IsSelected)
 	elseif field.Type == "ChoiceList" and edit.Type == "PowerColor" then
@@ -530,19 +547,19 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		end
 		local binding = field.Binding
 		if binding.Type == "SkinColor" then
-			return setSkinColor(state, color)
+			return share(setSkinColor(state, color))
 		end
-		return setItemTexture(state, binding, function(group: TextureGroup): TextureGroup
+		return share(setItemTexture(state, binding, function(group: TextureGroup): TextureGroup
 			return setTexture(group, color, group.Material)
-		end)
+		end))
 	elseif field.Type == "Material" and edit.Type == "Material" then
 		local material = edit.Material
 		if getIfFiltered(field.Filtered, material) then
 			return Result.err(`that material isn't offered here`)
 		end
-		return setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
+		return share(setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
 			return setTexture(group, group.Color, material)
-		end)
+		end))
 	elseif field.Type == "Toggle" and edit.Type == "Toggle" then
 		return Util.setTag(state, field.Focus, edit.IsSelected)
 	end
