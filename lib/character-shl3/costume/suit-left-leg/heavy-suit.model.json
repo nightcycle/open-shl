@@ -1,0 +1,568 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftUpperLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/heavy-suit/left-upper-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0000003576278687,
+                1.2165685892105103,
+                0.9999998807907104
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.0000003576278687,
+                1.2165685892105103,
+                0.9999998807907104
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715616"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0200003385543823,
+                1.236568570137024,
+                1.0199998617172241
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0625,
+                  -0.097412,
+                  0.001709
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.1321320533752441,
+                1.2526521682739258,
+                1.1248979568481445
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://1892369164"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.1321320533752441,
+                1.2526521682739258,
+                1.1248979568481445
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.117188,
+                  -0.277954,
+                  0.001709
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.062745101749897,
+                0.6901960968971252
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.256005048751831,
+                0.8015110492706299,
+                1.0054550170898438
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://1892350940"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.256005048751831,
+                0.8015110492706299,
+                1.0054550170898438
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-upper-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/heavy-suit/left-upper-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftLowerLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/heavy-suit/left-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999999403953552,
+                1.193092703819275,
+                0.9999995231628418
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999999403953552,
+                1.193092703819275,
+                0.9999995231628418
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715610"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199999809265137,
+                1.2130926847457886,
+                1.0199995040893555
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.101563,
+                  -0.03949,
+                  0.001709
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.1602599620819092,
+                0.6883580684661865,
+                0.9971869587898254
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://1892369485"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.1602599620819092,
+                0.6883580684661865,
+                0.9971869587898254
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-lower-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/heavy-suit/left-lower-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftFoot"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/heavy-suit/left-foot/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1,
+                0.3000001907348633,
+                1
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1,
+                0.3000001907348633,
+                1
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715602"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199999809265137,
+                0.32000020146369934,
+                1.0199999809265137
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.019531,
+                  0.144409,
+                  0.001709
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.1858880519866943,
+                0.6394409537315369,
+                1.0299800634384155
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://1892364096"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.1858880519866943,
+                0.6394409537315369,
+                1.0299800634384155
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-foot",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/heavy-suit/left-foot/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Heavy Suit"
+        },
+        "Rarity": {
+          "String": "VeryCommon"
+        }
+      }
+    }
+  }
+}

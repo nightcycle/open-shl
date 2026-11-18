@@ -1,0 +1,497 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "RightUpperArm"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-right-arm/covert-suit/right-upper-arm/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999996423721313,
+                1.168670654296875,
+                0.9999999403953552
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999996423721313,
+                1.168670654296875,
+                0.9999999403953552
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715576"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.019999623298645,
+                1.1886706352233887,
+                1.0199999809265137
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  0.072037,
+                  0.502472,
+                  -0.001587
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.232400894165039,
+                0.7873330116271973,
+                1.1843810081481934
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2262857554"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.232400894165039,
+                0.7873330116271973,
+                1.1843810081481934
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "right-upper-arm",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-right-arm/covert-suit/right-upper-arm/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "RightLowerArm"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-right-arm/covert-suit/right-lower-arm/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999997615814209,
+                1.0519180297851562,
+                1
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999997615814209,
+                1.0519180297851562,
+                1
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715562"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199997425079346,
+                1.07191801071167,
+                1.0199999809265137
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  0.023666,
+                  -0.179077,
+                  -0.001648
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.062745101749897,
+                0.6901960968971252
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.1073670387268066,
+                0.8605899810791016,
+                1.1347029209136963
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2262859720"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.1073670387268066,
+                0.8605899810791016,
+                1.1347029209136963
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "right-lower-arm",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-right-arm/covert-suit/right-lower-arm/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "RightHand"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-right-arm/covert-suit/right-hand/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999998807907104,
+                0.3000306785106659,
+                0.9999998807907104
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999998807907104,
+                0.3000306785106659,
+                0.9999998807907104
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715557"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199998617172241,
+                0.32003068923950195,
+                1.0199998617172241
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  0.276611,
+                  -0.007324,
+                  -0.001648
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0.062745101749897,
+                0.6901960968971252
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.5471929311752319,
+                0.296550989151001,
+                1.137850046157837
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2262860619"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                0.5471929311752319,
+                0.296550989151001,
+                1.137850046157837
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "right-hand",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-right-arm/covert-suit/right-hand/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Covert Suit"
+        },
+        "Rarity": {
+          "String": "Uncommon"
+        }
+      }
+    }
+  }
+}

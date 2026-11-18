@@ -1,0 +1,129 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/suit-head/psycho-suit/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.00032,
+              -0.001373,
+              -0.050415
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6392157077789307,
+            0.6352941393852234,
+            0.6470588445663452
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.3580290079116821,
+            1.4919471740722656,
+            1.2766419649124146
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2662065386"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.3580290079116821,
+            1.4919471740722656,
+            1.2766419649124146
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Psycho Suit"
+        },
+        "Rarity": {
+          "String": "Rare"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/suit-head/psycho-suit/root"
+        },
+        "ShaveBeard": {
+          "Bool": true
+        },
+        "ShaveHead": {
+          "Bool": true
+        }
+      }
+    },
+    "Tags": [
+      "Hood"
+    ]
+  }
+}

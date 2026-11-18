@@ -1,0 +1,284 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftUpperArm"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-arm/bodysuit/left-upper-arm/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999997615814209,
+                1.168670654296875,
+                0.9999999403953552
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999997615814209,
+                1.168670654296875,
+                0.9999999403953552
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715550"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199997425079346,
+                1.1886706352233887,
+                1.0199999809265137
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-upper-arm",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-arm/bodysuit/left-upper-arm/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftLowerArm"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-arm/bodysuit/left-lower-arm/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999996423721313,
+                1.0519180297851562,
+                1
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999996423721313,
+                1.0519180297851562,
+                1
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715541"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.019999623298645,
+                1.07191801071167,
+                1.0199999809265137
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-lower-arm",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-arm/bodysuit/left-lower-arm/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftHand"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-arm/bodysuit/left-hand/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999997615814209,
+                0.3000306785106659,
+                0.9999998807907104
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999997615814209,
+                0.3000306785106659,
+                0.9999998807907104
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715537"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199997425079346,
+                0.32003068923950195,
+                1.0199998617172241
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-hand",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-arm/bodysuit/left-hand/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Bodysuit"
+        },
+        "Rarity": {
+          "String": "VeryCommon"
+        }
+      }
+    }
+  }
+}

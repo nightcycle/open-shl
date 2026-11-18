@@ -1,0 +1,247 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftLowerLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/accessories/knee-pads/left-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999999403953552,
+                1.1930928230285645,
+                1.0000001192092896
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.054775,
+                  0.327209,
+                  -0.094149
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.2194880247116089,
+                0.7820509672164917,
+                1.3714909553527832
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2662034652"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.2194880247116089,
+                0.7820509672164917,
+                1.3714909553527832
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-lower-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/accessories/knee-pads/left-lower-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "RightLowerLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/accessories/knee-pads/right-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999999403953552,
+                1.1930928230285645,
+                1.0000001192092896
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.041459,
+                  0.329544,
+                  -0.090395
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.2194880247116089,
+                0.7820509672164917,
+                1.3714909553527832
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2662034652"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.2194880247116089,
+                0.7820509672164917,
+                1.3714909553527832
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "right-lower-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/accessories/knee-pads/right-lower-leg/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Knee Pads"
+        },
+        "Rarity": {
+          "String": "Common"
+        }
+      }
+    }
+  }
+}

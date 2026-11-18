@@ -1,0 +1,1255 @@
+{
+  "Entries": [
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-head_aerial-suit",
+        "costume_suit-torso_aerial-suit",
+        "costume_suit-left-arm_aerial-suit",
+        "costume_suit-right-arm_aerial-suit",
+        "costume_suit-left-leg_aerial-suit",
+        "costume_suit-right-leg_aerial-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Aerial Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_aerial-suit",
+        "Left Arm": "costume_suit-left-arm_aerial-suit",
+        "Left Leg": "costume_suit-left-leg_aerial-suit",
+        "Right Arm": "costume_suit-right-arm_aerial-suit",
+        "Right Leg": "costume_suit-right-leg_aerial-suit",
+        "Torso": "costume_suit-torso_aerial-suit"
+      },
+      "Rarity": "VeryCommon",
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-head_agility-suit",
+        "costume_suit-torso_agility-suit",
+        "costume_suit-left-arm_agility-suit",
+        "costume_suit-right-arm_agility-suit",
+        "costume_suit-left-leg_agility-suit",
+        "costume_suit-right-leg_agility-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Agility Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_agility-suit",
+        "Left Arm": "costume_suit-left-arm_agility-suit",
+        "Left Leg": "costume_suit-left-leg_agility-suit",
+        "Right Arm": "costume_suit-right-arm_agility-suit",
+        "Right Leg": "costume_suit-right-leg_agility-suit",
+        "Torso": "costume_suit-torso_agility-suit"
+      },
+      "Rarity": "VeryCommon",
+      "ShaveBeard": true,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-head_armored-suit",
+        "costume_suit-torso_armored-suit",
+        "costume_suit-left-arm_armored-suit",
+        "costume_suit-right-arm_armored-suit",
+        "costume_suit-left-leg_armored-suit",
+        "costume_suit-right-leg_armored-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Armored Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_armored-suit",
+        "Left Arm": "costume_suit-left-arm_armored-suit",
+        "Left Leg": "costume_suit-left-leg_armored-suit",
+        "Right Arm": "costume_suit-right-arm_armored-suit",
+        "Right Leg": "costume_suit-right-leg_armored-suit",
+        "Torso": "costume_suit-torso_armored-suit"
+      },
+      "Rarity": "VeryCommon",
+      "ShaveBeard": true,
+      "ShaveHead": true
+    },
+    {
+      "Cost": 7725,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-head_assassin-suit",
+        "costume_suit-torso_assassin-suit",
+        "costume_suit-left-arm_assassin-suit",
+        "costume_suit-right-arm_assassin-suit",
+        "costume_suit-left-leg_assassin-suit",
+        "costume_suit-right-leg_assassin-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Assassin Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_assassin-suit",
+        "Left Arm": "costume_suit-left-arm_assassin-suit",
+        "Left Leg": "costume_suit-left-leg_assassin-suit",
+        "Right Arm": "costume_suit-right-arm_assassin-suit",
+        "Right Leg": "costume_suit-right-leg_assassin-suit",
+        "Torso": "costume_suit-torso_assassin-suit"
+      },
+      "Rarity": "Rare",
+      "ShaveBeard": true
+    },
+    {
+      "Cost": 23670,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-head_cosmic-suit",
+        "costume_suit-torso_cosmic-suit",
+        "costume_suit-left-arm_cosmic-suit",
+        "costume_suit-right-arm_cosmic-suit",
+        "costume_suit-left-leg_cosmic-suit",
+        "costume_suit-right-leg_cosmic-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Cosmic Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_cosmic-suit",
+        "Left Arm": "costume_suit-left-arm_cosmic-suit",
+        "Left Leg": "costume_suit-left-leg_cosmic-suit",
+        "Right Arm": "costume_suit-right-arm_cosmic-suit",
+        "Right Leg": "costume_suit-right-leg_cosmic-suit",
+        "Torso": "costume_suit-torso_cosmic-suit"
+      },
+      "Rarity": "Legendary"
+    },
+    {
+      "Cost": 4238,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-head_covert-suit",
+        "costume_suit-torso_covert-suit",
+        "costume_suit-left-arm_covert-suit",
+        "costume_suit-right-arm_covert-suit",
+        "costume_suit-left-leg_covert-suit",
+        "costume_suit-right-leg_covert-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Covert Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_covert-suit",
+        "Left Arm": "costume_suit-left-arm_covert-suit",
+        "Left Leg": "costume_suit-left-leg_covert-suit",
+        "Right Arm": "costume_suit-right-arm_covert-suit",
+        "Right Leg": "costume_suit-right-leg_covert-suit",
+        "Torso": "costume_suit-torso_covert-suit"
+      },
+      "Rarity": "Uncommon",
+      "ShaveHead": true
+    },
+    {
+      "Cost": 4238,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-head_espionage-suit",
+        "costume_suit-torso_espionage-suit",
+        "costume_suit-left-arm_espionage-suit",
+        "costume_suit-right-arm_espionage-suit",
+        "costume_suit-left-leg_espionage-suit",
+        "costume_suit-right-leg_espionage-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Espionage Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_espionage-suit",
+        "Left Arm": "costume_suit-left-arm_espionage-suit",
+        "Left Leg": "costume_suit-left-leg_espionage-suit",
+        "Right Arm": "costume_suit-right-arm_espionage-suit",
+        "Right Leg": "costume_suit-right-leg_espionage-suit",
+        "Torso": "costume_suit-torso_espionage-suit"
+      },
+      "Rarity": "Uncommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-head_gymnast-suit",
+        "costume_suit-torso_gymnast-suit",
+        "costume_suit-left-arm_gymnast-suit",
+        "costume_suit-right-arm_gymnast-suit",
+        "costume_suit-left-leg_gymnast-suit",
+        "costume_suit-right-leg_gymnast-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Gymnast Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_gymnast-suit",
+        "Left Arm": "costume_suit-left-arm_gymnast-suit",
+        "Left Leg": "costume_suit-left-leg_gymnast-suit",
+        "Right Arm": "costume_suit-right-arm_gymnast-suit",
+        "Right Leg": "costume_suit-right-leg_gymnast-suit",
+        "Torso": "costume_suit-torso_gymnast-suit"
+      },
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-head_heavy-suit",
+        "costume_suit-torso_heavy-suit",
+        "costume_suit-left-arm_heavy-suit",
+        "costume_suit-right-arm_heavy-suit",
+        "costume_suit-left-leg_heavy-suit",
+        "costume_suit-right-leg_heavy-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Heavy Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_heavy-suit",
+        "Left Arm": "costume_suit-left-arm_heavy-suit",
+        "Left Leg": "costume_suit-left-leg_heavy-suit",
+        "Right Arm": "costume_suit-right-arm_heavy-suit",
+        "Right Leg": "costume_suit-right-leg_heavy-suit",
+        "Torso": "costume_suit-torso_heavy-suit"
+      },
+      "Rarity": "VeryCommon",
+      "ShaveBeard": true,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-head_insect-suit",
+        "costume_suit-torso_insect-suit",
+        "costume_suit-left-arm_insect-suit",
+        "costume_suit-right-arm_insect-suit",
+        "costume_suit-left-leg_insect-suit",
+        "costume_suit-right-leg_insect-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Insect Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_insect-suit",
+        "Left Arm": "costume_suit-left-arm_insect-suit",
+        "Left Leg": "costume_suit-left-leg_insect-suit",
+        "Right Arm": "costume_suit-right-arm_insect-suit",
+        "Right Leg": "costume_suit-right-leg_insect-suit",
+        "Torso": "costume_suit-torso_insect-suit"
+      },
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 4238,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-head_magician-suit",
+        "costume_suit-torso_magician-suit",
+        "costume_suit-left-arm_magician-suit",
+        "costume_suit-right-arm_magician-suit",
+        "costume_suit-left-leg_magician-suit",
+        "costume_suit-right-leg_magician-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Magician Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_magician-suit",
+        "Left Arm": "costume_suit-left-arm_magician-suit",
+        "Left Leg": "costume_suit-left-leg_magician-suit",
+        "Right Arm": "costume_suit-right-arm_magician-suit",
+        "Right Leg": "costume_suit-right-leg_magician-suit",
+        "Torso": "costume_suit-torso_magician-suit"
+      },
+      "Rarity": "Uncommon",
+      "ShaveBeard": true,
+      "ShaveHead": true
+    },
+    {
+      "Cost": 8175,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-head_psycho-suit",
+        "costume_suit-torso_psycho-suit",
+        "costume_suit-left-arm_psycho-suit",
+        "costume_suit-right-arm_psycho-suit",
+        "costume_suit-left-leg_psycho-suit",
+        "costume_suit-right-leg_psycho-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Psycho Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_psycho-suit",
+        "Left Arm": "costume_suit-left-arm_psycho-suit",
+        "Left Leg": "costume_suit-left-leg_psycho-suit",
+        "Right Arm": "costume_suit-right-arm_psycho-suit",
+        "Right Leg": "costume_suit-right-leg_psycho-suit",
+        "Torso": "costume_suit-torso_psycho-suit"
+      },
+      "Rarity": "Rare",
+      "ShaveBeard": true,
+      "ShaveHead": true
+    },
+    {
+      "Cost": 4238,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-head_twilight-suit",
+        "costume_suit-torso_twilight-suit",
+        "costume_suit-left-arm_twilight-suit",
+        "costume_suit-right-arm_twilight-suit",
+        "costume_suit-left-leg_twilight-suit",
+        "costume_suit-right-leg_twilight-suit"
+      ],
+      "LegacyCategory": "Suits",
+      "LegacyName": "Twilight Suit",
+      "LimbItemIds": {
+        "Head": "costume_suit-head_twilight-suit",
+        "Left Arm": "costume_suit-left-arm_twilight-suit",
+        "Left Leg": "costume_suit-left-leg_twilight-suit",
+        "Right Arm": "costume_suit-right-arm_twilight-suit",
+        "Right Leg": "costume_suit-right-leg_twilight-suit",
+        "Torso": "costume_suit-torso_twilight-suit"
+      },
+      "Rarity": "Uncommon",
+      "ShaveBeard": true,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_shirts_flannel-shirt"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Flannel Shirt",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_shirts_jacket"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Jacket",
+      "Rarity": "Uncommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_shirts_jersey"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Jersey",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_shirts_overcoat"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Overcoat",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_shirts_spaghetti-strap-top"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Spaghetti Strap Top",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_shirts_sports-jacket"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Sports Jacket",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_shirts_suit-coat"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Suit Coat",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_shirts_sweatshirt"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Sweatshirt",
+      "Rarity": "Uncommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_shirts_t-shirt"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "T-shirt",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_shirts_tank-top"
+      ],
+      "LegacyCategory": "Shirts",
+      "LegacyName": "Tank Top",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_pants_jeans"
+      ],
+      "LegacyCategory": "Pants",
+      "LegacyName": "Jeans",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_pants_khakis"
+      ],
+      "LegacyCategory": "Pants",
+      "LegacyName": "Khakis",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_pants_short-shorts"
+      ],
+      "LegacyCategory": "Pants",
+      "LegacyName": "Short Shorts",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_pants_shorts"
+      ],
+      "LegacyCategory": "Pants",
+      "LegacyName": "Shorts",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 0,
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_accessories_gloves"
+      ],
+      "LegacyCategory": "Accessories",
+      "LegacyName": "Gloves",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 833,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_accessories_knee-pads"
+      ],
+      "LegacyCategory": "Accessories",
+      "LegacyName": "Knee Pads",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 825,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_accessories_rocket-boosters"
+      ],
+      "LegacyCategory": "Accessories",
+      "LegacyName": "Rocket Boosters",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 818,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_accessories_shoulder-pads"
+      ],
+      "LegacyCategory": "Accessories",
+      "LegacyName": "Shoulder Pads",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 7575,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_accessories_shoulder-turrets"
+      ],
+      "LegacyCategory": "Accessories",
+      "LegacyName": "Shoulder Turrets",
+      "Rarity": "Rare"
+    },
+    {
+      "Cost": 4275,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_accessories_wrist-lasers"
+      ],
+      "LegacyCategory": "Accessories",
+      "LegacyName": "Wrist Lasers",
+      "Rarity": "Uncommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_emblems_arrow-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Arrow Emblem",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 818,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_box-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Box Emblem",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_emblems_circle-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Circle Emblem",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 7275,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_lightning-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Lightning Emblem",
+      "Rarity": "Rare"
+    },
+    {
+      "Cost": 788,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_octagon-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Octagon Emblem",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 3713,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_shield-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Shield Emblem",
+      "Rarity": "Uncommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_emblems_triangular-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Triangular Emblem",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 4013,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_trispoke-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Trispoke Emblem",
+      "Rarity": "Uncommon"
+    },
+    {
+      "Cost": 7275,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_wing-emblem"
+      ],
+      "LegacyCategory": "Emblems",
+      "LegacyName": "Wing Emblem",
+      "Rarity": "Rare"
+    },
+    {
+      "Cost": 810,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_capes_jetpack"
+      ],
+      "LegacyCategory": "Capes",
+      "LegacyName": "Jetpack",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_capes_quiver"
+      ],
+      "LegacyCategory": "Capes",
+      "LegacyName": "Quiver",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_capes_regular-cape"
+      ],
+      "LegacyCategory": "Capes",
+      "LegacyName": "Regular Cape",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 3600,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_capes_wings"
+      ],
+      "LegacyCategory": "Capes",
+      "LegacyName": "Wings",
+      "Rarity": "Uncommon"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_action-ponytail"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Action Ponytail",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 773,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_animazinghair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Animazing hair",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_beautiful-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Beautiful Hair",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_beautiful-people-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Beautiful People Hair",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 765,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_bob-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Bob Hair",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_club-kid-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Club Kid Hair",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 818,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_crazy-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Crazy Hair",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_dream-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Dream Hair",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_fabulous-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Fabulous Hair",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 675,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_lovely-locks-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Lovely Locks Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 840,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_manga-hero-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Manga Hero Hair",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_miss-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Miss Hair",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 788,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_mohawk-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Mohawk Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 773,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_politician-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Politician Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 728,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_princeton-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Princeton Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 795,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_roblohunk-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Roblohunk Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 713,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_scene-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Scene Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 810,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_shaggy-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Shaggy Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 720,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_spiked-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Spiked Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 698,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_straight-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Straight Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 750,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_stylish-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Stylish Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 803,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_swoosh-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Swoosh Hair",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_true-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "True Hair",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 720,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_ultraflash-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Ultraflash Hair",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 863,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_wavy-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Wavy Hair",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_facial-hair_beard"
+      ],
+      "LegacyCategory": "FacialHair",
+      "LegacyName": "Beard",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_facial-hair_goatee"
+      ],
+      "LegacyCategory": "FacialHair",
+      "LegacyName": "Goatee",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_facial-hair_mustache"
+      ],
+      "LegacyCategory": "FacialHair",
+      "LegacyName": "Mustache",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_facial-hair_soul-patch"
+      ],
+      "LegacyCategory": "FacialHair",
+      "LegacyName": "Soul Patch",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 855,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_hats_backwards-cap"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Backwards Cap",
+      "Rarity": "Common",
+      "ShaveHead": true
+    },
+    {
+      "Cost": 788,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_hats_cap"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Cap",
+      "Rarity": "Common",
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_hats_fedora"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Fedora",
+      "Rarity": "VeryCommon",
+      "ShaveHead": true
+    },
+    {
+      "Cost": 758,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_hats_headphones"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Headphones",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 698,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_hats_side-cap"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Side Cap",
+      "Rarity": "Common",
+      "ShaveHead": true
+    },
+    {
+      "Cost": 795,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_glasses_hipster-glasses"
+      ],
+      "LegacyCategory": "Glasses",
+      "LegacyName": "Hipster Glasses",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_glasses_nerd-glasses"
+      ],
+      "LegacyCategory": "Glasses",
+      "LegacyName": "Nerd Glasses",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 645,
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "clothing_glasses_shades"
+      ],
+      "LegacyCategory": "Glasses",
+      "LegacyName": "Shades",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "clothing_glasses_sunglasses"
+      ],
+      "LegacyCategory": "Glasses",
+      "LegacyName": "Sunglasses",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_eyes_alert"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Alert Eyes",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_eyes_angry"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Angry Eyes",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 3225,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_eyes_brave"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Brave Eyes",
+      "Rarity": "Uncommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_eyes_daring"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Daring Eyes",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_eyes_evil"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Evil Eyes",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_eyes_neutral"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Neutral Eyes",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 735,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_eyes_normal"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Normal Eyes",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 668,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_eyes_scared"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Scared Eyes",
+      "Rarity": "Common"
+    },
+    {
+      "Cost": 653,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_eyes_worried"
+      ],
+      "LegacyCategory": "Eyes",
+      "LegacyName": "Worried Eyes",
+      "Rarity": "Common"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_mouth_angry"
+      ],
+      "LegacyCategory": "Mouths",
+      "LegacyName": "Angry Mouth",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_mouth_brave"
+      ],
+      "LegacyCategory": "Mouths",
+      "LegacyName": "Brave Mouth",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_mouth_grimace"
+      ],
+      "LegacyCategory": "Mouths",
+      "LegacyName": "Grimace",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_mouth_joyful"
+      ],
+      "LegacyCategory": "Mouths",
+      "LegacyName": "Joyful Mouth",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "Cost": 720,
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_mouth_monster-smile"
+      ],
+      "LegacyCategory": "Mouths",
+      "LegacyName": "Monster Smile",
+      "Rarity": "VeryCommon"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_mouth_normal-smile"
+      ],
+      "LegacyCategory": "Mouths",
+      "LegacyName": "Normal Smile",
+      "Rarity": "VeryCommon"
+    }
+  ],
+  "Extras": [
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-torso_bodysuit",
+        "costume_suit-left-arm_bodysuit",
+        "costume_suit-right-arm_bodysuit",
+        "costume_suit-left-leg_bodysuit",
+        "costume_suit-right-leg_bodysuit"
+      ],
+      "LegacyCategory": "",
+      "LegacyName": "Bodysuit",
+      "LimbItemIds": {
+        "Left Arm": "costume_suit-left-arm_bodysuit",
+        "Left Leg": "costume_suit-left-leg_bodysuit",
+        "Right Arm": "costume_suit-right-arm_bodysuit",
+        "Right Leg": "costume_suit-right-leg_bodysuit",
+        "Torso": "costume_suit-torso_bodysuit"
+      },
+      "Rarity": "VeryCommon"
+    }
+  ],
+  "PriceAdjust": 1.675
+}

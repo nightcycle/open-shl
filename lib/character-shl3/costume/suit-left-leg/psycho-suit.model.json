@@ -1,0 +1,568 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftUpperLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/psycho-suit/left-upper-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0000004768371582,
+                1.2165685892105103,
+                0.9999668598175049
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.0000003576278687,
+                1.2165685892105103,
+                0.9999998807907104
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715616"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0200003385543823,
+                1.236568570137024,
+                1.0199998617172241
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.01828,
+                  0.204956,
+                  -0.005981
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9058823585510254,
+                0.9058823585510254,
+                0.9254902005195618
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.075410008430481,
+                0.8606500625610352,
+                1.082049012184143
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2658477406"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.075410008430481,
+                0.8606500625610352,
+                1.082049012184143
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.0672,
+                  -0.216064,
+                  -0.005981
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.265989065170288,
+                1.00370192527771,
+                1.214432954788208
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2658485920"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.265989065170288,
+                1.00370192527771,
+                1.214432954788208
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-upper-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/psycho-suit/left-upper-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftLowerLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/psycho-suit/left-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999999403953552,
+                1.1930928230285645,
+                1.0000001192092896
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999999403953552,
+                1.193092703819275,
+                0.9999995231628418
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715610"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199999809265137,
+                1.2130926847457886,
+                1.0199995040893555
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.030304,
+                  -0.081329,
+                  -0.001221
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9058823585510254,
+                0.9058823585510254,
+                0.9254902005195618
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.37506103515625,
+                1.0348320007324219,
+                1.2428029775619507
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2658486132"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.37506103515625,
+                1.0348320007324219,
+                1.2428029775619507
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-lower-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/psycho-suit/left-lower-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftFoot"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/psycho-suit/left-foot/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999999403953552,
+                0.3000001907348633,
+                1
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1,
+                0.3000001907348633,
+                1
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715602"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199999809265137,
+                0.32000020146369934,
+                1.0199999809265137
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0,
+                    -1
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.013519,
+                  0.030243,
+                  -0.113159
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.465533971786499,
+                0.40255501866340637,
+                1.2359199523925781
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2658486758"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.465533971786499,
+                0.40255501866340637,
+                1.2359199523925781
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-foot",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/psycho-suit/left-foot/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Psycho Suit"
+        },
+        "Rarity": {
+          "String": "Rare"
+        }
+      }
+    }
+  }
+}

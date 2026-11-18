@@ -75,5 +75,6 @@ jobs:
           status=0
           for place in build/*/*.rbxl; do
             lune run scripts/ci/check-place.lune.luau "$place" || status=1
+            lune run scripts/util/check-catalogue.lune.luau "$place" || status=1
           done
           exit $status

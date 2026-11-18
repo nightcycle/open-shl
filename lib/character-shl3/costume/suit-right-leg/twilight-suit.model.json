@@ -1,0 +1,710 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "RightUpperLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-right-leg/twilight-suit/right-upper-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0000004768371582,
+                1.2165685892105103,
+                0.9999668598175049
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.0000004768371582,
+                1.2165685892105103,
+                0.9999668598175049
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715641"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0200004577636719,
+                1.236568570137024,
+                1.0199668407440186
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.009468,
+                  -0.056198,
+                  -0.00091
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.01568627543747425,
+                0.686274528503418,
+                0.9254902005195618
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.2001309394836426,
+                1.570829153060913,
+                1.199613094329834
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2564481106"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.2001309394836426,
+                1.570829153060913,
+                1.199613094329834
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  0.199654,
+                  -0.056198,
+                  -0.00091
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.7686274647712708,
+                0.1568627506494522,
+                0.10980392247438431
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.6841820478439331,
+                1.570829153060913,
+                1.1841790676116943
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2564481623"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                0.6841820478439331,
+                1.570829153060913,
+                1.1841790676116943
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "right-upper-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-right-leg/twilight-suit/right-upper-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "RightLowerLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-right-leg/twilight-suit/right-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999999403953552,
+                1.1930928230285645,
+                1.0000001192092896
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999999403953552,
+                1.1930928230285645,
+                1.0000001192092896
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715632"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199999809265137,
+                1.2130928039550781,
+                1.0200001001358032
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.009469,
+                  0.175131,
+                  -0.047564
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.01568627543747425,
+                0.686274528503418,
+                0.9254902005195618
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.2377159595489502,
+                1.599491000175476,
+                1.2522320747375488
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2564481045"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.2377159595489502,
+                1.599491000175476,
+                1.2522320747375488
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.009468,
+                  0.175131,
+                  -0.069112
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.7686274647712708,
+                0.1568627506494522,
+                0.10980392247438431
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.207016944885254,
+                1.599491000175476,
+                1.2424750328063965
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2564481693"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.207016944885254,
+                1.599491000175476,
+                1.2424750328063965
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "right-lower-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-right-leg/twilight-suit/right-lower-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "RightFoot"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-right-leg/twilight-suit/right-foot/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999999403953552,
+                0.3000001907348633,
+                1
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999999403953552,
+                0.3000001907348633,
+                1
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715627"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199999809265137,
+                0.32000020146369934,
+                1.0199999809265137
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.009468,
+                  0.023797,
+                  -0.026955
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.01568627543747425,
+                0.686274528503418,
+                0.9254902005195618
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.253277063369751,
+                0.3956720232963562,
+                1.4256290197372437
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2564480965"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.253277063369751,
+                0.3956720232963562,
+                1.4256290197372437
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.009468,
+                  0.023909,
+                  -0.026955
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.7686274647712708,
+                0.1568627506494522,
+                0.10980392247438431
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9444429874420166,
+                0.3954450190067291,
+                1.4256290197372437
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2564481779"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                0.9444429874420166,
+                0.3954450190067291,
+                1.4256290197372437
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "right-foot",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-right-leg/twilight-suit/right-foot/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Twilight Suit"
+        },
+        "Rarity": {
+          "String": "Uncommon"
+        }
+      }
+    }
+  }
+}

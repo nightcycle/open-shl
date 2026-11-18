@@ -1,0 +1,568 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftUpperLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/cosmic-suit/left-upper-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.0000003576278687,
+                1.2165685892105103,
+                0.9999998807907104
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.0000003576278687,
+                1.2165685892105103,
+                0.9999998807907104
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715616"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0200003385543823,
+                1.236568570137024,
+                1.0199998617172241
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.59465,
+                  0.178581,
+                  0.007996
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.29634296894073486,
+                0.8702501058578491,
+                1.1108579635620117
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2536859435"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                0.3463429808616638,
+                0.8702501058578491,
+                1.160857915878296
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -0.996192,
+                    0.087188,
+                    0
+                  ],
+                  [
+                    0.087188,
+                    0.996192,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.53215,
+                  -0.024544,
+                  -0.011719
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                1,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.29634296894073486,
+                0.8702501058578491,
+                1.1108579635620117
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2536859435"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                0.3463429808616638,
+                1.2702500820159912,
+                1.060857892036438
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-upper-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/cosmic-suit/left-upper-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftLowerLeg"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/cosmic-suit/left-lower-leg/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.9999999403953552,
+                1.193092703819275,
+                0.9999995231628418
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                0.9999999403953552,
+                1.193092703819275,
+                0.9999995231628418
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715610"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199999809265137,
+                1.2130926847457886,
+                1.0199995040893555
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-lower-leg",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/cosmic-suit/left-lower-leg/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LeftFoot"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-left-leg/cosmic-suit/left-foot/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1,
+                0.3000001907348633,
+                1
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1,
+                0.3000001907348633,
+                1
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715602"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.0199999809265137,
+                0.32000020146369934,
+                1.0199999809265137
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  0.036613,
+                  0.201385,
+                  0.03302
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.1211239099502563,
+                1.0038130283355713,
+                1.2094509601593018
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2536859757"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.2211239337921143,
+                0.9038130044937134,
+                1.3094509840011597
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  0.036613,
+                  0.414543,
+                  0.03302
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                1,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.1211239099502563,
+                1.0038130283355713,
+                1.2094509601593018
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2536859757"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                1.1211239099502563,
+                1.0038130283355713,
+                1.2094509601593018
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "left-foot",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-left-leg/cosmic-suit/left-foot/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Cosmic Suit"
+        },
+        "Rarity": {
+          "String": "Legendary"
+        }
+      }
+    }
+  }
+}

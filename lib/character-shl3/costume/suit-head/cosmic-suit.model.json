@@ -1,0 +1,182 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/suit-head/cosmic-suit/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.02372,
+              0.198776,
+              -0.456482
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6392157077789307,
+            0.6352941393852234,
+            0.6470588445663452
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.3342000246047974,
+            1.4461499452590942,
+            0.5567499995231628
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=100523197"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.3342000246047974,
+            1.4461499452590942,
+            0.5567499995231628
+          ]
+        }
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.02372,
+              0.541107,
+              -0.622498
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            1,
+            0,
+            0
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Shape": {
+          "Enum": 0
+        },
+        "Size": {
+          "Vector3": [
+            0.2619999945163727,
+            0.2619999945163727,
+            0.2619999945163727
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Cosmic Suit"
+        },
+        "Rarity": {
+          "String": "Legendary"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/suit-head/cosmic-suit/root"
+        }
+      }
+    },
+    "Tags": [
+      "Hood"
+    ]
+  }
+}

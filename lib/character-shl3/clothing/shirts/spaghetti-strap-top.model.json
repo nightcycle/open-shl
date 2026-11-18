@@ -1,0 +1,247 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LowerTorso"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/clothing/shirts/spaghetti-strap-top/lower-torso/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.999999761581421,
+                0.4000554382801056,
+                1.0000001192092896
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "main",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  0.005577,
+                  0.030121,
+                  -0.012772
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.8313725590705872,
+                0.5647059082984924,
+                0.7411764860153198
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                2.129606008529663,
+                0.5498839616775513,
+                1.0943959951400757
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2569770854"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                2.129606008529663,
+                0.5498839616775513,
+                1.0943959951400757
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "lower-torso",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/clothing/shirts/spaghetti-strap-top/lower-torso/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "UpperTorso"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/clothing/shirts/spaghetti-strap-top/upper-torso/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                2,
+                1.600034236907959,
+                1.0000003576278687
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "main",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  0.005577,
+                  -0.032349,
+                  -0.012772
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.8313725590705872,
+                0.5647059082984924,
+                0.7411764860153198
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                2.0954580307006836,
+                1.7096281051635742,
+                1.0943959951400757
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2569770191"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                2.0954580307006836,
+                1.7096281051635742,
+                1.0943959951400757
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "upper-torso",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/clothing/shirts/spaghetti-strap-top/upper-torso/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Spaghetti Strap Top"
+        },
+        "Rarity": {
+          "String": "VeryCommon"
+        }
+      }
+    }
+  }
+}

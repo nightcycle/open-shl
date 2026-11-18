@@ -1,0 +1,120 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "CapeAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/capes/wings/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            0.05000000074505806,
+            0.05000000074505806,
+            0.05000000074505806
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0.965926,
+                -0.258819
+              ],
+              [
+                0,
+                0.258819,
+                0.965926
+              ]
+            ],
+            "position": [
+              0.000061,
+              -0.642899,
+              0.682617
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6392157077789307,
+            0.6352941393852234,
+            0.6470588445663452
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            7.913640022277832,
+            4.0660200119018555,
+            2.6860198974609375
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=223735655"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            6.646758556365967,
+            3.415097713470459,
+            2.2560205459594727
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Wings"
+        },
+        "Rarity": {
+          "String": "Uncommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/capes/wings/root"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,545 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "UpperTorso"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-torso/cosmic-suit/upper-torso/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                2,
+                1.600034236907959,
+                1.0000003576278687
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                2,
+                1.600034236907959,
+                1.0000003576278687
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715593"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                2.0199999809265137,
+                1.6200342178344727,
+                1.0200003385543823
+              ]
+            }
+          }
+        },
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "CapeAttachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        -1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        -1
+                      ]
+                    ],
+                    "position": [
+                      0.005005,
+                      0.084835,
+                      -0.558411
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "ClassName": "Attachment",
+              "Name": "EmblemAttachment",
+              "Properties": {
+                "CFrame": {
+                  "CFrame": {
+                    "orientation": [
+                      [
+                        1,
+                        0,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        0,
+                        1
+                      ]
+                    ],
+                    "position": [
+                      0.006643,
+                      -0.0514,
+                      0.559326
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.008698,
+                  0.354607,
+                  0.004578
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                2.1986820697784424,
+                1.4379870891571045,
+                1.39832603931427
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2536859930"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                2.1986820697784424,
+                1.4379870891571045,
+                1.4483259916305542
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.008698,
+                  0.167099,
+                  -0.015503
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                1,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                2.1986820697784424,
+                1.4379870891571045,
+                1.39832603931427
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2536859930"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                2.1986820697784424,
+                1.3379871845245361,
+                1.2883259057998657
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "upper-torso",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-torso/cosmic-suit/upper-torso/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LowerTorso"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl3/costume/suit-torso/cosmic-suit/lower-torso/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                1.999999761581421,
+                0.4000554382801056,
+                1.0000001192092896
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "base",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "Color": {
+              "Color3": [
+                0,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                1.999999761581421,
+                0.4000554382801056,
+                1.0000001192092896
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=1699715652"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                2.0199997425079346,
+                0.42005544900894165,
+                1.0200001001358032
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.008698,
+                  -0.008949,
+                  0.007996
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                2.2691540718078613,
+                0.6650980710983276,
+                1.3256479501724243
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2536859266"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                2.6091537475585938,
+                0.6650980710983276,
+                1.4156478643417358
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "MeshPart",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -1
+                  ]
+                ],
+                "position": [
+                  -0.008698,
+                  -0.114143,
+                  0.007996
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                1,
+                0,
+                0
+              ]
+            },
+            "InitialSize": {
+              "Vector3": [
+                2.2691540718078613,
+                0.6650980710983276,
+                1.3256479501724243
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "MeshContent": {
+              "Content": {
+                "Uri": "rbxassetid://2536859266"
+              }
+            },
+            "RenderFidelity": {
+              "Enum": 1
+            },
+            "Size": {
+              "Vector3": [
+                2.5691537857055664,
+                0.6650980710983276,
+                1.3756479024887085
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "lower-torso",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl3/costume/suit-torso/cosmic-suit/lower-torso/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Cosmic Suit"
+        },
+        "Rarity": {
+          "String": "Legendary"
+        }
+      }
+    }
+  }
+}

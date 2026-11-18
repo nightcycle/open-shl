@@ -1,0 +1,120 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "CapeAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/capes/regular-cape/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            0.05000000074505806,
+            0.05000000074505806,
+            0.05000000074505806
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.009766,
+              -1.038696,
+              -0.214844
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.5921568870544434,
+            0,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            2.378340005874634,
+            2.1961300373077393,
+            0.7880889773368835
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=114046169"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            3.214639902114868,
+            3.569199800491333,
+            1.2649599313735962
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Regular Cape"
+        },
+        "Rarity": {
+          "String": "VeryCommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/capes/regular-cape/root"
+        }
+      }
+    }
+  }
+}

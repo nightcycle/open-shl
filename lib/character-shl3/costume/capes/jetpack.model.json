@@ -1,0 +1,120 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "CapeAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/capes/jetpack/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            0.05000000074505806,
+            0.05000000074505806,
+            0.05000000074505806
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0.965926,
+                -0.258819
+              ],
+              [
+                0,
+                0.258819,
+                0.965926
+              ]
+            ],
+            "position": [
+              0.000061,
+              -0.662994,
+              0.216675
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6392157077789307,
+            0.6352941393852234,
+            0.6470588445663452
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.9982000589370728,
+            2.4124701023101807,
+            1.014009952545166
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=156292119"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.9982000589370728,
+            2.4124701023101807,
+            1.014009952545166
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Jetpack"
+        },
+        "Rarity": {
+          "String": "Common"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/capes/jetpack/root"
+        }
+      }
+    }
+  }
+}

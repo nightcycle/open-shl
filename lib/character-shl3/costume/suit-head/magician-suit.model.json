@@ -1,0 +1,129 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/suit-head/magician-suit/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0,
+              0.020905,
+              -0.112915
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0,
+            0.062745101749897,
+            0.6901960968971252
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.444100022315979,
+            1.4573999643325806,
+            1.498900055885315
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=63692129"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.444100022315979,
+            1.557399868965149,
+            1.5489000082015991
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Magician Suit"
+        },
+        "Rarity": {
+          "String": "Uncommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/suit-head/magician-suit/root"
+        },
+        "ShaveBeard": {
+          "Bool": true
+        },
+        "ShaveHead": {
+          "Bool": true
+        }
+      }
+    },
+    "Tags": [
+      "Hood"
+    ]
+  }
+}

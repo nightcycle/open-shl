@@ -1,0 +1,200 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/suit-head/armored-suit/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.009766,
+              0.091064,
+              -0.116333
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.6536900997161865,
+            1.2316839694976807,
+            1.5306179523468018
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2123543653"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.6536900997161865,
+            1.2316839694976807,
+            1.5306179523468018
+          ]
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.007813,
+              0.253906,
+              -0.059814
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0,
+            0.062745101749897,
+            0.6901960968971252
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.4505740404129028,
+            0.36574697494506836,
+            1.4398959875106812
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2123543949"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.4505740404129028,
+            0.36574697494506836,
+            1.4398959875106812
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Armored Suit"
+        },
+        "Rarity": {
+          "String": "VeryCommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/suit-head/armored-suit/root"
+        },
+        "ShaveBeard": {
+          "Bool": true
+        },
+        "ShaveHead": {
+          "Bool": true
+        }
+      }
+    },
+    "Tags": [
+      "Hood"
+    ]
+  }
+}

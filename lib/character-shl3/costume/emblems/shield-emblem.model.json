@@ -1,0 +1,191 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "EmblemAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/emblems/shield-emblem/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            0.05000000074505806,
+            0.05000000074505806,
+            0.05000000074505806
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.020996,
+              -0.016171,
+              -0.001709
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0,
+            1,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.9708539843559265,
+            3.5510919094085693,
+            2.748044013977051
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2195054811"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.2847256660461426,
+            0.8596115112304688,
+            0.8059283494949341
+          ]
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.020996,
+              -0.016171,
+              0.062012
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            1,
+            0,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.9708539843559265,
+            3.5510919094085693,
+            2.748044013977051
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2195054811"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.3345821797847748,
+            1.0101326704025269,
+            0.9470494985580444
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Shield Emblem"
+        },
+        "Rarity": {
+          "String": "Uncommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/emblems/shield-emblem/root"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "EmblemAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/emblems/octagon-emblem/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            0.05000000074505806,
+            0.05000000074505806,
+            0.05000000074505806
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.001831,
+              -0.016171,
+              -0.045654
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0,
+            1,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.5620700120925903,
+            2,
+            3.6435201168060303
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2195056848"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.14484022557735443,
+            0.515381395816803,
+            0.5265960097312927
+          ]
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.001831,
+              -0.016171,
+              0.03833
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            1,
+            0,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.5620700120925903,
+            2,
+            3.6435201168060303
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2195056848"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.22844569385051727,
+            0.6577858328819275,
+            0.6720993518829346
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Octagon Emblem"
+        },
+        "Rarity": {
+          "String": "Common"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/emblems/octagon-emblem/root"
+        }
+      }
+    }
+  }
+}

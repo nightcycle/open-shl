@@ -1,0 +1,191 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "EmblemAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/emblems/lightning-emblem/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            0.05000000074505806,
+            0.05000000074505806,
+            0.05000000074505806
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.054565,
+              -0.049095,
+              -0.072021
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0,
+            1,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.5820940136909485,
+            4.444828987121582,
+            1.134814977645874
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2195057712"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.1295091062784195,
+            0.5710393190383911,
+            0.24551211297512054
+          ]
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              -0.061157,
+              -0.049397,
+              0.036133
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            1,
+            0,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            0.5820940136909485,
+            4.444828987121582,
+            1.134814977645874
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2195057712"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.28018027544021606,
+            0.7276760935783386,
+            0.36912983655929565
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Lightning Emblem"
+        },
+        "Rarity": {
+          "String": "Rare"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/emblems/lightning-emblem/root"
+        }
+      }
+    }
+  }
+}

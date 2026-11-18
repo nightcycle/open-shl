@@ -1,0 +1,123 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/suit-head/espionage-suit/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            1.0523998737335205,
+            1.0523998737335205,
+            1.0523998737335205
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.001968,
+              0.075043,
+              -0.291992
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.2979600429534912,
+            0.45739349722862244,
+            0.7641280293464661
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=30166087"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.3554774522781372,
+            0.4776623547077179,
+            0.7979893684387207
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Espionage Suit"
+        },
+        "Rarity": {
+          "String": "Uncommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/suit-head/espionage-suit/root"
+        }
+      }
+    },
+    "Tags": [
+      "Hood"
+    ]
+  }
+}

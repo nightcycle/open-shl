@@ -1,0 +1,191 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "EmblemAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/emblems/trispoke-emblem/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            0.05000000074505806,
+            0.05000000074505806,
+            0.05000000074505806
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.001953,
+              -0.090767,
+              -0.036621
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0,
+            1,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.0484180450439453,
+            4.328252792358398,
+            4.330138206481934
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2195053185"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.18954896926879883,
+            0.7825278639793396,
+            0.7828683853149414
+          ]
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0.001953,
+              -0.090767,
+              0.053711
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            1,
+            0,
+            0
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.0484180450439453,
+            4.328252792358398,
+            4.330138206481934
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2195053185"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            0.26661625504493713,
+            0.9214235544204712,
+            0.9218242168426514
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Trispoke Emblem"
+        },
+        "Rarity": {
+          "String": "Uncommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/emblems/trispoke-emblem/root"
+        }
+      }
+    }
+  }
+}

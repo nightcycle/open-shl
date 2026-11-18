@@ -1,0 +1,123 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/suit-head/insect-suit/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.009033,
+              -0.009018,
+              0.01001
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.20392157137393951,
+            0.5568627715110779,
+            0.250980406999588
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.3123420476913452,
+            1.0031721591949463,
+            1.3571600914001465
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2664243572"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.3123420476913452,
+            1.0031721591949463,
+            1.3571600914001465
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Insect Suit"
+        },
+        "Rarity": {
+          "String": "VeryCommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/suit-head/insect-suit/root"
+        }
+      }
+    },
+    "Tags": [
+      "Hood"
+    ]
+  }
+}

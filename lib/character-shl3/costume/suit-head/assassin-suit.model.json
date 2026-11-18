@@ -1,0 +1,126 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/suit-head/assassin-suit/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              0.000034,
+              -0.315843,
+              -0.03018
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6392157077789307,
+            0.6352941393852234,
+            0.6470588445663452
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            1.2932000160217285,
+            1.1289499998092651,
+            1.3115500211715698
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=74220237"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            1.350000023841858,
+            1.128999948501587,
+            1.3519999980926514
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Assassin Suit"
+        },
+        "Rarity": {
+          "String": "Rare"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/suit-head/assassin-suit/root"
+        },
+        "ShaveBeard": {
+          "Bool": true
+        }
+      }
+    },
+    "Tags": [
+      "Hood"
+    ]
+  }
+}

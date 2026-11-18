@@ -1,0 +1,167 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "EmblemAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/emblems/circle-emblem/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            0.05000000074505806,
+            0.05000000074505806,
+            0.05000000074505806
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0,
+              0.000122,
+              0.029541
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0,
+            1,
+            0
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Shape": {
+          "Enum": 2
+        },
+        "Size": {
+          "Vector3": [
+            0.2399609088897705,
+            0.6398957371711731,
+            0.6398957371711731
+          ]
+        }
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                0,
+                0,
+                -1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "position": [
+              0,
+              0.000122,
+              0.051514
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            1,
+            0,
+            0
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Shape": {
+          "Enum": 2
+        },
+        "Size": {
+          "Vector3": [
+            0.2359648048877716,
+            0.7923755645751953,
+            0.7923755645751953
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Circle Emblem"
+        },
+        "Rarity": {
+          "String": "VeryCommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/emblems/circle-emblem/root"
+        }
+      }
+    }
+  }
+}

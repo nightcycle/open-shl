@@ -1,0 +1,191 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "CapeAttachment"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl3/costume/capes/quiver/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1.600034236907959,
+            1.0000003576278687
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -0.5,
+                -0.866025,
+                0
+              ],
+              [
+                -0.836516,
+                0.482963,
+                0.258819
+              ],
+              [
+                -0.224144,
+                0.12941,
+                -0.965926
+              ]
+            ],
+            "position": [
+              0.060631,
+              -0.703857,
+              0.125916
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6392157077789307,
+            0.6352941393852234,
+            0.6470588445663452
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            2.2319529056549072,
+            2.3842949867248535,
+            1.1360180377960205
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2262870317"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            2.2319529056549072,
+            2.3842949867248535,
+            1.1360180377960205
+          ]
+        }
+      }
+    },
+    {
+      "ClassName": "MeshPart",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -0.5,
+                -0.866025,
+                0
+              ],
+              [
+                -0.836516,
+                0.482963,
+                0.258819
+              ],
+              [
+                -0.224144,
+                0.12941,
+                -0.965926
+              ]
+            ],
+            "position": [
+              -0.060158,
+              -0.280975,
+              0.410248
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.35686275362968445,
+            0.364705890417099,
+            0.4117647111415863
+          ]
+        },
+        "InitialSize": {
+          "Vector3": [
+            2.203094959259033,
+            2.3024842739105225,
+            0.686460018157959
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "MeshContent": {
+          "Content": {
+            "Uri": "rbxassetid://2262870613"
+          }
+        },
+        "RenderFidelity": {
+          "Enum": 1
+        },
+        "Size": {
+          "Vector3": [
+            2.203094959259033,
+            2.3024842739105225,
+            0.686460018157959
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Quiver"
+        },
+        "Rarity": {
+          "String": "VeryCommon"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl3/costume/capes/quiver/root"
+        }
+      }
+    }
+  }
+}

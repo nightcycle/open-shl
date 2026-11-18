@@ -1,0 +1,75 @@
+[
+  {
+    "Image": "asset/image/shl3/pattern/camouflage.png",
+    "IsStarter": true,
+    "Key": "camouflage",
+    "LegacyAssetId": 2144550758,
+    "Name": "Camouflage",
+    "Rarity": "VeryCommon"
+  },
+  {
+    "Image": "asset/image/shl3/pattern/circuits.png",
+    "IsStarter": true,
+    "Key": "circuits",
+    "LegacyAssetId": 2201427901,
+    "Name": "Circuits",
+    "Rarity": "VeryCommon"
+  },
+  {
+    "Image": "asset/image/shl3/pattern/fur.png",
+    "IsStarter": true,
+    "Key": "fur",
+    "LegacyAssetId": 2179436850,
+    "Name": "Fur",
+    "Rarity": "VeryCommon"
+  },
+  {
+    "Image": "asset/image/shl3/pattern/honeycomb.png",
+    "IsStarter": true,
+    "Key": "honeycomb",
+    "LegacyAssetId": 2179439295,
+    "Name": "Honeycomb",
+    "Rarity": "VeryCommon"
+  },
+  {
+    "Image": "asset/image/shl3/pattern/leather.png",
+    "IsStarter": true,
+    "Key": "leather",
+    "LegacyAssetId": 2162469354,
+    "Name": "Leather",
+    "Rarity": "VeryCommon"
+  },
+  {
+    "Image": "asset/image/shl3/pattern/leopard.png",
+    "IsStarter": true,
+    "Key": "leopard",
+    "LegacyAssetId": 2162519888,
+    "Name": "Leopard",
+    "Rarity": "VeryCommon"
+  },
+  {
+    "Image": "asset/image/shl3/ui/suit-creation/neon-swatch.png",
+    "IsStarter": true,
+    "Key": "neon",
+    "LegacyAssetId": 325898493,
+    "Material": "Neon",
+    "Name": "Neon",
+    "Rarity": "VeryCommon"
+  },
+  {
+    "Image": "asset/image/shl3/pattern/pinstriped.png",
+    "IsStarter": true,
+    "Key": "pinstriped",
+    "LegacyAssetId": 2162470268,
+    "Name": "Pinstriped",
+    "Rarity": "VeryCommon"
+  },
+  {
+    "Image": "asset/image/shl3/pattern/scales.png",
+    "IsStarter": true,
+    "Key": "scales",
+    "LegacyAssetId": 2144659139,
+    "Name": "Scales",
+    "Rarity": "VeryCommon"
+  }
+]
