@@ -6,10 +6,7 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
-local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BaseConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Base")
-local CharacterSlotUtil = require("@game/ServerScriptService/Server/Util/CharacterSlot")
-local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 -- Types
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type Result<V, E> = TypeUnionLib.Result<V, E>
@@ -17,6 +14,15 @@ type PlayerSave = SaveType.PlayerSave
 export type Validator = (value: unknown) -> (boolean, string?)
 -- takes a document of the version it's listed under to the version after it
 export type Migration = (document: { [string]: any }) -> { [string]: any }
+-- what a handle on a document is made from. a game spells out the one it keeps its players in
+export type Spec<V> = {
+	Name: string,
+	GetKey: (userId: number) -> string,
+	Version: number,
+	Validator: Validator,
+	Default: () -> V,
+	Migrations: { Migration }, -- one per version that came before, in order
+}
 -- _Signature is never set, it only carries the type of what a key holds.
 -- one document per user that a single server holds at a time, it carries its Version so an older one can be caught up
 export type Store<V> = {
@@ -46,11 +52,17 @@ local isEnumItemValue = Type.strictArray(Type.string, Type.string)
 local isVersioned = Type.interface({
 	Version = Type.intersection(Type.integer, Type.numberMin(1)),
 })
-local PLAYER_MIGRATIONS: { Migration } = table.freeze({
-	-- a version 1 save listed the artifacts its player owned, every artifact is anybody's to wear since
-	function(document: { [string]: any }): { [string]: any }
-		document.ArtifactIds = nil
-		return document
+-- where a game keeps its players, under which key + in which shape is its own: a place that's opened in the universe
+-- of another game finds nothing there to read as its own. the save of another game is never required
+local PLAYER: Spec<PlayerSave> = GameDefinition.pick({
+	shl1 = function(): Spec<PlayerSave>
+		error(`shl1 has no save yet`)
+	end,
+	shl2 = function(): Spec<PlayerSave>
+		return require("@self/SHL2")
+	end,
+	shl3 = function(): Spec<PlayerSave>
+		error(`shl3 has no save yet`)
 	end,
 })
 -- Variables
@@ -161,26 +173,6 @@ local function fromStored(value: unknown): (unknown, string?)
 	end
 	return out
 end
-
-local function newPlayerSave(): PlayerSave
-	local characters = CharacterSlotUtil.newStarters()
-	local out: PlayerSave = {
-		Version = SaveType.CURRENT_VERSION,
-		Characters = characters,
-		ActiveCharacterId = characters[1].Id,
-		Balances = ProductDefinition.STARTING_BALANCES,
-		Inventory = BaseConstructor.newInventory(),
-		Entitlements = {},
-		BaseLayout = BaseConstructor.new(),
-		IsApartmentLocked = AttributeDefinition.IsApartmentLocked.Default,
-		IsTutorialEnabled = AttributeDefinition.IsTutorialEnabled.Default,
-		LastDailyRewardAt = 0,
-		PurchaseIds = {},
-		IsLegacyImported = false,
-	}
-	TableUtil.deepFreeze(out)
-	return out
-end
 -- Class
 local Module = {}
 
@@ -217,9 +209,14 @@ Module.newReadOnly = function(name: string, getKey: (userId: number) -> string, 
 	})
 end
 
-Module.Player = Module.new("PlayerSave", function(userId: number): string
-	return `Player_{userId}`
-end, SaveType.CURRENT_VERSION, SaveType.PlayerSave, newPlayerSave, PLAYER_MIGRATIONS) :: Store<PlayerSave>
+Module.Player = Module.new(
+	PLAYER.Name,
+	PLAYER.GetKey,
+	PLAYER.Version,
+	PLAYER.Validator,
+	PLAYER.Default,
+	PLAYER.Migrations
+) :: Store<PlayerSave>
 
 -- nothing is stored that the validator of its store turns down
 Module.encode = function<V>(store: Store<V>, value: V): Result<unknown, string>
