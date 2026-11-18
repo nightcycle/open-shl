@@ -1,0 +1,277 @@
+# how valor-city, the map of superhero life 3, comes out of its legacy place file. run from the root of the repo:
+#   lune run scripts/util/export-map.lune.luau lib/map/valor-city.export.yml
+# the place file is never opened in studio + never edited (it carries backdoor scripts), so whatever the map needs
+# that the place doesn't have is said here + applied again by every export
+place: Superhero Life III.rbxl
+
+# every script under what's exported is left behind. each one was read first: the table lists them by the hash of
+# their source next to what they did, one that isn't on it stops the export
+known_scripts: lib/map/valor-city.scripts.tsv
+
+exports:
+  # a file per child of the map, the way roblox-city is laid out. most children hold siblings that share a name
+  # (318 roads, 170 lamps), so they stay one file each + none of their parts is renamed. the buildings are 30,000 of
+  # the 35,000 instances + each has a name of its own, they get a directory with a file per building
+  - from: Workspace/Map
+    to: lib/map/valor-city
+    split: [Buildings]
+# the stage under the map that the character editor + the character select are shot on isn't part of it, that one
+# comes out through lib/scene-shl3.export.yml
+
+adds:
+  # where an avatar may be sent to (teleport, portals): the island from its streets up to above its roofs + the block
+  # of the prison. the sea around them + whatever is under the ground are left out
+  - to: Workspace/Map
+    name: PlayArea
+    persistent: true
+    parts:
+      - name: City
+        min: [-456, 155, -289]
+        max: [1629, 1200, 1548]
+        tags: [PlayArea]
+      - name: Prison
+        min: [-1037, 179, 469]
+        max: [-298, 520, 1744]
+        tags: [PlayArea]
+
+# `at` is a path into the place. a name stands for every sibling of that name, "*" for every child, "**" for
+# everything below + "Name#2" for the second of them. `count` is how many the path finds today: a place that changed
+# stops the export instead of losing a mark without a word. what a rule can say is listed at the Rule type of the tool
+rules:
+  # --- tags the services of superhero life 2 already read (src/server/Definition/Map.luau)
+  # the bulb of each lamp, it holds the light
+  - at: Workspace/Map/StreetLamps/StreetLamp/Neon
+    count: 170
+    tags: [StreetLamp]
+  # the window glow of the hero hq, of syndicorp + of the prison towers
+  - at: Workspace/Map/Nightlights/NeonLights
+    count: 3
+    tags: [NightWindows]
+  - at: Workspace/Map/Buildings/Museum/Exhibits/SpaceShip/Model/Beacon
+    count: 4
+    tags: [Beacon]
+  # the three pads that dress the secret identity. the folder of each holds the outfit in the fields of a legacy
+  # character, they're carried along as attributes for whoever writes the rows of the uniforms
+  - at: Workspace/Map/Clothing/Scientist
+    count: 1
+    wrap: ScientistUniform
+    value_attributes: Folder
+    attributes: { UniformId: ScientistUniform }
+    tags: [Uniform]
+  - at: Workspace/Map/Clothing/Business
+    count: 1
+    wrap: BusinessUniform
+    value_attributes: Folder
+    attributes: { UniformId: BusinessUniform }
+    tags: [Uniform]
+  - at: Workspace/Map/Buildings/Prison/PrisonTech/NewEscapeRoutes/Guard
+    count: 1
+    wrap: GuardUniform
+    value_attributes: Folder
+    attributes: { UniformId: GuardUniform }
+    tags: [Uniform]
+
+  # --- where players show up
+  # the five of them hang in the sky above the city
+  - at: Workspace/Map/Spawns
+    count: 1
+    persistent: true
+  - at: Workspace/Map/Spawns/SpawnLocation
+    count: 5
+    tags: [Spawn]
+  # the fly-in of the intro: StartCam names the next stop in NextCamera, which says how fast it's flown to in Speed
+  - at: Workspace/Map/Cameras
+    count: 1
+    tags: [IntroCamera]
+    persistent: true
+
+  # --- water
+  # the pond of the park, the moat of the hero hq + the sea
+  - at: Workspace/Map/Ground/Water/Water
+    count: 2
+    tags: [Water, SeasonWater]
+    attributes: { Freezes: true }
+  - at: Workspace/Map/Buildings/Hero HQ/PondWater/Water
+    count: 2
+    tags: [Water]
+  - at: Workspace/Map/WaterPlate
+    count: 1
+    tags: [Water, SeasonWater]
+
+  # --- seasons
+  # the ground takes the color + the material of the season
+  - at: Workspace/Map/Ground/*
+    count: 65
+    where: { is_a: BasePart }
+    tags: [SeasonGround]
+  # the leaves of a tree are its parts of grass, they turn with the season + are gone in winter
+  - at: Workspace/Map/Vegetation/Tree
+    count: 98
+    tags: [Foliage]
+  # the fountains of the park run in every season but winter
+  - at: Workspace/Map/Buildings/Park/Particles/Part
+    count: 16
+    where: { has_child: liq }
+    tags: [Fountain]
+  # these spurt on a pattern of their own (14 s on, 9 off, 4 on, 11 off)
+  - at: Workspace/Map/Buildings/Park/Model/Part
+    count: 12
+    where: { has_child: liq }
+    tags: [Spout]
+
+  # --- apartments
+  - at: Workspace/Map/Buildings/Apartment/RoomAnchors
+    count: 1
+    persistent: true
+  - at: Workspace/Map/Buildings/Apartment/RoomAnchors/Anchor
+    count: 24
+    tags: [ApartmentAnchor]
+  # the pad in the lobby that takes an owner up + the spot they're put on when they come back down
+  - at: Workspace/Map/Buildings/Apartment/Telepad
+    count: 1
+    wrap: Entrance
+    tags: [ApartmentEntrance]
+    persistent: true
+  - at: Workspace/Map/Buildings/Apartment/Teleport
+    count: 1
+    wrap: Entrance
+  - at: Workspace/Map/Buildings/Apartment/NPCSalesman
+    count: 1
+    tags: [ApartmentSalesman]
+
+  # --- bank
+  # the whole mechanism: FrontDoor, the three vaults under Doors + MoneyGivers, HeroSpawn + VillainSpawn
+  - at: Workspace/Map/Buildings/Bank/BankMechanics
+    count: 1
+    tags: [Bank]
+  # a beam sweeps from Start to Finish + back, the model it's filed under is named after the seconds one way takes
+  - at: Workspace/Map/Buildings/Bank/BankMechanics/AllBeams/1/BeamBridge
+    count: 10
+    tags: [LaserBeam]
+    attributes: { SweepDuration: 1 }
+  - at: Workspace/Map/Buildings/Bank/BankMechanics/AllBeams/1.75/BeamBridge
+    count: 10
+    tags: [LaserBeam]
+    attributes: { SweepDuration: 1.75 }
+  - at: Workspace/Map/Buildings/Bank/BankMechanics/AllBeams/2.5/BeamBridge
+    count: 10
+    tags: [LaserBeam]
+    attributes: { SweepDuration: 2.5 }
+
+  # --- jail
+  # SpawnPoint is where a jailed villain is put, Gate what keeps them in
+  - at: Workspace/Map/Buildings/Prison/PrisonTech/ActualCells/Cell
+    count: 24
+    tags: [JailCell]
+  # a villain that gets this far from it is free: 1216 / 2 studs in the legacy client
+  - at: Workspace/Map/Buildings/Prison/PrisonTech/PrisonRadius
+    count: 1
+    tags: [JailCenter]
+    attributes: { Radius: 608 }
+  # and so is one that sets a foot on a road of the city
+  - at: Workspace/Map/Roads
+    count: 1
+    tags: [Road]
+  # only a hero or whoever carries the keycard walks through
+  - at: Workspace/Map/Buildings/Prison/PrisonTech/PrisonGates/HeroOnlyGate
+    count: 5
+    tags: [HeroGate]
+  # a jailed villain that touches one of these is trouble, which makes them fair game again
+  - at: Workspace/Map/Buildings/Prison/PrisonTech/PrisonGates/HeroOnlyGate
+    count: 2
+    where: { has_child: Roudy }
+    tags: [Troublesome]
+  - at: Workspace/Map/Buildings/Prison/PrisonTech/Trigger
+    count: 1
+    tags: [Troublesome]
+  - at: Workspace/Map/Buildings/Prison/PrisonTech/Keycard
+    count: 1
+    tags: [Troublesome, PropPad]
+    name_attribute: PropId
+    # it's gone for a minute once somebody took it
+    attributes: { RestockDuration: 60 }
+
+  # --- pads
+  # whoever steps on one is handed the prop it's named after
+  - at: Workspace/Map/Items/*
+    count: 25
+    name_attribute: PropId
+    tags: [PropPad]
+  - at: Workspace/Map/Jobs/*
+    count: 4
+    name_attribute: JobId
+    tags: [JobPad]
+  # the elevators: whoever touches a pad stands at the exit of the same id. a pad + its exit share a model, which is
+  # persistent so neither end is ever missing
+  - at: Workspace/Map/Buildings/Hospital/TPs/Telepair
+    count: 4
+    persistent: true
+  - at: Workspace/Map/Buildings/Hospital/TPs/Telepair/Pad
+    count: 4
+    tags: [Telepad]
+    numbered_attributes: { TelepadId: hospital- }
+  - at: Workspace/Map/Buildings/Hospital/TPs/Telepair/Port
+    count: 4
+    tags: [TelepadExit]
+    numbered_attributes: { TelepadId: hospital- }
+  - at: Workspace/Map/Buildings/News/Elevators/Model/Telepair
+    count: 8
+    persistent: true
+  - at: Workspace/Map/Buildings/News/Elevators/Model/Telepair/Pad
+    count: 8
+    tags: [Telepad]
+    numbered_attributes: { TelepadId: news- }
+  - at: Workspace/Map/Buildings/News/Elevators/Model/Telepair/Port
+    count: 8
+    tags: [TelepadExit]
+    numbered_attributes: { TelepadId: news- }
+  - at: Workspace/Map/Buildings/Syndicorp/Interior/Elevators/*/Telepair
+    count: 4
+    persistent: true
+  - at: Workspace/Map/Buildings/Syndicorp/Interior/Elevators/*/Telepair/Pad
+    count: 4
+    tags: [Telepad]
+    numbered_attributes: { TelepadId: syndicorp- }
+  - at: Workspace/Map/Buildings/Syndicorp/Interior/Elevators/*/Telepair/Port
+    count: 4
+    tags: [TelepadExit]
+    numbered_attributes: { TelepadId: syndicorp- }
+
+  # --- museum
+  # the laser grid: its 8 parts blink on + off together, what's lit of it kills. the parts aren't marked Hazard, one
+  # of those kills from the start whether it's lit or not. they're found under the model + only counted here
+  - at: Workspace/Map/Buildings/Museum/Gates
+    count: 1
+    tags: [LaserGate]
+  - at: Workspace/Map/Buildings/Museum/Gates/*
+    count: 8
+    where: { class: Part }
+
+  # --- disasters
+  # what villains wear down: DisasterHumanoid holds its health, Visual the bar above it
+  - at: Workspace/Map/Disasters/ZombieApocalypse/Target
+    count: 1
+    tags: [DisasterTarget]
+    attributes: { DisasterId: ZombieApocalypse }
+    persistent: true
+  - at: Workspace/Map/Disasters/RefineryExplosion/Target
+    count: 1
+    tags: [DisasterTarget]
+    attributes: { DisasterId: RefineryExplosion }
+    persistent: true
+  # where the dead rise once the graveyard is done for
+  - at: Workspace/Map/Disasters/ZombieApocalypse/ZombieSpawns/Part
+    count: 18
+    tags: [ZombieSpawn]
+
+  # --- seats
+  # every seat is the engine's own + sat on as it is, there's nothing to mark. this only keeps count of them
+  - at: Workspace/Map/**
+    count: 1002
+    where: { class: Seat }
+
+  # --- clean up
+  # what a studio plugin left on the school
+  - at: Workspace/Map/Buildings/School
+    count: 1
+    drop_tags: ["wOK^90$24_"]

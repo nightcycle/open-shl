@@ -1,0 +1,64 @@
+{
+  "ClassName": "Sky",
+  "Properties": {
+    "CelestialBodiesShown": {
+      "Bool": false
+    },
+    "MoonAngularSize": {
+      "Float32": 11
+    },
+    "MoonTextureContent": {
+      "Content": {
+        "Uri": "rbxasset://sky/moon.jpg"
+      }
+    },
+    "SkyboxBackContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=255027929"
+      }
+    },
+    "SkyboxDownContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=255027967"
+      }
+    },
+    "SkyboxFrontContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=255027923"
+      }
+    },
+    "SkyboxLeftContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=255027938"
+      }
+    },
+    "SkyboxOrientation": {
+      "Vector3": [
+        0,
+        0,
+        0
+      ]
+    },
+    "SkyboxRightContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=255027946"
+      }
+    },
+    "SkyboxUpContent": {
+      "Content": {
+        "Uri": "http://www.roblox.com/asset/?id=255027960"
+      }
+    },
+    "StarCount": {
+      "Int32": 3000
+    },
+    "SunAngularSize": {
+      "Float32": 21
+    },
+    "SunTextureContent": {
+      "Content": {
+        "Uri": "rbxasset://sky/sun.jpg"
+      }
+    }
+  }
+}

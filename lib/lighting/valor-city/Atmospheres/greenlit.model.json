@@ -1,0 +1,27 @@
+{
+  "ClassName": "ColorCorrectionEffect",
+  "Properties": {
+    "Brightness": {
+      "Float32": 0
+    },
+    "ColorLutIntensity": {
+      "Float32": 1
+    },
+    "Contrast": {
+      "Float32": 0.15000000596046448
+    },
+    "Enabled": {
+      "Bool": true
+    },
+    "Saturation": {
+      "Float32": 0.10000000149011612
+    },
+    "TintColor": {
+      "Color3": [
+        0.8901961445808411,
+        1,
+        0.7960785031318665
+      ]
+    }
+  }
+}

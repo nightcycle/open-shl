@@ -1,0 +1,98 @@
+{
+  "className": "Lighting",
+  "properties": {
+    "Ambient": {
+      "Color3": [
+        0.4235294461250305,
+        0.4235294461250305,
+        0.4235294461250305
+      ]
+    },
+    "Attributes": {
+      "Attributes": {
+        "RBX_LightingTechnologyUnifiedMigration": {
+          "Bool": true
+        },
+        "RBX_OriginalTechnologyOnFileLoad": {
+          "Int32": 1
+        }
+      }
+    },
+    "Brightness": {
+      "Float32": 2
+    },
+    "ColorShift_Bottom": {
+      "Color3": [
+        0.6039215922355652,
+        0.6039215922355652,
+        0.6039215922355652
+      ]
+    },
+    "ColorShift_Top": {
+      "Color3": [
+        0.6666666865348816,
+        0.6666666865348816,
+        0.6666666865348816
+      ]
+    },
+    "EnvironmentDiffuseScale": {
+      "Float32": 0
+    },
+    "EnvironmentSpecularScale": {
+      "Float32": 0
+    },
+    "ExposureCompensation": {
+      "Float32": 0
+    },
+    "ExtendLightRangeTo120": {
+      "Enum": 0
+    },
+    "FogColor": {
+      "Color3": [
+        0.8352941870689392,
+        0.9254902601242065,
+        0.9058824181556702
+      ]
+    },
+    "FogEnd": {
+      "Float32": 1100000
+    },
+    "FogStart": {
+      "Float32": 0
+    },
+    "GeographicLatitude": {
+      "Float32": 77
+    },
+    "GlobalShadows": {
+      "Bool": true
+    },
+    "LightAttenuationMode": {
+      "Enum": 0
+    },
+    "LightingStyle": {
+      "Enum": 0
+    },
+    "OutdoorAmbient": {
+      "Color3": [
+        0.07058823853731155,
+        0.07058823853731155,
+        0.07058823853731155
+      ]
+    },
+    "Outlines": {
+      "Bool": false
+    },
+    "PrioritizeLightingQuality": {
+      "Bool": true
+    },
+    "ShadowSoftness": {
+      "Float32": 0.10999999940395355
+    },
+    "Technology": {
+      "Enum": 1
+    },
+    "TimeOfDay": {
+      "String": "12:00:00"
+    }
+  }
+}
