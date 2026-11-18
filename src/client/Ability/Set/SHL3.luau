@@ -13,6 +13,7 @@ local DEFINITIONS: { ClientDefinition } = table.freeze({
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/MartialArts"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/LaserRay"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Flight"),
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/SuperSpeed"),
 })
 -- Variables
 -- References

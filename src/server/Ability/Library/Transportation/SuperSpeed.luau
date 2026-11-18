@@ -8,11 +8,13 @@ local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/C
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local SpendEnergy = require("@game/ServerScriptService/Server/VFX/Library/SpendEnergy")
 local SuperSpeed = require("@game/ReplicatedStorage/Shared/Ability/Library/Transportation/SuperSpeed")
+local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ServerContext = AbilityType.ServerContext
+type SoundKey = VFXAssetDefinition.SoundKey
 type Cleanup = VFXType.Cleanup
 -- Constants
 -- seconds between two takes of energy off whoever runs + between two looks at whether there's enough to run on again
@@ -31,12 +33,13 @@ end
 -- Class
 local layout = SuperSpeed.Layout
 local bindings = layout.Bindings
+local config = SuperSpeed.Config
 local powerRes = PowerDefinition.get(layout.Id)
 assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 local energyCost = powerRes.Value.EnergyCost
 -- the server half of the super speed: running costs energy + everybody else gets to hear it. the avatar is moved by
 -- the client of its player, where it is gets to the others by itself
-return AbilityBuilder
+local builder = AbilityBuilder
 	.newServer(layout)
 	-- only an avatar that's on the move pays, standing about with the tool out is free. there's nothing to turn the
 	-- start down with: whoever can't pay for their first step is out of breath the moment they take it
@@ -56,15 +59,32 @@ return AbilityBuilder
 			end))
 		end
 	)
-	-- the player's own machine has the wind around them on right away, this is for everybody else
-	:RunClient(
+-- the player's own machine has the wind around them + what they leave behind on right away, this is for everybody
+-- else. not every game has either
+local sound = config.Sound
+if sound then
+	builder = builder:RunClient(bindings.Sprint, ClientVFXDefinition.SoundLoop, function(): ClientVFXType.SoundLoop
+		return { Sound = sound :: SoundKey }
+	end, { Audience = "Others" })
+end
+local wake = config.Wake
+if wake then
+	builder = builder:RunClient(
 		bindings.Sprint,
-		ClientVFXDefinition.SoundLoop,
-		function(): ClientVFXType.SoundLoop
-			return { Sound = SuperSpeed.Config.Sound }
+		ClientVFXDefinition.Wake,
+		function(context: ServerContext): ClientVFXType.Wake
+			return {
+				Color = context.Color or wake.Color,
+				SecondaryColor = context.SecondaryColor or wake.SecondaryColor,
+				Lifetime = wake.Lifetime,
+				Depth = wake.Depth,
+			}
 		end,
 		{ Audience = "Others" }
 	)
+end
+
+return builder
 	-- whoever ran out is back at full pace as soon as they can pay for a step again
 	:While(
 		bindings.Rest,

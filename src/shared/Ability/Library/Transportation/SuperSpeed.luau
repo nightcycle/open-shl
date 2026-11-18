@@ -5,10 +5,13 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/AbilityCondition")
 local AbilityTrigger = require("@game/ReplicatedStorage/Shared/Constructor/AbilityTrigger")
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 local VFXBinding = require("@game/ReplicatedStorage/Shared/Constructor/VFXBinding")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
+local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
 type EventBinding = AbilityType.EventBinding
 type StateBinding = AbilityType.StateBinding
 type ServerSignal<T> = AbilityType.ServerSignal<T>
@@ -24,7 +27,10 @@ export type Bindings = {
 }
 -- what both halves of the super speed have to agree on
 export type Config = {
-	Sound: VFXAssetDefinition.SoundKey, -- the wind around whoever runs
+	WalkSpeed: number, -- studs a second the avatar runs at
+	Sound: VFXAssetDefinition.SoundKey?, -- the wind around whoever runs, a run is quiet without
+	FieldOfView: ClientVFXType.FieldOfView?, -- how the view of whoever runs widens, it stays as it is without
+	Wake: ClientVFXType.Wake?, -- what whoever runs leaves behind, in the colors of the character. nothing without
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -32,6 +38,10 @@ export type Ability = {
 }
 -- Constants
 local ID = "transportation_super-speed"
+local CONFIG: Config = {
+	WalkSpeed = 80,
+	Sound = "Wind",
+}
 -- Variables
 -- References
 -- Private Functions
@@ -50,10 +60,19 @@ local bindings: Bindings = {
 	Recover = recover,
 	Stop = VFXBinding.event({ "Running", "Resting" }, AbilityTrigger.stopped(equipped), { To = "Walking" }),
 }
+-- the run is the same in every game, how fast it is + what's seen + heard of it isn't
 local ability: Ability = table.freeze({
 	Layout = VFXBinding.layout(ID, "Walking", true, bindings),
-	Config = table.freeze({
-		Sound = "Wind" :: VFXAssetDefinition.SoundKey,
+	Config = GameDefinition.tune(table.freeze(CONFIG), {
+		shl3 = FreezeUtil.delta(CONFIG, function(config: Config): Config
+			-- nearly twice the pace, in silence
+			config.WalkSpeed = 150
+			config.Sound = nil
+			-- the view only widens while the avatar is on the move, standing about with the tool out it's as it was
+			config.FieldOfView = { FieldOfView = 100, Duration = 0.5, IsMoving = true }
+			config.Wake = { Lifetime = 0.2, Depth = 0.5 }
+			return config
+		end),
 	}),
 })
 
