@@ -49,6 +49,11 @@ local NEON_GLOW: Glow? = GameDefinition.tune(nil :: Glow?, {
 local ARTIFACT_CATEGORY = "artifacts"
 local CAPE_CATEGORY = "capes"
 local CAPE_ANCHOR_NAME = "UpperTorso"
+local FACIAL_HAIR_CATEGORY = "facial-hair"
+local HAIR_TAG: HiddenTag = "Hair"
+-- what a helmet says of the hair + the beard there's no room for under it
+local SHAVE_HEAD_ATTRIBUTE = "ShaveHead"
+local SHAVE_BEARD_ATTRIBUTE = "ShaveBeard"
 -- Variables
 -- References
 -- Private Functions
@@ -239,15 +244,43 @@ local function getIfCapeCovered(appearance: Appearance): boolean
 	return false
 end
 
-local function getIfHidden(appearance: Appearance, itemDef: ItemDefinition): boolean
+local function getIfTagHidden(appearance: Appearance, itemDef: ItemDefinition): boolean
 	for _, tag in itemDef.Tags do
 		if table.find(appearance.HiddenTags, tag :: HiddenTag) then
 			return true
 		end
 	end
+	return false
+end
+
+-- a piece that leaves no room for what grows under it says so on its template. one that's hidden itself hides nothing
+local function getIfShaved(appearance: Appearance, attribute: string): boolean
+	for _, item in appearance.Items do
+		local templateRes = ItemAppearanceDefinition.getTemplate(item.DefinitionId)
+		if templateRes.IsErr or templateRes.Value:GetAttribute(attribute) ~= true then
+			continue
+		end
+		local itemDefRes = ItemAppearanceDefinition.get(item.DefinitionId)
+		if itemDefRes.IsOk and not getIfTagHidden(appearance, itemDefRes.Value) then
+			return true
+		end
+	end
+	return false
+end
+
+local function getIfHidden(appearance: Appearance, itemDef: ItemDefinition): boolean
+	if getIfTagHidden(appearance, itemDef) then
+		return true
+	end
 	local itemDefIndexRes = ItemAppearanceDefinition.getIndex(itemDef.Id)
 	if itemDefIndexRes.IsOk and itemDefIndexRes.Value.Category == CAPE_CATEGORY then
 		return getIfCapeCovered(appearance)
+	end
+	if table.find(itemDef.Tags, HAIR_TAG) then
+		return getIfShaved(appearance, SHAVE_HEAD_ATTRIBUTE)
+	end
+	if itemDefIndexRes.IsOk and itemDefIndexRes.Value.Category == FACIAL_HAIR_CATEGORY then
+		return getIfShaved(appearance, SHAVE_BEARD_ATTRIBUTE)
 	end
 	return false
 end
