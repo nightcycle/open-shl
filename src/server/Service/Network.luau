@@ -13,6 +13,7 @@ local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remo
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Result<V> = SessionType.Result<V>
 type RateLimit = RemoteDefinition.RateLimit
+type Remote = RemoteDefinition.Remote
 type ClientEvent<T> = RemoteDefinition.ClientEvent<T>
 type ServerEvent<T> = RemoteDefinition.ServerEvent<T>
 type ClientFunction<V, T> = RemoteDefinition.ClientFunction<V, T>
@@ -35,13 +36,21 @@ type NetworkServiceImpl = {
 	) -> (),
 	Fire: <T>(self: NetworkService, remote: ServerEvent<T>, player: Player, value: T) -> (),
 	FireAll: <T>(self: NetworkService, remote: ServerEvent<T>, value: T) -> (),
+	Seal: (self: NetworkService) -> (),
 }
 export type NetworkService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
 		_Events: { [string]: RemoteEvent },
 		_Functions: { [string]: RemoteFunction },
-		_IsHandled: { [string]: true },
+		-- what answers a function, once a service took it
+		_Handlers: { [string]: (player: Player, value: unknown) -> unknown },
+		-- the events clients fire that a service listens to
+		_IsListened: { [string]: true },
+		-- the functions a client was told nobody answers
+		_IsReported: { [string]: true },
+		-- every service that takes a remote has taken it
+		_IsSealed: boolean,
 		_Usages: { [Player]: { [string]: Usage } },
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
@@ -81,6 +90,24 @@ local function use(self: NetworkService, player: Player, name: string, rateLimit
 	end
 	return usage.Count <= rateLimit.Count
 end
+
+-- yields for as long as the services are still starting: whoever answers the function may not be up yet. once they
+-- all are, a function none of them took is one this game doesn't have, + its caller is told so instead of left waiting
+local function answer(self: NetworkService, remote: Remote, player: Player, value: unknown): unknown
+	while self.IsInitialized and not self._IsSealed and not self._Handlers[remote.Name] do
+		task.wait()
+	end
+	local handler = if self.IsInitialized then self._Handlers[remote.Name] else nil
+	if handler then
+		return handler(player, value)
+	end
+	-- told about once, not with every call of it
+	if self.IsInitialized and not self._IsReported[remote.Name] then
+		self._IsReported[remote.Name] = true
+		warn(`{player.Name} invoked "{remote.Name}", which nothing answers in this game`)
+	end
+	return Result.err(`nothing answers "{remote.Name}" in this game`)
+end
 -- Class
 local NetworkService = {} :: NetworkServiceImpl
 NetworkService.__index = NetworkService
@@ -91,6 +118,7 @@ function NetworkService:Connect<T>(remote: ClientEvent<T>, handler: (Player, T) 
 	assert(self.IsInitialized, `the network service isn't initialized`)
 	local inst = self._Events[remote.Name]
 	assert(inst and remote.Direction == "ClientToServer", `"{remote.Name}" isn't an event clients fire`)
+	self._IsListened[remote.Name] = true
 	local connection = inst.OnServerEvent:Connect(function(player: Player, value: unknown)
 		if not use(self, player, remote.Name, remote.RateLimit) then
 			return
@@ -111,11 +139,10 @@ function NetworkService:Handle<V, T>(remote: ClientFunction<V, T>, handler: (Pla
 	assert(self.IsInitialized, `the network service isn't initialized`)
 	local inst = self._Functions[remote.Name]
 	assert(inst, `"{remote.Name}" isn't a function clients invoke`)
-	assert(not self._IsHandled[remote.Name], `"{remote.Name}" already has a handler`)
-	self._IsHandled[remote.Name] = true
+	assert(not self._Handlers[remote.Name], `"{remote.Name}" already has a handler`)
 	-- who has a call of an exclusive function going
 	local isBusy: { [Player]: true? } = {}
-	inst.OnServerInvoke = function(player: Player, value: unknown): Result<V>
+	self._Handlers[remote.Name] = function(player: Player, value: unknown): Result<V>
 		if not use(self, player, remote.Name, remote.RateLimit) then
 			return Result.err(`too many requests`)
 		end
@@ -166,6 +193,22 @@ function NetworkService:FireAll<T>(remote: ServerEvent<T>, value: T)
 	inst:FireAllClients(value)
 end
 
+-- called once every service of the game is up: whoever takes a remote has taken it. from here on a function nobody
+-- handles turns its callers down right away, + what clients fire at an event nobody listens to is dropped instead of
+-- piling up in its queue
+function NetworkService:Seal()
+	assert(self.IsInitialized, `the network service isn't initialized`)
+	if self._IsSealed then
+		return
+	end
+	self._IsSealed = true
+	for _, remote in RemoteDefinition.list() do
+		if remote.Kind == "Event" and remote.Direction == "ClientToServer" and not self._IsListened[remote.Name] then
+			table.insert(self._Connections, self._Events[remote.Name].OnServerEvent:Connect(function() end))
+		end
+	end
+end
+
 return ServiceLocker(function(): NetworkService
 	local folder = Instance.new("Folder")
 	folder.Name = RemoteDefinition.FOLDER_NAME
@@ -191,7 +234,10 @@ return ServiceLocker(function(): NetworkService
 		IsInitialized = true :: true,
 		_Events = events,
 		_Functions = functions,
-		_IsHandled = {},
+		_Handlers = {},
+		_IsListened = {},
+		_IsReported = {},
+		_IsSealed = false,
 		_Usages = {},
 		_CleanUpCallbacks = {},
 		_Connections = {},
@@ -202,6 +248,14 @@ return ServiceLocker(function(): NetworkService
 	for _, remote in RemoteDefinition.list() do
 		if remote.Kind == "Event" and remote.Direction == "ServerToClient" then
 			table.insert(self._Connections, events[remote.Name].OnServerEvent:Connect(function() end))
+		end
+	end
+	-- a function is answered from the start: a call that comes in before a service took it is held for that service
+	for _, remote in RemoteDefinition.list() do
+		if remote.Kind == "Function" then
+			functions[remote.Name].OnServerInvoke = function(player: Player, value: unknown): unknown
+				return answer(self, remote, player, value)
+			end
 		end
 	end
 

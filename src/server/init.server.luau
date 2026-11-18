@@ -7,6 +7,7 @@ local SimpleTest = require("@game/ReplicatedStorage/Packages/SimpleTest")
 -- Modules
 local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
+local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local ServiceDefinition = require("@game/ServerScriptService/Server/Definition/Service")
 -- Types
 type Service = ServiceLocker.InitializationInterface
@@ -75,6 +76,9 @@ end
 for _, service in Services do
 	table.insert(DestroyCallbacks, service.init())
 end
+-- whatever takes a remote has taken it by now, one that's left is one this game doesn't have
+assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+NetworkService:Seal()
 
 game:BindToClose(function()
 	for index = #DestroyCallbacks, 1, -1 do
