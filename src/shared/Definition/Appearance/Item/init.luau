@@ -172,7 +172,10 @@ Module.getIdFromIndex = function(definitionIndex: ItemDefinitionIndex): string
 end
 
 Module.getFaceId = function(slot: FaceSlot, key: string): string
-	return table.concat({ FACE_GROUP, FACE_CATEGORIES[slot], key }, ID_DELIMITER)
+	local category = FACE_CATEGORIES[slot]
+	-- a slot of another game's faces is one the checker lets through
+	assert(category ~= nil, `the game has no "{slot}" face slot`)
+	return table.concat({ FACE_GROUP, category, key }, ID_DELIMITER)
 end
 
 -- what a slot shows with nothing worn in it, nil for a slot that stays bare
