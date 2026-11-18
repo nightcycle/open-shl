@@ -61,7 +61,8 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 		Properties = {
 			MaterialService = { Use2022Materials = false },
 			Players = { RespawnTime = 5 },
-			StarterPlayer = { CameraMaxZoomDistance = 40 },
+			-- the place said 16, a script of every avatar set 18 the moment it spawned
+			StarterPlayer = { CameraMaxZoomDistance = 40, CharacterWalkSpeed = 18 },
 		},
 	}),
 })
