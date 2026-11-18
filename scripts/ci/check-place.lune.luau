@@ -50,7 +50,7 @@ local TAG_PATTERN = 'newTag%(%s*"([^"]+)"%s*,%s*"([^"]+)"%s*%)'
 local NEEDED_TAGS: { [game.GameId]: { string } } = {
 	shl1 = {},
 	shl2 = { "StreetLamp", "NightWindows", "Uniform", "Hazard", "Beacon", "Gate", "Reactor", "Colorizer", "Rebuilt" },
-	shl3 = {},
+	shl3 = { "Beacon" },
 }
 -- Variables
 -- References
