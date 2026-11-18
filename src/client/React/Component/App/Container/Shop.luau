@@ -7,20 +7,56 @@ local RunService = game:GetService("RunService")
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
-local ShopMenu = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ShopMenu")
 -- Hooks
 local useIsMounted = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsMounted")
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
 -- Types
+local ShopMenuTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ShopMenu/Types")
 type ProductDefinition = ProductDefinition.ProductDefinition
+type Layout = ShopMenuTypes.Component
+type Placement = {
+	AnchorPoint: Vector2,
+	Position: UDim2,
+	Size: UDim2,
+	SizeConstraint: Enum.SizeConstraint,
+}
 export type Properties = {}
 -- Constants
+-- how the shop is laid out is the game's own, the layout of another game is never required
+local Layout: Layout = GameDefinition.pick({
+	shl1 = function(): Layout
+		error(`shl1 has no shop yet`)
+	end,
+	shl2 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ShopMenu")
+	end,
+	shl3 = function(): Layout
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/RobuxShop")
+	end,
+})
+local PLACEMENT: Placement = {
+	AnchorPoint = Vector2.new(0, 0.5),
+	Position = UDim2.fromScale(0.35, 0.5),
+	Size = UDim2.fromScale(0.3, 0.3),
+	SizeConstraint = Enum.SizeConstraint.RelativeXX,
+}
+-- where the panel is + how large is the game's own as well
+local GAME_PLACEMENT: Placement = GameDefinition.tune(PLACEMENT, {
+	-- where its panel was: the middle of the screen, 0.45 of its width by 0.3 of it
+	shl3 = {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.fromScale(0.45, 0.3),
+		SizeConstraint = Enum.SizeConstraint.RelativeXX,
+	},
+})
 local ERROR_DURATION = 4
 -- a product is free in studio, the server hands it over. anywhere else it's paid for through the prompt of the engine
 local IS_STUDIO = RunService:IsStudio()
@@ -74,14 +110,14 @@ return function(): React.ReactNode
 	end, {})
 
 	return e(
-		ShopMenu,
+		Layout,
 		{
-			AnchorPoint = Vector2.new(0, 0.5),
-			Position = UDim2.fromScale(0.35, 0.5),
-			Size = UDim2.fromScale(0.3, 0.3),
-			SizeConstraint = Enum.SizeConstraint.RelativeXX,
+			AnchorPoint = GAME_PLACEMENT.AnchorPoint,
+			Position = GAME_PLACEMENT.Position,
+			Size = GAME_PLACEMENT.Size,
+			SizeConstraint = GAME_PLACEMENT.SizeConstraint,
 			ErrorMessage = errorMessage,
-			OnAction = function(action: ShopMenu.ActionInfo)
+			OnAction = function(action: ShopMenuTypes.ActionInfo)
 				if action.Type == "Purchase" then
 					-- one purchase at a time, a card that's hammered doesn't pile them up
 					if purchasingRef.current then
@@ -128,6 +164,6 @@ return function(): React.ReactNode
 					ShellService:ClosePanel("Shop")
 				end
 			end,
-		} :: ShopMenu.Properties
+		} :: ShopMenuTypes.Properties
 	)
 end
