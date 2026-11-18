@@ -36,7 +36,7 @@ local IMAGE_GROUPS: { ImageGroup } = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): { ImageGroup }
-		error(`shl3 has no images yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(Type.array(Type.map(Type.string, Type.union(Type.string, Type.table)))(IMAGE_GROUPS))

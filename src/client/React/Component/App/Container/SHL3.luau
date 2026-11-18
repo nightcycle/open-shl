@@ -1,0 +1,55 @@
+--!strict
+-- Services
+-- Packages
+-- Modules
+-- Components
+local CharacterEditor =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
+local CharacterSelect =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterSelect")
+local CombatFeedback =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CombatFeedback")
+local CurrencyPopup =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CurrencyPopup")
+local EdgeHUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/EdgeHUD")
+local Intro = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Intro")
+local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
+local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
+local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
+local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
+local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
+-- Hooks
+-- Contexts
+-- Types
+local AppTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Types")
+type Registry = AppTypes.Registry
+-- Constants
+-- a slot another game fills as well is filled by the same container here: what a game has to itself is the layout that
+-- container picks. the menus that aren't built for it yet have no slot, their button opens nothing
+local REGISTRY: Registry = {
+	HUD = EdgeHUD,
+	BOOT_PHASES = {
+		Loading = Loading,
+		ModeSelect = ModeSelect,
+		Intro = Intro,
+	},
+	SCREENS = {
+		CharacterSelect = CharacterSelect,
+		CharacterEditor = CharacterEditor,
+	},
+	PANELS = {
+		Shop = Shop,
+	},
+	OVERLAYS = {
+		CurrencyPopup = CurrencyPopup,
+		NameTag = NameTag,
+		CombatFeedback = CombatFeedback,
+		ServerId = ServerId,
+	},
+	TOP_OVERLAYS = {},
+}
+-- Variables
+-- References
+-- Private Functions
+-- Class
+return REGISTRY

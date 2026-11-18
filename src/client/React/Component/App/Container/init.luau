@@ -21,7 +21,7 @@ local REGISTRY: Registry = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): Registry
-		error(`shl3 has no registry yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(AppTypes.Registry(REGISTRY))
