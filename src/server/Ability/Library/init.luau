@@ -18,7 +18,7 @@ local DEFINITIONS: { ServerDefinition } = GameDefinition.pick({
 		return require("@game/ServerScriptService/Server/Ability/Set/SHL2")
 	end,
 	shl3 = function(): { ServerDefinition }
-		error(`shl3 has no abilities yet`)
+		return require("@game/ServerScriptService/Server/Ability/Set/SHL3")
 	end,
 })
 -- Variables

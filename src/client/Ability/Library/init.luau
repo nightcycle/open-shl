@@ -18,7 +18,7 @@ local DEFINITIONS: { ClientDefinition } = GameDefinition.pick({
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Set/SHL2")
 	end,
 	shl3 = function(): { ClientDefinition }
-		error(`shl3 has no abilities yet`)
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Set/SHL3")
 	end,
 })
 -- Variables
