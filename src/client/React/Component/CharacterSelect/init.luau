@@ -17,25 +17,11 @@ local SessionActiveCharacterIdContext =
 local SessionCharactersContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Characters")
 -- Types
+local CharacterSelectTypes = require("@self/Types")
 export type Character = SessionCharactersContext.Character
 type PowerDefinition = PowerDefinition.PowerDefinition
-export type ActionInfo =
-	{
-		Type: "Select",
-		CharacterId: string,
-	}
-	| {
-		Type: "Edit",
-		CharacterId: string,
-	}
-	| {
-		Type: "Exit",
-	}
-
-export type Properties = RobloxComponents.FrameProperties & {
-	ErrorMessage: string?,
-	OnAction: (ActionInfo) -> (),
-}
+export type ActionInfo = CharacterSelectTypes.ActionInfo
+export type Properties = CharacterSelectTypes.Properties
 -- Constants
 local CONSTANTS = require("@self/CONSTANTS")
 local UNNAMED_TEXT = "Unnamed Character"
