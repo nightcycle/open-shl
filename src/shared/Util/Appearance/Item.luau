@@ -6,6 +6,7 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 local Option = TypeUnionLib.Option
 -- Modules
+local BodyUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance/Body")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PatternDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Pattern")
@@ -119,6 +120,48 @@ local function getAnchor(rig: Model, name: string): Anchor?
 		return { Part = bodyPart, CFrame = bodyPart.CFrame, Limb = bodyPart }
 	end
 	return getMountAnchor(rig, name)
+end
+
+-- a frame once the space it's in is stretched along the axes of that space
+local function stretch(cf: CFrame, scale: Vector3): CFrame
+	return cf.Rotation + cf.Position * scale
+end
+
+-- how much longer each of its own axes gets by that
+local function getGrowth(cf: CFrame, scale: Vector3): Vector3
+	return Vector3.new((cf.XVector * scale).Magnitude, (cf.YVector * scale).Magnitude, (cf.ZVector * scale).Magnitude)
+end
+
+-- a piece is made for the body as it comes. on a body of another size all of it grows + moves out from where it's
+-- worn by as much as that part of the body did
+local function fit(root: BasePart, attachment: Attachment, parts: { BasePart }, anchor: Anchor, limbScale: Vector3)
+	-- the body is sized along the axes of its parts, what sits on a worn attachment can be turned against those
+	local scale = getGrowth(anchor.Limb.CFrame:ToObjectSpace(anchor.CFrame), limbScale)
+	-- where the root is once the attachment is on its anchor
+	local rootCF = attachment.CFrame:Inverse()
+	local newRootCF = stretch(rootCF, scale)
+	local rootWorldCF = root.CFrame
+	for _, part in parts do
+		local cf = rootCF * rootWorldCF:ToObjectSpace(part.CFrame)
+		local growth = getGrowth(cf, scale)
+		part.Size *= growth
+		for _, v in part:GetChildren() do
+			if v:IsA("DataModelMesh") then
+				-- only a mesh out of a file has a size of its own, the others fill their part
+				if v:IsA("SpecialMesh") and v.MeshType == Enum.MeshType.FileMesh then
+					v.Scale *= growth
+				end
+				v.Offset *= growth
+			elseif v:IsA("Attachment") and v ~= attachment then
+				-- whatever is worn on the piece moves out with it
+				v.CFrame = stretch(v.CFrame, growth)
+			end
+		end
+		if part ~= root then
+			part.CFrame = rootWorldCF * newRootCF:Inverse() * stretch(cf, scale)
+		end
+	end
+	attachment.CFrame = newRootCF:Inverse()
 end
 
 local function prepItemInst(id: string, item: Instance, isNotRoot: boolean?)
@@ -263,7 +306,7 @@ local function applyTextureGroups(part: BasePart, appearance: Appearance, item: 
 	end
 end
 
-local function applyBasePart(rig: Model, basePart: BasePart): Result<true, string>
+local function applyBasePart(rig: Model, basePart: BasePart, appearance: Appearance?): Result<true, string>
 	local attachments = basePart:QueryDescendants("Attachment") :: { Attachment }
 	if #attachments == 0 then
 		return Result.err(`failed to find valid attachment under part`)
@@ -275,12 +318,16 @@ local function applyBasePart(rig: Model, basePart: BasePart): Result<true, strin
 	if not anchor then
 		return Result.err(`attachment name "{attachment.Name}" couldn't be mapped into a valid anchor instance`)
 	end
+	local scale = if appearance then BodyUtil.getFit(appearance, anchor.Limb.Name) else nil
+	if scale then
+		fit(basePart, attachment, { basePart }, anchor, scale)
+	end
 	basePart:PivotTo(anchor.CFrame * attachment.CFrame:Inverse())
 	WeldUtil.between(anchor.Part, basePart)
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
 
-local function applyModel(rig: Model, model: Model): Result<true, string>
+local function applyModel(rig: Model, model: Model, appearance: Appearance?): Result<true, string>
 	local root = model:FindFirstChild(ROOT_NAME)
 	if not root then
 		return Result.err(`couldn't find root`)
@@ -298,6 +345,10 @@ local function applyModel(rig: Model, model: Model): Result<true, string>
 	local anchor = getAnchor(rig, attachment.Name)
 	if not anchor then
 		return Result.err(`attachment name "{attachment.Name}" couldn't be mapped into a valid anchor instance`)
+	end
+	local scale = if appearance then BodyUtil.getFit(appearance, anchor.Limb.Name) else nil
+	if scale then
+		fit(root, attachment, model:QueryDescendants("BasePart") :: { BasePart }, anchor, scale)
 	end
 	model.WorldPivot = root.CFrame * root.PivotOffset
 	model:PivotTo(anchor.CFrame * attachment.CFrame:Inverse())
@@ -353,17 +404,17 @@ function Util.apply(rig: Model, appearance: Appearance, item: Item): Result<true
 	prepItemInst(item.DefinitionId, newItem)
 	local applyResOpt: Option<Result<true, string>> = Option.none()
 	if newItem:IsA("BasePart") then
-		applyResOpt = Option.some(applyBasePart(rig, newItem))
+		applyResOpt = Option.some(applyBasePart(rig, newItem, appearance))
 	elseif newItem:IsA("Model") then
-		applyResOpt = Option.some(applyModel(rig, newItem))
+		applyResOpt = Option.some(applyModel(rig, newItem, appearance))
 	elseif newItem:IsA("Folder") then
 		applyResOpt = Option.some(Result.ok(true :: any))
 		for _, inst in newItem:GetChildren() do
 			local applyChildResOpt: Option<Result<true, string>> = Option.none()
 			if inst:IsA("BasePart") then
-				applyChildResOpt = Option.some(applyBasePart(rig, inst))
+				applyChildResOpt = Option.some(applyBasePart(rig, inst, appearance))
 			elseif inst:IsA("Model") then
-				applyChildResOpt = Option.some(applyModel(rig, inst))
+				applyChildResOpt = Option.some(applyModel(rig, inst, appearance))
 			end
 			if applyChildResOpt.IsSome and applyChildResOpt.Value.IsErr then
 				applyResOpt = Option.some(Result.err(`piece "{inst.Name}": {applyChildResOpt.Value.Value}`))

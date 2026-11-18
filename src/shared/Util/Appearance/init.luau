@@ -59,8 +59,9 @@ local function getIfHairShows(appearance: Appearance): boolean
 	return false
 end
 
-local function clear(rig: Model, skinColor: Color3?, getIfCanceled: () -> boolean): boolean
-	local builder = BodyUtil.describe(HumanoidDescriptionBuilder.new())
+-- the body is built for the look that goes onto it, without one it's the body the game starts a look on
+local function clear(rig: Model, skinColor: Color3?, appearance: Appearance?, getIfCanceled: () -> boolean): boolean
+	local builder = BodyUtil.describe(HumanoidDescriptionBuilder.new(), appearance)
 	if skinColor then
 		builder = builder:addBodyColor(skinColor)
 	end
@@ -85,7 +86,7 @@ local function apply(rig: Model, appearance: Appearance, getIfCanceled: () -> bo
 	if not rig:FindFirstChildWhichIsA("Humanoid") then
 		return Result.err({ `rig "{rig.Name}" has no humanoid` })
 	end
-	if not clear(rig, appearance.SkinColor, getIfCanceled) then
+	if not clear(rig, appearance.SkinColor, appearance, getIfCanceled) then
 		return nil
 	end
 	local errs = {}
@@ -124,7 +125,7 @@ local Util = {}
 
 function Util.clear(rig: Model, skinColor: Color3?): TypeUnionLib.ToDo<true>
 	return Future.toDo(function(getIfCanceled): true?
-		local success, isCleared = pcall(clear, rig, skinColor, newGetIfStopped(rig, getIfCanceled))
+		local success, isCleared = pcall(clear, rig, skinColor, nil, newGetIfStopped(rig, getIfCanceled))
 		if not success then
 			warn(`rig "{rig.Name}" failed to clear: {isCleared}`)
 			return nil

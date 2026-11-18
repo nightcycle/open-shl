@@ -2,9 +2,13 @@
 -- Services
 -- Packages
 -- Modules
+local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 -- Types
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local HumanoidDescriptionBuilder = require("@game/ReplicatedStorage/Shared/Builder/HumanoidDescription")
+type Appearance = AppearanceType.Appearance
+type Scale = AppearanceType.Scale
 type Builder = HumanoidDescriptionBuilder.Builder
 -- how far a body leans to the two taller builds a description knows
 type Build = {
@@ -12,24 +16,79 @@ type Build = {
 	Proportion: number,
 }
 -- Constants
+local HEAD_NAME = "Head"
 -- the pieces of a game are fitted to the body it builds. a game that names no build has the one a description comes
 -- with, which is the body the pieces of shl2 were fitted to
 local BUILD: Build? = GameDefinition.tune(nil :: Build?, {
 	-- the plain block body: next to it the one a description comes with has arms a quarter + legs nearly a third longer
 	shl3 = table.freeze({ BodyType = 0, Proportion = 0 }),
 })
+-- the sizes a body can have are the game's own, in a game without any every body is the size it comes in
+local SCALE = CharacterEditorDefinition.SCALE
+local SCALE_EPSILON = CharacterEditorDefinition.SCALE_EPSILON
 -- Variables
 -- References
 -- Private Functions
+-- a look that was never given a size, or holds one its game doesn't offer, has the size a body starts at
+local function getScale(appearance: Appearance?): Scale?
+	if not SCALE then
+		return nil
+	end
+	local scale = if appearance then appearance.Scale else nil
+	if not scale then
+		return SCALE.Default
+	end
+	local isOffered = false
+	for _, height in SCALE.Heights do
+		isOffered = isOffered or math.abs(scale.Height - height) < SCALE_EPSILON
+	end
+	if not isOffered then
+		return SCALE.Default
+	end
+	for _, ratio in SCALE.WidthRatios do
+		if math.abs(scale.Width / scale.Height - ratio) < SCALE_EPSILON then
+			return scale
+		end
+	end
+	return SCALE.Default
+end
+
+-- a head grows with the height of its body + all but keeps its size as the body broadens
+local function getHeadScale(scale: Scale): number
+	return scale.Height * (scale.Width - 0.05) * (0.925 / scale.Width ^ 1.075)
+end
 -- Class
 local Util = {}
 
--- the body of the game onto a description
-function Util.describe(builder: Builder): Builder
+-- the body of the game onto a description, in the size of the look where the game has sizes
+function Util.describe(builder: Builder, appearance: Appearance?): Builder
 	if BUILD then
 		builder = builder:addScale(BUILD.BodyType, "BodyType"):addScale(BUILD.Proportion, "Proportion")
 	end
+	local scale = getScale(appearance)
+	if scale then
+		builder = builder
+			:addScale(scale.Height, "Height")
+			:addScale(scale.Width, "Width")
+			-- a body is as deep as it's broad
+			:addScale(scale.Width, "Depth")
+			:addScale(getHeadScale(scale), "Head")
+	end
 	return builder
+end
+
+-- how much of a piece worn on that part of the body is left on the body of the look, along each axis of the part.
+-- nil in a game without body sizes: every piece is worn the size it was made
+function Util.getFit(appearance: Appearance, limbName: string): Vector3?
+	local scale = getScale(appearance)
+	if not scale then
+		return nil
+	end
+	-- a head keeps its shape
+	if limbName == HEAD_NAME then
+		return Vector3.one * getHeadScale(scale)
+	end
+	return Vector3.new(scale.Width, scale.Height, scale.Width)
 end
 
 return Util
