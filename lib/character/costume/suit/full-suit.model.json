@@ -314,9 +314,9 @@
             },
             "Color": {
               "Color3": [
-                0,
-                1,
-                0
+                0.062745101749897,
+                0.16470588743686676,
+                0.8627451062202454
               ]
             },
             "Size": {
@@ -332,7 +332,7 @@
             "Attributes": {
               "Attributes": {
                 "TextureGroup": {
-                  "String": "Secondary"
+                  "String": "Primary"
                 }
               }
             }
@@ -906,9 +906,9 @@
             },
             "Color": {
               "Color3": [
-                0,
-                1,
-                0
+                0.062745101749897,
+                0.16470588743686676,
+                0.8627451062202454
               ]
             },
             "Size": {
@@ -924,7 +924,7 @@
             "Attributes": {
               "Attributes": {
                 "TextureGroup": {
-                  "String": "Secondary"
+                  "String": "Primary"
                 }
               }
             }

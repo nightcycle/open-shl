@@ -3,6 +3,7 @@
 -- Packages
 local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
+local Animation = require("@game/ReplicatedStorage/Generated/Animation")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local TransitionType = require("@game/ReplicatedStorage/Shared/Type/Transition")
@@ -10,18 +11,17 @@ export type EffectDefinition = TransitionType.EffectDefinition
 export type TransformationDefinition = TransitionType.TransformationDefinition
 export type DeathDefinition = TransitionType.DeathDefinition
 -- Constants
--- animations are owned by the old place
-local ASCENSION_ANIMATION_ID = "rbxassetid://601437776"
-local SPIN_ANIMATION_ID = "rbxassetid://601411837"
-local FIRE_ANIMATION_ID = "rbxassetid://601430281"
-local SMOKE_ANIMATION_ID = "rbxassetid://601428872"
-local FALL_BACKWARD_ANIMATION_ID = "rbxassetid://601499493"
-local FALL_FORWARD_ANIMATION_ID = "rbxassetid://601481878"
+local ASCENSION_ANIMATION_ID = Animation.transition["ascension.rbxm"]
+local SPIN_ANIMATION_ID = Animation.transition["spin.rbxm"]
+local FIRE_ANIMATION_ID = Animation.transition["fire.rbxm"]
+local SMOKE_ANIMATION_ID = Animation.transition["smoke.rbxm"]
+local FALL_BACKWARD_ANIMATION_ID = Animation.transition["fall-backward.rbxm"]
+local FALL_FORWARD_ANIMATION_ID = Animation.transition["fall-forward.rbxm"]
 -- one of the two plays when a hit leaves the character standing
 local FLINCH = table.freeze({
 	ANIMATION_IDS = table.freeze({
-		"rbxassetid://938913337",
-		"rbxassetid://938919081",
+		Animation.transition["flinch-1.rbxm"],
+		Animation.transition["flinch-2.rbxm"],
 	}),
 	DURATION = 0.4,
 })

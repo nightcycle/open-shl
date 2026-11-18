@@ -5,6 +5,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
+local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Components
 -- Hooks
 local useTween = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTween")
@@ -14,7 +15,7 @@ export type Properties = RobloxComponents.FrameProperties & {
 	Progress: number, -- from 0 to 1
 }
 -- Constants
-local LOGO_URL = "rbxassetid://1470835910"
+local LOGO_URL = Image.ui["loading-logo.png"]
 local PROMO_TEXT = "Join Deadly Pineapple Games for free gems!"
 local MIN_FILL = 0.01
 local FILL_TWEEN_INFO = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)

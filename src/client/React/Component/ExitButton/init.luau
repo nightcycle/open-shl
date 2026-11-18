@@ -5,13 +5,14 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
+local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Components
 -- Hooks
 -- Contexts
 -- Types
 export type Properties = RobloxComponents.ImageButtonProperties & {}
 -- Constants
-local ICON_URL = "rbxassetid://1373549749"
+local ICON_URL = Image.ui["exit.png"]
 -- Variables
 -- References
 -- Private Functions

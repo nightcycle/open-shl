@@ -5,6 +5,7 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
+local Audio = require("@game/ReplicatedStorage/Generated/Audio")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local SongType = require("@game/ReplicatedStorage/Shared/Type/Song")
@@ -16,22 +17,34 @@ local VOLUME = 0.25
 local DEFAULT_ID: SongId = "Danger"
 -- assets are owned by the old place
 local DEFINITIONS: { SongDefinition } = {
-	{ Id = "Conflict", Title = "Conflict", Artist = ARTIST, SoundId = "rbxassetid://793808482", Volume = VOLUME },
-	{ Id = "Creator", Title = "Creator", Artist = ARTIST, SoundId = "rbxassetid://793809203", Volume = VOLUME },
-	{ Id = "Damage", Title = "Damage", Artist = ARTIST, SoundId = "rbxassetid://793811063", Volume = VOLUME },
-	{ Id = "Danger", Title = "Danger", Artist = ARTIST, SoundId = "rbxassetid://793811660", Volume = VOLUME },
+	{ Id = "Conflict", Title = "Conflict", Artist = ARTIST, SoundId = Audio.music["conflict.ogg"], Volume = VOLUME },
+	{ Id = "Creator", Title = "Creator", Artist = ARTIST, SoundId = Audio.music["creator.ogg"], Volume = VOLUME },
+	{ Id = "Damage", Title = "Damage", Artist = ARTIST, SoundId = Audio.music["damage.ogg"], Volume = VOLUME },
+	{ Id = "Danger", Title = "Danger", Artist = ARTIST, SoundId = Audio.music["danger.ogg"], Volume = VOLUME },
 	{
 		Id = "Deliberation",
 		Title = "Deliberation",
 		Artist = ARTIST,
-		SoundId = "rbxassetid://793813299",
+		SoundId = Audio.music["deliberation.ogg"],
 		Volume = VOLUME,
 	},
-	{ Id = "Passionate", Title = "Passionate", Artist = ARTIST, SoundId = "rbxassetid://793814041", Volume = VOLUME },
-	{ Id = "Sentinel", Title = "Sentinel", Artist = ARTIST, SoundId = "rbxassetid://793814978", Volume = VOLUME },
-	{ Id = "Struggle", Title = "Struggle", Artist = ARTIST, SoundId = "rbxassetid://793816038", Volume = VOLUME },
-	{ Id = "Trailblazer", Title = "Trailblazer", Artist = ARTIST, SoundId = "rbxassetid://793817162", Volume = VOLUME },
-	{ Id = "WindyDay", Title = "Windy Day", Artist = ARTIST, SoundId = "rbxassetid://793817644", Volume = VOLUME },
+	{
+		Id = "Passionate",
+		Title = "Passionate",
+		Artist = ARTIST,
+		SoundId = Audio.music["passionate.ogg"],
+		Volume = VOLUME,
+	},
+	{ Id = "Sentinel", Title = "Sentinel", Artist = ARTIST, SoundId = Audio.music["sentinel.ogg"], Volume = VOLUME },
+	{ Id = "Struggle", Title = "Struggle", Artist = ARTIST, SoundId = Audio.music["struggle.ogg"], Volume = VOLUME },
+	{
+		Id = "Trailblazer",
+		Title = "Trailblazer",
+		Artist = ARTIST,
+		SoundId = Audio.music["trailblazer.ogg"],
+		Volume = VOLUME,
+	},
+	{ Id = "WindyDay", Title = "Windy Day", Artist = ARTIST, SoundId = Audio.music["windy-day.ogg"], Volume = VOLUME },
 }
 TableUtil.deepFreeze(DEFINITIONS)
 -- Variables

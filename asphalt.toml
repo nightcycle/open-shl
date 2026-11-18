@@ -12,4 +12,50 @@ strip_extension = true
 path = "asset/image/**"
 output_path = "Generated"
 
+[inputs.Audio]
+path = "asset/audio/**"
+output_path = "Generated"
 
+[inputs.Animation]
+path = "asset/animation/**"
+output_path = "Generated"
+
+# an animation only plays for whoever owns it, so a file here counts once `asphalt sync cloud` has uploaded it for the
+# creator above. until then every one of them stands for the upload it was exported from: take an entry out of this
+# table (or the whole table) + the file is uploaded in its place the next time the assets are synced to the cloud
+[inputs.Animation.web]
+"ability/bow-holding.rbxm" = { id = 910048046 }
+"ability/bow-shooting.rbxm" = { id = 910052477 }
+"ability/claw-sheathing.rbxm" = { id = 580413960 }
+"ability/flight-idle.rbxm" = { id = 596610664 }
+"ability/flight-movement.rbxm" = { id = 596620930 }
+"ability/force-explosion.rbxm" = { id = 583352411 }
+"ability/force-push.rbxm" = { id = 580087215 }
+"ability/gun-holding.rbxm" = { id = 586909830 }
+"ability/gun-shooting.rbxm" = { id = 586915698 }
+"ability/head-shot.rbxm" = { id = 584939993 }
+"ability/ice-spin.rbxm" = { id = 582036597 }
+"ability/knife-jab.rbxm" = { id = 580438782 }
+"ability/knife-slash.rbxm" = { id = 580441242 }
+"ability/left-slash.rbxm" = { id = 580408411 }
+"ability/power-punch.rbxm" = { id = 580665102 }
+"ability/power-shot.rbxm" = { id = 584892686 }
+"ability/right-foot-kick.rbxm" = { id = 580717982 }
+"ability/right-slash.rbxm" = { id = 580402239 }
+"ability/sheathing.rbxm" = { id = 580434436 }
+"ability/strike.rbxm" = { id = 580683034 }
+"ability/wall-climbing.rbxm" = { id = 599890877 }
+"emote/handcuffs.rbxm" = { id = 863517866 }
+"emote/hands-behind-back.rbxm" = { id = 863217511 }
+"emote/heroic-pose.rbxm" = { id = 863319510 }
+"emote/kneel.rbxm" = { id = 863364794 }
+"emote/laugh.rbxm" = { id = 863451363 }
+"emote/point.rbxm" = { id = 863470730 }
+"transition/ascension.rbxm" = { id = 601437776 }
+"transition/fall-backward.rbxm" = { id = 601499493 }
+"transition/fall-forward.rbxm" = { id = 601481878 }
+"transition/fire.rbxm" = { id = 601430281 }
+"transition/flinch-1.rbxm" = { id = 938913337 }
+"transition/flinch-2.rbxm" = { id = 938919081 }
+"transition/smoke.rbxm" = { id = 601428872 }
+"transition/spin.rbxm" = { id = 601411837 }

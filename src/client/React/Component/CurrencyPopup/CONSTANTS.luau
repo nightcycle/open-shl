@@ -2,6 +2,7 @@
 -- Services
 -- Packages
 -- Modules
+local Audio = require("@game/ReplicatedStorage/Generated/Audio")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 export type CurrencyInfo = {
@@ -31,5 +32,5 @@ local CURRENCIES: { [PseudoEnum.Currency]: CurrencyInfo } = table.freeze({
 -- Class
 return {
 	CURRENCIES = CURRENCIES,
-	SOUND_ID = "rbxassetid://134732869",
+	SOUND_ID = Audio.ui["currency.ogg"],
 }

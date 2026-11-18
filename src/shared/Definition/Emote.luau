@@ -5,6 +5,7 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
+local Animation = require("@game/ReplicatedStorage/Generated/Animation")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
@@ -17,35 +18,35 @@ local DEFINITIONS: { EmoteDefinition } = {
 	{
 		Id = "HandsBehindBack",
 		Name = "Hands Behind Back",
-		AnimationId = "rbxassetid://863217511",
+		AnimationId = Animation.emote["hands-behind-back.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
 	{
 		Id = "HeroicPose",
 		Name = "Heroic Pose",
-		AnimationId = "rbxassetid://863319510",
+		AnimationId = Animation.emote["heroic-pose.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
 	{
 		Id = "Kneel",
 		Name = "Kneel",
-		AnimationId = "rbxassetid://863364794",
+		AnimationId = Animation.emote["kneel.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
 	{
 		Id = "Laugh",
 		Name = "Laugh",
-		AnimationId = "rbxassetid://863451363",
+		AnimationId = Animation.emote["laugh.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
 	{
 		Id = "Point",
 		Name = "Point",
-		AnimationId = "rbxassetid://863470730",
+		AnimationId = Animation.emote["point.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
@@ -54,7 +55,7 @@ TableUtil.deepFreeze(DEFINITIONS)
 -- not an emote, a cuffed character can still walk around
 local HANDCUFFS: PoseDefinition = table.freeze({
 	Name = "Handcuffs",
-	AnimationId = "rbxassetid://863517866",
+	AnimationId = Animation.emote["handcuffs.rbxm"],
 	IsLooped = true,
 	IsRooting = false,
 })
