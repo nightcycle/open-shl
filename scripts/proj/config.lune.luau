@@ -91,6 +91,15 @@ do -- write in a do block now to make it easier to copy to other things later / 
 	end)
 
 	appendService("Workspace", function(node: rojo.ProjectNode)
+		-- a client is only sent what's around its avatar, closest first. what it can't do without wherever it stands
+		-- is marked as persistent in the map
+		node["$properties"] = {
+			StreamingEnabled = true,
+			-- an avatar that outruns the map is held where it is, not dropped through a floor that's on its way
+			StreamingIntegrityMode = "PauseOutsideLoadedArea",
+			-- what did get there stays for as long as the device has the memory, the skyline is part of the game
+			StreamOutBehavior = "LowMemory",
+		} :: rojo.NodeProperties
 		node["Map"] = {
 			["$path"] = `lib/map/{MAP}`,
 		}

@@ -57,6 +57,7 @@ export type ResidenceService = typeof(setmetatable(
 		_PendingState: ResidenceState?, -- a change that got here ahead of the answer it follows
 		_IsRequesting: boolean, -- the server hasn't answered the last request yet
 		_TeleportTime: number,
+		_Triggers: { [BasePart]: true }, -- the teleports of the map that are bound
 		_ResidenceConnections: { RBXScriptConnection }, -- the triggers of the residence
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
@@ -397,47 +398,40 @@ local function walkIn(self: ResidenceService, door: Door)
 	end)
 end
 
-local function bindTeleports(self: ResidenceService, map: Instance)
-	local apartments = IndexUtil.findFirstLocalPath(map, APARTMENTS_PATH)
-	local lobbyTrigger = IndexUtil.findFirstLocalPath(map, LOBBY_TRIGGER_PATH)
-	for _, desc in map:GetDescendants() do
-		if desc.Name ~= EXIT_NAME or not desc:IsA("ObjectValue") then
-			continue
-		end
-		local trigger = desc.Parent
-		local exit = desc.Value
-		if not trigger or not trigger:IsA("BasePart") or not exit or not exit:IsA("BasePart") then
-			continue
-		end
-		-- the way back sits next to the exit under the same name
-		local behind = exit.Parent and exit.Parent:FindFirstChild(trigger.Name)
-		if not behind or not behind:IsA("BasePart") then
-			warn(`the exit of {trigger:GetFullName()} has no trigger next to it`)
-			continue
-		end
-		local isCooledDown = apartments ~= nil and trigger:IsDescendantOf(apartments)
-		bind(self._Connections, trigger, function()
-			if isCooledDown and not getIfReady(self) then
-				return
-			end
-			if not teleport(self, getLanding(exit, behind)) then
-				return
-			end
-			if trigger == lobbyTrigger and ShellService.IsInitialized then
-				ShellService:FireTutorialTrigger("LobbyEntered")
-			end
-		end)
+-- a client only has the parts of the map around its avatar, so a teleport is bound as its trigger gets here + where it
+-- leads is looked at once it's stepped on: the other side may show up later than the trigger did
+local function bindTeleport(self: ResidenceService, map: Instance, desc: Instance)
+	if desc.Name ~= EXIT_NAME or not desc:IsA("ObjectValue") then
+		return
 	end
+	local trigger = desc.Parent
+	-- a trigger that left + came back is still bound from the first time
+	if not trigger or not trigger:IsA("BasePart") or self._Triggers[trigger] then
+		return
+	end
+	self._Triggers[trigger] = true
+	bind(self._Connections, trigger, function()
+		local exit = desc.Value
+		-- the way back sits next to the exit under the same name
+		local behind = exit and exit.Parent and exit.Parent:FindFirstChild(trigger.Name)
+		if not exit or not exit:IsA("BasePart") or not behind or not behind:IsA("BasePart") then
+			return
+		end
+		local apartments = IndexUtil.findFirstLocalPath(map, APARTMENTS_PATH)
+		if apartments and trigger:IsDescendantOf(apartments) and not getIfReady(self) then
+			return
+		end
+		if not teleport(self, getLanding(exit, behind)) then
+			return
+		end
+		if trigger == IndexUtil.findFirstLocalPath(map, LOBBY_TRIGGER_PATH) and ShellService.IsInitialized then
+			ShellService:FireTutorialTrigger("LobbyEntered")
+		end
+	end)
 end
 
 -- every door of the lobby leads to the residence of the same name, whoever lives there
-local function bindDoors(self: ResidenceService, map: Instance)
-	local doors = IndexUtil.findFirstLocalPath(map, DOORS_PATH)
-	local anchors = IndexUtil.findFirstLocalPath(map, ANCHORS_PATH)
-	if not doors or not anchors then
-		warn(`the map has no doors to a residence`)
-		return
-	end
+local function bindDoors(self: ResidenceService, doors: Instance, anchors: Instance)
 	for _, inst in doors:GetChildren() do
 		local triggerRes = tryPart(inst, DOOR_TRIGGER_NAME)
 		local plateRes = tryPart(inst, DOOR_PLATE_NAME)
@@ -450,7 +444,7 @@ local function bindDoors(self: ResidenceService, map: Instance)
 			ResidenceId = inst.Name :: ResidenceId,
 			Doorstep = getDoorstep(triggerRes.Value, plateRes.Value),
 			Anchor = anchorRes.Value.CFrame,
-			Parent = anchorRes.Value.Parent or map,
+			Parent = anchorRes.Value.Parent or anchors,
 		}
 		table.freeze(door)
 		bind(self._Connections, triggerRes.Value, function()
@@ -529,6 +523,7 @@ return ServiceLocker(function(): ResidenceService
 		_PendingState = nil :: ResidenceState?,
 		_IsRequesting = false,
 		_TeleportTime = -TELEPORT_COOLDOWN,
+		_Triggers = {},
 		_ResidenceConnections = {},
 		_CleanUpCallbacks = {},
 		_Connections = {},
@@ -595,19 +590,39 @@ return ServiceLocker(function(): ResidenceService
 		leave(self)
 	end)
 
-	-- the map is still on its way in when the client starts, its triggers are looked for once all of it is there
+	local function getIfDestroyed(): boolean
+		return not self.IsInitialized
+	end
+	-- the map is still on its way in when the client starts + what's far from the avatar may never get here
 	task.spawn(function()
-		if not game:IsLoaded() then
-			game.Loaded:Wait()
-		end
-		local mapF = Future.awaitUntil(IndexUtil.getFuturePath(MAP_PATH), function(): boolean
-			return not self.IsInitialized
-		end)
+		local mapF = Future.awaitUntil(IndexUtil.getFuturePath(MAP_PATH), getIfDestroyed)
 		if not mapF.IsDone or not self.IsInitialized then
 			return
 		end
-		bindTeleports(self, mapF.Value)
-		bindDoors(self, mapF.Value)
+		local map = mapF.Value
+		table.insert(
+			self._Connections,
+			map.DescendantAdded:Connect(function(desc: Instance)
+				bindTeleport(self, map, desc)
+			end)
+		)
+		for _, desc in map:GetDescendants() do
+			bindTeleport(self, map, desc)
+		end
+	end)
+	-- the doors + what they lead to are persistent in the map: every client has all of them, wherever its avatar is.
+	-- not every map has residences, so nothing waits on them
+	task.spawn(function()
+		-- a map that isn't streamed comes in piece by piece, its doors are only all there once the game is
+		if not game:IsLoaded() then
+			game.Loaded:Wait()
+		end
+		local doorsF = Future.awaitUntil(IndexUtil.getFuturePath(`{MAP_PATH}/{DOORS_PATH}`), getIfDestroyed)
+		local anchorsF = Future.awaitUntil(IndexUtil.getFuturePath(`{MAP_PATH}/{ANCHORS_PATH}`), getIfDestroyed)
+		if not doorsF.IsDone or not anchorsF.IsDone or not self.IsInitialized then
+			return
+		end
+		bindDoors(self, doorsF.Value, anchorsF.Value)
 	end)
 
 	return self
