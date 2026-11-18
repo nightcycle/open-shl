@@ -8,6 +8,7 @@ type ServerDefinition = AbilityType.ServerDefinition
 -- Constants
 -- the server half of every ability the game has. the client keeps a list of its own, an ability is added to both
 local DEFINITIONS: { ServerDefinition } = table.freeze({
+	require("@game/ServerScriptService/Server/Ability/Library/BasicMelee/Claws"),
 	require("@game/ServerScriptService/Server/Ability/Library/BasicMelee/MartialArts"),
 	require("@game/ServerScriptService/Server/Ability/Library/Ranged/LaserRay"),
 })
