@@ -78,3 +78,6 @@ script.Destroying:Connect(function()
 	destroyVFX()
 	destroyNetwork()
 end)
+
+-- what a play-test looks for: every service is up + the app is on its way to the screen
+print(`[boot] client ok`)

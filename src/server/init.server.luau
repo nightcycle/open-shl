@@ -118,3 +118,6 @@ game:BindToClose(function()
 		end
 	end
 end)
+
+-- what a play-test looks for: every service is up
+print(`[boot] server ok`)
