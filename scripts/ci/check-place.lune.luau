@@ -52,6 +52,20 @@ local NEEDED_TAGS: { [game.GameId]: { string } } = {
 	shl2 = { "StreetLamp", "NightWindows", "Uniform", "Hazard", "Beacon", "Gate", "Reactor", "Colorizer", "Rebuilt" },
 	shl3 = { "Beacon" },
 }
+-- where a game lists the halves of its abilities, each side in a module that goes by the name of the game. the two
+-- lists are kept by hand + neither side can see the other's, so only a read of both tells that they agree
+local ABILITY_SET_PATHS = {
+	server = "ServerScriptService/Server/Ability/Set",
+	client = "StarterPlayer/StarterPlayerScripts/Client/Ability/Set",
+}
+local ABILITY_HALF_PATTERN = 'Ability/Library/([%w_/]+)"'
+-- what both halves of an ability share, it names the power the ability is built for
+local ABILITY_LAYOUT_PATH = "ReplicatedStorage/Shared/Ability/Library"
+local POWER_ID_PATTERN = '"([%l%-]+_[%l%d%-]+)"'
+-- the powers of a game, in a module that goes by its name. the rows below the mark aren't offered yet
+local POWER_CATALOGUE_PATH = "ReplicatedStorage/Shared/Definition/Power"
+local POWER_ROW_PATTERN = 'Id%s*=%s*"([^"]+)"'
+local POWER_UPCOMING_MARK = "local UPCOMING"
 -- Variables
 -- References
 -- Private Functions
@@ -139,10 +153,14 @@ local function getMapFailures(place: roblox.DataModel): { string }
 	return {}
 end
 
+local function getGameId(place: roblox.DataModel): string?
+	return (getSource(place, BUILD_CONFIG_PATH) or ""):match(GAME_PATTERN)
+end
+
 -- the server finds what it runs in a map by its tags. one on the wrong class is skipped with a warning + one that's
 -- on nothing at all is never missed, so neither shows up in a boot
 local function getTagFailures(place: roblox.DataModel): { string }
-	local gameId = (getSource(place, BUILD_CONFIG_PATH) or ""):match(GAME_PATTERN)
+	local gameId = getGameId(place)
 	local neededTags: { string }? = nil
 	for id, tags in NEEDED_TAGS do
 		if id == gameId then
@@ -187,6 +205,66 @@ local function getTagFailures(place: roblox.DataModel): { string }
 	end
 	return failures
 end
+
+-- an ability is two halves + a power to be handed out as. a half that only one side lists leaves the other with a
+-- tool that does nothing, and a power nothing is built for is offered all the same: neither stops a boot
+local function getAbilityFailures(place: roblox.DataModel): { string }
+	local gameId = getGameId(place)
+	if gameId == nil then
+		return {}
+	end
+	local siblingName = gameId:upper()
+	local serverSource = getSource(place, `{ABILITY_SET_PATHS.server}{PATH_DELIMITER}{siblingName}`)
+	local clientSource = getSource(place, `{ABILITY_SET_PATHS.client}{PATH_DELIMITER}{siblingName}`)
+	-- a game that isn't built yet has neither
+	if serverSource == nil and clientSource == nil then
+		return {}
+	end
+	local failures: { string } = {}
+	local halves: { [string]: { [string]: true } } = { server = {}, client = {} }
+	for side, source in { server = serverSource or "", client = clientSource or "" } do
+		for half in source:gmatch(ABILITY_HALF_PATTERN) do
+			halves[side][half] = true
+		end
+		if next(halves[side]) == nil then
+			table.insert(failures, `{gameId} has no abilities in the set of its {side}`)
+		end
+	end
+	local powerHalves: { [string]: string } = {}
+	for side, others in { server = "client", client = "server" } do
+		for half in halves[side] do
+			if not halves[others][half] then
+				table.insert(failures, `the {side} of {gameId} has the ability "{half}", its {others} doesn't`)
+			end
+			local layoutPath = `{ABILITY_LAYOUT_PATH}{PATH_DELIMITER}{half}`
+			local powerId = (getSource(place, layoutPath) or ""):match(POWER_ID_PATTERN)
+			if powerId == nil then
+				table.insert(failures, `the ability "{half}" of {gameId} names no power in "{layoutPath}"`)
+			else
+				powerHalves[powerId] = half
+			end
+		end
+	end
+	local catalogue = getSource(place, `{POWER_CATALOGUE_PATH}{PATH_DELIMITER}{siblingName}`) or ""
+	local offered = catalogue:sub(1, (catalogue:find(POWER_UPCOMING_MARK, 1, true) or #catalogue + 1) - 1)
+	local isOffered: { [string]: true } = {}
+	for powerId in offered:gmatch(POWER_ROW_PATTERN) do
+		isOffered[powerId] = true
+		if powerHalves[powerId] == nil then
+			table.insert(failures, `{gameId} offers the power "{powerId}", no ability of its sets is built for it`)
+		end
+	end
+	for powerId, half in powerHalves do
+		if not isOffered[powerId] then
+			table.insert(
+				failures,
+				`the ability "{half}" of {gameId} is built for "{powerId}", which {gameId} doesn't offer`
+			)
+		end
+	end
+	table.sort(failures)
+	return failures
+end
 -- Class
 do
 	local placePath = parseArgs(process.args)
@@ -194,7 +272,13 @@ do
 	local place = roblox.deserializePlace(fs.readFile(placePath))
 
 	local count = 0
-	local checks = { getCSGFailures(place), getScriptFailures(place), getMapFailures(place), getTagFailures(place) }
+	local checks = {
+		getCSGFailures(place),
+		getScriptFailures(place),
+		getMapFailures(place),
+		getTagFailures(place),
+		getAbilityFailures(place),
+	}
 	for _, failures in checks do
 		for _, failure in failures do
 			count += 1
