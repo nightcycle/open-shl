@@ -5,54 +5,34 @@ local Players = game:GetService("Players")
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local React = require("@game/ReplicatedStorage/Packages/React")
 local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
+local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 -- Modules
-local AbilityService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Ability")
-local CameraModeService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/CameraMode")
-local EmoteService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Emote")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
-local MusicService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Music")
-local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
-local QuestGiverService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/QuestGiver")
-local ResidenceService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Residence")
-local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
-local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
-local SwapService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Swap")
-local VFXService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/VFX")
+local ServiceDefinition = require("@game/StarterPlayer/StarterPlayerScripts/Client/Definition/Service")
 -- Components
 local App = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/App")
 -- Types
+type Service = ServiceLocker.InitializationInterface
 -- Constants
 -- Variables
+local Services: { Service } = {}
+local DestroyCallbacks: { () -> () } = {}
 -- References
 local PlayerGui = IndexUtil.waitForLocalPath(Players.LocalPlayer, "PlayerGui")
 -- Private Functions
 local e = React.createElement
 -- Class
+-- every one of this game's is in before the first starts
+for _, entry in ServiceDefinition.list() do
+	table.insert(Services, entry.Load())
+end
 -- on a private server what the game plays by is the server's to say, everything below asks about it
 ModeDefinition.await()
--- in dependency order
-assert(not NetworkService.IsInitialized, `the network service is already initialized`)
-local destroyNetwork = NetworkService.init()
-assert(not VFXService.IsInitialized, `the vfx service is already initialized`)
-local destroyVFX = VFXService.init()
-assert(not AbilityService.IsInitialized, `the ability service is already initialized`)
-local destroyAbility = AbilityService.init()
-assert(not SessionService.IsInitialized, `the session service is already initialized`)
-local destroySession = SessionService.init()
-assert(not ShellService.IsInitialized, `the shell service is already initialized`)
-local destroyShell = ShellService.init()
-assert(not MusicService.IsInitialized, `the music service is already initialized`)
-local destroyMusic = MusicService.init()
-assert(not CameraModeService.IsInitialized, `the camera mode service is already initialized`)
-local destroyCameraMode = CameraModeService.init()
-assert(not SwapService.IsInitialized, `the swap service is already initialized`)
-local destroySwap = SwapService.init()
-assert(not EmoteService.IsInitialized, `the emote service is already initialized`)
-local destroyEmote = EmoteService.init()
-assert(not ResidenceService.IsInitialized, `the residence service is already initialized`)
-local destroyResidence = ResidenceService.init()
-assert(not QuestGiverService.IsInitialized, `the quest giver service is already initialized`)
-local destroyQuestGiver = QuestGiverService.init()
+-- in the order of the list
+for _, service in Services do
+	table.insert(DestroyCallbacks, service.init())
+end
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "App"
@@ -66,18 +46,10 @@ root:render(e(App, {}))
 script.Destroying:Connect(function()
 	root:unmount()
 	screenGui:Destroy()
-	destroyQuestGiver()
-	destroyResidence()
-	destroyEmote()
-	destroySwap()
-	destroyCameraMode()
-	destroyMusic()
-	destroyShell()
-	destroySession()
-	destroyAbility()
-	destroyVFX()
-	destroyNetwork()
+	for index = #DestroyCallbacks, 1, -1 do
+		DestroyCallbacks[index]()
+	end
 end)
 
 -- what a play-test looks for: every service is up + the app is on its way to the screen
-print(`[boot] client ok`)
+print(`[boot] client ok ({GameDefinition.ID})`)
