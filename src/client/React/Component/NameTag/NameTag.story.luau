@@ -8,6 +8,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
+local StyleStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/Story")
 -- Components
 local ParentComponent = require(".")
 -- Hooks
@@ -16,6 +17,12 @@ local ParentComponent = require(".")
 -- Constants
 local HEAD_DISTANCE = 12
 local HEAD_SIZE = Vector3.new(1.2, 1.2, 1.2)
+-- the sides a name is colored for where there's a fight on
+local TEAM_COLORS: { [string]: Color3 } = {
+	Hero = Color3.fromRGB(0, 0, 255),
+	Villain = Color3.fromRGB(255, 0, 0),
+}
+local TEAMS = { "None", "Hero", "Villain" }
 -- Variables
 -- References
 -- Private Functions
@@ -28,6 +35,11 @@ return UILabs.CreateReactStory({
 		PersonaName = UILabs.String("Captain Coolguy"),
 		UserName = UILabs.String("Player1"),
 		IsInMenu = UILabs.Boolean(false),
+		-- only read in a look that has a place for it
+		Bio = UILabs.String("Fell into a vat of something at the refinery. Sorts the mail of Valor City by day."),
+		IsBioShown = UILabs.Boolean(false),
+		Team = UILabs.Choose(TEAMS),
+		Style = StyleStory.newControl(),
 	},
 }, function(props)
 	-- billboards only render in the world, so it needs a part to sit on
@@ -66,14 +78,18 @@ return UILabs.CreateReactStory({
 			TextScaled = true,
 		}),
 		Tag = head and ReactRoblox.createPortal(
-			e(
-				ParentComponent,
-				{
-					PersonaName = props.controls.PersonaName,
-					UserName = props.controls.UserName,
-					IsInMenu = props.controls.IsInMenu,
-				} :: ParentComponent.Properties
-			),
+			StyleStory.provide(props.controls.Style, {
+				NameTag = e(
+					ParentComponent,
+					{
+						PersonaName = props.controls.PersonaName,
+						UserName = props.controls.UserName,
+						IsInMenu = props.controls.IsInMenu,
+						Bio = if props.controls.IsBioShown then props.controls.Bio else nil,
+						TeamColor3 = TEAM_COLORS[props.controls.Team],
+					} :: ParentComponent.Properties
+				),
+			}),
 			head
 		),
 	})
