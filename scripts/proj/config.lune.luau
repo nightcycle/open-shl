@@ -9,12 +9,16 @@ local process = require("@lune/process")
 local serde = require("@lune/serde")
 -- Packages
 -- Modules
+local game = require("../modules/game")
 local rojo = require("../modules/rojo")
 -- Types
 -- Constants
 local PROJECT_PATH = process.env["PROJECT"] or "default.project.json"
 local PROJECT_NAME = process.env["PROJECT_NAME"] or "superhero-life"
 local MAP = process.env["MAP"] or "roblox-city"
+-- the code is the same in every game, where its data, its items + its scenes come from isn't
+local GAME: game.GameId = game.getId(process.env["GAME"])
+local CONTENT = game.getContent(GAME)
 -- Variables
 -- References
 -- Private Functions
@@ -33,6 +37,15 @@ do -- write in a do block now to make it easier to copy to other things later / 
 		if fn then
 			fn(service)
 		end
+		-- what a game sets on a service has the say over what all of them set on it
+		local gameProperties = CONTENT.Properties[serviceName]
+		if gameProperties then
+			local properties: rojo.NodeProperties = service["$properties"] or {}
+			for key, value in gameProperties do
+				properties[key] = value
+			end
+			service["$properties"] = properties
+		end
 		assert(project.tree[serviceName] == nil, `duplicate service`)
 		project.tree[serviceName] = service
 	end
@@ -42,7 +55,7 @@ do -- write in a do block now to make it easier to copy to other things later / 
 		}
 		-- legacy save data stays server-side, each json file becomes a module
 		node["Data"] = {
-			["$path"] = "data",
+			["$path"] = CONTENT.DataPath,
 		}
 	end)
 
@@ -64,15 +77,13 @@ do -- write in a do block now to make it easier to copy to other things later / 
 			["base"] = {
 				["$path"] = "lib/base",
 			} :: rojo.ProjectNode,
-			["character"] = {
-				["$path"] = "lib/character",
-			} :: rojo.ProjectNode,
+			["character"] = game.newCharacterNode(CONTENT),
 			-- props are worn like character items, but are not part of the item library
 			["prop"] = {
 				["$path"] = "lib/prop",
 			} :: rojo.ProjectNode,
 			["scene"] = {
-				["$path"] = "lib/scene",
+				["$path"] = CONTENT.ScenePath,
 			} :: rojo.ProjectNode,
 		}
 	end)
@@ -116,6 +127,13 @@ do -- write in a do block now to make it easier to copy to other things later / 
 			ChatVersion = "TextChatService",
 		} :: rojo.NodeProperties
 	end)
+
+	-- a service none of the above has a word on is only there for the game that does
+	for serviceName in CONTENT.Properties do
+		if project.tree[serviceName] == nil then
+			appendService(serviceName)
+		end
+	end
 
 	-- the sky + the look of the light are tuned for a map, so they're swapped out along with it
 	project.tree["Lighting"] = {

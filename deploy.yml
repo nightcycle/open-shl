@@ -7,10 +7,11 @@
 # the ids aren't secrets. the open cloud key that publishes a universe is: `api_key_env` names the env variable it's
 # read from, which is a secret of the workflow (and a line of .env to publish from a terminal)
 #
-# `env` is what the build scripts are run with, the same variables they take from a terminal (MODE, MAP, PROJECT_NAME,
-# any flag of the build config). a place adds its own to those of its universe. on top of that every build is handed
-# UNIVERSE_ID, PLACE_ID + the id of each place of its universe as <NAME>_PLACE_ID, so one place can send players to
-# another without any of them being written down twice
+# `env` is what the build scripts are run with, the same variables they take from a terminal (GAME, MODE, MAP,
+# PROJECT_NAME, any flag of the build config). a universe that names no GAME is shl2. a place adds its own to those of
+# its universe. on top of that every build is handed UNIVERSE_ID, PLACE_ID + the id of each place of its universe as
+# <NAME>_PLACE_ID, so one place can send players to another without any of them being written down twice. a terminal
+# gets all of it for one place from scripts/proj/env.lune.luau
 universes:
   shl2:
     universe_id: 197125125
