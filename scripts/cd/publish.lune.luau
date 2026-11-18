@@ -1,6 +1,7 @@
 --!strict
 -- every place of every universe in the deploy config is this code, built with the switches of that place + published
--- to it. what goes where is all in the config, this only walks it
+-- to it. what goes where is all in the config, this only walks it. all of it is built before any of it is published,
+-- so a place that doesn't build leaves every other one as it was. one without an id yet is built + left at that
 -- Services
 local fs = require("@lune/fs")
 local process = require("@lune/process")
@@ -22,6 +23,13 @@ type UniverseConfig = {
 }
 type DeployConfig = {
 	universes: { [string]: UniverseConfig },
+}
+type Build = {
+	universeName: string,
+	placeName: string,
+	universe: UniverseConfig,
+	place: PlaceConfig,
+	rbxlPath: string,
 }
 -- Constants
 local DEFAULT_CONFIG_PATH = "deploy.yml"
@@ -110,7 +118,7 @@ do
 	local placeFilter = getEnv("PLACE")
 	-- builds everything without sending any of it anywhere
 	local isDryRun = getEnv("DRY_RUN") == "true"
-	local count = 0
+	local builds: { Build } = {}
 
 	for _, universeName in getSortedKeys(config.universes) do
 		if universeFilter and universeFilter ~= universeName then
@@ -126,7 +134,6 @@ do
 			local projectPath = `{universeName}-{placeName}.project.json`
 			local rbxlPath = `{BUILD_PATH}/{universeName}/{placeName}.rbxl`
 			local env = getBuildEnv(universe, place, projectPath)
-			count += 1
 
 			print(`\nbuilding {universeName}/{placeName}`)
 			fs.writeDir(`{BUILD_PATH}/{universeName}`)
@@ -140,37 +147,54 @@ do
 				fs.removeFile(projectPath)
 			end
 			assert(isBuilt, msg)
-
-			if isDryRun then
-				print(`dry run: {rbxlPath} isn't published`)
-				continue
-			end
-			assert(
-				universe.universe_id > 0 and place.place_id > 0,
-				`{universeName}/{placeName} has no ids to publish to yet`
-			)
-			local apiKey = getEnv(universe.api_key_env)
-			assert(apiKey, `the key of {universeName} is read from {universe.api_key_env}, which isn't set`)
-			print(`publishing {universeName}/{placeName} to place {place.place_id}`)
-			run("rbxcloud", {
-				"experience",
-				"publish",
-				"--filename",
-				rbxlPath,
-				"--place-id",
-				tostring(place.place_id),
-				"--universe-id",
-				tostring(universe.universe_id),
-				"--version-type",
-				place.version_type or DEFAULT_VERSION_TYPE,
-			}, {
-				RBXCLOUD_API_KEY = apiKey :: string,
+			table.insert(builds, {
+				universeName = universeName,
+				placeName = placeName,
+				universe = universe,
+				place = place,
+				rbxlPath = rbxlPath,
 			})
 		end
 	end
 
 	-- the last place built isn't what a terminal or an open studio expects to find
 	run("lune", { "run", "scripts/proj/build-config.lune.luau" })
-	assert(count > 0, `nothing in the deploy config matches what was asked for`)
-	print(`\n{count} place(s) {if isDryRun then "built" else "published"}`)
+	assert(#builds > 0, `nothing in the deploy config matches what was asked for`)
+
+	-- nothing goes out before all of it is built + every key is there, so a run that fails this far has changed no place
+	print("")
+	local uploads: { Build } = {}
+	for _, build in builds do
+		if build.universe.universe_id <= 0 or build.place.place_id <= 0 then
+			print(`{build.universeName}/{build.placeName} skipped: no id yet`)
+		elseif isDryRun then
+			print(`dry run: {build.rbxlPath} isn't published`)
+		else
+			assert(
+				getEnv(build.universe.api_key_env),
+				`the key of {build.universeName} is read from {build.universe.api_key_env}, which isn't set`
+			)
+			table.insert(uploads, build)
+		end
+	end
+
+	for _, build in uploads do
+		print(`publishing {build.universeName}/{build.placeName} to place {build.place.place_id}`)
+		run("rbxcloud", {
+			"experience",
+			"publish",
+			"--filename",
+			build.rbxlPath,
+			"--place-id",
+			tostring(build.place.place_id),
+			"--universe-id",
+			tostring(build.universe.universe_id),
+			"--version-type",
+			build.place.version_type or DEFAULT_VERSION_TYPE,
+		}, {
+			RBXCLOUD_API_KEY = getEnv(build.universe.api_key_env) :: string,
+		})
+	end
+
+	print(`\n{#builds} place(s) built, {#uploads} published`)
 end

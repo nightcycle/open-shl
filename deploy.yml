@@ -1,6 +1,9 @@
 # what the cd pipeline publishes + where to. a universe is one experience on roblox, each of its places is this code
 # built with its own switches. another place is another entry under `places`, another game another under `universes`
 #
+# every run builds all of it before publishing any of it. a universe or a place that has no id on roblox yet is
+# written with an id of 0: it's built with the rest so it can't rot, then skipped
+#
 # the ids aren't secrets. the open cloud key that publishes a universe is: `api_key_env` names the env variable it's
 # read from, which is a secret of the workflow (and a line of .env to publish from a terminal)
 #
