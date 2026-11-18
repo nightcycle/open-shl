@@ -32,6 +32,18 @@ local isSize = function(value: unknown): (boolean, string?)
 	end
 	return true
 end
+-- a spot on a limb or on what it holds: nothing an effect hangs onto an avatar is further off than a part gets long
+local isReach = function(value: unknown): (boolean, string?)
+	local success, msg = isFiniteVector3(value)
+	if not success then
+		return false, msg
+	end
+	local reach = value :: Vector3
+	if reach.Magnitude > MAX_SIZE then
+		return false, `a spot within {MAX_SIZE} studs expected, got {reach}`
+	end
+	return true
+end
 -- studs a line through the world runs at most, nothing an ability lets go gets further
 local MAX_LENGTH = 1000
 
@@ -98,6 +110,33 @@ Types.Prop = Type.strictInterface({
 	Shape = Type.optional(Type.enum(Enum.PartType)),
 	SlideOffset = Type.optional(Type.CFrame),
 	SlideDuration = Type.optional(Type.numberConstrained(0, 2)),
+	Delay = Type.optional(Type.numberConstrained(0, 2)),
+	Linger = Type.optional(Type.numberConstrained(0, 2)),
+})
+
+-- a ribbon a limb of the avatar leaves behind as it moves
+export type Streak = {
+	Limb: string, -- the name of the part of the avatar it's drawn out by
+	-- the two ends of the edge it's drawn out from
+	From: Vector3,
+	To: Vector3,
+	-- of the limb from what the two ends are measured on, the way a prop is held: the ribbon of a blade takes the
+	-- offset of the blade. they're measured on the limb itself without
+	Offset: CFrame?,
+	Lifetime: number, -- seconds until a stretch of it is gone
+	Transparency: number, -- of where it's drawn out, it thins out to nothing from there
+	Color: Color3,
+	Delay: number?, -- seconds until it's there, the time a hand takes to reach for what leaves it
+	Linger: number?, -- seconds it stays once it's stopped, the time a hand takes to let go of what leaves it
+}
+Types.Streak = Type.strictInterface({
+	Limb = Type.string,
+	From = isReach,
+	To = isReach,
+	Offset = Type.optional(Type.CFrame),
+	Lifetime = Type.numberConstrained(0.01, 2),
+	Transparency = Type.numberConstrained(0, 1),
+	Color = Type.Color3,
 	Delay = Type.optional(Type.numberConstrained(0, 2)),
 	Linger = Type.optional(Type.numberConstrained(0, 2)),
 })

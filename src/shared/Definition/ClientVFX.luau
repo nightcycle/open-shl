@@ -79,6 +79,7 @@ Module.Flame = newState("Flame", ClientVFXType.Flame) :: ClientState<ClientVFXTy
 Module.Ripple = newEvent("Ripple", ClientVFXType.Ripple) :: ClientEvent<ClientVFXType.Ripple>
 Module.Spray = newState("Spray", ClientVFXType.Spray) :: ClientState<ClientVFXType.Spray>
 Module.Beam = newEvent("Beam", ClientVFXType.Beam) :: ClientEvent<ClientVFXType.Beam>
+Module.Streak = newState("Streak", ClientVFXType.Streak) :: ClientState<ClientVFXType.Streak>
 
 Module.get = function(name: string): Result<VFX, string>
 	local vfx = VFXsByName[name]

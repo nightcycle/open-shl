@@ -32,6 +32,7 @@ local IMPLEMENTATIONS: { Implementation } = {
 	require("@self/SoundLoop"),
 	require("@self/Spectate"),
 	require("@self/Spray"),
+	require("@self/Streak"),
 	require("@self/Thrust"),
 	require("@self/WalkSpeed"),
 	require("@self/Warp"),
