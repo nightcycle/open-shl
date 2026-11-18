@@ -288,6 +288,18 @@ do -- Types.PageDefinition
 	Types.PageDefinition = checkPageDefinition
 end
 
+-- what a game's editor is: how much of a name + a backstory it keeps + its pages, from the root down
+export type EditorDefinition = {
+	MaxNameLength: number,
+	MaxBackstoryLength: number,
+	Root: PageDefinition,
+}
+Types.EditorDefinition = Type.strictInterface({
+	MaxNameLength = Type.intersection(Type.integer, Type.numberPositive),
+	MaxBackstoryLength = Type.intersection(Type.integer, Type.numberPositive),
+	Root = Types.PageDefinition,
+})
+
 export type Entitlements = {
 	PowerLimit: number,
 	HasMultiHair: boolean,
