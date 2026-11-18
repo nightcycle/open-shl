@@ -12,6 +12,7 @@ local Result = TypeUnionLib.Result
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 -- Types
@@ -88,6 +89,13 @@ local SCREEN_TRIGGERS: { [ScreenType]: Trigger } = table.freeze({
 	CharacterSelect = "CharactersOpened",
 	CharacterEditor = "EditorOpened",
 	ArtifactMenu = "ArtifactMenuOpened",
+})
+-- the screen the boot ends on. a game without one ends on its hud, as whoever the server picked
+local FIRST_SCREEN: Screen? = GameDefinition.tune(nil :: Screen?, {
+	-- who to play as is picked on every join, its legacy place opened the character manager the same way
+	shl3 = {
+		Type = "CharacterSelect",
+	} :: Screen,
 })
 -- Variables
 -- References
@@ -206,6 +214,10 @@ function ShellService:FinishBootPhase(bootPhase: BootPhase)
 	end
 	local state = table.clone(self._State)
 	state.BootPhase = getNextBootPhase(bootPhase)
+	-- the boot is only left once. nothing could be opened during it, so there's no screen this takes the place of
+	if FIRST_SCREEN and bootPhase ~= "Playing" and state.BootPhase == "Playing" then
+		state.Screen = TableUtil.deepCopy(FIRST_SCREEN)
+	end
 	setState(self, state)
 end
 
