@@ -6,7 +6,9 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 local Option = TypeUnionLib.Option
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
+local PatternDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Pattern")
 local WeldUtil = require("@game/ReplicatedStorage/Shared/Util/Weld")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
@@ -15,9 +17,23 @@ type Option<V> = TypeUnionLib.Option<V>
 export type Appearance = AppearanceType.Appearance
 type Item = AppearanceType.Item
 type ItemDefinition = AppearanceType.ItemDefinition
+type TextureGroup = AppearanceType.TextureGroup
 type HiddenTag = AppearanceType.HiddenTag
+type Glow = {
+	Range: number,
+	Brightness: number,
+	Shadows: boolean,
+}
 -- Constants
 local ITEM_TAG = "AppearanceItem"
+local PATTERN_NAME = "Pattern"
+local GLOW_NAME = "Glow"
+-- a pattern is one image stretched over each side of a part
+local PATTERN_FACES: { Enum.NormalId } = table.freeze(Enum.NormalId:GetEnumItems())
+-- where neon lights what's around it, a part of that material carries a light of its own color
+local NEON_GLOW: Glow? = GameDefinition.tune(nil :: Glow?, {
+	shl3 = table.freeze({ Range = 6, Brightness = 0.5, Shadows = true }),
+})
 local ARTIFACT_CATEGORY = "artifacts"
 local CAPE_CATEGORY = "capes"
 local CAPE_ANCHOR_NAME = "UpperTorso"
@@ -122,6 +138,42 @@ local function getIfHidden(appearance: Appearance, itemDef: ItemDefinition): boo
 	return false
 end
 
+-- the image is drawn in the color of its group. an item is cloned anew every time it's worn, so a pattern that's
+-- taken off again leaves nothing behind
+local function applyPattern(part: BasePart, group: TextureGroup)
+	local key = group.Pattern
+	if not key then
+		return
+	end
+	local patternRes = PatternDefinition.get(key)
+	-- a look can be older than the patterns of its game, one that's gone is a part left plain
+	if patternRes.IsErr then
+		return
+	end
+	for _, face in PATTERN_FACES do
+		local decal = Instance.new("Decal")
+		decal.Name = PATTERN_NAME
+		decal.Face = face
+		decal.Texture = patternRes.Value.Image
+		decal.Color3 = group.Color
+		decal.Transparency = group.Transparency
+		decal.Parent = part
+	end
+end
+
+local function applyGlow(part: BasePart, group: TextureGroup)
+	if not NEON_GLOW or group.Material ~= Enum.Material.Neon then
+		return
+	end
+	local light = Instance.new("PointLight")
+	light.Name = GLOW_NAME
+	light.Color = group.Color
+	light.Range = NEON_GLOW.Range
+	light.Brightness = NEON_GLOW.Brightness
+	light.Shadows = NEON_GLOW.Shadows
+	light.Parent = part
+end
+
 local function applyTextureGroups(part: BasePart, appearance: Appearance, item: Item)
 	local attr: AppearanceType.TextureGroupKey? = part:GetAttribute("TextureGroup") :: AppearanceType.TextureGroupKey?
 	if not attr then
@@ -132,6 +184,8 @@ local function applyTextureGroups(part: BasePart, appearance: Appearance, item: 
 		part.Color = group.Color
 		part.Material = group.Material
 		part.Transparency = group.Transparency
+		applyPattern(part, group)
+		applyGlow(part, group)
 	elseif attr == "Skin" then
 		-- bare skin the item doesn't color itself matches the body
 		part.Color = appearance.SkinColor
