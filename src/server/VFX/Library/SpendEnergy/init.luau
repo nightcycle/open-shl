@@ -4,8 +4,8 @@
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local ServerVFX = require("@game/ServerScriptService/Server/VFX")
 -- Types
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
@@ -30,7 +30,7 @@ return ServerVFX.newEvent("SpendEnergy", isProperties, function(props: Propertie
 	if not character then
 		return false
 	end
-	if not BUILD_CONFIG.ENERGY_ENABLED then
+	if not ModeDefinition.getIfEnergyEnabled() then
 		return true
 	end
 	local energy = AttributeDefinition.get(character, AttributeDefinition.Energy)

@@ -11,7 +11,7 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Future = TypeUnionLib.Future
 -- Modules
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local QuestDefinition = require("@game/ReplicatedStorage/Shared/Definition/Quest")
@@ -128,7 +128,7 @@ local QuestGiverService = {} :: QuestGiverServiceImpl
 QuestGiverService.__index = QuestGiverService
 
 return ServiceLocker(function(): QuestGiverService
-	if BUILD_CONFIG.QUESTS_ENABLED then
+	if ModeDefinition.getIfQuestsEnabled() then
 		assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 		assert(ShellService.IsInitialized, `the shell service isn't initialized`)
 	end
@@ -142,7 +142,7 @@ return ServiceLocker(function(): QuestGiverService
 
 	-- the map may still be loading + not every map has a quest giver, so nothing waits on him
 	task.spawn(function()
-		local path = if BUILD_CONFIG.QUESTS_ENABLED then DIALOG_PATH else QuestDefinition.QUEST_GIVER_PATH
+		local path = if ModeDefinition.getIfQuestsEnabled() then DIALOG_PATH else QuestDefinition.QUEST_GIVER_PATH
 		local instF = Future.awaitUntil(IndexUtil.getFuturePath(path), function(): boolean
 			return not self.IsInitialized
 		end)
@@ -150,7 +150,7 @@ return ServiceLocker(function(): QuestGiverService
 			return
 		end
 		local inst = instF.Value
-		if not BUILD_CONFIG.QUESTS_ENABLED then
+		if not ModeDefinition.getIfQuestsEnabled() then
 			hide(self, inst)
 		elseif inst:IsA("Dialog") then
 			bind(self, inst)

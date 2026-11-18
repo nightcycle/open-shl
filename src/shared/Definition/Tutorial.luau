@@ -5,8 +5,8 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Option = TypeUnionLib.Option
 -- Modules
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local Image = require("@game/ReplicatedStorage/Generated/Image")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 -- Types
 type Option<V> = TypeUnionLib.Option<V>
 local TutorialType = require("@game/ReplicatedStorage/Shared/Type/Tutorial")
@@ -96,9 +96,9 @@ end
 
 local function getIfConditionMet(condition: Condition, isQuestSectionDone: boolean, hasActiveQuest: boolean): boolean
 	if condition == "PvpEnabled" then
-		return BUILD_CONFIG.PVP_ENABLED
+		return ModeDefinition.getIfPVPEnabled()
 	elseif condition == "QuestsEnabled" then
-		return BUILD_CONFIG.QUESTS_ENABLED
+		return ModeDefinition.getIfQuestsEnabled()
 	elseif condition == "QuestSectionPending" then
 		return not isQuestSectionDone
 	else

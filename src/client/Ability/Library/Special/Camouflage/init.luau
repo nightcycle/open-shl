@@ -5,9 +5,9 @@ local Workspace = game:GetService("Workspace")
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local Camouflage = require("@game/ReplicatedStorage/Shared/Ability/Library/Special/Camouflage")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
@@ -69,7 +69,7 @@ return AbilityBuilder
 	:Guard(
 		bindings.Cast,
 		function(context: ClientContext): boolean
-			if BUILD_CONFIG.ENERGY_ENABLED and getEnergy(context) < energyCost then
+			if ModeDefinition.getIfEnergyEnabled() and getEnergy(context) < energyCost then
 				if not context.Memory[IS_DISGUISED_KEY] then
 					context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
 				end
@@ -106,7 +106,7 @@ return AbilityBuilder
 	:Guard(
 		bindings.Shed,
 		function(context: ClientContext): boolean
-			return BUILD_CONFIG.ENERGY_ENABLED and getEnergy(context) < energyCost
+			return ModeDefinition.getIfEnergyEnabled() and getEnergy(context) < energyCost
 		end
 	)
 	:Fire(bindings.Shed, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound

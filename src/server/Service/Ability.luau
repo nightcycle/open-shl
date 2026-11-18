@@ -7,10 +7,10 @@ local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/AbilityCondition")
 local AbilityLibrary = require("@game/ServerScriptService/Server/Ability/Library")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ConditionStore = require("@game/ReplicatedStorage/Shared/Ability/ConditionStore")
 local Context = require("@game/ReplicatedStorage/Shared/Ability/Context")
 local Machine = require("@game/ReplicatedStorage/Shared/Ability/Machine")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
@@ -350,7 +350,7 @@ return ServiceLocker(function(): AbilityService
 			unload(self, player)
 		end)
 	)
-	if BUILD_CONFIG.ENERGY_ENABLED then
+	if ModeDefinition.getIfEnergyEnabled() then
 		local energyThread = task.spawn(function()
 			while true do
 				task.wait(ENERGY_INTERVAL)

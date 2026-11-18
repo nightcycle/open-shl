@@ -4,10 +4,10 @@
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local Hitbox = require("@game/ReplicatedStorage/Shared/VFX/Library/Hitbox")
 local MeleeFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Melee")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 -- Types
@@ -46,7 +46,7 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 			bindings.Swing,
 			function(context: ClientContext): boolean
 				local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
-				if BUILD_CONFIG.ENERGY_ENABLED and energy < energyCost then
+				if ModeDefinition.getIfEnergyEnabled() and energy < energyCost then
 					context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
 					return false
 				end

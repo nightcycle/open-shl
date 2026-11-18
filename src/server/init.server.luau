@@ -37,6 +37,10 @@ local DestroyCallbacks: { () -> () } = {}
 assert(not NetworkService.IsInitialized, `the network service is already initialized`)
 table.insert(DestroyCallbacks, NetworkService.init())
 
+-- a private server finds out what it plays by in here, so nothing that asks about it starts before this is back
+assert(not CustomServerService.IsInitialized, `the custom server service is already initialized`)
+table.insert(DestroyCallbacks, CustomServerService.init())
+
 -- a client makes up its mind about the mode screen as soon as it's in, so this is on before the saves are
 assert(not ModeSelectService.IsInitialized, `the mode select service is already initialized`)
 table.insert(DestroyCallbacks, ModeSelectService.init())
@@ -104,9 +108,6 @@ table.insert(DestroyCallbacks, UniformService.init())
 -- these two put the server up for others to join, so they start once all of it is there + stop before any of it does
 assert(not ServerIdService.IsInitialized, `the server id service is already initialized`)
 table.insert(DestroyCallbacks, ServerIdService.init())
-
-assert(not CustomServerService.IsInitialized, `the custom server service is already initialized`)
-table.insert(DestroyCallbacks, CustomServerService.init())
 
 game:BindToClose(function()
 	for index = #DestroyCallbacks, 1, -1 do

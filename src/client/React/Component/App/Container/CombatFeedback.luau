@@ -5,7 +5,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local TransitionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Transition")
 local WalkLock = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/WalkLock")
 -- Components
@@ -139,7 +139,7 @@ local function feedback(): React.ReactNode
 end
 -- Class
 return function(): React.ReactNode
-	if not BUILD_CONFIG.PVP_ENABLED then
+	if not ModeDefinition.getIfPVPEnabled() then
 		return nil
 	end
 	return e(feedback, {})

@@ -7,7 +7,7 @@ local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local Attack = require("@game/ServerScriptService/Server/VFX/Library/Attack")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local VFXStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Story")
 -- Components
 -- Hooks
@@ -35,5 +35,5 @@ return VFXStory.newEventStory({
 	end
 	local isLanded = stage.ServerScope.fire(Attack, { Target = target, Amount = controls.Amount })
 	local health = AttributeDefinition.get(target, AttributeDefinition.Health)
-	print(`landed: {isLanded}, health: {health}, pvp enabled: {BUILD_CONFIG.PVP_ENABLED}`)
+	print(`landed: {isLanded}, health: {health}, pvp enabled: {ModeDefinition.getIfPVPEnabled()}`)
 end)

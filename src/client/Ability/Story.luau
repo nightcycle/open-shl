@@ -8,10 +8,10 @@ local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local Aim = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Aim")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ConditionStore = require("@game/ReplicatedStorage/Shared/Ability/ConditionStore")
 local Context = require("@game/ReplicatedStorage/Shared/Ability/Context")
 local Machine = require("@game/ReplicatedStorage/Shared/Ability/Machine")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local VFXStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Story")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
@@ -189,7 +189,7 @@ local function getReadout(rig: Rig, stage: Stage): { string }
 		`client: {rig.Client.StateId}   server: {rig.Server.StateId}`,
 		`user energy: {AttributeDefinition.get(stage.User, AttributeDefinition.Energy)}`
 			.. `   target health: {AttributeDefinition.get(stage.Target, AttributeDefinition.Health)}`,
-		`pvp: {BUILD_CONFIG.PVP_ENABLED}   energy: {BUILD_CONFIG.ENERGY_ENABLED}`,
+		`pvp: {ModeDefinition.getIfPVPEnabled()}   energy: {ModeDefinition.getIfEnergyEnabled()}`,
 	}
 end
 -- Class

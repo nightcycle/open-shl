@@ -9,6 +9,7 @@ local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local AbilityService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Ability")
 local CameraModeService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/CameraMode")
 local EmoteService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Emote")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local MusicService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Music")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local QuestGiverService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/QuestGiver")
@@ -27,6 +28,8 @@ local PlayerGui = IndexUtil.waitForLocalPath(Players.LocalPlayer, "PlayerGui")
 -- Private Functions
 local e = React.createElement
 -- Class
+-- on a private server what the game plays by is the server's to say, everything below asks about it
+ModeDefinition.await()
 -- in dependency order
 assert(not NetworkService.IsInitialized, `the network service is already initialized`)
 local destroyNetwork = NetworkService.init()

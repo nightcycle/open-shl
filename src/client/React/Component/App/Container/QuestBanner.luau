@@ -4,7 +4,7 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
@@ -28,7 +28,7 @@ return function(): React.ReactNode
 	local quest = useSignalState(SessionService.QuestChanged, function(): QuestState?
 		return SessionService:GetQuest()
 	end)
-	if not BUILD_CONFIG.QUESTS_ENABLED then
+	if not ModeDefinition.getIfQuestsEnabled() then
 		return nil
 	end
 

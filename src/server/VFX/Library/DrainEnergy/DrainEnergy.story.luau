@@ -6,8 +6,8 @@ _G.__REACT_MICROPROFILER_LEVEL = 10
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local DrainEnergy = require("@game/ServerScriptService/Server/VFX/Library/DrainEnergy")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local VFXStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Story")
 -- Components
 -- Hooks
@@ -40,7 +40,9 @@ return VFXStory.newStateStory({
 	end
 	draw()
 	local connection = user:GetAttributeChangedSignal(AttributeDefinition.Energy.Name):Connect(draw)
-	print(`draining {controls.Amount} every {controls.Interval} s, energy enabled: {BUILD_CONFIG.ENERGY_ENABLED}`)
+	print(
+		`draining {controls.Amount} every {controls.Interval} s, energy enabled: {ModeDefinition.getIfEnergyEnabled()}`
+	)
 	local handle = stage.ServerScope.start(DrainEnergy, {
 		Amount = controls.Amount,
 		Interval = controls.Interval,

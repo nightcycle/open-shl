@@ -5,7 +5,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local Boundary = require("@self/Boundary")
@@ -130,8 +130,8 @@ return function(props: Properties)
 					IsBuildVisible = isInResidence,
 					IsCameraMode = isCameraMode,
 					IsCameraHidden = not isCameraModeAvailable,
-					IsHealthVisible = BUILD_CONFIG.PVP_ENABLED,
-					IsEnergyVisible = BUILD_CONFIG.ENERGY_ENABLED,
+					IsHealthVisible = ModeDefinition.getIfPVPEnabled(),
+					IsEnergyVisible = ModeDefinition.getIfEnergyEnabled(),
 					OnClick = function(menuId: PseudoEnum.MenuId)
 						props.OnAction({
 							Type = "MenuButtonPressed",

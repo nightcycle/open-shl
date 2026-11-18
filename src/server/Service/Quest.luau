@@ -8,8 +8,8 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local EconomyService = require("@game/ServerScriptService/Server/Service/Economy")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local QuestDefinition = require("@game/ReplicatedStorage/Shared/Definition/Quest")
@@ -189,7 +189,7 @@ end
 -- the server picks the goal + rolls the reward, an error is the line the quest giver turns the player down with
 local function start(self: QuestService, player: Player, questType: PseudoEnum.QuestType): Result<QuestState, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	if not BUILD_CONFIG.QUESTS_ENABLED then
+	if not ModeDefinition.getIfQuestsEnabled() then
 		return Result.err(`quests are off in this mode`)
 	end
 	if SessionService:Get(player).IsNone then

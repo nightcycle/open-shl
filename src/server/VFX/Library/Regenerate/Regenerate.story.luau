@@ -6,7 +6,7 @@ _G.__REACT_MICROPROFILER_LEVEL = 10
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local Regenerate = require("@game/ServerScriptService/Server/VFX/Library/Regenerate")
 local VFXStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Story")
 -- Components
@@ -43,7 +43,7 @@ return VFXStory.newStateStory({
 		print(`health: {health}, energy: {AttributeDefinition.get(user, AttributeDefinition.Energy)}`)
 	end
 	local connection = user:GetAttributeChangedSignal(AttributeDefinition.Health.Name):Connect(draw)
-	print(`{controls.Amount} health every {controls.Interval} s, energy enabled: {BUILD_CONFIG.ENERGY_ENABLED}`)
+	print(`{controls.Amount} health every {controls.Interval} s, energy enabled: {ModeDefinition.getIfEnergyEnabled()}`)
 	local handle = stage.ServerScope.start(Regenerate, {
 		Amount = controls.Amount,
 		Cost = controls.Cost,

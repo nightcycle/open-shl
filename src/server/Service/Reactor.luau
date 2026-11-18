@@ -5,9 +5,9 @@ local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local HazardService = require("@game/ServerScriptService/Server/Service/Hazard")
 local MapDefinition = require("@game/ServerScriptService/Server/Definition/Map")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Reactor = {
@@ -108,7 +108,7 @@ local function setMeltingDown(reactor: Reactor, isMeltingDown: boolean)
 		rod.Transparency = if isMeltingDown then 1 else 0
 	end
 	-- the lightning only hurts where players can be hurt at all
-	HazardService:SetLethal(reactor.MeltBeam, isMeltingDown and BUILD_CONFIG.PVP_ENABLED)
+	HazardService:SetLethal(reactor.MeltBeam, isMeltingDown and ModeDefinition.getIfPVPEnabled())
 end
 
 -- yields for as long as the service lives

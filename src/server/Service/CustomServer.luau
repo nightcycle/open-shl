@@ -2,11 +2,14 @@
 -- Services
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
+local Workspace = game:GetService("Workspace")
 -- Packages
 local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
+local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ServerRegistryUtil = require("@game/ServerScriptService/Server/Util/ServerRegistry")
 -- Types
@@ -147,16 +150,6 @@ end
 
 -- yields for as long as the service lives
 local function run(self: CustomServerService)
-	local serverRes = load()
-	if serverRes.IsErr then
-		warn(`this custom server runs unlisted: {serverRes.Value}`)
-		return
-	end
-	self._Server = serverRes.Value
-	-- whoever got in while the record was on its way
-	for _, player in Players:GetPlayers() do
-		kickIfBanned(serverRes.Value, player)
-	end
 	local isFailing = false
 	while true do
 		local server = self._Server
@@ -184,19 +177,39 @@ return ServiceLocker(function(): CustomServerService
 		_Connections = {},
 	}, CustomServerService)
 
+	-- the record is read before anything else of the game starts: on a private place it says what the server plays by
+	if IS_RESERVED then
+		local serverRes = load()
+		if serverRes.IsOk then
+			self._Server = serverRes.Value
+		else
+			warn(`this custom server runs unlisted: {serverRes.Value}`)
+		end
+	end
+	local server = self._Server
+	-- one that's joined without having been set up, or whose record is gone, plays by the rules of roleplay
+	if BUILD_CONFIG.MODE == "private-server" then
+		AttributeDefinition.set(Workspace, AttributeDefinition.IsPVP, server ~= nil and server.IsPVP)
+	end
 	if not IS_RESERVED then
 		return self
 	end
 
+	-- whoever got in while the record was on its way
+	if server then
+		for _, player in Players:GetPlayers() do
+			kickIfBanned(server, player)
+		end
+	end
 	local heartbeatThread = task.spawn(run, self)
 	table.insert(self._CleanUpCallbacks, function()
-		local server = self._Server
+		local lastServer = self._Server
 		if coroutine.status(heartbeatThread) == "suspended" then
 			task.cancel(heartbeatThread)
 		end
 		-- a closing server isn't held up for this, a record that's left behind runs out by itself
-		if server then
-			ServerRegistryUtil.removeCustomServer(server.Id)
+		if lastServer then
+			ServerRegistryUtil.removeCustomServer(lastServer.Id)
 		end
 	end)
 

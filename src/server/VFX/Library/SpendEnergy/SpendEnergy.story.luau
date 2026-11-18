@@ -6,8 +6,8 @@ _G.__REACT_MICROPROFILER_LEVEL = 10
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local EnergyWarned = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Library/EnergyWarning/Warned")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local SpendEnergy = require("@game/ServerScriptService/Server/VFX/Library/SpendEnergy")
 local VFXStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Story")
 -- Components
@@ -34,7 +34,9 @@ return VFXStory.newEventStory({
 	local isSpent = stage.ServerScope.fire(SpendEnergy, { Amount = controls.Amount })
 	connection:Disconnect()
 	local energy = AttributeDefinition.get(user, AttributeDefinition.Energy)
-	print(`spent: {isSpent}, warned: {isWarned}, energy: {energy}, energy enabled: {BUILD_CONFIG.ENERGY_ENABLED}`)
+	print(
+		`spent: {isSpent}, warned: {isWarned}, energy: {energy}, energy enabled: {ModeDefinition.getIfEnergyEnabled()}`
+	)
 	if not isSpent then
 		AttributeDefinition.setDefaults(user, "Character")
 	end

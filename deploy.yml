@@ -10,7 +10,7 @@
 # another without any of them being written down twice
 universes:
   shl2:
-    universe_id: 0
+    universe_id: 197125125
     api_key_env: PUBLISH_ROBLOX_API_KEY
     env:
       PROJECT_NAME: superhero-life-2
@@ -18,12 +18,19 @@ universes:
     places:
       # the place players land in
       root:
-        place_id: 0
+        place_id: 508693446
         version_type: published # "saved" uploads a version without putting it live
         env:
           MODE: combat
       roleplay:
-        place_id: 0
+        place_id: 718655742
         version_type: published
         env:
           MODE: roleplay
+      # where every custom server is reserved, whoever sets one up picks what it plays by
+      private-server:
+        place_id: 907988423
+        version_type: published
+        env:
+          MODE: private-server
+

@@ -3,8 +3,8 @@
 -- Packages
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local Damage = require("@game/ServerScriptService/Server/VFX/Library/Damage")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local ServerVFX = require("@game/ServerScriptService/Server/VFX")
 -- Types
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
@@ -24,7 +24,7 @@ local isProperties = Type.strictInterface({
 -- Class
 -- a character hurting another one, as far as the mode lets them. true if it landed
 return ServerVFX.newEvent("Attack", isProperties, function(props: Properties, scope: ServerScope): boolean
-	if not BUILD_CONFIG.PVP_ENABLED or props.Target == scope.Character then
+	if not ModeDefinition.getIfPVPEnabled() or props.Target == scope.Character then
 		return false
 	end
 	return scope.fire(Damage, {

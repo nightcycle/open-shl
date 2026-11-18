@@ -17,7 +17,7 @@ type IdentityKey = CharacterType.IdentityKey
 type EntitlementKey = EconomyType.EntitlementKey
 type ExpressionId = RoleplayType.ExpressionId
 export type Validator = (value: unknown) -> (boolean, string?)
-export type Owner = "Player" | "Character"
+export type Owner = "Player" | "Character" | "Workspace"
 -- _Signature is never set, it only carries the type of the value
 export type Attribute<V> = {
 	Name: string,
@@ -34,6 +34,7 @@ local ENTITLEMENT_KEYS: { EntitlementKey } =
 local OWNER_CLASS_NAMES: { [Owner]: string } = table.freeze({
 	Player = "Player",
 	Character = "Model",
+	Workspace = "Workspace",
 })
 -- Variables
 local Attributes: { Attribute<any> } = {}
@@ -97,6 +98,11 @@ Module.IsApartmentLocked = new("Player", "IsApartmentLocked", Type.boolean, true
 Module.IsModeChosen = new("Player", "IsModeChosen", Type.boolean, false) :: Attribute<boolean>
 -- nil for as long as the player has no residence
 Module.ResidenceId = new("Player", "ResidenceId", Type.optional(BaseType.ResidenceId), nil) :: Attribute<ResidenceId?>
+
+-- on the workspace
+-- if a private server lets its players fight, which is up to whoever set it up. nil until its server knows + on
+-- every place that's built for one mode
+Module.IsPVP = new("Workspace", "IsPVP", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
 
 Module.list = function(owner: Owner?): { Attribute<any> }
 	local out: { Attribute<any> } = {}

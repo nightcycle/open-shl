@@ -4,8 +4,8 @@
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local Probe = require("@game/ReplicatedStorage/Shared/VFX/Library/Probe")
 local WallClimb = require("@game/ReplicatedStorage/Shared/Ability/Library/Transportation/WallClimb")
@@ -51,7 +51,7 @@ return AbilityBuilder.newClient(layout)
 				local distance = context.VFX.fire(Probe, { Range = config.ProbeRange })
 				if distance and distance < config.ClingDistance then
 					local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
-					if not BUILD_CONFIG.ENERGY_ENABLED or energy >= energyCost then
+					if not ModeDefinition.getIfEnergyEnabled() or energy >= energyCost then
 						context.raise(bindings.Cling, nil)
 						return
 					end

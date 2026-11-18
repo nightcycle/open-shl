@@ -4,8 +4,8 @@
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local ToggleFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Toggle")
 -- Types
@@ -28,7 +28,7 @@ Module.new = function(ability: ToggleFactory.Ability): AbilityBuilder.ClientBuil
 	local energyCost = powerRes.Value.EnergyCost
 	return AbilityBuilder.newClient(layout):Guard(bindings.Cast, function(context: ClientContext): boolean
 		local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
-		if BUILD_CONFIG.ENERGY_ENABLED and energy < energyCost then
+		if ModeDefinition.getIfEnergyEnabled() and energy < energyCost then
 			context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
 			return false
 		end

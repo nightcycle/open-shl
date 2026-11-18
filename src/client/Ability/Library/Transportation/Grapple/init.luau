@@ -4,9 +4,9 @@
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local Grapple = require("@game/ReplicatedStorage/Shared/Ability/Library/Transportation/Grapple")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local Projectile = require("@game/ReplicatedStorage/Shared/VFX/Library/Projectile")
 local Reach = require("@game/ReplicatedStorage/Shared/VFX/Library/Reach")
@@ -156,7 +156,7 @@ for _, binding in { bindings.Fire, bindings.Refire } do
 			binding,
 			function(context: ClientContext): boolean
 				local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
-				if BUILD_CONFIG.ENERGY_ENABLED and energy < power.EnergyCost then
+				if ModeDefinition.getIfEnergyEnabled() and energy < power.EnergyCost then
 					context.VFX.fire(ClientVFXDefinition.EnergyWarning, {})
 					return false
 				end

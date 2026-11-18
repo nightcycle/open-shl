@@ -197,10 +197,10 @@ end
 
 local function createServer(player: Player, settings: Settings): Result<true, string>
 	local fixedSettings = ServerDefinition.fixSettings(settings)
-	local mode: Mode = if fixedSettings.IsPVP then "combat" else "roleplay"
-	local placeId = getPlaceId(mode)
+	-- every custom server is a server of the one place that's built for them, whichever way its owner wants it played
+	local placeId = BUILD_CONFIG.PRIVATE_SERVER_PLACE_ID
 	if placeId == 0 then
-		return Result.err(`{mode} servers aren't available yet`)
+		return Result.err(`custom servers aren't available yet`)
 	end
 	local nameRes = filter(player, fixedSettings.Name)
 	if nameRes.IsErr then
