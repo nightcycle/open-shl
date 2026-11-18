@@ -7,6 +7,7 @@ local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/AbilityCondition")
 local AbilityLibrary = require("@game/ServerScriptService/Server/Ability/Library")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local ConditionStore = require("@game/ReplicatedStorage/Shared/Ability/ConditionStore")
 local Context = require("@game/ReplicatedStorage/Shared/Ability/Context")
 local Machine = require("@game/ReplicatedStorage/Shared/Ability/Machine")
@@ -227,6 +228,21 @@ local function gainEnergy(self: AbilityService)
 		loadout.Energy = energy
 	end
 end
+
+-- a character that's hurt + still up gets some health back
+local function gainHealth(self: AbilityService, amount: number)
+	for _, loadout in self._Loadouts do
+		local character = loadout.Character
+		local health = AttributeDefinition.get(character, AttributeDefinition.Health)
+		if
+			health < AttributeDefinition.MAX_HEALTH
+			and not AttributeDefinition.get(character, AttributeDefinition.IsDead)
+		then
+			health = math.min(AttributeDefinition.MAX_HEALTH, health + amount)
+			AttributeDefinition.set(character, AttributeDefinition.Health, health)
+		end
+	end
+end
 -- Class
 local AbilityService = {} :: AbilityServiceImpl
 AbilityService.__index = AbilityService
@@ -359,6 +375,19 @@ return ServiceLocker(function(): AbilityService
 		end)
 		table.insert(self._CleanUpCallbacks, function()
 			task.cancel(energyThread)
+		end)
+	end
+	-- not every game has health come back by itself
+	local regeneration = CombatDefinition.REGENERATION
+	if regeneration then
+		local healthThread = task.spawn(function()
+			while true do
+				task.wait(regeneration.Interval)
+				gainHealth(self, regeneration.Amount)
+			end
+		end)
+		table.insert(self._CleanUpCallbacks, function()
+			task.cancel(healthThread)
 		end)
 	end
 
