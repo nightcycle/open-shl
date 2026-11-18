@@ -44,6 +44,8 @@ return function(scene: Scene?, appearance: Appearance?)
 		appearance and appearance.Items :: any,
 		appearance and appearance.HiddenTags,
 		appearance and appearance.SkinColor,
+		-- never nil, a hole would cut the list short of the rig
+		appearance and appearance.Scale or false,
 		rig,
 	})
 end
