@@ -59,6 +59,8 @@ do
 	for _, name in COMBAT_FLAGS do
 		table.insert(lines, `\t{name} = {getFlag(name, mode == "combat")},`)
 	end
+	-- off in every mode: the server runs its specs before it starts, only a terminal ever asks it to
+	table.insert(lines, `	TESTS_ENABLED = {getFlag("TESTS_ENABLED", false)},`)
 	table.insert(lines, `	ROLEPLAY_PLACE_ID = {getPlaceId("ROLEPLAY_PLACE_ID")},`)
 	table.insert(lines, `	PRIVATE_SERVER_PLACE_ID = {getPlaceId("PRIVATE_SERVER_PLACE_ID")},`)
 	table.insert(lines, "})")

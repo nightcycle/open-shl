@@ -1,9 +1,12 @@
 --!strict
 -- Services
 -- Packages
+local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
+local SimpleTest = require("@game/ReplicatedStorage/Packages/SimpleTest")
 -- Modules
 local AbilityService = require("@game/ServerScriptService/Server/Service/Ability")
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
+local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local BeaconService = require("@game/ServerScriptService/Server/Service/Beacon")
 local CharacterService = require("@game/ServerScriptService/Server/Service/Character")
 local ColorizerService = require("@game/ServerScriptService/Server/Service/Colorizer")
@@ -31,8 +34,49 @@ local VFXService = require("@game/ServerScriptService/Server/Service/VFX")
 -- Variables
 local DestroyCallbacks: { () -> () } = {}
 -- References
+local Server = IndexUtil.waitForPath("game/ServerScriptService/Server")
 -- Private Functions
+-- yields. a spec is a module named after what it tests + ".spec", in the folder of what it tests. each sets up + takes
+-- down the services it needs, which is why they run before the server has any of its own up
+local function test()
+	local tests: { [string]: SimpleTest.Test } = {}
+	local passCount, failCount = 0, 0
+	for _, module in Server:GetDescendants() do
+		if not module:IsA("ModuleScript") or not string.match(module.Name, "%.spec$") then
+			continue
+		end
+		-- the package leaves out a spec it can't make sense of without a word, so each is asked for on its own
+		local moduleTests = SimpleTest.search({ module })
+		if next(moduleTests) == nil then
+			failCount += 1
+			warn(`[test] {module:GetFullName()}: no test could be read from it`)
+		end
+		for path, moduleTest in moduleTests do
+			tests[path] = moduleTest
+		end
+	end
+	local summary = SimpleTest.run(tests, "Overview")
+	assert(summary.Type == "Overview", `the tests weren't summed up as an overview`)
+	for path, result in summary.Results do
+		if result == "Success" then
+			passCount += 1
+		else
+			failCount += 1
+			warn(`[test] {path}: {result}`)
+		end
+	end
+	-- what a play-test looks for
+	print(`[test] {passCount} passed, {failCount} failed`)
+end
 -- Class
+-- only in a build that was made to be tested. a run that throws its way out of the package can't keep the server down
+if BUILD_CONFIG.TESTS_ENABLED then
+	local success, msg = pcall(test :: any)
+	if not success then
+		warn(`[test] the run threw: {msg}`)
+	end
+end
+
 -- a service leans on the ones above it, so they start in this order + stop in the reverse one
 assert(not NetworkService.IsInitialized, `the network service is already initialized`)
 table.insert(DestroyCallbacks, NetworkService.init())
