@@ -88,7 +88,7 @@ local function apply(rig: Model, appearance: Appearance, getIfCanceled: () -> bo
 		return nil
 	end
 	local errs = {}
-	for _, item in appearance.Items do
+	local function wear(item: Item)
 		-- one broken item shouldn't cost the rig the rest of the outfit
 		local success, res = pcall(ItemUtil.apply, rig, appearance, item)
 		if not success then
@@ -96,6 +96,18 @@ local function apply(rig: Model, appearance: Appearance, getIfCanceled: () -> bo
 		elseif res.IsErr then
 			table.insert(errs, `item "{item.DefinitionId}" failed to apply: {res.Value}`)
 		end
+	end
+	-- what sits on a worn piece goes on once everything that sits on the body is
+	local hungItems: { Item } = {}
+	for _, item in appearance.Items do
+		if ItemUtil.getIfHung(rig, item.DefinitionId) then
+			table.insert(hungItems, item)
+		else
+			wear(item)
+		end
+	end
+	for _, item in hungItems do
+		wear(item)
 	end
 	local faceRes = FaceUtil.apply(rig, appearance)
 	if faceRes.IsErr then

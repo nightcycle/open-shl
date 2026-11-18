@@ -24,8 +24,19 @@ type Glow = {
 	Brightness: number,
 	Shadows: boolean,
 }
+type Anchor = {
+	Part: BasePart, -- what the piece is welded to
+	CFrame: CFrame, -- where the attachment of the piece goes
+	Limb: BasePart, -- the part of the body all of it moves with
+}
 -- Constants
 local ITEM_TAG = "AppearanceItem"
+local ROOT_NAME = "root"
+local WELD_NAME = "Weld"
+-- a suit's torso is where an emblem + a cape go
+local TORSO_NAMES: { string } = table.freeze({ "UpperTorso", "LowerTorso" })
+-- further than any piece is welded away from the body
+local MAX_WELD_COUNT = 8
 local PATTERN_NAME = "Pattern"
 local GLOW_NAME = "Glow"
 -- a pattern is one image stretched over each side of a part
@@ -40,23 +51,74 @@ local CAPE_ANCHOR_NAME = "UpperTorso"
 -- Variables
 -- References
 -- Private Functions
-local function getAnchorFromName(rig: Model, name: string): (BasePart | Attachment)?
-	local anchorPart = IndexUtil.findFirstMatch(rig, function(v: Instance): BasePart?
+local function getBodyPart(rig: Model, name: string): BasePart?
+	return IndexUtil.findFirstMatch(rig, function(v: Instance): BasePart?
 		if v:IsA("BasePart") and v.Name == name then
 			return v
 		end
 		return nil
 	end)
-	if anchorPart then
-		return anchorPart
-	end
-	local anchorAttachment = IndexUtil.findFirstMatch(rig, function(v: Instance): Attachment?
-		if v:IsA("Attachment") and v.Name == name then
-			return v
+end
+
+-- the part of the body a worn part hangs off, through whatever it's welded to
+local function getLimb(rig: Model, part: BasePart): BasePart?
+	local current = part
+	for _ = 1, MAX_WELD_COUNT do
+		if current.Parent == rig and not current:HasTag(ITEM_TAG) then
+			return current
 		end
-		return nil
-	end)
-	return anchorAttachment
+		local weld = current:FindFirstChild(WELD_NAME)
+		local part0 = if weld and weld:IsA("Weld") then weld.Part0 else nil
+		if not part0 then
+			return nil
+		end
+		current = part0
+	end
+	return nil
+end
+
+-- what isn't named after a part of the body sits on a piece that's worn already, on the attachment of that name the
+-- piece brings along. one on the torso wins over any other
+local function getMountAnchor(rig: Model, name: string): Anchor?
+	local anchor: Anchor? = nil
+	for _, item in rig:GetChildren() do
+		if not item:HasTag(ITEM_TAG) then
+			continue
+		end
+		for _, attachment: Attachment in item:QueryDescendants("Attachment") :: { Attachment } do
+			local part = attachment.Parent
+			-- the attachment of a root, or of an item that's a single part, is the one that piece is worn by itself
+			if
+				attachment.Name ~= name
+				or not part
+				or not part:IsA("BasePart")
+				or part == item
+				or part.Name == ROOT_NAME
+			then
+				continue
+			end
+			local limb = getLimb(rig, part)
+			if not limb then
+				continue
+			end
+			local isTorso = table.find(TORSO_NAMES, limb.Name) ~= nil
+			if isTorso or not anchor then
+				anchor = { Part = part, CFrame = part.CFrame * attachment.CFrame, Limb = limb }
+			end
+			if isTorso then
+				return anchor
+			end
+		end
+	end
+	return anchor
+end
+
+local function getAnchor(rig: Model, name: string): Anchor?
+	local bodyPart = getBodyPart(rig, name)
+	if bodyPart then
+		return { Part = bodyPart, CFrame = bodyPart.CFrame, Limb = bodyPart }
+	end
+	return getMountAnchor(rig, name)
 end
 
 local function prepItemInst(id: string, item: Instance, isNotRoot: boolean?)
@@ -99,7 +161,7 @@ local function getAnchorName(definitionId: string): Result<string, string>
 		return Result.err(`item-template error: {itemTemplateRes.Value}`)
 	end
 	local template = itemTemplateRes.Value
-	local root = if template:IsA("Model") then template:FindFirstChild("root") else template
+	local root = if template:IsA("Model") then template:FindFirstChild(ROOT_NAME) else template
 	if not root or not root:IsA("BasePart") then
 		return Result.err(`"{definitionId}" isn't worn as a single piece`)
 	end
@@ -108,6 +170,15 @@ local function getAnchorName(definitionId: string): Result<string, string>
 		return Result.err(`failed to find valid attachment under part`)
 	end
 	return Result.ok(attachment.Name)
+end
+
+-- what a single piece sits on when that's no part of the body: a piece that's worn has to bring it along
+local function getMountName(rig: Model, definitionId: string): string?
+	local anchorNameRes = getAnchorName(definitionId)
+	if anchorNameRes.IsErr or getBodyPart(rig, anchorNameRes.Value) then
+		return nil
+	end
+	return anchorNameRes.Value
 end
 
 -- a back / neck artifact takes the place of the cape
@@ -200,31 +271,17 @@ local function applyBasePart(rig: Model, basePart: BasePart): Result<true, strin
 		return Result.err(`returned #{attachments} attachments, expected only one`)
 	end
 	local attachment = attachments[1]
-	local anchor = getAnchorFromName(rig, attachment.Name)
+	local anchor = getAnchor(rig, attachment.Name)
 	if not anchor then
 		return Result.err(`attachment name "{attachment.Name}" couldn't be mapped into a valid anchor instance`)
 	end
-	local globalCF: CFrame
-	local anchorPart: BasePart
-	if anchor:IsA("Attachment") then
-		local anchorParent = anchor:FindFirstAncestorWhichIsA("BasePart")
-		if not anchorParent then
-			return Result.err(`couldn't find basepart ancestor for root attachment "{attachment.Name}"`)
-		end
-		anchorPart = anchorParent
-		globalCF = anchorParent.CFrame * anchor.CFrame
-	else
-		anchorPart = anchor
-		globalCF = anchor.CFrame
-	end
-	globalCF *= attachment.CFrame:Inverse()
-	basePart:PivotTo(globalCF)
-	WeldUtil.between(anchorPart, basePart)
+	basePart:PivotTo(anchor.CFrame * attachment.CFrame:Inverse())
+	WeldUtil.between(anchor.Part, basePart)
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
 
 local function applyModel(rig: Model, model: Model): Result<true, string>
-	local root = model:FindFirstChild("root")
+	local root = model:FindFirstChild(ROOT_NAME)
 	if not root then
 		return Result.err(`couldn't find root`)
 	end
@@ -238,32 +295,18 @@ local function applyModel(rig: Model, model: Model): Result<true, string>
 		return Result.err(`returned #{attachments} attachments, expected only one`)
 	end
 	local attachment = attachments[1]
-	local anchor = getAnchorFromName(rig, attachment.Name)
+	local anchor = getAnchor(rig, attachment.Name)
 	if not anchor then
 		return Result.err(`attachment name "{attachment.Name}" couldn't be mapped into a valid anchor instance`)
 	end
-	local globalCF: CFrame
-	local anchorPart: BasePart
-	if anchor:IsA("Attachment") then
-		local anchorParent = anchor:FindFirstAncestorWhichIsA("BasePart")
-		if not anchorParent then
-			return Result.err(`couldn't find basepart ancestor for root attachment "{attachment.Name}"`)
-		end
-		anchorPart = anchorParent
-		globalCF = anchorParent.CFrame * anchor.CFrame
-	else
-		anchorPart = anchor
-		globalCF = anchor.CFrame
-	end
-	globalCF *= attachment.CFrame:Inverse()
 	model.WorldPivot = root.CFrame * root.PivotOffset
-	model:PivotTo(globalCF)
+	model:PivotTo(anchor.CFrame * attachment.CFrame:Inverse())
 	for _, v in model:QueryDescendants("BasePart") do
 		if v ~= root then
 			WeldUtil.between(root, v)
 		end
 	end
-	WeldUtil.between(anchorPart, root)
+	WeldUtil.between(anchor.Part, root)
 
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
@@ -277,6 +320,11 @@ function Util.getAnchorName(definitionId: string): Result<string, string>
 	return getAnchorName(definitionId)
 end
 
+-- an item that sits on a worn piece instead of on the body can only go on after the item that piece is of
+function Util.getIfHung(rig: Model, definitionId: string): boolean
+	return getMountName(rig, definitionId) ~= nil
+end
+
 function Util.apply(rig: Model, appearance: Appearance, item: Item): Result<true, string>
 	local itemDefRes = ItemAppearanceDefinition.get(item.DefinitionId)
 	if itemDefRes.IsErr then
@@ -284,6 +332,11 @@ function Util.apply(rig: Model, appearance: Appearance, item: Item): Result<true
 	end
 	-- a face item is drawn onto the head instead, a hidden item stays in the data but isn't worn
 	if itemDefRes.Value.Type == "Face" or getIfHidden(appearance, itemDefRes.Value) then
+		return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
+	end
+	-- so does an emblem or a cape with nothing under it to sit on
+	local mountName = getMountName(rig, item.DefinitionId)
+	if mountName and not getMountAnchor(rig, mountName) then
 		return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 	end
 	local newItemRes = newItemInst(item)
