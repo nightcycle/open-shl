@@ -6,6 +6,7 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 local Parameter = SimpleTest.Parameter
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local SpecUtil = require("@game/ServerScriptService/Server/Util/Spec")
 local StoreDefinition = require("@game/ServerScriptService/Server/Definition/Store")
 -- Types
@@ -29,13 +30,40 @@ type Note = {
 	Title: string,
 	Tags: { string },
 }
+-- where a game keeps its saves + what a save of its first version held that one of today doesn't
+type PlayerStore = {
+	Name: string,
+	KeyFormat: string,
+	FirstVersionFields: { [string]: any },
+}
 -- Constants
 local MATERIALS = table.freeze({ Enum.Material.Plastic, Enum.Material.Neon, Enum.Material.Wood })
 local POSITION_LIMIT = Vector3.new(1000, 1000, 1000)
 local ROUND_TRIP_ITERATIONS = 64
--- the name + the key of the store every save of the game sits in, a server that asks under another one finds nothing
-local PLAYER_STORE_NAME = "PlayerSave"
-local PLAYER_KEY_FORMAT = "Player_%d"
+-- the name + the key of the store every save of a game sits in, a server that asks under another one finds nothing
+local PLAYER_STORE: PlayerStore = GameDefinition.pick({
+	shl1 = function(): PlayerStore
+		error(`shl1 has no save yet`)
+	end,
+	-- the first version of the game listed the artifacts its player owned
+	shl2 = function(): PlayerStore
+		return {
+			Name = "PlayerSave",
+			KeyFormat = "Player_%d",
+			FirstVersionFields = { ArtifactIds = { "costume_artifacts_a-bright-presence" } },
+		}
+	end,
+	-- no save of it was ever written at its first version, one would have been in the shape of today
+	shl3 = function(): PlayerStore
+		return {
+			Name = "PlayerSave_shl3",
+			KeyFormat = "Player_%d",
+			FirstVersionFields = {},
+		}
+	end,
+})
+local PLAYER_STORE_NAME = PLAYER_STORE.Name
+local PLAYER_KEY_FORMAT = PLAYER_STORE.KeyFormat
 local isSample = Type.strictInterface({
 	Version = Type.literal(1),
 	Color = Type.Color3,
@@ -291,10 +319,12 @@ return {
 		-- a starter suit comes with an id that's baked in, a slot that kept it would share it with everybody
 		assert(store.Default().Characters[1].Id ~= save.Characters[1].Id, `two new saves share the id of a slot`)
 
-		-- what the first version of the game wrote: the same save + the artifacts its player owned
+		-- what the first version of the game wrote: the same save + whatever it held on top of it
 		local first = TableUtil.deepCopy(dataRes.Value :: { [string]: any })
 		first.Version = 1
-		first.ArtifactIds = { "costume_artifacts_a-bright-presence" }
+		for key, value in PLAYER_STORE.FirstVersionFields do
+			first[key] = value
+		end
 		local firstRes = StoreDefinition.decode(store, first)
 		assert(firstRes.IsOk, `a version 1 save wasn't decoded: {tostring(firstRes.Value)}`)
 		assert(firstRes.Value.Version == SaveType.CURRENT_VERSION, `a version 1 save wasn't caught up`)

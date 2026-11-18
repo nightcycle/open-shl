@@ -26,6 +26,16 @@ local function test()
 		if not module:IsA("ModuleScript") or not string.match(module.Name, "%.spec$") then
 			continue
 		end
+		local isRead, spec = pcall(require :: any, module)
+		if not isRead then
+			failCount += 1
+			warn(`[test] {module:GetFullName()}: it threw as it was read: {spec}`)
+			continue
+		end
+		-- a spec that has nothing to hold this game to says so with an empty list: what it tests is another game's
+		if type(spec) == "table" and next(spec) == nil then
+			continue
+		end
 		-- the package leaves out a spec it can't make sense of without a word, so each is asked for on its own
 		local moduleTests = SimpleTest.search({ module })
 		if next(moduleTests) == nil then
