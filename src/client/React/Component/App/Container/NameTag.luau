@@ -81,7 +81,9 @@ local function playerTag(props: {
 	local head = useHead(character)
 	local personaName = useAttributeValue(character, AttributeDefinition.PersonaName)
 	local isInMenu = useAttributeValue(character, AttributeDefinition.IsInMenu)
-	if not head then
+	local isNameHidden = useAttributeValue(character, AttributeDefinition.IsNameHidden)
+	-- a name over an avatar that's out of sight would say where it is
+	if not head or isNameHidden then
 		return nil
 	end
 	return e(

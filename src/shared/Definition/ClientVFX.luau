@@ -60,8 +60,24 @@ Module.Prop = newState("Prop", ClientVFXType.Prop) :: ClientState<ClientVFXType.
 Module.Bolt = newEvent("Bolt", ClientVFXType.Bolt) :: ClientEvent<ClientVFXType.Bolt>
 Module.Hover = newState("Hover", ClientVFXType.Hover) :: ClientState<ClientVFXType.Hover>
 Module.Thrust = newState("Thrust", ClientVFXType.Thrust) :: ClientState<ClientVFXType.Thrust>
+Module.Warp = newEvent("Warp", ClientVFXType.Warp) :: ClientEvent<ClientVFXType.Warp>
+Module.WalkSpeed = newState("WalkSpeed", ClientVFXType.WalkSpeed) :: ClientState<ClientVFXType.WalkSpeed>
+Module.Skim = newState("Skim", ClientVFXType.Skim) :: ClientState<ClientVFXType.Skim>
+Module.Lift = newState("Lift", ClientVFXType.Lift) :: ClientState<ClientVFXType.Lift>
+Module.Reel = newState("Reel", ClientVFXType.Reel) :: ClientState<ClientVFXType.Reel>
+Module.Rope = newState("Rope", ClientVFXType.Rope) :: ClientState<ClientVFXType.Rope>
+Module.Cloak = newState("Cloak", ClientVFXType.Cloak) :: ClientState<ClientVFXType.Cloak>
+Module.Coat = newState("Coat", ClientVFXType.Coat) :: ClientState<ClientVFXType.Coat>
+Module.ScreenFilter = newState("ScreenFilter", ClientVFXType.ScreenFilter) :: ClientState<ClientVFXType.ScreenFilter>
+Module.Spectate = newState("Spectate", ClientVFXType.Spectate) :: ClientState<ClientVFXType.Spectate>
+Module.Root = newState("Root", ClientVFXType.Root) :: ClientState<ClientVFXType.Root>
 Module.EnergyWarning =
 	newEvent("EnergyWarning", ClientVFXType.EnergyWarning) :: ClientEvent<ClientVFXType.EnergyWarning>
+Module.Plume = newState("Plume", ClientVFXType.Plume) :: ClientState<ClientVFXType.Plume>
+Module.Smoke = newState("Smoke", ClientVFXType.Smoke) :: ClientState<ClientVFXType.Smoke>
+Module.Flame = newState("Flame", ClientVFXType.Flame) :: ClientState<ClientVFXType.Flame>
+Module.Ripple = newEvent("Ripple", ClientVFXType.Ripple) :: ClientEvent<ClientVFXType.Ripple>
+Module.Spray = newState("Spray", ClientVFXType.Spray) :: ClientState<ClientVFXType.Spray>
 
 Module.get = function(name: string): Result<VFX, string>
 	local vfx = VFXsByName[name]

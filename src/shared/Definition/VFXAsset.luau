@@ -13,6 +13,8 @@ export type SoundKey =
 	| "ForceWhoosh"
 	| "GunShot"
 	| "Impact"
+	| "Morph"
+	| "MorphReset"
 	| "PewPew"
 	| "Platforming"
 	| "PortalShot"
@@ -54,9 +56,43 @@ export type AnimationDefinition = {
 	Url: string,
 	Length: number, -- seconds until whatever it's the wind-up of is over
 }
-export type MeshKey = "Sword"
+export type MeshKey =
+	"Sword"
+	| "ThrowingStar"
+	| "Claw"
+	| "Hammer"
+	| "Katana"
+	| "Knife"
+	| "Trident"
+	| "Rifle"
+	| "Handgun"
+	| "Bow"
+	| "Arrow"
+	| "Icicle"
 export type MeshDefinition = {
 	MeshUrl: string,
+	TextureUrl: string,
+}
+export type ParticleKey = "LightningLeft" | "LightningRight" | "Tornado"
+-- how an emitter gives off one kind of particle
+export type ParticleDefinition = {
+	TextureUrl: string,
+	Rate: number, -- a second
+	Lifetime: NumberRange,
+	Size: number,
+	Rotation: NumberRange,
+	Speed: number,
+	LightEmission: number,
+	IsLockedToPart: boolean, -- they go where what gives them off goes
+	Color: ColorSequence?, -- over their life, white without
+	EndSize: number?, -- what they've grown or shrunk to by the end of their life, the size they start at without
+	RotationSpeed: number?, -- degrees a second they turn at, they don't without
+	SpreadAngle: number?, -- degrees they're given off at either side of straight up, none without
+	Transparency: NumberSequence?, -- over their life, they're there until they're gone without
+	VelocityInheritance: number?, -- how much of the pace of what gives them off they set out with, none without
+}
+export type DecalKey = "PsychicWave" | "Shockwave"
+export type DecalDefinition = {
 	TextureUrl: string,
 }
 -- Constants
@@ -66,6 +102,8 @@ local SOUNDS: { [SoundKey]: SoundDefinition } = {
 	ForceWhoosh = { Url = "rbxassetid://580313487", Volume = 1, PlaybackSpeed = 1 },
 	GunShot = { Url = "rbxassetid://356911785", Volume = 0.25, PlaybackSpeed = 1 },
 	Impact = { Url = "rbxassetid://177172187", Volume = 1, PlaybackSpeed = 1 },
+	Morph = { Url = "rbxassetid://48579482", Volume = 0.55, PlaybackSpeed = 1 },
+	MorphReset = { Url = "rbxassetid://48579638", Volume = 0.55, PlaybackSpeed = 1 },
 	PewPew = { Url = "rbxassetid://13775494", Volume = 1.2, PlaybackSpeed = 0.6 },
 	Platforming = { Url = "rbxassetid://34315534", Volume = 1, PlaybackSpeed = 1 },
 	PortalShot = { Url = "rbxassetid://34320952", Volume = 1, PlaybackSpeed = 1 },
@@ -104,8 +142,71 @@ local ANIMATIONS: { [AnimationKey]: AnimationDefinition } = {
 TableUtil.deepFreeze(ANIMATIONS)
 local MESHES: { [MeshKey]: MeshDefinition } = {
 	Sword = { MeshUrl = "rbxasset://fonts/sword.mesh", TextureUrl = "" },
+	ThrowingStar = { MeshUrl = "rbxassetid://11376946", TextureUrl = "" },
+	Claw = { MeshUrl = "rbxassetid://10681506", TextureUrl = "" },
+	Hammer = { MeshUrl = "rbxassetid://12592754", TextureUrl = "rbxassetid://12592745" },
+	Katana = { MeshUrl = "rbxassetid://11442510", TextureUrl = "" },
+	Knife = { MeshUrl = "rbxassetid://121944778", TextureUrl = "" },
+	Trident = { MeshUrl = "rbxassetid://53926151", TextureUrl = "" },
+	Rifle = { MeshUrl = "rbxassetid://72012671", TextureUrl = "rbxassetid://72012605" },
+	Handgun = { MeshUrl = "rbxassetid://72012879", TextureUrl = "rbxassetid://72012859" },
+	Bow = { MeshUrl = "rbxassetid://55709693", TextureUrl = "" },
+	Arrow = { MeshUrl = "rbxassetid://1036682", TextureUrl = "" },
+	Icicle = { MeshUrl = "rbxassetid://20518365", TextureUrl = "rbxassetid://19287687" },
 }
 TableUtil.deepFreeze(MESHES)
+local PARTICLES: { [ParticleKey]: ParticleDefinition } = {
+	LightningLeft = {
+		TextureUrl = "rbxassetid://280294650",
+		Rate = 30,
+		Lifetime = NumberRange.new(0.1, 0.2),
+		Size = 2,
+		Rotation = NumberRange.new(-100, -1),
+		Speed = 0,
+		LightEmission = 1,
+		IsLockedToPart = true,
+	},
+	LightningRight = {
+		TextureUrl = "rbxassetid://280294638",
+		Rate = 30,
+		Lifetime = NumberRange.new(0.1, 0.2),
+		Size = 2,
+		Rotation = NumberRange.new(1, 100),
+		Speed = 0,
+		LightEmission = 1,
+		IsLockedToPart = true,
+	},
+	Tornado = {
+		TextureUrl = "rbxasset://textures/particles/smoke_main.dds",
+		Rate = 100,
+		Lifetime = NumberRange.new(1.5, 2.5),
+		Size = 8.1875,
+		Rotation = NumberRange.new(0),
+		Speed = 20,
+		LightEmission = 0,
+		IsLockedToPart = true,
+		Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.new(0.34509805, 0.37647063, 0.3803922)),
+			ColorSequenceKeypoint.new(0.75374377, Color3.new(0.5684839, 0.5891553, 0.5917393)),
+			ColorSequenceKeypoint.new(1, Color3.new(1, 1, 1)),
+		}),
+		EndSize = 10,
+		RotationSpeed = 40,
+		SpreadAngle = 40,
+		Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0),
+			NumberSequenceKeypoint.new(0.9110429, 0.049382687),
+			NumberSequenceKeypoint.new(1, 1),
+		}),
+		VelocityInheritance = 2,
+	},
+}
+TableUtil.deepFreeze(PARTICLES)
+local DECALS: { [DecalKey]: DecalDefinition } = {
+	PsychicWave = { TextureUrl = "rbxassetid://580331200" },
+	Shockwave = { TextureUrl = "rbxassetid://1280730" },
+}
+TableUtil.deepFreeze(DECALS)
 -- Variables
 -- References
 -- Private Functions
@@ -122,6 +223,8 @@ local Module = {}
 Module.SoundKey = isKey(SOUNDS)
 Module.AnimationKey = isKey(ANIMATIONS)
 Module.MeshKey = isKey(MESHES)
+Module.ParticleKey = isKey(PARTICLES)
+Module.DecalKey = isKey(DECALS)
 
 Module.getSound = function(key: SoundKey): SoundDefinition
 	return SOUNDS[key]
@@ -133,6 +236,14 @@ end
 
 Module.getMesh = function(key: MeshKey): MeshDefinition
 	return MESHES[key]
+end
+
+Module.getParticle = function(key: ParticleKey): ParticleDefinition
+	return PARTICLES[key]
+end
+
+Module.getDecal = function(key: DecalKey): DecalDefinition
+	return DECALS[key]
 end
 
 return Module

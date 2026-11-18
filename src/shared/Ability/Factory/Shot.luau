@@ -5,6 +5,7 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/AbilityCondition")
 local AbilityTrigger = require("@game/ReplicatedStorage/Shared/Constructor/AbilityTrigger")
+local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 local VFXBinding = require("@game/ReplicatedStorage/Shared/Constructor/VFXBinding")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
@@ -35,11 +36,24 @@ export type Config = {
 	ReleaseDelay: number, -- seconds from the click until the shot leaves
 	Duration: number, -- seconds from the click until the next one counts
 	Limb: string, -- the name of the part of the avatar the shot leaves from
+	Offset: Vector3?, -- of the spot on the limb it leaves from off the middle of it, in the space of the limb
 	Speed: number, -- studs a second
 	Lifetime: number, -- seconds the shot flies for at most
+	Gravity: number?, -- studs a second it picks up downwards every second, it flies straight without
 	Size: Vector3,
 	Color: Color3, -- the one it has unless the character picked one
 	FireSize: number?, -- of the flame it trails, none without
+	SecondaryColor: Color3?, -- of the sparks of its flame, the color of the rest of it without
+	HasSparkles: boolean?, -- it trails sparkles
+	Particles: { VFXAssetDefinition.ParticleKey }?, -- what it gives off on its way
+	Material: Enum.Material?, -- it glows without
+	Mesh: VFXAssetDefinition.MeshKey?,
+	MeshScale: Vector3?,
+	-- how it's turned off the way it flies. without: a flame trails behind it, anything else points ahead
+	Turn: CFrame?,
+	IsSticking: boolean?, -- it's left where it ran into something for as long as it had left to fly
+	IsHidden: boolean?, -- nobody gets to see it fly: it still runs into whoever is in its way
+	LaunchSound: VFXAssetDefinition.SoundKey?, -- heard as it leaves
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -76,10 +90,13 @@ local isHit = Type.strictInterface({
 -- Class
 local Module = {}
 
+-- every state the machine of a shot gets to, for a factory that puts bindings of its own next to the ones below
+Module.STATE_IDS = STATE_IDS
+
 -- the bindings of an ability that lets something fly: a click with the tool out winds it up, the shot leaves once
 -- that's done + whoever it runs into first is hit. the tool can be put away mid-cast, the shot still leaves
-Module.new = function(id: string, config: Config): Ability
-	local bindings: Bindings = {
+Module.newBindings = function(id: string, config: Config): Bindings
+	return {
 		Cast = VFXBinding.event(
 			{ "Idle" },
 			AbilityTrigger.during(
@@ -97,8 +114,11 @@ Module.new = function(id: string, config: Config): Ability
 			{ To = "Idle" }
 		),
 	}
+end
+
+Module.new = function(id: string, config: Config): Ability
 	return table.freeze({
-		Layout = VFXBinding.layout(id, "Idle", true, bindings),
+		Layout = VFXBinding.layout(id, "Idle", true, Module.newBindings(id, config)),
 		Config = table.freeze(table.clone(config)),
 	})
 end
@@ -113,6 +133,15 @@ Module.getBolt = function(config: Config, launch: Launch, color: Color3?): Clien
 		Size = config.Size,
 		Color = color or config.Color,
 		FireSize = config.FireSize,
+		SecondaryColor = config.SecondaryColor,
+		HasSparkles = config.HasSparkles,
+		Particles = config.Particles,
+		Material = config.Material,
+		Mesh = config.Mesh,
+		MeshScale = config.MeshScale,
+		Turn = config.Turn,
+		Gravity = config.Gravity,
+		IsSticking = config.IsSticking,
 	}
 end
 

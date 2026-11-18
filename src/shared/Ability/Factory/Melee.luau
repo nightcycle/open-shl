@@ -14,6 +14,8 @@ type EventBinding = AbilityType.EventBinding
 type StateBinding = AbilityType.StateBinding
 type ClientSignal<T> = AbilityType.ClientSignal<T>
 type Layout<B> = AbilityType.Layout<B>
+type SoundKey = VFXAssetDefinition.SoundKey
+type Prop = ClientVFXType.Prop
 -- what the client saw its weapon run into
 export type Hit = {
 	Target: Model,
@@ -27,15 +29,23 @@ export type Bindings = {
 	Hit: ClientSignal<Hit>,
 	Recover: EventBinding,
 }
+-- a box that's swept through the air by the limb that carries it: around what the limb holds, or the limb itself
+export type Hitbox = {
+	Limb: string, -- the name of the part of the avatar
+	Size: Vector3,
+	Offset: CFrame, -- of the box from the limb
+}
 -- what both halves of a melee ability have to agree on
 export type Config = {
 	Duration: number, -- seconds from the start of a swing until the next one
 	Reach: number, -- studs from the middle of the avatar a swing gets to at most
-	Prop: ClientVFXType.Prop, -- the weapon, in the color it has unless the character picked one
-	-- the box around the weapon that's swept through the air, carried by the limb that holds it
-	HitboxSize: Vector3,
-	HitboxOffset: CFrame,
-	SwingSound: VFXAssetDefinition.SoundKey?,
+	-- what's held for as long as the weapon is out, each in the color it has unless the character picked one. bare
+	-- hands hold nothing
+	Props: { Prop },
+	Hitboxes: { Hitbox }, -- all of them are on with every swing, whoever any of them runs into is hit once
+	DrawSound: SoundKey?,
+	SheatheSound: SoundKey?,
+	SwingSound: SoundKey?,
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -68,10 +78,37 @@ Module.new = function(id: string, config: Config): Ability
 		Hit = VFXBinding.signal({ "Swinging" }, "Client", isHit) :: ClientSignal<Hit>,
 		Recover = VFXBinding.event({ "Swinging" }, AbilityTrigger.after(config.Duration), { To = "Idle" }),
 	}
+	local out: Config = table.clone(config)
+	out.Props = table.freeze(table.clone(config.Props))
+	out.Hitboxes = table.freeze(table.clone(config.Hitboxes))
 	return table.freeze({
 		Layout = VFXBinding.layout(id, "Idle", true, bindings),
-		Config = table.freeze(table.clone(config)),
+		Config = table.freeze(out),
 	})
+end
+
+-- one of the props as every machine shows it: in the color the character wears the ability in
+Module.getProp = function(prop: Prop, color: Color3?): Prop
+	local out = table.clone(prop)
+	out.Color = color or prop.Color
+	return out
+end
+
+-- what's heard at which binding, for the ones the ability has a sound for
+Module.getSounds = function(ability: Ability): { [EventBinding]: SoundKey }
+	local bindings = ability.Layout.Bindings
+	local config = ability.Config
+	local sounds: { [EventBinding]: SoundKey } = {}
+	if config.DrawSound then
+		sounds[bindings.Draw] = config.DrawSound
+	end
+	if config.SheatheSound then
+		sounds[bindings.Sheathe] = config.SheatheSound
+	end
+	if config.SwingSound then
+		sounds[bindings.Swing] = config.SwingSound
+	end
+	return sounds
 end
 
 return Module

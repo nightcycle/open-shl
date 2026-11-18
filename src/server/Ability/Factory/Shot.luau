@@ -9,6 +9,7 @@ local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power
 local Reach = require("@game/ReplicatedStorage/Shared/VFX/Library/Reach")
 local ShotFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Shot")
 local SpendEnergy = require("@game/ServerScriptService/Server/VFX/Library/SpendEnergy")
+local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
@@ -31,13 +32,35 @@ local PATH_TOLERANCE = 6
 local FLIGHT_TOLERANCE = 0.25
 -- seconds past the end of its flight a shot is kept for: word of what it ran into last takes a while to get here
 local WORD_DELAY = 1
+-- seconds of flight to each of the stretches the arc of a shot is checked in
+local ARC_INTERVAL = 0.05
+-- studs everybody else hears a shot leave from
+local SOUND_RANGE = 150
+-- seconds ahead of the end of its wind-up a shot may leave: the machine of the server is that far ahead of the clock
+-- as well, so a client that's on time isn't turned down over a hiccup of its connection
+local RELEASE_TOLERANCE = 0.15
 -- the shots of the character that are out, by the id their client gave them
 local SHOTS_KEY = "Shots"
 -- a cast got as far as letting its shot go, which the client has yet to say where to
 local IS_LOADED_KEY = "IsLoaded"
+-- when the cast began that has yet to get that far
+local CAST_TIME_KEY = "CastTime"
+-- word of the shot of that cast is in already, it has none left to let go
+local IS_SPENT_KEY = "IsSpent"
 -- Variables
 -- References
 -- Private Functions
+-- whether a cast has a shot to let go. one that's wound up by the clock counts before the machine got around to it:
+-- word of a shot that takes next to no winding up can get here along with the click it began with
+local function getIfLoaded(context: ServerContext, releaseDelay: number): boolean
+	local record = context.Record
+	if record[IS_LOADED_KEY] then
+		return true
+	end
+	local castTime = record[CAST_TIME_KEY] :: number?
+	return castTime ~= nil and not record[IS_SPENT_KEY] and os.clock() - castTime + RELEASE_TOLERANCE >= releaseDelay
+end
+
 -- whatever can't be in the air any more is dropped on the way
 local function getShots(context: ServerContext, lifetime: number): { [number]: Shot }
 	local shots = (context.Record[SHOTS_KEY] or {}) :: { [number]: Shot }
@@ -51,10 +74,30 @@ local function getShots(context: ServerContext, lifetime: number): { [number]: S
 	return shots
 end
 
--- how far a spot is off the stretch of its path a shot has behind it
-local function getPathDistance(shot: Shot, position: Vector3, length: number): number
-	local along = math.clamp((position - shot.Origin):Dot(shot.Direction), 0, length)
-	return (shot.Origin + shot.Direction * along - position).Magnitude
+-- how far a spot is off a straight stretch
+local function getStretchDistance(origin: Vector3, direction: Vector3, length: number, position: Vector3): number
+	local along = math.clamp((position - origin):Dot(direction), 0, length)
+	return (origin + direction * along - position).Magnitude
+end
+
+-- how far a spot is off the stretch of its path a shot of that age has behind it
+local function getPathDistance(shot: Shot, position: Vector3, speed: number, age: number, gravity: number?): number
+	if not gravity then
+		return getStretchDistance(shot.Origin, shot.Direction, speed * age, position)
+	end
+	-- the arc of one that's pulled down is gone over in stretches short enough to pass for straight
+	local distance = math.huge
+	local from = shot.Origin
+	for index = 1, math.ceil(age / ARC_INTERVAL) do
+		local time = math.min(index * ARC_INTERVAL, age)
+		local to = shot.Origin + shot.Direction * speed * time - Vector3.yAxis * gravity * time ^ 2 / 2
+		local stretch = to - from
+		if stretch.Magnitude > 0 then
+			distance = math.min(distance, getStretchDistance(from, stretch.Unit, stretch.Magnitude, position))
+		end
+		from = to
+	end
+	return distance
 end
 -- Class
 local Module = {}
@@ -70,20 +113,32 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 	local power = powerRes.Value
 	-- as many as a client that's on time can have out at once + one to spare, a made up launch doesn't add to them
 	local maxShotCount = math.ceil((shared.Lifetime + WORD_DELAY) / shared.Duration) + 1
-	return AbilityBuilder
+	-- a spot off the middle of the limb is that much further out to begin with
+	local originRange = ORIGIN_RANGE + (if shared.Offset then shared.Offset.Magnitude else 0)
+	local builder = AbilityBuilder
 		.newServer(layout)
 		:Guard(bindings.Cast, function(context: ServerContext): boolean
 			return context.VFX.fire(SpendEnergy, { Amount = power.EnergyCost })
 		end)
+		:On(bindings.Cast, function(context: ServerContext)
+			context.Record[CAST_TIME_KEY] = os.clock()
+		end)
 		:On(bindings.Release, function(context: ServerContext)
-			context.Record[IS_LOADED_KEY] = true
+			local record = context.Record
+			-- a shot that's out already isn't let go of a second time
+			if record[IS_SPENT_KEY] then
+				record[IS_SPENT_KEY] = nil
+			else
+				record[IS_LOADED_KEY] = true
+			end
+			record[CAST_TIME_KEY] = nil
 		end)
 		-- a cast lets one shot fly, from where the server has its avatar
 		:Guard(
 			bindings.Launch,
 			function(context: ServerContext): boolean
 				local launch = context.read(bindings.Launch)
-				if not launch or not context.Record[IS_LOADED_KEY] then
+				if not launch or not getIfLoaded(context, shared.ReleaseDelay) then
 					return false
 				end
 				local count = 0
@@ -91,13 +146,18 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 					count += 1
 				end
 				return count < maxShotCount
-					and context.VFX.fire(Reach, { Position = launch.Origin, Range = ORIGIN_RANGE })
+					and context.VFX.fire(Reach, { Position = launch.Origin, Range = originRange })
 			end
 		)
 		:On(bindings.Launch, function(context: ServerContext)
 			local launch = context.read(bindings.Launch)
 			if launch then
-				context.Record[IS_LOADED_KEY] = nil
+				local record = context.Record
+				if record[IS_LOADED_KEY] then
+					record[IS_LOADED_KEY] = nil
+				else
+					record[IS_SPENT_KEY] = true
+				end
 				getShots(context, shared.Lifetime)[launch.Id] = {
 					Origin = launch.Origin,
 					Direction = launch.Direction.Unit,
@@ -105,16 +165,6 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 				}
 			end
 		end)
-		-- the player's own machine shows them their shot right away, this is for everybody else. whoever it can get to
-		-- has to see it coming
-		:FireClient(
-			bindings.Launch,
-			ClientVFXDefinition.Bolt,
-			function(context: ServerContext): ClientVFXType.Bolt
-				return ShotFactory.getBolt(shared, context.read(bindings.Launch) :: ShotFactory.Launch, context.Color)
-			end,
-			{ Audience = "Others", Range = shared.Speed * shared.Lifetime }
-		)
 		:Guard(bindings.Hit, function(context: ServerContext): boolean
 			local hit = context.read(bindings.Hit)
 			local shot = if hit then getShots(context, shared.Lifetime)[hit.ShotId] else nil
@@ -126,7 +176,8 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 				return false
 			end
 			local age = math.min(os.clock() - shot.LaunchTime + FLIGHT_TOLERANCE, shared.Lifetime)
-			return getPathDistance(shot, target:GetPivot().Position, shared.Speed * age) <= PATH_TOLERANCE
+			return getPathDistance(shot, target:GetPivot().Position, shared.Speed, age, shared.Gravity)
+				<= PATH_TOLERANCE
 		end)
 		-- a shot is spent on whoever it ran into first
 		:On(bindings.Hit, function(context: ServerContext)
@@ -136,6 +187,28 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 				context.VFX.fire(Attack, { Target = hit.Target, Amount = power.Damage })
 			end
 		end)
+
+	-- the player's own machine shows them their shot right away, this is for everybody else. whoever it can get to
+	-- has to see it coming, unless there's nothing of it to see
+	if not shared.IsHidden then
+		builder = builder:FireClient(
+			bindings.Launch,
+			ClientVFXDefinition.Bolt,
+			function(context: ServerContext): ClientVFXType.Bolt
+				return ShotFactory.getBolt(shared, context.read(bindings.Launch) :: ShotFactory.Launch, context.Color)
+			end,
+			{ Audience = "Others", Range = shared.Speed * shared.Lifetime }
+		)
+	end
+	-- not every shot is heard as it leaves
+	local launchSound = shared.LaunchSound
+	if launchSound then
+		builder = builder:FireClient(bindings.Launch, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+			return { Sound = launchSound :: VFXAssetDefinition.SoundKey }
+		end, { Audience = "Others", Range = SOUND_RANGE })
+	end
+
+	return builder
 end
 
 return Module

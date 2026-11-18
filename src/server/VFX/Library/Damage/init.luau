@@ -19,11 +19,15 @@ local isProperties = Type.strictInterface({
 -- References
 -- Private Functions
 -- Class
--- takes health off a character, whoever asks + whatever the rules of the mode. true if it landed
+-- takes health off a character, whoever asks + whatever the rules of the mode. true if it landed, which it never
+-- does on one that's invulnerable
 return ServerVFX.newEvent("Damage", isProperties, function(props: Properties): boolean
 	local target = props.Target
 	local humanoid = target:FindFirstChildWhichIsA("Humanoid")
 	if not humanoid or humanoid.Health <= 0 or AttributeDefinition.get(target, AttributeDefinition.IsDead) then
+		return false
+	end
+	if AttributeDefinition.get(target, AttributeDefinition.IsInvulnerable) then
 		return false
 	end
 	local health = math.max(0, AttributeDefinition.get(target, AttributeDefinition.Health) - props.Amount)

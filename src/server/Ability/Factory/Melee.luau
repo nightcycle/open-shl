@@ -15,7 +15,7 @@ local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
 type ServerContext = AbilityType.ServerContext
 -- Constants
--- studs everybody else hears a swing from
+-- studs everybody else hears a weapon from
 local SOUND_RANGE = 150
 -- studs a target may be further off than the reach: the two sides never see an avatar in quite the same spot
 local REACH_TOLERANCE = 4
@@ -36,19 +36,7 @@ Module.new = function(ability: MeleeFactory.Ability): AbilityBuilder.ServerBuild
 	local powerRes = PowerDefinition.get(layout.Id)
 	assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 	local power = powerRes.Value
-	local builder = AbilityBuilder
-		.newServer(layout)
-		-- the player's own machine shows them their weapon + their swing right away, this is for everybody else
-		:RunClient(
-			bindings.Hold,
-			ClientVFXDefinition.Prop,
-			function(context: ServerContext): ClientVFXType.Prop
-				local prop = table.clone(shared.Prop)
-				prop.Color = context.Color or prop.Color
-				return prop
-			end,
-			{ Audience = "Others" }
-		)
+	local builder = AbilityBuilder.newServer(layout)
 		:Guard(bindings.Swing, function(context: ServerContext): boolean
 			return context.VFX.fire(SpendEnergy, { Amount = power.EnergyCost })
 		end)
@@ -72,11 +60,20 @@ Module.new = function(ability: MeleeFactory.Ability): AbilityBuilder.ServerBuild
 			end
 		end)
 
-	-- not every weapon is heard as it's swung
-	local swingSound = shared.SwingSound
-	if swingSound then
-		builder = builder:FireClient(bindings.Swing, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
-			return { Sound = swingSound :: VFXAssetDefinition.SoundKey }
+	-- the player's own machine shows them their weapon + lets them hear it right away, this is for everybody else
+	for _, prop in shared.Props do
+		builder = builder:RunClient(
+			bindings.Hold,
+			ClientVFXDefinition.Prop,
+			function(context: ServerContext): ClientVFXType.Prop
+				return MeleeFactory.getProp(prop, context.Color)
+			end,
+			{ Audience = "Others" }
+		)
+	end
+	for binding, sound in MeleeFactory.getSounds(ability) do
+		builder = builder:FireClient(binding, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+			return { Sound = sound :: VFXAssetDefinition.SoundKey }
 		end, { Audience = "Others", Range = SOUND_RANGE })
 	end
 

@@ -13,6 +13,8 @@ local CharacterEnergyContext = require("@game/StarterPlayer/StarterPlayerScripts
 local CharacterHealthContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Health")
 local CharacterIsEnergyInsufficientContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/IsEnergyInsufficient")
+local CharacterIsInvulnerableContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/IsInvulnerable")
 -- Types
 export type Properties = {
 	IsHealthVisible: boolean?,
@@ -49,6 +51,7 @@ local function statBar(props: {
 	Fill: number,
 	FillColor3: Color3,
 	Position: UDim2,
+	IsFillVisible: boolean?,
 }): React.ReactNode
 	local fill = math.clamp(props.Fill, 0, 1)
 	local fillRef: { current: Frame? } = React.useRef(nil :: Frame?)
@@ -73,6 +76,7 @@ local function statBar(props: {
 				BorderColor3 = Color3.fromRGB(27, 42, 53),
 				Position = getFillPosition(initialFillRef.current),
 				Size = getFillSize(initialFillRef.current),
+				Visible = props.IsFillVisible ~= false,
 			} :: RobloxComponents.FrameProperties
 		),
 
@@ -94,6 +98,7 @@ return function(props: Properties): React.ReactNode
 	local health = React.useContext(CharacterHealthContext)
 	local energy = React.useContext(CharacterEnergyContext)
 	local isEnergyInsufficient = React.useContext(CharacterIsEnergyInsufficientContext)
+	local isInvulnerable = React.useContext(CharacterIsInvulnerableContext)
 
 	return e(React.Fragment, {}, {
 		Energy = props.IsEnergyVisible ~= false and e(statBar, {
@@ -108,6 +113,8 @@ return function(props: Properties): React.ReactNode
 			Fill = health / MAX_HEALTH,
 			FillColor3 = getHealthColor(health),
 			Position = UDim2.fromScale(0.35, 0.01),
+			-- there's no health to lose for as long as nothing can take it
+			IsFillVisible = not isInvulnerable,
 		}),
 
 		EnergyWarning = props.IsEnergyVisible ~= false and isEnergyInsufficient and e("TextLabel", {

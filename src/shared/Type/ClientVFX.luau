@@ -12,6 +12,7 @@ local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 type SoundKey = VFXAssetDefinition.SoundKey
 type AnimationKey = VFXAssetDefinition.AnimationKey
 type MeshKey = VFXAssetDefinition.MeshKey
+type ParticleKey = VFXAssetDefinition.ParticleKey
 
 -- the props of every client effect. the ones a player's own machine may show to others are checked by the server
 -- before they're passed on, so their validators are as tight as the effect allows
@@ -68,6 +69,12 @@ export type Prop = {
 	Color: Color3,
 	Material: Enum.Material?,
 	Mesh: MeshKey?,
+	MeshScale: Vector3?,
+	MeshOffset: Vector3?, -- studs the mesh sits off the middle of the part
+	Shape: Enum.PartType?, -- a block without
+	-- where it comes out from + goes back to as it's put away, it's there + gone at once without
+	SlideOffset: CFrame?,
+	SlideDuration: number?, -- seconds it takes either way
 }
 Types.Prop = Type.strictInterface({
 	Limb = Type.string,
@@ -76,6 +83,11 @@ Types.Prop = Type.strictInterface({
 	Color = Type.Color3,
 	Material = Type.optional(Type.enum(Enum.Material)),
 	Mesh = Type.optional(VFXAssetDefinition.MeshKey),
+	MeshScale = Type.optional(isSize),
+	MeshOffset = Type.optional(isFiniteVector3),
+	Shape = Type.optional(Type.enum(Enum.PartType)),
+	SlideOffset = Type.optional(Type.CFrame),
+	SlideDuration = Type.optional(Type.numberConstrained(0, 2)),
 })
 
 -- a glowing shot on its way through the world
@@ -87,6 +99,17 @@ export type Bolt = {
 	Size: Vector3,
 	Color: Color3,
 	FireSize: number?, -- of the flame it trails, none without
+	FireHeat: number?, -- how fast its flame rises, as fast as one that trails a shot without
+	SecondaryColor: Color3?, -- of the sparks of its flame, the color of the rest of it without
+	HasSparkles: boolean?, -- it trails sparkles
+	Particles: { ParticleKey }?, -- what it gives off on its way
+	Material: Enum.Material?, -- it glows without
+	Mesh: MeshKey?,
+	MeshScale: Vector3?,
+	-- how it's turned off the way it flies. without: a flame trails behind it, anything else points ahead
+	Turn: CFrame?,
+	Gravity: number?, -- studs a second it picks up downwards every second, it flies straight without
+	IsSticking: boolean?, -- it's left where it ran into something for as long as it had left to fly
 	OnHit: ((result: RaycastResult) -> ())?, -- only ever set by the machine that shot it
 }
 Types.Bolt = Type.strictInterface({
@@ -97,6 +120,16 @@ Types.Bolt = Type.strictInterface({
 	Size = isSize,
 	Color = Type.Color3,
 	FireSize = Type.optional(Type.numberConstrained(0, 30)),
+	FireHeat = Type.optional(Type.numberConstrained(-25, 25)),
+	SecondaryColor = Type.optional(Type.Color3),
+	HasSparkles = Type.optional(Type.boolean),
+	Particles = Type.optional(Type.array(VFXAssetDefinition.ParticleKey)),
+	Material = Type.optional(Type.enum(Enum.Material)),
+	Mesh = Type.optional(VFXAssetDefinition.MeshKey),
+	MeshScale = Type.optional(isSize),
+	Turn = Type.optional(Type.CFrame),
+	Gravity = Type.optional(Type.numberMin(0)),
+	IsSticking = Type.optional(Type.boolean),
 	OnHit = Type.optional(Type.callback),
 })
 
@@ -119,5 +152,199 @@ Types.Thrust = Type.strictInterface({
 -- the "not enough energy" warning of the hud
 export type EnergyWarning = {}
 Types.EnergyWarning = Type.strictInterface({})
+
+-- makes the avatar harder to see
+export type Cloak = {
+	Transparency: number, -- 1 is gone altogether
+}
+Types.Cloak = Type.strictInterface({
+	Transparency = Type.numberConstrained(0, 1),
+})
+
+-- every part of the avatar in one material + color
+export type Coat = {
+	Material: Enum.Material,
+	Color: Color3,
+}
+Types.Coat = Type.strictInterface({
+	Material = Type.enum(Enum.Material),
+	Color = Type.Color3,
+})
+
+-- how the screen of whoever shows it takes the world in
+export type ScreenFilter = {
+	Brightness: number,
+	Contrast: number,
+	Saturation: number,
+	Blur: number,
+}
+Types.ScreenFilter = Type.strictInterface({
+	Brightness = Type.numberConstrained(-1, 1),
+	Contrast = Type.numberConstrained(-1, 1),
+	Saturation = Type.numberConstrained(-1, 1),
+	Blur = Type.numberConstrained(0, 56),
+})
+
+-- the camera of whoever shows it follows somebody else, picked with the buttons it comes with
+export type Spectate = {
+	Targets: { Model }?, -- who there is to watch, the avatar of every other player without
+}
+Types.Spectate = Type.strictInterface({
+	Targets = Type.optional(Type.array(Type.instanceIsA("Model"))),
+})
+
+-- holds the avatar where it stands: it neither walks nor jumps
+export type Root = {}
+Types.Root = Type.strictInterface({})
+
+-- puts the avatar somewhere else at once, upright + facing the way the world does
+export type Warp = {
+	Position: Vector3, -- where the middle of it ends up
+}
+Types.Warp = Type.strictInterface({
+	Position = isFiniteVector3,
+})
+
+-- has the avatar walk at another pace
+export type WalkSpeed = {
+	WalkSpeed: number, -- studs a second
+}
+Types.WalkSpeed = Type.strictInterface({
+	WalkSpeed = Type.numberConstrained(0, 200),
+})
+
+-- a part of the world nobody stands on carries the avatar for as long as it keeps moving
+export type Skim = {
+	Part: BasePart,
+}
+Types.Skim = Type.strictInterface({
+	Part = Type.instanceIsA("BasePart"),
+})
+
+-- carries the avatar straight up, where it goes sideways is left to its player
+export type Lift = {
+	Speed: number, -- studs a second
+}
+Types.Lift = Type.strictInterface({
+	Speed = Type.numberConstrained(0, 200),
+})
+
+-- pulls the avatar to a spot in a straight line, turned the way it was as the pull began
+export type Reel = {
+	Position: Vector3,
+	Speed: number, -- studs a second
+}
+Types.Reel = Type.strictInterface({
+	Position = isFiniteVector3,
+	Speed = Type.numberConstrained(0, 200),
+})
+
+-- a line from a limb of the avatar to a spot of the world
+export type Rope = {
+	Limb: string, -- the name of the part of the avatar that holds it
+	Position: Vector3, -- where its far end is, or is headed
+	Origin: Vector3?, -- where its far end sets out from, it's at the position right away without
+	Speed: number?, -- studs a second its far end flies at
+	Thickness: number,
+	Color: Color3,
+}
+Types.Rope = Type.strictInterface({
+	Limb = Type.string,
+	Position = isFiniteVector3,
+	Origin = Type.optional(isFiniteVector3),
+	Speed = Type.optional(Type.numberPositive),
+	Thickness = Type.numberConstrained(0.05, 4),
+	Color = Type.Color3,
+})
+
+-- a limb of the avatar gives off particles
+export type Plume = {
+	Limb: string, -- the name of the part of the avatar they come from
+	Particle: VFXAssetDefinition.ParticleKey,
+}
+Types.Plume = Type.strictInterface({
+	Limb = Type.string,
+	Particle = VFXAssetDefinition.ParticleKey,
+})
+
+-- a limb of the avatar gives off smoke
+export type Smoke = {
+	Limb: string,
+	Size: number,
+	RiseVelocity: number, -- studs a second it goes up at, below 0 it sinks
+	Opacity: number,
+	Color: Color3,
+}
+Types.Smoke = Type.strictInterface({
+	Limb = Type.string,
+	Size = Type.numberConstrained(0.1, 100),
+	RiseVelocity = Type.numberConstrained(-25, 25),
+	Opacity = Type.numberConstrained(0, 1),
+	Color = Type.Color3,
+})
+
+-- a limb of the avatar is on fire
+export type Flame = {
+	Limb: string,
+	Size: number,
+	Heat: number, -- how fast the flames rise, at 0 they stay where they are
+	Color: Color3,
+	SecondaryColor: Color3?, -- of its sparks, the color of the rest of it without
+}
+Types.Flame = Type.strictInterface({
+	Limb = Type.string,
+	Size = Type.numberConstrained(2, 30),
+	Heat = Type.numberConstrained(-25, 25),
+	Color = Type.Color3,
+	SecondaryColor = Type.optional(Type.Color3),
+})
+
+-- a flat picture in the world that grows + fades until it's gone
+export type Ripple = {
+	Decal: VFXAssetDefinition.DecalKey, -- what's on both faces of it
+	CFrame: CFrame, -- where it starts out + how it lies
+	Size: Vector3,
+	EndSize: Vector3, -- what it has grown to by the time it's gone
+	Lifetime: number, -- seconds until it has faded
+	Velocity: Vector3?, -- studs a second it travels at, it stays where it is without
+}
+Types.Ripple = Type.strictInterface({
+	Decal = VFXAssetDefinition.DecalKey,
+	CFrame = Type.CFrame,
+	Size = isSize,
+	EndSize = isFiniteVector3,
+	Lifetime = Type.numberConstrained(0.05, 10),
+	Velocity = Type.optional(isFiniteVector3),
+})
+
+-- limbs of the avatar let bolts fly for as long as it's on, a round of one each at a time
+export type Spray = {
+	Limbs: { string }, -- the names of the parts of the avatar they leave from
+	Interval: number, -- seconds between two rounds
+	Turn: CFrame, -- how the way a bolt leaves is turned off the way its limb faces
+	Speed: number,
+	Lifetime: number,
+	Gravity: number?, -- studs a second they pick up downwards every second, they fly straight without
+	Size: Vector3,
+	Color: Color3,
+	Material: Enum.Material?, -- they glow without
+	Mesh: MeshKey?,
+	MeshScale: Vector3?,
+	OnHit: ((result: RaycastResult) -> ())?, -- only ever set by the machine of the avatar
+}
+Types.Spray = Type.strictInterface({
+	Limbs = Type.array(Type.string),
+	Interval = Type.numberConstrained(0.02, 10),
+	Turn = Type.CFrame,
+	Speed = Type.numberPositive,
+	Lifetime = Type.numberPositive,
+	Gravity = Type.optional(Type.numberMin(0)),
+	Size = isSize,
+	Color = Type.Color3,
+	Material = Type.optional(Type.enum(Enum.Material)),
+	Mesh = Type.optional(VFXAssetDefinition.MeshKey),
+	MeshScale = Type.optional(isSize),
+	OnHit = Type.optional(Type.callback),
+})
 
 return Types

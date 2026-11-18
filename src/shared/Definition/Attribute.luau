@@ -69,6 +69,10 @@ Module.IdentityKey = new("Character", "IdentityKey", CharacterType.IdentityKey, 
 Module.IsInMenu = new("Character", "IsInMenu", Type.boolean, false) :: Attribute<boolean>
 Module.IsMasked = new("Character", "IsMasked", Type.boolean, true) :: Attribute<boolean>
 Module.IsHandcuffed = new("Character", "IsHandcuffed", Type.boolean, false) :: Attribute<boolean>
+-- nothing takes health off it
+Module.IsInvulnerable = new("Character", "IsInvulnerable", Type.boolean, false) :: Attribute<boolean>
+-- nobody is shown who it is
+Module.IsNameHidden = new("Character", "IsNameHidden", Type.boolean, false) :: Attribute<boolean>
 Module.ExpressionId =
 	new("Character", "ExpressionId", Type.optional(RoleplayType.ExpressionId), nil) :: Attribute<ExpressionId?>
 

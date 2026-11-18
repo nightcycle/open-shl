@@ -13,12 +13,14 @@ local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VF
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
+local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ClientContext = AbilityType.ClientContext
 type AnimationKey = VFXAssetDefinition.AnimationKey
 -- what only the player who swings needs to know
 export type Config = {
 	DrawAnimation: AnimationKey?, -- as the weapon comes out + as it's put away
 	SwingAnimations: { AnimationKey }, -- one of them at random with every swing
+	IsRooted: boolean?, -- the avatar stands where it is for as long as a swing takes
 }
 -- Constants
 -- Variables
@@ -39,11 +41,6 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 	local energyCost = powerRes.Value.EnergyCost
 	local builder = AbilityBuilder
 		.newClient(layout)
-		:Run(bindings.Hold, ClientVFXDefinition.Prop, function(context: ClientContext): ClientVFXType.Prop
-			local prop = table.clone(shared.Prop)
-			prop.Color = context.Color or prop.Color
-			return prop
-		end)
 		-- the server has the last word on the energy, a swing it's sure to turn down isn't started on
 		:Guard(
 			bindings.Swing,
@@ -60,21 +57,46 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 			return { Animation = config.SwingAnimations[Rng:NextInteger(1, #config.SwingAnimations)] }
 		end)
 		:While(bindings.Sweep, function(context: ClientContext)
-			local limb = context.Character:FindFirstChild(shared.Prop.Limb)
-			if not limb or not limb:IsA("BasePart") then
-				return function() end
+			-- somebody two of the boxes run into is still only told of once
+			local targets: { [Model]: true } = {}
+			local handles: { VFXType.Handle } = {}
+			for _, hitbox in shared.Hitboxes do
+				local limb = context.Character:FindFirstChild(hitbox.Limb)
+				if not limb or not limb:IsA("BasePart") then
+					continue
+				end
+				table.insert(
+					handles,
+					context.VFX.start(Hitbox, {
+						Part = limb,
+						Size = hitbox.Size,
+						Offset = hitbox.Offset,
+						OnHit = function(target: Model)
+							if not targets[target] then
+								targets[target] = true
+								context.raise(bindings.Hit, { Target = target })
+							end
+						end,
+					})
+				)
 			end
-			return context.VFX.start(Hitbox, {
-				Part = limb,
-				Size = shared.HitboxSize,
-				Offset = shared.HitboxOffset,
-				OnHit = function(target: Model)
-					context.raise(bindings.Hit, { Target = target })
-				end,
-			}).Stop
+			return function()
+				for _, handle in handles do
+					handle.Stop()
+				end
+			end
 		end)
 
-	-- not every weapon is drawn with a flourish or heard as it's swung
+	for _, prop in shared.Props do
+		builder = builder:Run(
+			bindings.Hold,
+			ClientVFXDefinition.Prop,
+			function(context: ClientContext): ClientVFXType.Prop
+				return MeleeFactory.getProp(prop, context.Color)
+			end
+		)
+	end
+	-- not every weapon is drawn with a flourish or heard as it's drawn, swung or put away
 	local drawAnimation = config.DrawAnimation
 	if drawAnimation then
 		local function getProps(): ClientVFXType.AnimationOnce
@@ -84,10 +106,14 @@ Module.new = function(ability: MeleeFactory.Ability, config: Config): AbilityBui
 			:Fire(bindings.Draw, ClientVFXDefinition.AnimationOnce, getProps)
 			:Fire(bindings.Sheathe, ClientVFXDefinition.AnimationOnce, getProps)
 	end
-	local swingSound = shared.SwingSound
-	if swingSound then
-		builder = builder:Fire(bindings.Swing, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
-			return { Sound = swingSound :: VFXAssetDefinition.SoundKey }
+	for binding, sound in MeleeFactory.getSounds(ability) do
+		builder = builder:Fire(binding, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+			return { Sound = sound :: VFXAssetDefinition.SoundKey }
+		end)
+	end
+	if config.IsRooted then
+		builder = builder:Run(bindings.Sweep, ClientVFXDefinition.Root, function(): ClientVFXType.Root
+			return {}
 		end)
 	end
 

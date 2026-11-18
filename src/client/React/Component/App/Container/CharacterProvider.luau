@@ -17,6 +17,8 @@ local CharacterEnergyContext = require("@game/StarterPlayer/StarterPlayerScripts
 local CharacterHealthContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/Health")
 local CharacterIsEnergyInsufficientContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/IsEnergyInsufficient")
+local CharacterIsInvulnerableContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character/IsInvulnerable")
 local SessionActiveCharacterIdContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ActiveCharacterId")
 local SessionCharactersContext =
@@ -49,6 +51,7 @@ return function(props: Properties): React.ReactNode
 
 	local health = useCharacterAttribute(AttributeDefinition.Health)
 	local energy = useCharacterAttribute(AttributeDefinition.Energy)
+	local isInvulnerable = useCharacterAttribute(AttributeDefinition.IsInvulnerable)
 	local isEnergyInsufficient, setIsEnergyInsufficient = React.useState(false)
 	React.useEffect(function()
 		local thread: thread?
@@ -81,7 +84,11 @@ return function(props: Properties): React.ReactNode
 			}, {
 				IsEnergyInsufficient = e(CharacterIsEnergyInsufficientContext.Provider, {
 					value = isEnergyInsufficient,
-				}, props.children),
+				}, {
+					IsInvulnerable = e(CharacterIsInvulnerableContext.Provider, {
+						value = isInvulnerable,
+					}, props.children),
+				}),
 			}),
 		}),
 	})

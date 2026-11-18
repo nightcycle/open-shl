@@ -16,11 +16,12 @@ local VFXStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/St
 -- Private Functions
 -- Class
 -- the ball is where the projectile is on its way from the user to the target. it turns green where it ran into
--- something + red where its time was up
+-- something + red where its time was up. with gravity it drops short of where it was headed
 return VFXStory.newStateStory({
 	Distance = UILabs.Slider(30, 4, 60, 1),
 	Speed = UILabs.Slider(80, 5, 300, 5),
 	Lifetime = UILabs.Slider(3, 0.1, 10, 0.1),
+	Gravity = UILabs.Slider(0, 0, 250, 1),
 }, function(stage: VFXStory.Stage, controls)
 	local userRoot = stage.User.PrimaryPart
 	local targetRoot = stage.Target.PrimaryPart
@@ -46,6 +47,7 @@ return VFXStory.newStateStory({
 		Direction = targetRoot.Position - origin,
 		Speed = controls.Speed,
 		Lifetime = controls.Lifetime,
+		Gravity = controls.Gravity,
 		OnStep = function(position: Vector3)
 			ball.Position = position
 		end,

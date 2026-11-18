@@ -1,0 +1,23 @@
+--!strict
+--!native
+_G.__REACT_MICROPROFILER_LEVEL = 10
+-- Services
+-- Packages
+-- Modules
+local Ability = require("@game/ReplicatedStorage/Shared/Ability/Library/Transportation/Portals")
+local AbilityStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Story")
+local Client = require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Portals")
+local Server = require("@game/ServerScriptService/Server/Ability/Library/Transportation/Portals")
+-- Components
+-- Hooks
+-- Types
+-- Constants
+-- Variables
+-- References
+-- Private Functions
+-- Class
+return AbilityStory.new(Client, Server, Ability.Layout.Bindings.Travel, {
+	GetPayload = function(stage: AbilityStory.Stage)
+		return { Position = stage.Target:GetPivot().Position }
+	end,
+})

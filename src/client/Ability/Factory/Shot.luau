@@ -7,11 +7,13 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
+local Projectile = require("@game/ReplicatedStorage/Shared/VFX/Library/Projectile")
 local ShotFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Shot")
 local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
+local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ClientContext = AbilityType.ClientContext
 -- what only the player who shoots needs to know
 export type Config = {
@@ -47,7 +49,7 @@ Module.new = function(ability: ShotFactory.Ability, config: Config): AbilityBuil
 	local powerRes = PowerDefinition.get(layout.Id)
 	assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 	local energyCost = powerRes.Value.EnergyCost
-	return AbilityBuilder
+	local builder = AbilityBuilder
 		.newClient(layout)
 		-- the server has the last word on the energy, a cast it's sure to turn down isn't started on
 		:Guard(
@@ -69,9 +71,10 @@ Module.new = function(ability: ShotFactory.Ability, config: Config): AbilityBuil
 			if not limb or not limb:IsA("BasePart") then
 				return
 			end
+			local from = if shared.Offset then limb.CFrame:PointToWorldSpace(shared.Offset) else limb.Position
 			-- the shot goes where the player pointed as they clicked, wherever they point by the time it leaves
 			local aim = context.Aim or context.getAim()
-			local offset = aim.Position - limb.Position
+			local offset = aim.Position - from
 			-- pointed right at the limb there's no telling where to, the shot goes where the avatar looks
 			local direction = if offset.Magnitude > MIN_AIM_DISTANCE
 				then offset.Unit
@@ -81,21 +84,66 @@ Module.new = function(ability: ShotFactory.Ability, config: Config): AbilityBuil
 			context.raise(bindings.Launch, {
 				Id = id,
 				-- half its length ahead of the limb, so none of it starts out behind it
-				Origin = limb.Position + direction * shared.Size.Z / 2,
+				Origin = from + direction * shared.Size.Z / 2,
 				Direction = direction,
 			})
 		end)
-		:Fire(bindings.Launch, ClientVFXDefinition.Bolt, function(context: ClientContext): ClientVFXType.Bolt
-			local launch = context.read(bindings.Launch) :: ShotFactory.Launch
-			local bolt = ShotFactory.getBolt(shared, launch, context.Color)
-			bolt.OnHit = function(result: RaycastResult)
-				local target = getCharacter(result.Instance)
-				if target then
-					context.raise(bindings.Hit, { ShotId = launch.Id, Target = target })
-				end
+
+	-- only somebody a shot runs into is worth a word to the server
+	local function getOnHit(context: ClientContext, launch: ShotFactory.Launch): (result: RaycastResult) -> ()
+		return function(result: RaycastResult)
+			local target = getCharacter(result.Instance)
+			if target then
+				context.raise(bindings.Hit, { ShotId = launch.Id, Target = target })
 			end
-			return bolt
+		end
+	end
+	if shared.IsHidden then
+		-- there's nothing of it to show, it's only flown to find out who it runs into
+		builder = builder:On(bindings.Launch, function(context: ClientContext)
+			local launch = context.read(bindings.Launch)
+			if not launch then
+				return
+			end
+			local onHit = getOnHit(context, launch)
+			local handle: VFXType.Handle
+			handle = context.VFX.start(Projectile, {
+				Origin = launch.Origin,
+				Direction = launch.Direction,
+				Speed = shared.Speed,
+				Lifetime = shared.Lifetime,
+				Gravity = shared.Gravity,
+				OnHit = function(result: RaycastResult)
+					handle.Stop()
+					onHit(result)
+				end,
+				OnExpired = function()
+					handle.Stop()
+				end,
+			})
 		end)
+	else
+		builder = builder:Fire(
+			bindings.Launch,
+			ClientVFXDefinition.Bolt,
+			function(context: ClientContext): ClientVFXType.Bolt
+				local launch = context.read(bindings.Launch) :: ShotFactory.Launch
+				local bolt = ShotFactory.getBolt(shared, launch, context.Color)
+				bolt.OnHit = getOnHit(context, launch)
+				return bolt
+			end
+		)
+	end
+
+	-- not every shot is heard as it leaves
+	local launchSound = shared.LaunchSound
+	if launchSound then
+		builder = builder:Fire(bindings.Launch, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+			return { Sound = launchSound :: VFXAssetDefinition.SoundKey }
+		end)
+	end
+
+	return builder
 end
 
 return Module
