@@ -13,7 +13,7 @@ local Result = TypeUnionLib.Result
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
-local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
+local Flow = require("@self/Flow")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 -- Types
@@ -26,6 +26,8 @@ export type BootPhase = ShellType.BootPhase
 export type Screen = ShellType.Screen
 export type ScreenType = ShellType.ScreenType
 export type PanelId = ShellType.PanelId
+type Stop = ShellType.Stop
+type MenuAction = ShellType.MenuAction
 export type Trigger = TutorialType.Trigger
 -- swapped for a new frozen table on every change
 type State = {
@@ -80,29 +82,17 @@ export type ShellService = typeof(setmetatable(
 	{} :: ShellServiceImpl
 ))
 -- Constants
-local PANEL_IDS: { [PseudoEnum.MenuId]: PanelId } = table.freeze({
-	Music = "Music",
-	Actions = "Actions",
-	Database = "Database",
-	Shop = "Shop",
-	Build = "Build",
-})
 local SCREEN_TRIGGERS: { [ScreenType]: Trigger } = table.freeze({
 	CharacterSelect = "CharactersOpened",
 	CharacterEditor = "EditorOpened",
 	ArtifactMenu = "ArtifactMenuOpened",
 })
+-- the phases the game that's built goes through on the way in, in order
+local STOPS: { Stop } = Flow.Stops
 -- the screen the boot ends on. a game without one ends on its hud, as whoever the server picked
-local FIRST_SCREEN: Screen? = GameDefinition.tune(nil :: Screen?, {
-	-- a session of it started in its creator: a new suit or a saved one, asked on every join
-	shl1 = {
-		Type = "CharacterSelect",
-	} :: Screen,
-	-- who to play as is picked on every join, its legacy place opened the character manager the same way
-	shl3 = {
-		Type = "CharacterSelect",
-	} :: Screen,
-})
+local FIRST_SCREEN: Screen? = Flow.FirstScreen
+-- where a button of the hud leads, one the game has no use for leads nowhere
+local MENU: { [PseudoEnum.MenuId]: MenuAction } = Flow.Menu
 -- Variables
 -- References
 -- Private Functions
@@ -112,11 +102,29 @@ local function getIfModeSelectShown(): boolean
 		and not AttributeDefinition.get(Players.LocalPlayer, AttributeDefinition.IsModeChosen)
 end
 
+-- the next phase of the game that has something to show, the game itself after the last
 local function getNextBootPhase(bootPhase: BootPhase): BootPhase
-	if bootPhase == "Loading" then
-		return if getIfModeSelectShown() then "ModeSelect" else "Intro"
-	elseif bootPhase == "ModeSelect" or bootPhase == "ServerBrowser" then
-		return "Intro"
+	-- the browser is a side room of the mode screen, whoever leaves it goes on from there
+	local from: BootPhase = bootPhase
+	if bootPhase == "ServerBrowser" then
+		from = "ModeSelect"
+	end
+	local index: number? = nil
+	for i, stop in STOPS do
+		if stop == from then
+			index = i
+			break
+		end
+	end
+	if index then
+		for i = index + 1, #STOPS do
+			local stop: BootPhase = STOPS[i]
+			-- a mode is only picked by whoever came without one, every other phase is everybody's
+			local isShown = stop ~= "ModeSelect" or getIfModeSelectShown()
+			if isShown then
+				return stop
+			end
+		end
 	end
 	return "Playing"
 end
@@ -331,35 +339,33 @@ function ShellService:PressMenuButton(menuId: PseudoEnum.MenuId)
 	if not self._State.IsGameplayHudVisible then
 		return
 	end
-	if menuId == PseudoEnum.MenuId.Camera then
+	local action: MenuAction? = MENU[menuId]
+	if not action then
+		return
+	end
+	if action.Type == "CameraMode" then
 		self:SetCameraMode(not self._State.IsCameraMode)
 	elseif self._State.IsCameraMode then
 		return
-	elseif menuId == PseudoEnum.MenuId.Swap then
+	elseif action.Type == "Swap" then
 		self.SwapRequested:Fire()
-	elseif menuId == PseudoEnum.MenuId.Characters then
-		local avatar = Players.LocalPlayer.Character
-		-- a dead avatar has to get up before it can be swapped for another
-		if AttributeDefinition.get(avatar, AttributeDefinition.IsDead) then
-			return
+	elseif action.Type == "Screen" then
+		-- the screen the avatar is swapped for another on
+		if action.Screen.Type == "CharacterSelect" then
+			local avatar = Players.LocalPlayer.Character
+			-- a dead avatar has to get up before it can be swapped for another
+			if AttributeDefinition.get(avatar, AttributeDefinition.IsDead) then
+				return
+			end
+			-- one that's in a fight has to see it through first, the server wouldn't count it as in the menu anyway
+			local fightingUntil = AttributeDefinition.get(avatar, AttributeDefinition.FightingUntil)
+			if CombatDefinition.getIfFighting(fightingUntil, CombatDefinition.getTime()) then
+				return
+			end
 		end
-		-- one that's in a fight has to see it through first, the server wouldn't count it as in the menu anyway
-		local fightingUntil = AttributeDefinition.get(avatar, AttributeDefinition.FightingUntil)
-		if CombatDefinition.getIfFighting(fightingUntil, CombatDefinition.getTime()) then
-			return
-		end
-		self:OpenScreen({
-			Type = "CharacterSelect",
-		})
-	elseif menuId == PseudoEnum.MenuId.Artifact then
-		self:OpenScreen({
-			Type = "ArtifactMenu",
-		})
-	else
-		local panelId: PanelId? = PANEL_IDS[menuId]
-		if panelId then
-			self:TogglePanel(panelId)
-		end
+		self:OpenScreen(action.Screen)
+	elseif action.Type == "Panel" then
+		self:TogglePanel(action.PanelId)
 	end
 end
 
@@ -376,7 +382,7 @@ return ServiceLocker(function(): ShellService
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
 	local state: State = {
-		BootPhase = "Loading",
+		BootPhase = STOPS[1],
 		Screen = {
 			Type = "None",
 		},
