@@ -27,7 +27,7 @@ local ERROR_DURATION = 4
 -- how the editor is laid out is the game's own, the layout of another game is never required
 local CharacterEditor: Layout = GameDefinition.pick({
 	shl1 = function(): Layout
-		error(`shl1 has no character editor yet`)
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard")
 	end,
 	shl2 = function(): Layout
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor")
