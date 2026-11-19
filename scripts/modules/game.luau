@@ -34,7 +34,7 @@ local BORROW_COMMENT = "#"
 local MODEL_EXTENSIONS = { ".model.json", ".rbxm", ".rbxmx" }
 local CONTENTS: { [GameId]: GameContent } = table.freeze({
 	shl1 = table.freeze({
-		DataPath = "data/shl1",
+		DataPath = "data/shl-1",
 		ScenePath = "lib/scene/shl-1",
 		CharacterPath = "lib/character/shl-1",
 		BorrowListPath = "lib/character/shl-1/borrow.txt",
@@ -46,14 +46,14 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 		},
 	}),
 	shl2 = table.freeze({
-		DataPath = "data/shl2",
+		DataPath = "data/shl-2",
 		ScenePath = "lib/scene/shl-2",
 		CharacterPath = BORROW_PATH,
 		-- it's the game every shared setting was tuned for
 		Properties = {},
 	}),
 	shl3 = table.freeze({
-		DataPath = "data/shl3",
+		DataPath = "data/shl-3",
 		ScenePath = "lib/scene/shl-3",
 		CharacterPath = "lib/character/shl-3",
 		BorrowListPath = "lib/character/shl-3/borrow.txt",

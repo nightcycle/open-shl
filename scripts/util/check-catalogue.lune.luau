@@ -11,6 +11,7 @@ local roblox = require("@lune/roblox")
 local serde = require("@lune/serde")
 -- Packages
 -- Modules
+local game = require("../modules/game")
 -- Types
 type EntryRow = { LegacyCategory: string, LegacyName: string, ItemIds: { string } }
 type FaceRow = { Id: string, Image: string }
@@ -29,7 +30,7 @@ type Summary = {
 	ids: { [string]: boolean },
 }
 -- Constants
-local USAGE = "Usage: lune run scripts/util/check-catalogue.lune.luau <place.rbxl> [data/<game>/catalogue]"
+local USAGE = "Usage: lune run scripts/util/check-catalogue.lune.luau <place.rbxl> [data/shl-<n>/catalogue]"
 local LIBRARY_PATH = "ReplicatedStorage/lib/character"
 local BUILD_CONFIG_PATH = "ReplicatedStorage/Generated/BUILD_CONFIG"
 local GAME_PATTERN = '%f[%w_]GAME%s*=%s*"([^"]*)"'
@@ -92,7 +93,8 @@ end
 -- where the tables of the game a place was built for are kept, nil for a game that has none
 local function getCataloguePath(place: roblox.DataModel): string?
 	local gameId = (read(findInstance(place, BUILD_CONFIG_PATH), "Source") :: string):match(GAME_PATTERN)
-	local path = `data/{assert(gameId, `"{BUILD_CONFIG_PATH}" doesn't say which game this is`)}/catalogue`
+	assert(type(gameId) == "string", `"{BUILD_CONFIG_PATH}" doesn't say which game this is`)
+	local path = `{game.CONTENTS[game.getId(gameId)].DataPath}/catalogue`
 	return if fs.isDir(path) then path else nil
 end
 

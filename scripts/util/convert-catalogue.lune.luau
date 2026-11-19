@@ -1268,7 +1268,7 @@ do
 	-- a game is written into the folders it's built from
 	local content = game.CONTENTS[game.getId(gameId)]
 	local libraryPath = content.CharacterPath
-	local dataPath = `data/{gameId}/catalogue`
+	local dataPath = `{content.DataPath}/catalogue`
 	for _, path in { libraryPath, dataPath } do
 		local fullPath = `{outPath}/{path}`
 		if fs.isDir(fullPath) then
