@@ -168,16 +168,22 @@ local function stepper(props: Properties): React.ReactNode
 	local under: { [string]: React.ReactNode } = {}
 	if source.Type == "Items" or source.Type == "Sets" then
 		local entries = listEntries(state, source.Folder)
+		local hasNone = source.Type == "Items" and source.HasNone == true
 		onStep = function(direction: number)
 			if #entries == 0 then
 				return
 			end
-			local entry = entries[getNextIndex(findWornIndex(entries), #entries, direction)]
+			local wornIndex = findWornIndex(entries)
+			-- a list with a stop for nothing has it between its last item + its first: stepped to, what's worn of the
+			-- list comes off. with nothing worn the row stands on that stop
+			local isLeaving = hasNone and wornIndex == (if direction > 0 then #entries else 1)
+			local entry =
+				entries[if isLeaving and wornIndex then wornIndex else getNextIndex(wornIndex, #entries, direction)]
 			-- a field of an item or a set is written through its page
 			setPath(entry.Path)
 			fieldCallback(entry.Toggle, {
 				Type = "Toggle",
-				IsSelected = true,
+				IsSelected = not isLeaving,
 			})
 		end
 	elseif source.Type == "Extras" then

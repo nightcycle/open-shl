@@ -22,6 +22,7 @@ export type RowSource =
 	{
 		Type: "Items", -- the items of a list: what's stepped to is worn at once, in place of the one before
 		Folder: string,
+		HasNone: boolean?, -- past its last item the list has a stop where nothing of it is worn
 	}
 	| {
 		Type: "Sets", -- the sets of a list: every item of the one that's stepped to goes on

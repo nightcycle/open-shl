@@ -135,6 +135,7 @@ local SECRET_IDENTITY_ROWS: { RowInfo } = {
 		Source = {
 			Type = "Items",
 			Folder = "Secret Identity/HAIR",
+			HasNone = true,
 		},
 		Position = UDim2.fromScale(0.025, 0.5),
 		Size = ROW_SIZE,
@@ -157,6 +158,7 @@ local COSTUME_ROWS: { RowInfo } = {
 		Source = {
 			Type = "Items",
 			Folder = "Costume/CAPES",
+			HasNone = true,
 		},
 		Position = UDim2.fromScale(0.025, 0.525),
 		Size = SLIM_ROW_SIZE,
@@ -166,6 +168,7 @@ local COSTUME_ROWS: { RowInfo } = {
 		Source = {
 			Type = "Items",
 			Folder = "Costume/MASKS",
+			HasNone = true,
 		},
 		Position = UDim2.fromScale(0.025, 0.6),
 		Size = SLIM_ROW_SIZE,
