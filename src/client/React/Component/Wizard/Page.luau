@@ -69,6 +69,16 @@ local function listColorFields(path: string): { FieldDefinition }
 	return out
 end
 
+-- whether a field is one of a page's own: what a field of another page was turned down for isn't this page's to say
+local function getIfPageField(path: string, field: FieldDefinition): boolean
+	local pageOpt = CharacterEditorDefinition.getPage(path)
+	if pageOpt.IsNone or pageOpt.Value.Type ~= "Default" then
+		return false
+	end
+	local fields: { FieldDefinition } = pageOpt.Value.Fields or NO_FIELDS
+	return table.find(fields, field) ~= nil
+end
+
 -- what the identity in focus has to wear before the page is left
 local function getRequirement(state: EditorState, path: string): PageRequirement?
 	local pageOpt = CharacterEditorDefinition.getPage(path)
@@ -171,10 +181,13 @@ return function(props: Properties): React.ReactNode
 	local forward = page.Forward
 	-- a list that turned a pick down has nowhere of its own to say so, every other field that does is heard of in the
 	-- output
-	local listRefusal: string? = if editRefusal and editRefusal.Field.Type == "ChoiceList"
+	local listRefusal: string? = if onForward
+			and editRefusal
+			and editRefusal.Field.Type == "ChoiceList"
+			and getIfPageField(page.Key, editRefusal.Field)
 		then editRefusal.Message
 		else nil
-	local notice = refusal or (if onForward then listRefusal else nil) or props.Notice
+	local notice = refusal or listRefusal or props.Notice
 	local forwardButton: React.ReactNode = nil
 	if forward then
 		forwardButton = e("TextButton", {
