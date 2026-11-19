@@ -22,7 +22,7 @@ type VFXAssetCatalogue = VFXAssetType.VFXAssetCatalogue
 -- what a key plays or shows is the game's own, the sounds + animations of another game are never required
 local CATALOGUE: VFXAssetCatalogue = GameDefinition.pick({
 	shl1 = function(): VFXAssetCatalogue
-		error(`shl1 has no effect assets yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): VFXAssetCatalogue
 		return require("@self/SHL2")

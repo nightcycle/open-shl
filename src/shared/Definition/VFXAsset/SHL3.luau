@@ -20,7 +20,8 @@ type VFXAssetCatalogue = VFXAssetType.VFXAssetCatalogue
 -- Constants
 -- every one of them is heard the way it was uploaded: nothing is turned down or slowed
 local SOUNDS: { [SoundKey]: SoundDefinition } = {
-	Bow = { Url = Audio["shl-3"].ability["bow.ogg"], Volume = 1, PlaybackSpeed = 1 },
+	-- the one file an arrow of shl1 is heard landing by
+	Bow = { Url = Audio.core.ability["arrow-thud.ogg"], Volume = 1, PlaybackSpeed = 1 },
 	GunShot = { Url = Audio["shl-3"].ability["gun-shot.ogg"], Volume = 1, PlaybackSpeed = 1 },
 	-- the one file both games shoot their lasers with
 	PewPew = { Url = Audio.core.ability["pew-pew.ogg"], Volume = 1, PlaybackSpeed = 1 },

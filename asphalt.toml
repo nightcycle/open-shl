@@ -49,6 +49,7 @@ output_path = "Generated"
 "shl-1/gag/toilet-face-7.png" = { id = 8329421 }
 "shl-1/gag/tv-static-1.png" = { id = 58247550 }
 "shl-1/gag/tv-static-2.png" = { id = 58247679 }
+"shl-1/mesh/bow-bolt.png" = { id = 33803004 }
 "shl-1/ui/black-hole.png" = { id = 75995665 }
 "shl-1/ui/cursor/bow.png" = { id = 29073295 }
 "shl-1/ui/cursor/machine-gun-blue.png" = { id = 50912641 }
@@ -237,14 +238,17 @@ output_path = "Generated"
 "shl-3/ui/team-change/open.png" = { id = 2564676227 }
 "shl-3/ui/team-change/panel.png" = { id = 2564814060 }
 
-# as with the images: asset/audio/shl-3 is left out of the path + every file of it has a line in the table below
-# naming the upload its legacy game made of it
+# as with the images: asset/audio/shl-1 + asset/audio/shl-3 are left out of the path + every file of them has a line
+# in the table below naming the upload its legacy game made of it
 [inputs.Audio]
 path = "asset/audio/{core,shl-2}/**"
 output_path = "Generated"
 
+# core/ability/arrow-thud.ogg is what the arrows of shl1 + the bow of shl3 are heard by: it came over from shl-3, so
+# it's inside the path now without an upload of the creator's. its line stands for it until it has one
 [inputs.Audio.web]
-"shl-3/ability/bow.ogg" = { id = 16211030 }
+"core/ability/arrow-thud.ogg" = { id = 16211030 }
+"shl-1/ability/bow.ogg" = { id = 16211041 }
 "shl-3/ability/gun-shot.ogg" = { id = 210112900 }
 
 # the same goes for asset/animation/shl-3, its lines are at the end of the table below
@@ -256,15 +260,21 @@ output_path = "Generated"
 # creator above. until then every one of them stands for the upload it was exported from: take an entry out of this
 # table (or the whole table) + the file is uploaded in its place the next time the assets are synced to the cloud
 [inputs.Animation.web]
+"core/ability/bow-holding.rbxm" = { id = 910048046 }
+"core/ability/bow-shooting.rbxm" = { id = 910052477 }
+"core/ability/flight-idle.rbxm" = { id = 596610664 }
+"core/ability/flight-movement.rbxm" = { id = 596620930 }
 "core/ability/gun-holding.rbxm" = { id = 586909830 }
+"core/ability/left-slash.rbxm" = { id = 580408411 }
+"core/ability/power-punch.rbxm" = { id = 580665102 }
+"core/ability/power-shot.rbxm" = { id = 584892686 }
+"core/ability/right-foot-kick.rbxm" = { id = 580717982 }
+"core/ability/right-slash.rbxm" = { id = 580402239 }
+"core/ability/strike.rbxm" = { id = 580683034 }
 "core/transition/fall-forward.rbxm" = { id = 601481878 }
 "core/transition/flinch-1.rbxm" = { id = 938913337 }
 "core/transition/flinch-2.rbxm" = { id = 938919081 }
-"shl-2/ability/bow-holding.rbxm" = { id = 910048046 }
-"shl-2/ability/bow-shooting.rbxm" = { id = 910052477 }
 "shl-2/ability/claw-sheathing.rbxm" = { id = 580413960 }
-"shl-2/ability/flight-idle.rbxm" = { id = 596610664 }
-"shl-2/ability/flight-movement.rbxm" = { id = 596620930 }
 "shl-2/ability/force-explosion.rbxm" = { id = 583352411 }
 "shl-2/ability/force-push.rbxm" = { id = 580087215 }
 "shl-2/ability/gun-shooting.rbxm" = { id = 586915698 }
@@ -272,13 +282,7 @@ output_path = "Generated"
 "shl-2/ability/ice-spin.rbxm" = { id = 582036597 }
 "shl-2/ability/knife-jab.rbxm" = { id = 580438782 }
 "shl-2/ability/knife-slash.rbxm" = { id = 580441242 }
-"shl-2/ability/left-slash.rbxm" = { id = 580408411 }
-"shl-2/ability/power-punch.rbxm" = { id = 580665102 }
-"shl-2/ability/power-shot.rbxm" = { id = 584892686 }
-"shl-2/ability/right-foot-kick.rbxm" = { id = 580717982 }
-"shl-2/ability/right-slash.rbxm" = { id = 580402239 }
 "shl-2/ability/sheathing.rbxm" = { id = 580434436 }
-"shl-2/ability/strike.rbxm" = { id = 580683034 }
 "shl-2/ability/wall-climbing.rbxm" = { id = 599890877 }
 "shl-2/emote/handcuffs.rbxm" = { id = 863517866 }
 "shl-2/emote/hands-behind-back.rbxm" = { id = 863217511 }
