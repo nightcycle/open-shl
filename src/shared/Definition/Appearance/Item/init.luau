@@ -22,11 +22,15 @@ type TextureGroupKey = AppearanceType.TextureGroupKey
 type TextureGroup = AppearanceType.TextureGroup
 type FaceSlot = AppearanceType.FaceSlot
 type FaceCatalogue = AppearanceType.FaceCatalogue
+type ItemOrder = AppearanceType.ItemOrder
 -- Constants
 local ID_DELIMITER = "_"
 local PATH_DELIMITER = "/"
 local TEXTURE_GROUP_KEYS: { TextureGroupKey } = { "Primary", "Secondary", "Tertiary", "Hair", "Skin" }
 table.freeze(TEXTURE_GROUP_KEYS)
+-- what a template says about the body under it: the part it's worn on isn't drawn, hair isn't
+local BODY_HIDDEN_ATTRIBUTE = "IsBodyHidden"
+local SHAVE_HEAD_ATTRIBUTE = "ShaveHead"
 -- face items have no template in the library, they are images sorted into a folder per slot
 local FACE_GROUP: ItemGroup = "cosmetics"
 local FACE_IMAGE_EXTENSION = ".png"
@@ -35,7 +39,7 @@ local FACE_TINT_GROUP_KEY: TextureGroupKey = "Primary"
 -- which slots a face has + the images of each are the game's own, the faces of another game are never required
 local FACES: FaceCatalogue = GameDefinition.pick({
 	shl1 = function(): FaceCatalogue
-		error(`shl1 has no faces yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): FaceCatalogue
 		return require("@self/SHL2")
@@ -52,6 +56,9 @@ local FACE_IMAGES = FACES.Images
 local FACE_NAMES = FACES.Names
 local FACE_DEFAULTS = FACES.Defaults
 local FACE_TINTS = FACES.Tints
+-- the categories the game lists in an order of its own, by "<group>/<category>". none in a game that lists every one
+-- the way the library holds it
+local ORDERS: { [string]: ItemOrder } = FACES.Orders or table.freeze({})
 -- Variables
 local DefinitionIndexCache: { [string]: ItemDefinitionIndex? } = {}
 local TemplateCache: { [string]: Instance? } = {}
@@ -107,6 +114,41 @@ end
 
 local function getFaceName(slot: FaceSlot, id: string, key: string): string
 	return FACE_NAMES[id] or `{key:sub(1, 1):upper()}{key:sub(2)} {slot}`
+end
+
+-- where an item is on the list of its category + whether it's anybody's. nil for both in a category the game lists
+-- the way the library holds it, an item the list of its category leaves out has no place + is nobody's
+local function getOrder(defIndex: ItemDefinitionIndex): (number?, boolean?)
+	local order = ORDERS[`{defIndex.Group}{PATH_DELIMITER}{defIndex.Category}`]
+	if order == nil then
+		return nil, nil
+	end
+	local index = table.find(order.Keys, defIndex.Key)
+	return index, index ~= nil and index <= (order.StarterCount or #order.Keys)
+end
+
+-- the items of one category the way the game lists them: the ones with a place first, in that order, then the rest
+-- the way they came
+local function insertOrdered(out: { ItemDefinition }, definitions: { ItemDefinition })
+	local placed: { [number]: ItemDefinition } = {}
+	local last = 0
+	for _, definition in definitions do
+		if definition.Order then
+			placed[definition.Order] = definition
+			last = math.max(last, definition.Order)
+		end
+	end
+	for index = 1, last do
+		local definition = placed[index]
+		if definition then
+			table.insert(out, definition)
+		end
+	end
+	for _, definition in definitions do
+		if definition.Order == nil then
+			table.insert(out, definition)
+		end
+	end
 end
 
 -- Class
@@ -226,6 +268,7 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 	end
 
 	local itemDefinition: ItemDefinition
+	local order, isStarter = getOrder(indexRes.Value)
 	local faceSlot: FaceSlot? = getFaceSlot(indexRes.Value)
 	if faceSlot then
 		local image: string? = FACE_IMAGES[faceSlot][`{indexRes.Value.Key}{FACE_IMAGE_EXTENSION}`]
@@ -240,6 +283,8 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 			TextureGroups = if FACE_TINTS[faceSlot] then { FACE_TINT_GROUP_KEY } else {},
 			Slot = faceSlot,
 			Image = image,
+			Order = order,
+			IsStarter = isStarter,
 		}
 	else
 		local itemDefRes = Module.getTemplate(id)
@@ -253,6 +298,11 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 			Rarity = itemDefRes.Value:GetAttribute("Rarity") :: PseudoEnum.Rarity?,
 			Tags = itemDefRes.Value:GetTags(),
 			TextureGroups = getTextureGroups(itemDefRes.Value),
+			-- only what a template says is so, one that says nothing is like one from before either was asked
+			IsBodyHidden = if itemDefRes.Value:GetAttribute(BODY_HIDDEN_ATTRIBUTE) == true then true else nil,
+			ShaveHead = if itemDefRes.Value:GetAttribute(SHAVE_HEAD_ATTRIBUTE) == true then true else nil,
+			Order = order,
+			IsStarter = isStarter,
 		}
 	end
 	TableUtil.deepFreeze(itemDefinition)
@@ -328,6 +378,7 @@ Module.list = function(group: ItemGroup?, category: string?): { ItemDefinition }
 					continue
 				end
 			end
+			local definitions: { ItemDefinition } = {}
 			for _, item in categoryFolder:GetChildren() do
 				local defIndex: ItemDefinitionIndex = {
 					Group = groupFolder.Name :: AppearanceType.ItemGroup,
@@ -338,11 +389,12 @@ Module.list = function(group: ItemGroup?, category: string?): { ItemDefinition }
 				local id = Module.getIdFromIndex(defIndex)
 				local itemDefRes = Module.get(id)
 				if itemDefRes.IsOk then
-					table.insert(out, itemDefRes.Value)
+					table.insert(definitions, itemDefRes.Value)
 				else
 					warn(itemDefRes.Value)
 				end
 			end
+			insertOrdered(out, definitions)
 		end
 	end
 	if group == nil or group == FACE_GROUP then
@@ -352,18 +404,34 @@ Module.list = function(group: ItemGroup?, category: string?): { ItemDefinition }
 					continue
 				end
 			end
+			local definitions: { ItemDefinition } = {}
 			for _, key in getFaceKeys(slot) do
 				local itemDefRes = Module.get(Module.getFaceId(slot, key))
 				if itemDefRes.IsOk then
-					table.insert(out, itemDefRes.Value)
+					table.insert(definitions, itemDefRes.Value)
 				else
 					warn(itemDefRes.Value)
 				end
 			end
+			insertOrdered(out, definitions)
 		end
 	end
 	table.freeze(out)
 	return out
+end
+
+-- a list that names an item the game doesn't have, or one twice, is one the checker lets through
+for path, order in ORDERS do
+	local keys = path:split(PATH_DELIMITER)
+	assert(#keys == 2 and AppearanceType.ItemGroup(keys[1]), `bad category "{path}" in the item orders`)
+	local seen: { [string]: true } = {}
+	for _, key in order.Keys do
+		assert(not seen[key], `"{key}" is on the list of "{path}" twice`)
+		seen[key] = true
+		local id = table.concat({ keys[1], keys[2], key }, ID_DELIMITER)
+		local itemDefRes = Module.get(id)
+		assert(itemDefRes.IsOk, `the list of "{path}" names "{key}": {itemDefRes.Value}`)
+	end
 end
 
 return Module
