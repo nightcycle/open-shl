@@ -61,7 +61,7 @@ Types.EffectDefinition = Type.union(
 export type TransformationDefinition = {
 	Style: PseudoEnum.TransformationStyle,
 	Name: string,
-	AnimationId: string,
+	AnimationId: string?, -- left out, nothing is played: the swap is timed as if one started
 	AnimationLength: number,
 	SwapDelay: number, -- seconds after the animation starts that the server changes the identity
 	LockDuration: number, -- seconds after the animation starts that another swap can begin
@@ -71,7 +71,7 @@ export type TransformationDefinition = {
 Types.TransformationDefinition = Type.strictInterface({
 	Style = Type.literal(table.unpack(PseudoEnum.getEnumItems("TransformationStyle"))),
 	Name = Type.string,
-	AnimationId = Type.string,
+	AnimationId = Type.optional(Type.string),
 	AnimationLength = Type.number,
 	SwapDelay = Type.number,
 	LockDuration = Type.number,

@@ -49,6 +49,16 @@ local TRANSFORMATIONS: { [PseudoEnum.TransformationStyle]: TransformationDefinit
 	},
 	-- the one every character starts out with, so it's the one a game without a choice of them swaps by
 	Spin = GameDefinition.tune(SPIN, {
+		-- it became the other where it stood with nothing played, + couldn't walk for a second and a half. that
+		-- was all that kept the next switch off
+		shl1 = {
+			Style = PseudoEnum.TransformationStyle.Spin,
+			Name = "Spin",
+			AnimationLength = 0,
+			SwapDelay = 0,
+			LockDuration = 1.5,
+			FreezeDuration = 1.5,
+		},
 		-- its own turn on the spot, the costume changes half a second in. how long its switch stays faded for is
 		-- the hud's to say
 		shl3 = {

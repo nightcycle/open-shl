@@ -126,7 +126,8 @@ local function start(self: SwapService)
 
 	local swap: Swap = {
 		Avatar = avatar,
-		Track = getTrack(self, humanoid, definition.AnimationId),
+		-- a game that swaps without a move has nothing to load
+		Track = if definition.AnimationId then getTrack(self, humanoid, definition.AnimationId) else nil,
 	}
 	self._Swap = swap
 	-- the way out is set before anything is taken, the hotbar + the button come back whatever happens below
