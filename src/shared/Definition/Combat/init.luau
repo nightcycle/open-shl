@@ -17,7 +17,7 @@ export type CombatRule = CombatType.CombatRule
 -- what a hit comes to is the game's own, the rule of another game is never required
 local RULE: CombatRule = GameDefinition.pick({
 	shl1 = function(): CombatRule
-		error(`shl1 has no combat rule yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): CombatRule
 		return require("@self/SHL2")
@@ -43,6 +43,9 @@ Module.REGENERATION = RULE.Regeneration
 -- if nobody is hurt while they sit in a menu
 Module.IS_MENU_SAFE = RULE.IsMenuSafe
 
+-- if who fights is each player's own pick: whoever sat fights out hurts nobody + nobody hurts them
+Module.IS_OPTIONAL = RULE.IsOptional == true
+
 -- how long a loss of health keeps somebody out of the menus, nil in a game where they get into one whenever
 Module.FIGHTING = RULE.Fighting
 
@@ -67,14 +70,35 @@ Module.getIfFighting = function(fightingUntil: number?, now: number): boolean
 	return RULE.Fighting ~= nil and fightingUntil ~= nil and now < fightingUntil
 end
 
+-- whether one character may do anything unkind to another: hurt it, hold it, drag it. both sides can ask, only what
+-- the server makes of it counts
+Module.getIfHostile = function(attacker: Model?, victim: Model): boolean
+	-- a place without pvp has nobody hurt anybody, nobody hurts themselves anywhere
+	if not ModeDefinition.getIfPVPEnabled() or victim == attacker then
+		return false
+	end
+	if RULE.IsMenuSafe and AttributeDefinition.get(victim, AttributeDefinition.IsInMenu) then
+		return false
+	end
+	-- one who sat fights out is left alone + leaves everybody alone
+	if RULE.IsOptional then
+		local isPeaceful = AttributeDefinition.get(victim, AttributeDefinition.IsPeaceful) == true
+			or (attacker ~= nil and AttributeDefinition.get(attacker, AttributeDefinition.IsPeaceful) == true)
+		if isPeaceful then
+			return false
+		end
+	end
+	-- the force field a spot hands whoever comes in on it, for as long as the engine leaves it up
+	if RULE.IsShieldSafe and victim:FindFirstChildWhichIsA("ForceField") ~= nil then
+		return false
+	end
+	return true
+end
+
 -- what a hit of that much takes off the character it's meant for, nil if the rules don't let it land. both sides
 -- can ask, only what the server makes of it counts
 Module.getDamage = function(attacker: Model?, victim: Model, amount: number): number?
-	-- a place without pvp has nobody hurt anybody, nobody hurts themselves anywhere
-	if not ModeDefinition.getIfPVPEnabled() or victim == attacker then
-		return nil
-	end
-	if RULE.IsMenuSafe and AttributeDefinition.get(victim, AttributeDefinition.IsInMenu) then
+	if not Module.getIfHostile(attacker, victim) then
 		return nil
 	end
 	return amount * RULE.PlayerScale

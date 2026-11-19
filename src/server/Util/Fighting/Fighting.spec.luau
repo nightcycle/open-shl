@@ -14,6 +14,10 @@ type Fighting = CombatType.Fighting
 -- what a loss of health comes to in the game, written down apart from its rule. a game that isn't listed keeps nobody
 -- out of its menus, whatever they lost
 local FIGHTING: Fighting? = GameDefinition.tune(nil :: Fighting?, {
+	shl1 = {
+		Duration = 15,
+		MaxDuration = 30,
+	},
 	shl3 = {
 		Duration = 15,
 		MaxDuration = 30,
