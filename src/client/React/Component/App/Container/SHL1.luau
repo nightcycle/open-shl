@@ -7,7 +7,11 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Components
 local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
+local CharacterSelect =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterSelect")
+local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
+local Rules = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Rules")
 local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
 -- Hooks
 -- Contexts
@@ -23,8 +27,13 @@ local REGISTRY: Registry = {
 	HUD = function(_: HUDTypes.Properties): React.ReactNode
 		return nil
 	end,
-	BOOT_PHASES = {},
+	BOOT_PHASES = {
+		Loading = Loading,
+		-- it flies nobody in: where another game does that its rules are read, on every join
+		Intro = Rules,
+	},
 	SCREENS = {
+		CharacterSelect = CharacterSelect,
 		CharacterEditor = CharacterEditor,
 	},
 	PANELS = {},
