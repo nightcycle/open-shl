@@ -54,11 +54,16 @@ local e = React.createElement
 
 local function applyFilteredText(state: EditorState, filteredText: FilteredText): EditorState
 	local filter = filteredText.Filter
-	if state.Path ~= filter.Path or state.IdentityKey ~= filter.IdentityKey then
+	if state.Path ~= filter.Path then
 		return state
 	end
 	for _, field in CharacterEditorUtil.listFields(state) do
-		if field.Type ~= "Text" or field.Binding.Key ~= filter.Key then
+		-- a text is of the identity in focus unless its field names one: a page can hold the same text of each
+		if
+			field.Type ~= "Text"
+			or field.Binding.Key ~= filter.Key
+			or (field.Binding.IdentityKey or state.IdentityKey) ~= filter.IdentityKey
+		then
 			continue
 		end
 		local value = CharacterEditorUtil.read(state, field)
@@ -135,7 +140,7 @@ return function(props: Properties): React.ReactNode
 		end
 		propsRef.current.OnFilterText(table.freeze({
 			Path = currentState.Path,
-			IdentityKey = currentState.IdentityKey,
+			IdentityKey = field.Binding.IdentityKey or currentState.IdentityKey,
 			Key = field.Binding.Key,
 			Text = value.Text,
 		}))
