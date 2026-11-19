@@ -251,6 +251,7 @@ end
 -- the game superhero life 2 was before it was rewritten: its stores are in Definition/LegacyStore, what they hold is
 -- made sense of by Util/LegacyDataMigration
 local Importer: Importer = table.freeze({
+	Version = 1,
 	Import = import,
 })
 

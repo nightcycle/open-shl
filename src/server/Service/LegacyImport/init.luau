@@ -16,13 +16,15 @@ export type SavePatch = LegacyImportType.SavePatch
 type LegacyImportServiceImpl = {
 	__index: LegacyImportServiceImpl,
 	Import: (self: LegacyImportService, userId: number) -> Result<SavePatch, string>,
+	GetIfDue: (self: LegacyImportService, importVersion: number) -> boolean,
 }
 export type LegacyImportService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
-		-- whether there's a game before this one to ask. where there isn't no save is ever marked as asked for, so
-		-- every one of them is still due the day the game gets its importer
-		HasImporter: boolean,
+		-- the version of the importer of this game, 0 where there's no game before it to ask. a save keeps the
+		-- version of the pass it had: with no importer none is ever behind, so no save is marked as asked for + every
+		-- one of them is still due the day the game gets its importer
+		Version: number,
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
 	},
@@ -60,11 +62,16 @@ function LegacyImportService:Import(userId: number): Result<SavePatch, string>
 	return IMPORTER.Import(userId)
 end
 
+-- whether a save that had the pass of that version (0 for none) is owed the one of the importer there is by now
+function LegacyImportService:GetIfDue(importVersion: number): boolean
+	return importVersion < self.Version
+end
+
 return ServiceLocker(function(): LegacyImportService
 	assert(DataService.IsInitialized, `the data service isn't initialized`)
 	local self = setmetatable({
 		IsInitialized = true :: true,
-		HasImporter = IMPORTER ~= nil,
+		Version = if IMPORTER then IMPORTER.Version else 0,
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, LegacyImportService)

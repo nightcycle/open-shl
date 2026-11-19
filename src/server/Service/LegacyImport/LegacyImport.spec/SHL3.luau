@@ -35,7 +35,9 @@ return {
 			DataService:SetDataStoreService(fake)
 			table.insert(destroyCallbacks, startLegacyImport())
 			assert(LegacyImportService.IsInitialized, `the legacy import service isn't initialized`)
-			assert(not LegacyImportService.HasImporter, `the game has an importer, this spec is out of date`)
+			assert(LegacyImportService.Version == 0, `the game has an importer, this spec is out of date`)
+			-- with no importer no save is behind one: none is asked for, none is marked
+			assert(not LegacyImportService:GetIfDue(0), `a save is due an import with no game to import from`)
 			local patchRes = LegacyImportService:Import(USER_ID)
 			assert(patchRes.IsErr, `a patch was made with no game to import from`)
 			assert(#fake:GetCalls() == 0, `a store was asked with no game to import from`)

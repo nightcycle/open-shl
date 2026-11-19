@@ -39,10 +39,14 @@ Types.SavePatch = Type.strictInterface({
 -- the way into the stores of the game a game takes over from. which stores there are, what they hold + how that's read
 -- is that game's own, so each has one of these to itself
 export type Importer = {
+	-- starts at 1 + goes up whenever what it brings over changes. a save keeps the version of the pass it had, so one
+	-- that had an earlier pass (or none: the importer came after the save did) is asked for again
+	Version: number,
 	-- yields. a user the old stores hold nothing of gets an empty patch, an error means they couldn't be asked
 	Import: (userId: number) -> Result<SavePatch, string>,
 }
 Types.Importer = Type.strictInterface({
+	Version = Type.intersection(Type.integer, Type.numberMin(1)),
 	Import = Type.callback,
 })
 

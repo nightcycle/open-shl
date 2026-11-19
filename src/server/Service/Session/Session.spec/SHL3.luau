@@ -123,12 +123,12 @@ local function walk(destroyCallbacks: { () -> () })
 	-- the first visit: a new save, the way the game starts a player out
 	start(destroyCallbacks, fake)
 	assert(
-		LegacyImportService.IsInitialized and not LegacyImportService.HasImporter,
+		LegacyImportService.IsInitialized and LegacyImportService.Version == 0,
 		`the game has an importer, this spec is out of date`
 	)
 	local session = awaitSession(player)
 	local save = session.Save
-	assert(not save.IsLegacyImported, `a save was marked as imported with no game to import from`)
+	assert(save.LegacyImportVersion == 0, `a save was marked as imported with no game to import from`)
 	assert(
 		#save.Characters == ProductDefinition.getCharacterSlotCount({}),
 		`a new player has {#save.Characters} characters`
@@ -162,13 +162,13 @@ local function walk(destroyCallbacks: { () -> () })
 	local closed = fake:Peek(STORE.Name, key) :: any
 	assert(closed.Lock == nil, `the save is still locked after the server closed`)
 	assert(closed.Data.ActiveCharacterId == nextCharacterId, `the change wasn't written as the server closed`)
-	assert(closed.Data.IsLegacyImported == false, `the save was written as imported`)
+	assert(closed.Data.LegacyImportVersion == 0, `the save was written as imported`)
 
 	-- the second visit: the save comes back the way it was left
 	start(destroyCallbacks, fake)
 	session = awaitSession(player)
 	assert(SpecUtil.getIfEqual(session.Save, save), `the save didn't come back the way it was left`)
-	assert(not session.Save.IsLegacyImported, `the second visit marked the save as imported`)
+	assert(session.Save.LegacyImportVersion == 0, `the second visit marked the save as imported`)
 	assertOwnStoreOnly(fake)
 end
 -- Class

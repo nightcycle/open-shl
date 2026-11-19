@@ -35,7 +35,7 @@ local function newPlayerSave(): PlayerSave
 		IsTutorialEnabled = AttributeDefinition.IsTutorialEnabled.Default,
 		LastDailyRewardAt = 0,
 		PurchaseIds = {},
-		IsLegacyImported = false,
+		LegacyImportVersion = 0,
 	}
 	TableUtil.deepFreeze(out)
 	return out

@@ -30,12 +30,16 @@ type Note = {
 	Title: string,
 	Tags: { string },
 }
--- where a game keeps its saves, the version it's at + how a save of today looked when its first version wrote it
+-- where a game keeps its saves + the version it's at
 type PlayerStore = {
 	Name: string,
 	KeyFormat: string,
 	Version: number,
-	ToFirstVersion: (document: { [string]: any }) -> (),
+	-- takes a save of today back to the way each earlier version of the game kept it, [1] to the first
+	Earlier: { (document: { [string]: any }) -> () },
+	-- takes a save of today back to one that was through the import when a save only said whether it had been, nil
+	-- for a game whose saves kept the version of it from the start
+	ToImported: ((document: { [string]: any }) -> ())?,
 }
 -- Constants
 local MATERIALS = table.freeze({ Enum.Material.Plastic, Enum.Material.Neon, Enum.Material.Wood })
@@ -46,16 +50,33 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 	shl1 = function(): PlayerStore
 		error(`shl1 has no save yet`)
 	end,
-	-- the first version of the game listed the artifacts its player owned + didn't say which game wrote it
 	shl2 = function(): PlayerStore
+		-- said whether it had been through the import, not which pass of it
+		local function toThird(document: { [string]: any })
+			document.Version = 3
+			document.IsLegacyImported = document.LegacyImportVersion >= 1
+			document.LegacyImportVersion = nil
+		end
+		-- didn't say which game wrote it
+		local function toSecond(document: { [string]: any })
+			toThird(document)
+			document.Version = 2
+			document.Game = nil
+		end
+		-- listed the artifacts its player owned
+		local function toFirst(document: { [string]: any })
+			toSecond(document)
+			document.Version = 1
+			document.ArtifactIds = { "costume_artifacts_a-bright-presence" }
+		end
 		return {
 			Name = "PlayerSave",
 			KeyFormat = "Player_%d",
 			Version = SaveType.SHL2_VERSION,
-			ToFirstVersion = function(document: { [string]: any })
-				document.Version = 1
-				document.ArtifactIds = { "costume_artifacts_a-bright-presence" }
-				document.Game = nil
+			Earlier = { toFirst, toSecond, toThird },
+			ToImported = function(document: { [string]: any })
+				toSecond(document)
+				document.IsLegacyImported = true
 			end,
 		}
 	end,
@@ -65,14 +86,14 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 			Name = "PlayerSave",
 			KeyFormat = "Player_%d",
 			Version = SaveType.SHL3_VERSION,
-			ToFirstVersion = function(_document: { [string]: any }) end,
+			Earlier = {},
 		}
 	end,
 })
 local PLAYER_STORE_NAME = PLAYER_STORE.Name
 local PLAYER_KEY_FORMAT = PLAYER_STORE.KeyFormat
 -- a game this server isn't
-local OTHER_GAME_ID: GameDefinition.GameId = if GameDefinition.ID == "shl2" then "shl3" else "shl2"
+local OTHER_GAME_ID = GameDefinition.tune("shl2", { shl2 = "shl3" })
 local isSample = Type.strictInterface({
 	Version = Type.literal(1),
 	Color = Type.Color3,
@@ -448,13 +469,34 @@ return {
 		-- a starter suit comes with an id that's baked in, a slot that kept it would share it with everybody
 		assert(store.Default().Characters[1].Id ~= save.Characters[1].Id, `two new saves share the id of a slot`)
 
-		-- what the first version of the game wrote: the same save, the way it was kept then
-		local first = TableUtil.deepCopy(dataRes.Value :: { [string]: any })
-		PLAYER_STORE.ToFirstVersion(first)
-		local firstRes = StoreDefinition.decode(store, first)
-		assert(firstRes.IsOk, `a version 1 save wasn't decoded: {tostring(firstRes.Value)}`)
-		assert(firstRes.Value.Version == PLAYER_STORE.Version, `a version 1 save wasn't caught up`)
-		assert(SpecUtil.getIfEqual(firstRes.Value, save), `a version 1 save lost more than its artifacts on the way`)
+		-- what every earlier version of the game wrote: the same save, the way it was kept then
+		assert(
+			#PLAYER_STORE.Earlier == store.Version - 1,
+			`{#PLAYER_STORE.Earlier} of the earlier versions are held to this`
+		)
+		for version, toEarlier in PLAYER_STORE.Earlier do
+			local earlier = TableUtil.deepCopy(dataRes.Value :: { [string]: any })
+			toEarlier(earlier)
+			assert(earlier.Version == version, `the save of version {version} is at version {earlier.Version}`)
+			local earlierRes = StoreDefinition.decode(store, earlier)
+			assert(earlierRes.IsOk, `a version {version} save wasn't decoded: {tostring(earlierRes.Value)}`)
+			assert(earlierRes.Value.Version == PLAYER_STORE.Version, `a version {version} save wasn't caught up`)
+			assert(SpecUtil.getIfEqual(earlierRes.Value, save), `a version {version} save changed on the way`)
+		end
+
+		-- a save keeps the version of the import it had, a new one had none. one from before that was kept only said
+		-- whether it had been through it: the importer there was by then is the first
+		assert(save.LegacyImportVersion == 0, `a new save starts out as imported`)
+		if PLAYER_STORE.ToImported then
+			local imported = TableUtil.deepCopy(dataRes.Value :: { [string]: any })
+			PLAYER_STORE.ToImported(imported)
+			local importedRes = StoreDefinition.decode(store, imported)
+			assert(importedRes.IsOk, `a save that was imported wasn't decoded: {tostring(importedRes.Value)}`)
+			assert(importedRes.Value.LegacyImportVersion == 1, `a save that was imported is due the same import again`)
+			local expected = TableUtil.deepCopy(save)
+			expected.LegacyImportVersion = 1
+			assert(SpecUtil.getIfEqual(importedRes.Value, expected), `a save that was imported changed on the way`)
+		end
 
 		local ahead = TableUtil.deepCopy(dataRes.Value :: { [string]: any })
 		ahead.Version = PLAYER_STORE.Version + 1

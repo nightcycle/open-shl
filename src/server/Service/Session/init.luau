@@ -178,9 +178,9 @@ local function set(self: SessionService, player: Player, session: Session)
 	end
 end
 
--- whatever the patch holds takes the place of what a new save starts out with. it's only ever done once, the old
--- stores aren't written to so they'd hand out the same thing again
-local function import(save: PlayerSave, patch: SavePatch): PlayerSave
+-- whatever the patch holds takes the place of what a new save starts out with. it's only ever done once for a version
+-- of the importer, the old stores aren't written to so they'd hand out the same thing again
+local function import(save: PlayerSave, patch: SavePatch, importVersion: number): PlayerSave
 	return FreezeUtil.delta(save, function(t: PlayerSave): PlayerSave
 		t.Characters = patch.Characters or t.Characters
 		t.ActiveCharacterId = patch.ActiveCharacterId or t.ActiveCharacterId
@@ -195,7 +195,8 @@ local function import(save: PlayerSave, patch: SavePatch): PlayerSave
 		if not getCharacter(t, t.ActiveCharacterId) and t.Characters[1] then
 			t.ActiveCharacterId = t.Characters[1].Id
 		end
-		t.IsLegacyImported = true
+		-- written whatever the pass brought over or left behind: it ran, the same one isn't due again
+		t.LegacyImportVersion = importVersion
 		return t
 	end)
 end
@@ -207,16 +208,18 @@ local function load(userId: number, getIfCanceled: () -> boolean): Result<Player
 		return Result.err(`the data service isn't initialized`)
 	end
 	local saveRes = DataService:Load(StoreDefinition.Player, userId)
-	if saveRes.IsErr or saveRes.Value.IsLegacyImported then
+	if saveRes.IsErr then
 		return saveRes
 	end
-	-- a game that takes over from nothing has nobody to ask, its saves are left unmarked: the day it's given an
-	-- importer every one of them is still due
-	if LegacyImportService.IsInitialized and not LegacyImportService.HasImporter then
+	-- a save that had the pass of the importer there is by now is through with it. a game that takes over from nothing
+	-- has no importer + nobody to ask, its saves are left at 0: the day it's given one every one of them is still due
+	if LegacyImportService.IsInitialized and not LegacyImportService:GetIfDue(saveRes.Value.LegacyImportVersion) then
 		return saveRes
 	end
 	local patchRes: Result<SavePatch, string> = Result.err(`the legacy import service isn't initialized`)
+	local importVersion = 0
 	if LegacyImportService.IsInitialized then
+		importVersion = LegacyImportService.Version
 		patchRes = LegacyImportService:Import(userId)
 	end
 	if getIfCanceled() or not DataService.IsInitialized then
@@ -224,7 +227,7 @@ local function load(userId: number, getIfCanceled: () -> boolean): Result<Player
 	end
 	local problem: string
 	if patchRes.IsOk then
-		local save = import(saveRes.Value, patchRes.Value)
+		local save = import(saveRes.Value, patchRes.Value, importVersion)
 		local importRes = DataService:Save(StoreDefinition.Player, userId, save)
 		if importRes.IsOk then
 			return Result.ok(save)

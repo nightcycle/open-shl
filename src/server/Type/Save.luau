@@ -23,7 +23,7 @@ local Types = {}
 -- goes up whenever what a game keeps changes shape, along with a migration that takes its saves of the version before
 -- there. each game counts its own: a save is only ever read by the game that wrote it, so what one adds is no step
 -- for another
-Types.SHL2_VERSION = 3
+Types.SHL2_VERSION = 4
 -- no save of it is kept yet. until the game is given its universe its shape is changed in place, without a migration
 Types.SHL3_VERSION = 1
 
@@ -41,7 +41,9 @@ export type PlayerSave = {
 	IsTutorialEnabled: boolean,
 	LastDailyRewardAt: number, -- unix seconds, 0 until the first one
 	PurchaseIds: { string }, -- the receipts that were granted, newest last
-	IsLegacyImported: boolean,
+	-- the version of the importer whose pass the save had, 0 for none. an importer that's ahead of it is still due: one
+	-- that came after the save did, or one that came back fixed
+	LegacyImportVersion: number,
 }
 do -- Types.SHL2PlayerSave, Types.SHL3PlayerSave
 	-- a slot is found by its id, so a save where that can't work is as broken as one with a field missing
@@ -78,7 +80,7 @@ do -- Types.SHL2PlayerSave, Types.SHL3PlayerSave
 			IsTutorialEnabled = Type.boolean,
 			LastDailyRewardAt = Type.intersection(Type.integer, Type.numberMin(0)),
 			PurchaseIds = Type.array(Type.string),
-			IsLegacyImported = Type.boolean,
+			LegacyImportVersion = Type.intersection(Type.integer, Type.numberMin(0)),
 		})
 		return Type.intersection(isShape, isLinked)
 	end

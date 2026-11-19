@@ -106,6 +106,19 @@ return {
 		end)
 	end),
 
+	-- a save keeps the version of the pass it had. one that's behind the importer is due, whether it never had a pass
+	-- or had an earlier one: that's what lets an importer come late or come back fixed
+	Version = SpecUtil.newScenario(function()
+		run(function(legacyImportService: LegacyImportService, _fake: FakeDataStoreService)
+			local version = legacyImportService.Version
+			assert(version >= 1 and version % 1 == 0, `the importer is at version {version}`)
+			assert(legacyImportService:GetIfDue(0), `a save that was never imported isn't due`)
+			assert(legacyImportService:GetIfDue(version - 1), `a save that had an earlier pass isn't due`)
+			assert(not legacyImportService:GetIfDue(version), `a save that had the pass is due it again`)
+			assert(not legacyImportService:GetIfDue(version + 1), `a save from a newer server is due an older pass`)
+		end)
+	end),
+
 	-- a balance is a whole number that's never under 0, the old game didn't see to either
 	Balances = SpecUtil.newScenario(function()
 		run(function(legacyImportService: LegacyImportService, fake: FakeDataStoreService)

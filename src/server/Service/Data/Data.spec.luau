@@ -32,7 +32,7 @@ local MAX_ATTEMPTS = 4
 local UNIVERSE_ID = 123
 local OTHER_UNIVERSE_ID = 456
 -- a game this server isn't
-local OTHER_GAME_ID: GameDefinition.GameId = if GameDefinition.ID == "shl2" then "shl3" else "shl2"
+local OTHER_GAME_ID = GameDefinition.tune("shl2", { shl2 = "shl3" })
 local isHero = Type.strictInterface({
 	Version = Type.literal(2),
 	Coins = Type.integer,

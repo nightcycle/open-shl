@@ -200,7 +200,10 @@ local function walk(destroyCallbacks: { () -> () })
 	start(destroyCallbacks, fake)
 	local session = awaitSession(player)
 	local save = session.Save
-	assert(save.IsLegacyImported, `the first save wasn't marked as imported`)
+	assert(LegacyImportService.IsInitialized, `the legacy import service isn't initialized`)
+	local importVersion = LegacyImportService.Version
+	assert(importVersion >= 1, `the game has no importer, this spec is out of date`)
+	assert(save.LegacyImportVersion == importVersion, `the first save wasn't marked with the import it had`)
 	assert(SpecUtil.getIfEqual(getIds(save.Characters), SLOT_IDS), `the old slots didn't make it into the save`)
 	assert(save.ActiveCharacterId == SLOT_IDS[LAST_SLOT_INDEX], `the slot that was played last isn't the active one`)
 	local appearance = save.Characters[LAST_SLOT_INDEX].Identities.Main.Appearance
@@ -239,7 +242,7 @@ local function walk(destroyCallbacks: { () -> () })
 	end)
 	assert(type(saved.Lock) == "table", `the autosave let go of the save`)
 	assert(
-		saved.Data.IsApartmentLocked == isApartmentLocked and saved.Data.IsLegacyImported == true,
+		saved.Data.IsApartmentLocked == isApartmentLocked and saved.Data.LegacyImportVersion == importVersion,
 		`the autosave wrote less than the session holds`
 	)
 
@@ -265,6 +268,18 @@ local function walk(destroyCallbacks: { () -> () })
 	for index = callCount + 1, #calls do
 		assert(calls[index].StoreName == STORE.Name, `"{calls[index].StoreName}" was asked for a second import`)
 	end
+
+	-- the third visit, of a save that's behind the importer: one from before the game had it, or from before it was
+	-- fixed. it's due the pass it didn't have, whatever was done with it since
+	stop(destroyCallbacks)
+	local behind = fake:Peek(STORE.Name, key) :: any
+	assert(behind.Data.LegacyImportVersion == importVersion, `the save was let go of without its import version`)
+	behind.Data.LegacyImportVersion = importVersion - 1
+	fake:Plant(STORE.Name, key, behind)
+	start(destroyCallbacks, fake)
+	session = awaitSession(player)
+	assert(session.Save.LegacyImportVersion == importVersion, `a save behind the importer wasn't caught up with it`)
+	assert(session.Save.Balances.Credits == CREDITS * 100, `the pass a save was due didn't bring over the old stores`)
 end
 -- Class
 return SpecUtil.newScenario(function()

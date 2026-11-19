@@ -25,6 +25,12 @@ local MIGRATIONS: { (document: { [string]: any }) -> { [string]: any } } = table
 		document.Game = "shl2"
 		return document
 	end,
+	-- a version 3 save said whether it had been through the import, not which pass of it. there was only the first
+	function(document: { [string]: any }): { [string]: any }
+		document.LegacyImportVersion = if document.IsLegacyImported then 1 else 0
+		document.IsLegacyImported = nil
+		return document
+	end,
 })
 -- Variables
 -- References
@@ -44,7 +50,7 @@ local function newPlayerSave(): PlayerSave
 		IsTutorialEnabled = AttributeDefinition.IsTutorialEnabled.Default,
 		LastDailyRewardAt = 0,
 		PurchaseIds = {},
-		IsLegacyImported = false,
+		LegacyImportVersion = 0,
 	}
 	TableUtil.deepFreeze(out)
 	return out
