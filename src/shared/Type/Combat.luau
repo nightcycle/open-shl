@@ -34,18 +34,57 @@ Types.Regeneration = Type.strictInterface({
 	Interval = Type.numberPositive,
 })
 
+-- how long somebody who lost health counts as in a fight: every loss adds to what's left of the one before
+export type Fighting = {
+	Duration: number, -- seconds a loss of health adds
+	MaxDuration: number, -- seconds it's never further off than
+}
+Types.Fighting = Type.intersection(
+	Type.strictInterface({
+		Duration = Type.numberPositive,
+		MaxDuration = Type.numberPositive,
+	}),
+	function(value: Fighting): (boolean, string?)
+		if value.Duration > value.MaxDuration then
+			return false, `a loss of health adds more than a fight can last`
+		end
+		return true
+	end
+)
+
+-- why somebody isn't counted as in a menu although their client says they are
+export type MenuRefusal = {
+	Type: "Fighting",
+	Until: number, -- when the fight is over, on the clock of the server
+}
+Types.MenuRefusal = Type.strictInterface({
+	Type = Type.literal("Fighting"),
+	Until = Type.number,
+})
+
 -- what a game makes of one character hitting another
 export type CombatRule = {
 	PlayerScale: number, -- what a hit on somebody's character is multiplied by
 	IsMenuSafe: boolean, -- nobody is hurt while they sit in a menu
+	Fighting: Fighting?, -- nobody is kept out of a menu without
 	Knockback: Knockback?, -- nobody is sent off without
 	Regeneration: Regeneration?, -- health only comes back by a power without
 }
-Types.CombatRule = Type.strictInterface({
-	PlayerScale = Type.numberPositive,
-	IsMenuSafe = Type.boolean,
-	Knockback = Type.optional(Types.Knockback),
-	Regeneration = Type.optional(Types.Regeneration),
-})
+Types.CombatRule = Type.intersection(
+	Type.strictInterface({
+		PlayerScale = Type.numberPositive,
+		IsMenuSafe = Type.boolean,
+		Fighting = Type.optional(Types.Fighting),
+		Knockback = Type.optional(Types.Knockback),
+		Regeneration = Type.optional(Types.Regeneration),
+	}),
+	-- a menu that shelters nobody has nobody to keep out of it
+	function(value: CombatRule): (boolean, string?)
+		if value.Fighting ~= nil and not value.IsMenuSafe then
+			return false, `a fight keeps out of the menus, which shelter nobody without IsMenuSafe`
+		end
+		return true
+	end
+)
 
 return Types

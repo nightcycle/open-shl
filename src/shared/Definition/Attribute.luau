@@ -68,6 +68,8 @@ Module.IsDead = new("Character", "IsDead", Type.boolean, false) :: Attribute<boo
 Module.PersonaName = new("Character", "PersonaName", Type.string, "") :: Attribute<string>
 Module.IdentityKey = new("Character", "IdentityKey", CharacterType.IdentityKey, "Main") :: Attribute<IdentityKey>
 Module.IsInMenu = new("Character", "IsInMenu", Type.boolean, false) :: Attribute<boolean>
+-- when the fight it's in is over, on the clock of the server. nil for one that didn't lose health since it came in
+Module.FightingUntil = new("Character", "FightingUntil", Type.optional(Type.numberMin(0)), nil) :: Attribute<number?>
 Module.IsMasked = new("Character", "IsMasked", Type.boolean, true) :: Attribute<boolean>
 Module.IsHandcuffed = new("Character", "IsHandcuffed", Type.boolean, false) :: Attribute<boolean>
 -- nothing takes health off it
