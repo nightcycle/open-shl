@@ -88,6 +88,13 @@ local ability: Ability = table.freeze({
 			config.Wake = { Lifetime = 0.2, Depth = 0.5 }
 			return config
 		end),
+		shl1 = FreezeUtil.delta(CONFIG, function(config: Config): Config
+			config.Height = 10
+			-- a far shorter pull, in silence
+			config.Power = 10
+			config.Sound = nil
+			return config
+		end),
 	}),
 })
 
