@@ -41,7 +41,8 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 		-- what the legacy place was set to
 		Properties = {
 			MaterialService = { Use2022Materials = false },
-			Players = { RespawnTime = 5 },
+			-- the place said 5 + never let the engine bring a character back, a script did a second after it died
+			Players = { RespawnTime = 1 },
 			StarterPlayer = { CameraMaxZoomDistance = 400 },
 		},
 	}),
