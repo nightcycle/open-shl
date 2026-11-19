@@ -87,6 +87,9 @@ local function strip(props: {
 	Step: Step,
 	LeavingStep: Step?,
 	Notice: string?,
+	FilteredText: FilteredText?,
+	IsPeaceful: boolean,
+	OnPeaceful: (isPeaceful: boolean) -> (),
 	OnForward: (draft: Character) -> (),
 })
 	local style = React.useContext(StyleContext)
@@ -112,6 +115,9 @@ local function strip(props: {
 				Position = if leavingStep then UDim2.fromScale(0, 1) else nil,
 				Step = props.Step,
 				Notice = props.Notice,
+				FilteredText = props.FilteredText,
+				IsPeaceful = props.IsPeaceful,
+				OnPeaceful = props.OnPeaceful,
 				OnForward = props.OnForward,
 			} :: Page.Properties
 		),
@@ -170,6 +176,9 @@ local function walker(props: Properties)
 	end)
 	-- how far the mannequin is turned, a step back leaves it the way it stands
 	local turn, setTurn = React.useState(0)
+	-- whether the player sits fights out once the walk is through. it's nothing of the draft: the walk starts out
+	-- fighting + a step back doesn't take the pick back
+	local isPeaceful, setIsPeaceful = React.useState(false)
 	local stepIndex = walk.StepIndex
 	local step = STEPS[stepIndex]
 	local isRestart = stepIndex <= CONSTANTS.RESTART_STEP_COUNT
@@ -178,8 +187,13 @@ local function walker(props: Properties)
 		if props.IsSaving then
 			return
 		end
-		-- the last stop is left into the game, as what was made
+		-- the last stop is left into the game, as what was made. the mode is the player's + not the character's, so
+		-- it's asked for by itself, ahead of the character it's first played in
 		if stepIndex == #STEPS then
+			props.OnAction({
+				Type = "SetPeaceful",
+				IsPeaceful = isPeaceful,
+			})
 			props.OnAction({
 				Type = "Save",
 				Character = draft,
@@ -224,6 +238,9 @@ local function walker(props: Properties)
 		Step = step,
 		LeavingStep = if walk.SlidFrom then STEPS[walk.SlidFrom] else nil,
 		Notice = props.ErrorMessage,
+		FilteredText = props.FilteredText,
+		IsPeaceful = isPeaceful,
+		OnPeaceful = setIsPeaceful,
 		OnForward = goOn,
 	})
 	local editors: { [string]: React.ReactNode } = {}

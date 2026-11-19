@@ -9,79 +9,49 @@ local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definit
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
 -- Components
-local Row = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Row")
+local Names = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Names")
+local Stepper = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Stepper")
 local Swatches = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Swatches")
 -- Hooks
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
+local CharacterEditorRefusalContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Refusal")
 local CharacterEditorStateContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/State")
-local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
 local StyleContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style")
 -- Types
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local EditorTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor/Types")
 local Types = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Types")
 type Character = CharacterType.Character
 type EditorState = CharacterEditorType.EditorState
 type FieldDefinition = CharacterEditorType.FieldDefinition
+type FilteredText = EditorTypes.FilteredText
 type PageInfo = Types.PageInfo
 type PageRequirement = CharacterEditorType.PageRequirement
 type RowInfo = Types.RowInfo
 type Step = Types.Step
--- an item a row steps to: where its page is + the field that puts it on
-type ItemEntry = {
-	Path: string,
-	IsWorn: boolean,
-	Toggle: FieldDefinition,
-}
 export type Properties = RobloxComponents.FrameProperties & {
 	Step: Step,
 	-- what the button the page is left by says in place of what it's for: why the walk couldn't end
 	Notice: string?,
+	FilteredText: FilteredText?, -- the last answer of the text filter, for a page names are typed on
+	IsPeaceful: boolean?, -- whether the player sat fights out, for the page that asks
+	OnPeaceful: ((isPeaceful: boolean) -> ())?,
 	-- the way on, with the draft as it's left. left out, the page is only looked at: one that's sliding off
 	OnForward: ((draft: Character) -> ())?,
 }
 -- Constants
 local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/CONSTANTS")
-local ITEM_TAG: CharacterEditorType.Tag = "IsItemAdded"
 local NO_FIELDS: { FieldDefinition } = table.freeze({})
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
-
--- the items of a list of the game's editor in its order. a place built for another game has no such list
-local function listItems(state: EditorState, folderPath: string): { ItemEntry }
-	local out: { ItemEntry } = {}
-	local folderOpt = CharacterEditorDefinition.getPage(folderPath)
-	if folderOpt.IsNone then
-		return out
-	end
-	local folder = folderOpt.Value
-	if folder.Type ~= "Default" or not folder.Children then
-		return out
-	end
-	for _, child in folder.Children do
-		if child.Type ~= "Item" then
-			continue
-		end
-		local fields: { FieldDefinition } = child.Fields or NO_FIELDS
-		for _, field in fields do
-			if field.Type == "Toggle" and field.Focus == ITEM_TAG then
-				table.insert(out, {
-					Path = CharacterEditorDefinition.getChildPath(folderPath, child),
-					IsWorn = CharacterEditorUtil.getIfItemWorn(state, child.DefinitionId),
-					Toggle = field,
-				})
-				break
-			end
-		end
-	end
-	return out
-end
 
 -- the fields of a page that pick a color, in the order the page is stopped on for them
 local function listColorFields(path: string): { FieldDefinition }
@@ -143,18 +113,19 @@ end
 -- Class
 -- one stop of the walk: a page that hides the booth, or the two see-through panels at the sides of it with the
 -- controls of the page in the left one + a word about them in the right one. it's drawn over the editor of the game
--- the place is built for: in a place of another game the rows have nothing to step through + a color paints nothing
+-- the place is built for: in a place of another game the rows have nothing to step through, a color paints nothing
+-- + a name has no box that takes it
 return function(props: Properties): React.ReactNode
 	local style = React.useContext(StyleContext)
 	local state = React.useContext(CharacterEditorStateContext)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
-	local setPath = React.useContext(SetPathContext)
+	local editRefusal = React.useContext(CharacterEditorRefusalContext)
 	-- why the page wasn't left, for as long as the button says it
 	local refusal: string?, setRefusal: (string?) -> () = useTimedState(CONSTANTS.NOTICE_DURATION)
 	local step = props.Step
 	local page = step.Page
 	local onForward = props.OnForward
-	if not state or not fieldCallback or not setPath then
+	if not state or not fieldCallback then
 		return nil
 	end
 	local palette = style.Palette
@@ -171,29 +142,6 @@ return function(props: Properties): React.ReactNode
 			return
 		end
 		onForward(state.Character)
-	end
-
-	-- an arrow puts the next one of the list on, the one after the last is the first again. with nothing of the list
-	-- worn yet either arrow starts at its own end
-	local function stepRow(row: RowInfo, direction: number)
-		local items = listItems(state, row.Folder)
-		if #items == 0 then
-			return
-		end
-		local wornIndex: number? = nil
-		for index, item in items do
-			if item.IsWorn then
-				wornIndex = index
-				break
-			end
-		end
-		local index = if wornIndex then (wornIndex - 1 + direction) % #items + 1 elseif direction > 0 then 1 else #items
-		local item = items[index]
-		setPath(item.Path)
-		fieldCallback(item.Toggle, {
-			Type = "Toggle",
-			IsSelected = true,
-		})
 	end
 
 	-- a press on a swatch is the pick + the way on at once, whether or not there's anything to paint
@@ -221,7 +169,12 @@ return function(props: Properties): React.ReactNode
 	end
 
 	local forward = page.Forward
-	local notice = refusal or props.Notice
+	-- a list that turned a pick down has nowhere of its own to say so, every other field that does is heard of in the
+	-- output
+	local listRefusal: string? = if editRefusal and editRefusal.Field.Type == "ChoiceList"
+		then editRefusal.Message
+		else nil
+	local notice = refusal or (if onForward then listRefusal else nil) or props.Notice
 	local forwardButton: React.ReactNode = nil
 	if forward then
 		forwardButton = e("TextButton", {
@@ -276,25 +229,26 @@ return function(props: Properties): React.ReactNode
 		local rows: { RowInfo } = page.Rows or {}
 		for _, row in rows do
 			controls[`Row-{row.Text}`] = e(
-				Row,
+				Stepper,
 				{
-					Position = row.Position,
-					Size = CONSTANTS.ROW_SIZE,
-					Text = row.Text,
-					LeftPosition = CONSTANTS.ROW_LEFT_POSITION,
-					RightPosition = CONSTANTS.ROW_RIGHT_POSITION,
-					ArrowSize = CONSTANTS.ROW_ARROW_SIZE,
-					NamePosition = CONSTANTS.ROW_NAME_POSITION,
-					NameSize = CONSTANTS.ROW_NAME_SIZE,
-					OnStep = if onForward
-						then function(direction: number)
-							stepRow(row, direction)
-						end
-						else nil,
-				} :: Row.Properties
+					Row = row,
+					PageKey = page.Key,
+					IsLive = onForward ~= nil,
+					IsPeaceful = props.IsPeaceful,
+					OnPeaceful = props.OnPeaceful,
+				} :: Stepper.Properties
 			)
 		end
-		if page.Kind == "Palette" then
+		if page.Kind == "Names" then
+			controls.Names = e(
+				Names,
+				{
+					Page = page,
+					IsLive = onForward ~= nil,
+					FilteredText = props.FilteredText,
+				} :: Names.Properties
+			)
+		elseif page.Kind == "Palette" then
 			controls.Swatches = e(
 				Swatches,
 				{

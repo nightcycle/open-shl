@@ -1,0 +1,358 @@
+--!strict
+--!native
+-- Services
+-- Packages
+local React = require("@game/ReplicatedStorage/Packages/React")
+-- Modules
+local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
+local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
+local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
+-- Components
+local Row = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Row")
+-- Hooks
+-- Contexts
+local CharacterEditorFieldCallback =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
+local CharacterEditorStateContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/State")
+local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
+local StyleContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style")
+-- Types
+local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
+local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
+local Types = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Types")
+type ChoiceDefinition = MiscType.ChoiceDefinition
+type EditorState = CharacterEditorType.EditorState
+type FieldDefinition = CharacterEditorType.FieldDefinition
+type PatternChoice = CharacterEditorType.PatternChoice
+type RowInfo = Types.RowInfo
+-- something of a list a row steps to: where its page is, the field that puts it on + how much of it is worn already
+type Entry = {
+	Path: string,
+	Name: string,
+	Toggle: FieldDefinition,
+	WornCount: number,
+}
+export type Properties = {
+	Row: RowInfo,
+	PageKey: string, -- the page of the game's editor the row is on
+	IsLive: boolean?, -- left out, the row is only looked at
+	IsPeaceful: boolean?, -- what a row of the mode reads
+	OnPeaceful: ((isPeaceful: boolean) -> ())?,
+}
+-- Constants
+local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/CONSTANTS")
+local ITEM_TAG: CharacterEditorType.Tag = "IsItemAdded"
+local NO_FIELDS: { FieldDefinition } = table.freeze({})
+local NO_PATTERN_CHOICES: { PatternChoice } = table.freeze({})
+-- Variables
+-- References
+-- Private Functions
+local e = React.createElement
+
+local function findToggle(pageFields: { FieldDefinition }?): FieldDefinition?
+	local fields: { FieldDefinition } = pageFields or NO_FIELDS
+	for _, field in fields do
+		if field.Type == "Toggle" and field.Focus == ITEM_TAG then
+			return field
+		end
+	end
+	return nil
+end
+
+-- what a list of the game's editor holds, in its order. a place built for another game has no such list
+local function listEntries(state: EditorState, folderPath: string): { Entry }
+	local out: { Entry } = {}
+	local folderOpt = CharacterEditorDefinition.getPage(folderPath)
+	if folderOpt.IsNone then
+		return out
+	end
+	local folder = folderOpt.Value
+	if folder.Type ~= "Default" or not folder.Children then
+		return out
+	end
+	for _, child in folder.Children do
+		if child.Type == "Item" then
+			local toggle = findToggle(child.Fields)
+			local itemDefRes = AppearanceItemDefinition.get(child.DefinitionId)
+			if toggle then
+				table.insert(out, {
+					Path = CharacterEditorDefinition.getChildPath(folderPath, child),
+					Name = if itemDefRes.IsOk and itemDefRes.Value.Name
+						then itemDefRes.Value.Name
+						else child.DefinitionId,
+					Toggle = toggle,
+					WornCount = if CharacterEditorUtil.getIfItemWorn(state, child.DefinitionId) then 1 else 0,
+				})
+			end
+		elseif child.Type == "Set" then
+			local toggle = findToggle(child.Fields)
+			local wornCount = 0
+			for _, definitionId in child.DefinitionIds do
+				if CharacterEditorUtil.getIfItemWorn(state, definitionId) then
+					wornCount += 1
+				end
+			end
+			if toggle then
+				table.insert(out, {
+					Path = CharacterEditorDefinition.getChildPath(folderPath, child),
+					Name = child.Title or child.Key,
+					Toggle = toggle,
+					WornCount = wornCount,
+				})
+			end
+		end
+	end
+	return out
+end
+
+-- where a list stands: at what's worn of it. of a list of sets that's the set most of what's worn is of, so a suit
+-- that had a piece swapped is still the one the row steps on from
+local function findWornIndex(entries: { Entry }): number?
+	local wornIndex: number? = nil
+	local wornCount = 0
+	for index, entry in entries do
+		if entry.WornCount > wornCount then
+			wornIndex = index
+			wornCount = entry.WornCount
+		end
+	end
+	return wornIndex
+end
+
+-- the one after the last is the first again. with nothing to step on from either arrow starts at its own end
+local function getNextIndex(index: number?, count: number, direction: number): number
+	return if index then (index - 1 + direction) % count + 1 elseif direction > 0 then 1 else count
+end
+
+-- the field of a kind a row is about, by its place among the fields of that kind on the page
+local function findField(pageKey: string, fieldType: string, index: number): FieldDefinition?
+	local pageOpt = CharacterEditorDefinition.getPage(pageKey)
+	if pageOpt.IsNone or pageOpt.Value.Type ~= "Default" then
+		return nil
+	end
+	local count = 0
+	local fields: { FieldDefinition } = pageOpt.Value.Fields or NO_FIELDS
+	for _, field in fields do
+		if field.Type == fieldType then
+			count += 1
+			if count == index then
+				return field
+			end
+		end
+	end
+	return nil
+end
+
+local function getChoiceText(choice: ChoiceDefinition): string
+	return if choice.Type == "Icon" then tostring(choice.Value) else choice.Text
+end
+-- Class
+-- a row of a page with what its arrows do to the draft: it steps through a list of the page of the game's editor it's
+-- on, or through the choices of one of that page's fields. what a row can't find in the game the place is built for
+-- it has nothing to step through, the bar is there all the same
+local function stepper(props: Properties): React.ReactNode
+	local style = React.useContext(StyleContext)
+	local state = React.useContext(CharacterEditorStateContext)
+	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
+	local setPath = React.useContext(SetPathContext)
+	local row = props.Row
+	local source = row.Source
+	if not state or not fieldCallback or not setPath then
+		return nil
+	end
+	local palette = style.Palette
+
+	local text = row.Text
+	local onStep: ((direction: number) -> ())? = nil
+	local under: { [string]: React.ReactNode } = {}
+	if source.Type == "Items" or source.Type == "Sets" then
+		local entries = listEntries(state, source.Folder)
+		onStep = function(direction: number)
+			if #entries == 0 then
+				return
+			end
+			local entry = entries[getNextIndex(findWornIndex(entries), #entries, direction)]
+			-- a field of an item or a set is written through its page
+			setPath(entry.Path)
+			fieldCallback(entry.Toggle, {
+				Type = "Toggle",
+				IsSelected = true,
+			})
+		end
+	elseif source.Type == "Extras" then
+		local entries = listEntries(state, source.Folder)
+		-- the one that's tried on or was last kept is the one whose page is open
+		local openIndex: number? = nil
+		for index, entry in entries do
+			if entry.Path == state.Path then
+				openIndex = index
+			end
+		end
+		local openEntry: Entry? = if openIndex then entries[openIndex] else nil
+		local isKept = openEntry ~= nil and openEntry.WornCount > 0
+		onStep = function(direction: number)
+			if #entries > 0 then
+				setPath(entries[getNextIndex(openIndex, #entries, direction)].Path)
+			end
+		end
+		under.Box = e("Frame", {
+			BackgroundColor3 = palette.FieldAlt,
+			BackgroundTransparency = CONSTANTS.NESTED_ROW_TRANSPARENCY,
+			BorderSizePixel = 0,
+			Position = CONSTANTS.EXTRAS_BOX_POSITION,
+			Size = CONSTANTS.EXTRAS_BOX_SIZE,
+		}, {
+			Label = e("TextLabel", {
+				BackgroundTransparency = 1,
+				FontFace = style.Fonts.Body,
+				Position = CONSTANTS.EXTRAS_LABEL_POSITION,
+				Size = CONSTANTS.EXTRAS_LABEL_SIZE,
+				Text = if openEntry then openEntry.Name else CONSTANTS.NONE_TEXT,
+				TextColor3 = palette.Text,
+				TextScaled = true,
+				TextWrapped = true,
+				TextXAlignment = Enum.TextXAlignment.Left,
+			}),
+			Button = e("TextButton", {
+				Active = props.IsLive == true,
+				BackgroundColor3 = if isKept then palette.Negative else palette.Positive,
+				BorderSizePixel = 0,
+				FontFace = style.Fonts.Body,
+				Position = CONSTANTS.EXTRAS_BUTTON_POSITION,
+				Size = CONSTANTS.EXTRAS_BUTTON_SIZE,
+				Text = if isKept then CONSTANTS.EXTRAS_REMOVE_TEXT else CONSTANTS.EXTRAS_ADD_TEXT,
+				TextColor3 = palette.Text,
+				TextScaled = true,
+				TextWrapped = true,
+				[React.Event.Activated] = if props.IsLive and openEntry
+					then function()
+						fieldCallback(openEntry.Toggle, {
+							Type = "Toggle",
+							IsSelected = not isKept,
+						})
+					end
+					else nil,
+			}),
+		})
+	elseif source.Type == "Glow" then
+		local field = findField(props.PageKey, "Pattern", source.Field)
+		local choices: { PatternChoice } = CharacterEditorDefinition.PATTERN_CHOICES or NO_PATTERN_CHOICES
+		if field and #choices > 0 then
+			local value = CharacterEditorUtil.read(state, field)
+			-- what's worn of nothing reads like the first of the looks
+			local index = 1
+			for choiceIndex, choice in choices do
+				if
+					value.Type == "Pattern"
+					and choice.Material == value.Material
+					and choice.Pattern == value.Pattern
+				then
+					index = choiceIndex
+				end
+			end
+			onStep = function(direction: number)
+				local choice = choices[getNextIndex(index, #choices, direction)]
+				fieldCallback(field, {
+					Type = "Pattern",
+					Material = choice.Material,
+					Pattern = choice.Pattern,
+				})
+			end
+		end
+	elseif source.Type == "Power" then
+		local field = findField(props.PageKey, "ChoiceList", source.Field)
+		local pickedText: string? = nil
+		if field and field.Type == "ChoiceList" then
+			local choices = field.Choices
+			local value = CharacterEditorUtil.read(state, field)
+			local index: number? = nil
+			for choiceIndex, choice in choices do
+				if value.Type == "Powers" and value.Powers[choice.Value] then
+					index = choiceIndex
+					pickedText = getChoiceText(choice)
+				end
+			end
+			onStep = function(direction: number)
+				if #choices == 0 then
+					return
+				end
+				fieldCallback(field, {
+					Type = "Power",
+					Id = choices[getNextIndex(index, #choices, direction)].Value,
+					IsSelected = true,
+				})
+			end
+		end
+		under.Assignment = e("TextLabel", {
+			BackgroundTransparency = 1,
+			FontFace = style.Fonts.Body,
+			Position = CONSTANTS.ASSIGNMENT_POSITION,
+			Size = CONSTANTS.ASSIGNMENT_SIZE,
+			Text = pickedText or CONSTANTS.NONE_TEXT,
+			TextColor3 = palette.TextStrong,
+			TextScaled = true,
+			TextWrapped = true,
+		})
+	elseif source.Type == "Choice" then
+		local field = findField(props.PageKey, "Choose", source.Field)
+		if field and field.Type == "Choose" then
+			local choices = field.Choices
+			local value = CharacterEditorUtil.read(state, field)
+			local index: number? = nil
+			for choiceIndex, choice in choices do
+				if value.Type == "Choice" and choice.Value == value.Value then
+					index = choiceIndex
+					text = getChoiceText(choice)
+				end
+			end
+			onStep = function(direction: number)
+				if #choices == 0 then
+					return
+				end
+				fieldCallback(field, {
+					Type = "Choice",
+					Value = choices[getNextIndex(index, #choices, direction)].Value,
+				})
+			end
+		end
+	else
+		local isPeaceful = props.IsPeaceful == true
+		local onPeaceful = props.OnPeaceful
+		text = if isPeaceful then CONSTANTS.PEACEFUL_MODE_TEXT else CONSTANTS.MODE_TEXT
+		-- there are two of them, so either arrow is the switch
+		onStep = if onPeaceful
+			then function()
+				onPeaceful(not isPeaceful)
+			end
+			else nil
+	end
+
+	local rows: { RowInfo } = row.Rows or {}
+	for _, nestedRow in rows do
+		under[`Row-{nestedRow.Text}`] = e(stepper, {
+			Row = nestedRow,
+			PageKey = props.PageKey,
+			IsLive = props.IsLive,
+		})
+	end
+
+	return e(
+		Row,
+		{
+			BackgroundColor3 = if row.IsNested then palette.FieldAlt else nil,
+			BackgroundTransparency = if row.IsNested then CONSTANTS.NESTED_ROW_TRANSPARENCY else nil,
+			Position = row.Position,
+			Size = row.Size,
+			Text = text,
+			LeftPosition = CONSTANTS.ROW_LEFT_POSITION,
+			RightPosition = CONSTANTS.ROW_RIGHT_POSITION,
+			ArrowSize = CONSTANTS.ROW_ARROW_SIZE,
+			NamePosition = CONSTANTS.ROW_NAME_POSITION,
+			NameSize = CONSTANTS.ROW_NAME_SIZE,
+			OnStep = if props.IsLive then onStep else nil,
+			Under = under,
+		} :: Row.Properties
+	)
+end
+return stepper

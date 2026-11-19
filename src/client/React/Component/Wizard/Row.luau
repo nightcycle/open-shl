@@ -19,6 +19,8 @@ export type Properties = RobloxComponents.FrameProperties & {
 	NameSize: UDim2,
 	OnStep: ((direction: number) -> ())?, -- left out, the row is only looked at
 	OnName: (() -> ())?, -- left out, what the row is called isn't pressed
+	-- what hangs on the bar besides its three buttons, placed in scale of it
+	Under: { [string]: React.ReactNode }?,
 }
 -- Constants
 -- Variables
@@ -51,28 +53,25 @@ return function(props: Properties): React.ReactNode
 		})
 	end
 
-	return e(RobloxComponents.Frame(
-		{
-			-- the blue of a field unless whoever mounts it has another bar for it
-			BackgroundColor3 = if props.BackgroundColor3 == nil then style.Palette.Field else nil,
-			BorderSizePixel = 0,
-		},
-		props,
-		{
-			Left = arrow("<", props.LeftPosition, -1),
-			Right = arrow(">", props.RightPosition, 1),
-			Name = e("TextButton", {
-				Active = onName ~= nil,
-				BackgroundTransparency = 1,
-				FontFace = style.Fonts.Body,
-				Position = props.NamePosition,
-				Size = props.NameSize,
-				Text = props.Text,
-				TextColor3 = style.Palette.Text,
-				TextScaled = true,
-				TextWrapped = true,
-				[React.Event.Activated] = onName,
-			}),
-		}
-	))
+	local children: { [string]: React.ReactNode } = if props.Under then table.clone(props.Under) else {}
+	children.Left = arrow("<", props.LeftPosition, -1)
+	children.Right = arrow(">", props.RightPosition, 1)
+	children.Name = e("TextButton", {
+		Active = onName ~= nil,
+		BackgroundTransparency = 1,
+		FontFace = style.Fonts.Body,
+		Position = props.NamePosition,
+		Size = props.NameSize,
+		Text = props.Text,
+		TextColor3 = style.Palette.Text,
+		TextScaled = true,
+		TextWrapped = true,
+		[React.Event.Activated] = onName,
+	})
+
+	return e(RobloxComponents.Frame({
+		-- the blue of a field unless whoever mounts it has another bar for it
+		BackgroundColor3 = if props.BackgroundColor3 == nil then style.Palette.Field else nil,
+		BorderSizePixel = 0,
+	}, props, children))
 end
