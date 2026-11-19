@@ -59,3 +59,8 @@ rules:
   - at: Workspace/ViewingRooms/ViewingRoom#1/Cam
     count: 1
     attributes: { FieldOfView: 70 }
+  # the picture of the backdrop is a name only the universe of the legacy game can look up. anywhere else it's blank
+  # + roblox says so six times on every client that gets to see a booth, so it goes without
+  - at: Workspace/ViewingRooms/ViewingRoom#1/Background/Decal
+    count: 1
+    contents: { TextureContent: "" }
