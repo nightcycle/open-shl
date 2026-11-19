@@ -18,8 +18,9 @@ export type Properties = {}
 -- Constants
 -- how a gain is shown is the game's own, the layout of another game is never required
 local Layout: Layout = GameDefinition.pick({
+	-- its balance moved by its number alone, a gain was never shown. nothing of it mounts this
 	shl1 = function(): Layout
-		error(`shl1 has no currency popup yet`)
+		error(`shl1 shows no gain`)
 	end,
 	shl2 = function(): Layout
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CurrencyPopup")
