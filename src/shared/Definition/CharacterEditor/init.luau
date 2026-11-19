@@ -12,6 +12,8 @@ type Option<V> = TypeUnionLib.Option<V>
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 type EditorDefinition = CharacterEditorType.EditorDefinition
 type PageDefinition = CharacterEditorType.PageDefinition
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
+type TextureGroupKey = AppearanceType.TextureGroupKey
 -- Constants
 local ROOT_KEY = EditorPageDefinition.ROOT_KEY
 local PATH_DELIMITER = "/"
@@ -20,7 +22,7 @@ local SCALE_EPSILON = 0.001
 -- which pages there are + how much of a name is kept is the game's own, the tree of another game is never required
 local EDITOR: EditorDefinition = GameDefinition.pick({
 	shl1 = function(): EditorDefinition
-		error(`shl1 has no editor pages yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): EditorDefinition
 		return require("@self/SHL2")
@@ -33,6 +35,8 @@ assert(CharacterEditorType.EditorDefinition(EDITOR))
 TableUtil.deepFreeze(EDITOR)
 -- Variables
 local ItemPaths: { [string]: string } = {}
+-- the colors of the game's palette by their hex, none in a game without one
+local PaletteColors: { [string]: Color3? } = {}
 -- References
 -- Private Functions
 local function getPathSegments(path: string): { string }
@@ -79,6 +83,25 @@ do
 	end
 end
 
+do
+	-- a color a group starts out in is one a picker could have put there
+	local palette = EDITOR.Palette
+	if palette then
+		for _, color in palette do
+			local hex = color:ToHex()
+			assert(PaletteColors[hex] == nil, `the palette holds #{hex} twice`)
+			PaletteColors[hex] = color
+		end
+		local channelDefaults: { [TextureGroupKey]: Color3 } = EDITOR.ChannelDefaults or {}
+		for key, color in channelDefaults do
+			assert(
+				PaletteColors[color:ToHex()] ~= nil,
+				`the "{key}" group starts out in a color that's off the palette`
+			)
+		end
+	end
+end
+
 Module.MAX_NAME_LENGTH = EDITOR.MaxNameLength
 Module.MAX_BACKSTORY_LENGTH = EDITOR.MaxBackstoryLength
 Module.SCALE_EPSILON = SCALE_EPSILON
@@ -88,6 +111,14 @@ Module.SCALE = EDITOR.Scale
 Module.PATTERN_CHOICES = EDITOR.PatternChoices
 -- nil in a game whose powers are colored by a pick of their own
 Module.POWER_COLOR_SOURCE = EDITOR.PowerColorSource
+-- the only colors skin + what's worn come in, nil in a game where any color goes
+Module.PALETTE = EDITOR.Palette
+-- what a texture group of something newly worn starts out in when nothing worn beside it holds one, nil in a game
+-- where an item starts out the way it was made
+Module.CHANNEL_DEFAULTS = EDITOR.ChannelDefaults
+-- what an identity goes by when its name was left empty, the name of the account goes where the %s is. nil in a game
+-- where an empty name stays empty
+Module.NAME_DEFAULTS = EDITOR.NameDefaults
 Module.DETAIL_TEXTURE_GROUP_KEY = EditorPageDefinition.DETAIL_TEXTURE_GROUP_KEY
 
 Module.DEFINITION = EDITOR.Root
@@ -160,6 +191,15 @@ end
 -- the same page can be spelled with or without the root + slashes around it, this is the spelling paths are compared in
 function Module.fixPath(path: string): string
 	return table.concat(getPathSegments(path), PATH_DELIMITER)
+end
+
+-- the color of the game's palette that a color is, nil for one that's off it. compared as hex: a color that went
+-- through a save or a remote may not be bit equal to its choice. any color is itself in a game without a palette
+function Module.getPaletteColor(color: Color3): Color3?
+	if EDITOR.Palette == nil then
+		return color
+	end
+	return PaletteColors[color:ToHex()]
 end
 
 -- none for an item the editor doesn't offer (an artifact)
