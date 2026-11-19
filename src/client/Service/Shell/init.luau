@@ -94,6 +94,10 @@ local SCREEN_TRIGGERS: { [ScreenType]: Trigger } = table.freeze({
 })
 -- the screen the boot ends on. a game without one ends on its hud, as whoever the server picked
 local FIRST_SCREEN: Screen? = GameDefinition.tune(nil :: Screen?, {
+	-- a session of it started in its creator: a new suit or a saved one, asked on every join
+	shl1 = {
+		Type = "CharacterSelect",
+	} :: Screen,
 	-- who to play as is picked on every join, its legacy place opened the character manager the same way
 	shl3 = {
 		Type = "CharacterSelect",
