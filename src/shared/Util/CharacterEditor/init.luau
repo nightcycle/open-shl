@@ -36,6 +36,7 @@ export type Tags = PageUtil.Tags
 export type Character = CharacterType.Character
 export type IdentityKey = CharacterType.IdentityKey
 type ItemTextureBinding = CharacterEditorType.ItemTextureBinding
+type PowerValue = CharacterEditorType.PowerValue
 type Identity = IdentityType.Identity
 type Appearance = AppearanceType.Appearance
 type Item = AppearanceType.Item
@@ -344,7 +345,8 @@ end
 function Util.listFields(state: EditorState): { FieldDefinition }
 	local out: { FieldDefinition } = {}
 	local page = PageUtil.get(state.Path)
-	if page and page.Fields then
+	-- nothing is edited on a step
+	if page and page.Type ~= "Step" and page.Fields then
 		local tags = Util.getTags(state)
 		local function insertFields(fields: { FieldDefinition })
 			for _, field in fields do
@@ -422,6 +424,11 @@ function Util.setTag(state: EditorState, tag: Tag, isSelected: boolean): Result<
 		-- changes nothing
 		return Result.ok(state)
 	end
+	local page = PageUtil.get(state.Path)
+	if page and page.Type == "Set" then
+		-- stub: the items of a set don't go on or come off together yet, the press is turned down
+		return Result.err(`a set can't be worn yet`)
+	end
 	local itemDef = PageUtil.getItemDefinition(state)
 	if not itemDef then
 		return Result.err(`no item is selected`)
@@ -437,7 +444,7 @@ end
 function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 	local out: FieldValue
 	if field.Type == "Text" or field.Type == "GenerateAlias" then
-		out = { Type = "Text", Text = ProfileUtil.getText(state, field.Binding.Key) }
+		out = { Type = "Text", Text = ProfileUtil.getText(state, field.Binding.Key, field.Binding.IdentityKey) }
 	elseif field.Type == "SectionHeader" then
 		local text = field.Text
 		local defaultWord = NUMBER_WORDS[PowerDefinition.DEFAULT_LIMIT]
@@ -460,9 +467,17 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 		end
 		out = { Type = "Choice", Value = value }
 	elseif field.Type == "ChoiceList" then
+		local binding = field.Binding
+		local powers: { [string]: PowerValue }
+		if binding.Type == "Powers" then
+			powers = PowerUtil.list(state, binding.Group)
+		else
+			-- stub: the power a slot holds isn't read yet, a list by slot shows none of its powers picked
+			powers = {}
+		end
 		out = {
 			Type = "Powers",
-			Powers = PowerUtil.list(state, field.Binding.Group),
+			Powers = powers,
 			Count = #state.Character.Powers,
 			Limit = state.Entitlements.PowerLimit,
 		}
@@ -470,6 +485,9 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 		local binding = field.Binding
 		if binding.Type == "SkinColor" then
 			out = { Type = "Color", Color = StateUtil.getIdentity(state).Appearance.SkinColor }
+		elseif binding.Type == "WornTexture" then
+			-- stub: what's worn of an item group isn't read yet, the field shows as if there were nothing to color
+			out = { Type = "Color", Color = nil }
 		else
 			local group = getItemTexture(state, binding)
 			out = { Type = "Color", Color = if group then group.Color else nil }
@@ -478,7 +496,9 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 		local group = getItemTexture(state, field.Binding)
 		out = { Type = "Material", Material = if group then group.Material else nil }
 	elseif field.Type == "Pattern" then
-		local group = getItemTexture(state, field.Binding)
+		local binding = field.Binding
+		-- stub: what's worn of an item group isn't read yet, the field shows as if there were nothing to texture
+		local group: TextureGroup? = if binding.Type == "WornTexture" then nil else getItemTexture(state, binding)
 		out = {
 			Type = "Pattern",
 			Material = if group then group.Material else nil,
@@ -498,10 +518,24 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 	end
 	if field.Type == "Text" and edit.Type == "Text" then
 		return share(
-			ProfileUtil.setText(state, field.Binding.Key, edit.Text, field.MaxLength, field.IsMultiLine == true)
+			ProfileUtil.setText(
+				state,
+				field.Binding.Key,
+				edit.Text,
+				field.MaxLength,
+				field.IsMultiLine == true,
+				field.Binding.IdentityKey
+			)
 		)
 	elseif field.Type == "GenerateAlias" and edit.Type == "Alias" then
-		return ProfileUtil.setText(state, field.Binding.Key, AliasDefinition.get(edit.Seed), nil, false)
+		return ProfileUtil.setText(
+			state,
+			field.Binding.Key,
+			AliasDefinition.get(edit.Seed),
+			nil,
+			false,
+			field.Binding.IdentityKey
+		)
 	elseif field.Type == "Choose" and edit.Type == "Choice" then
 		local isChoice = false
 		for _, choice in field.Choices do
@@ -527,7 +561,12 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		if not isChoice then
 			return Result.err(`that pattern isn't offered here`)
 		end
-		return share(setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
+		local binding = field.Binding
+		if binding.Type == "WornTexture" then
+			-- stub: nothing writes to everything worn of an item group yet, the pick is turned down
+			return Result.err(`what's worn can't be textured all at once yet`)
+		end
+		return share(setItemTexture(state, binding, function(group: TextureGroup): TextureGroup
 			local out = TextureGroupConstructor.new(group.Color, material, group.Transparency)
 			if pattern == nil then
 				return out
@@ -537,10 +576,16 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 				return t
 			end)
 		end))
-	elseif field.Type == "ChoiceList" and edit.Type == "Power" then
-		return PowerUtil.setSelected(state, field.Binding.Group, edit.Id, edit.IsSelected)
-	elseif field.Type == "ChoiceList" and edit.Type == "PowerColor" then
-		return PowerUtil.setColor(state, field.Binding.Group, edit.Id, edit.Color)
+	elseif field.Type == "ChoiceList" and (edit.Type == "Power" or edit.Type == "PowerColor") then
+		local binding = field.Binding
+		if binding.Type == "PowerSlot" then
+			-- stub: a slot doesn't take a power yet, the pick is turned down
+			return Result.err(`the power of a slot can't be picked yet`)
+		end
+		if edit.Type == "Power" then
+			return PowerUtil.setSelected(state, binding.Group, edit.Id, edit.IsSelected)
+		end
+		return PowerUtil.setColor(state, binding.Group, edit.Id, edit.Color)
 	elseif field.Type == "Color" and edit.Type == "Color" then
 		local color = edit.Color
 		if getIfFiltered(field.Filtered, color) then
@@ -549,6 +594,9 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		local binding = field.Binding
 		if binding.Type == "SkinColor" then
 			return share(setSkinColor(state, color))
+		elseif binding.Type == "WornTexture" then
+			-- stub: nothing writes to everything worn of an item group yet, the pick is turned down
+			return Result.err(`what's worn can't be recolored all at once yet`)
 		end
 		return share(setItemTexture(state, binding, function(group: TextureGroup): TextureGroup
 			return setTexture(group, color, group.Material)

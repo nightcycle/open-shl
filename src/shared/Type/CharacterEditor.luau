@@ -54,14 +54,17 @@ Types.Order = Type.literal("Chaotic", "Neutral", "Lawful")
 export type ScaleAxis = "Height" | "Width"
 Types.ScaleAxis = Type.literal("Height", "Width")
 
--- a binding is the piece of the character a field edits
+-- a binding is the piece of the character a field edits. a profile is the one of the identity in focus unless it names
+-- another: a page that holds the names of both has a field for each
 export type ProfileBinding = {
 	Type: "Profile",
 	Key: ProfileKey,
+	IdentityKey: CharacterType.IdentityKey?,
 }
 Types.ProfileBinding = Type.strictInterface({
 	Type = Type.literal("Profile"),
 	Key = Types.ProfileKey,
+	IdentityKey = Type.optional(CharacterType.IdentityKey),
 })
 
 export type AlignmentBinding = {
@@ -98,6 +101,16 @@ Types.PowersBinding = Type.strictInterface({
 	Group = PowerType.PowerGroup,
 })
 
+-- the one power a character holds of a slot of the game, by the key of the slot
+export type PowerSlotBinding = {
+	Type: "PowerSlot",
+	Slot: string,
+}
+Types.PowerSlotBinding = Type.strictInterface({
+	Type = Type.literal("PowerSlot"),
+	Slot = Type.string,
+})
+
 export type PowerLimitBinding = {
 	Type: "PowerLimit",
 }
@@ -114,6 +127,19 @@ Types.ItemTextureBinding = Type.strictInterface({
 	Group = Type.optional(AppearanceType.TextureGroupKey),
 })
 
+-- a texture group of everything the identity wears of an item group at once: every worn item that lists the group
+-- takes what's written, what's read is what the first of them holds
+export type WornTextureBinding = {
+	Type: "WornTexture",
+	ItemGroup: AppearanceType.ItemGroup,
+	Group: AppearanceType.TextureGroupKey,
+}
+Types.WornTextureBinding = Type.strictInterface({
+	Type = Type.literal("WornTexture"),
+	ItemGroup = AppearanceType.ItemGroup,
+	Group = AppearanceType.TextureGroupKey,
+})
+
 -- the choices of a height are heights, the choices of a width are how broad the body is for its height
 export type ScaleBinding = {
 	Type: "Scale",
@@ -127,8 +153,15 @@ Types.ScaleBinding = Type.strictInterface({
 export type ChooseBinding = AlignmentBinding | TransitionBinding | ScaleBinding
 Types.ChooseBinding = Type.union(Types.AlignmentBinding, Types.TransitionBinding, Types.ScaleBinding)
 
-export type ColorBinding = SkinColorBinding | ItemTextureBinding
-Types.ColorBinding = Type.union(Types.SkinColorBinding, Types.ItemTextureBinding)
+export type ColorBinding = SkinColorBinding | ItemTextureBinding | WornTextureBinding
+Types.ColorBinding = Type.union(Types.SkinColorBinding, Types.ItemTextureBinding, Types.WornTextureBinding)
+
+export type PatternBinding = ItemTextureBinding | WornTextureBinding
+Types.PatternBinding = Type.union(Types.ItemTextureBinding, Types.WornTextureBinding)
+
+-- a list of powers is a group of the game's or one of its slots
+export type ChoiceListBinding = PowersBinding | PowerSlotBinding
+Types.ChoiceListBinding = Type.union(Types.PowersBinding, Types.PowerSlotBinding)
 
 export type Binding =
 	ProfileBinding
@@ -136,8 +169,10 @@ export type Binding =
 	| SkinColorBinding
 	| TransitionBinding
 	| PowersBinding
+	| PowerSlotBinding
 	| PowerLimitBinding
 	| ItemTextureBinding
+	| WornTextureBinding
 	| ScaleBinding
 Types.Binding = Type.union(
 	Types.ProfileBinding,
@@ -145,8 +180,10 @@ Types.Binding = Type.union(
 	Types.SkinColorBinding,
 	Types.TransitionBinding,
 	Types.PowersBinding,
+	Types.PowerSlotBinding,
 	Types.PowerLimitBinding,
 	Types.ItemTextureBinding,
+	Types.WornTextureBinding,
 	Types.ScaleBinding
 )
 
@@ -184,7 +221,7 @@ export type FieldDefinition =
 	}
 	| {
 		Type: "ChoiceList",
-		Binding: PowersBinding,
+		Binding: ChoiceListBinding,
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
 		Description: string?,
 		Choices: { MiscType.ChoiceDefinition },
@@ -205,7 +242,7 @@ export type FieldDefinition =
 	}
 	| {
 		Type: "Pattern", -- offers the pattern choices of the game's editor
-		Binding: ItemTextureBinding,
+		Binding: PatternBinding,
 		Description: string?,
 		ExclusionTags: { Tag }?, -- used to determine if a field is visible
 	}
@@ -256,7 +293,7 @@ do -- Types.FieldDefinition
 		}),
 		Type.strictInterface({
 			Type = Type.literal("ChoiceList"),
-			Binding = Types.PowersBinding,
+			Binding = Types.ChoiceListBinding,
 			ExclusionTags = exclusionTags,
 			Description = Type.optional(Type.string),
 			Choices = Type.array(MiscType.ChoiceDefinition),
@@ -277,7 +314,7 @@ do -- Types.FieldDefinition
 		}),
 		Type.strictInterface({
 			Type = Type.literal("Pattern"),
-			Binding = Types.ItemTextureBinding,
+			Binding = Types.PatternBinding,
 			Description = Type.optional(Type.string),
 			ExclusionTags = exclusionTags,
 		}),
@@ -305,6 +342,22 @@ do -- Types.FieldDefinition
 	)
 	Types.FieldDefinition = checkFieldDefinition
 end
+-- what an identity has to wear of a category before an editor that goes from page to page lets a page be left, + what
+-- it says until then. nothing but that editor holds anybody to it
+export type PageRequirement = {
+	Group: AppearanceType.ItemGroup,
+	Category: string,
+	Text: string,
+}
+Types.PageRequirement = Type.strictInterface({
+	Group = AppearanceType.ItemGroup,
+	Category = Type.string,
+	Text = Type.string,
+})
+
+-- a set is worn like an item, it's one item of each of a few categories that go on + come off together. a step is a
+-- stop of an editor that goes from page to page where nothing of the character is edited: what it shows is the
+-- layout's own, by its key
 export type PageDefinition =
 	{
 		Type: "Default",
@@ -312,6 +365,7 @@ export type PageDefinition =
 		Title: string?, -- text actually shown on button, uses key otherwise
 		ExclusionTags: { Tag }?, -- used to determine if a page is visible
 		IsShared: boolean?, -- what's edited on it goes to every identity, not just the one in focus
+		Requirement: PageRequirement?,
 		Fields: { FieldDefinition }?, -- the fields to fill the property panel with
 		Children: { PageDefinition }?, -- the buttons that appear in the explorer when this page is selected
 	}
@@ -324,6 +378,21 @@ export type PageDefinition =
 		StandInId: string?, -- the item that's worn in its place once it's taken off, its category is never left bare
 		Fields: { FieldDefinition }?, -- the fields to fill the property panel with
 	}
+	| {
+		Type: "Set",
+		Key: string,
+		Title: string?,
+		DefinitionIds: { string }, -- each swaps out what's worn of its own category
+		ExclusionTags: { Tag }?, -- used to determine if a page is visible
+		IsShared: boolean?, -- the items are worn in every identity, not just the one in focus
+		Fields: { FieldDefinition }?, -- the fields to fill the property panel with
+	}
+	| {
+		Type: "Step",
+		Key: string,
+		Title: string?,
+		ExclusionTags: { Tag }?, -- used to determine if a page is visible
+	}
 
 do -- Types.PageDefinition
 	local checkPageDefinition: (unknown) -> (boolean, string?)
@@ -334,6 +403,7 @@ do -- Types.PageDefinition
 			Title = Type.optional(Type.string),
 			ExclusionTags = Type.optional(Type.array(Types.Tag)),
 			IsShared = Type.optional(Type.boolean),
+			Requirement = Type.optional(Types.PageRequirement),
 			Fields = Type.optional(Type.array(Types.FieldDefinition)),
 			Children = Type.optional(Type.array(function(value: unknown): (boolean, string?)
 				return checkPageDefinition(value)
@@ -347,6 +417,21 @@ do -- Types.PageDefinition
 			IsShared = Type.optional(Type.boolean),
 			StandInId = Type.optional(Type.string),
 			Fields = Type.optional(Type.array(Types.FieldDefinition)),
+		}),
+		Type.strictInterface({
+			Type = Type.literal("Set"),
+			Key = Type.string,
+			Title = Type.optional(Type.string),
+			DefinitionIds = Type.array(Type.string),
+			ExclusionTags = Type.optional(Type.array(Types.Tag)),
+			IsShared = Type.optional(Type.boolean),
+			Fields = Type.optional(Type.array(Types.FieldDefinition)),
+		}),
+		Type.strictInterface({
+			Type = Type.literal("Step"),
+			Key = Type.string,
+			Title = Type.optional(Type.string),
+			ExclusionTags = Type.optional(Type.array(Types.Tag)),
 		})
 	)
 	Types.PageDefinition = checkPageDefinition
@@ -385,21 +470,32 @@ Types.PowerColorSource = Type.strictInterface({
 
 -- what a game's editor is: how much of a name + a backstory it keeps + its pages, from the root down. a game without
 -- body sizes has no scale, one without patterns has no choices for a pattern picker, one whose powers are colored by
--- a pick of their own has no source for their colors
+-- a pick of their own has no source for their colors + one without backstories keeps none of one. a game with a
+-- palette holds every color of skin + of what's worn to it, any color goes without
 export type EditorDefinition = {
 	MaxNameLength: number,
 	MaxBackstoryLength: number,
 	Scale: ScaleDefinition?,
 	PatternChoices: { PatternChoice }?, -- in the order a picker lists them
 	PowerColorSource: PowerColorSource?,
+	Palette: { Color3 }?, -- in the order a picker lists them
+	-- what a texture group of something newly worn starts out in when nothing worn beside it holds one, an item
+	-- starts out the way it was made without
+	ChannelDefaults: { [AppearanceType.TextureGroupKey]: Color3 }?,
+	-- what an identity goes by when its name was left empty, the name of the player's account goes where the %s is.
+	-- an empty name stays empty without
+	NameDefaults: { [CharacterType.IdentityKey]: string }?,
 	Root: PageDefinition,
 }
 Types.EditorDefinition = Type.strictInterface({
 	MaxNameLength = Type.intersection(Type.integer, Type.numberPositive),
-	MaxBackstoryLength = Type.intersection(Type.integer, Type.numberPositive),
+	MaxBackstoryLength = Type.intersection(Type.integer, Type.numberMin(0)),
 	Scale = Type.optional(Types.ScaleDefinition),
 	PatternChoices = Type.optional(Type.array(Types.PatternChoice)),
 	PowerColorSource = Type.optional(Types.PowerColorSource),
+	Palette = Type.optional(Type.array(Type.Color3)),
+	ChannelDefaults = Type.optional(Type.map(AppearanceType.TextureGroupKey, Type.Color3)),
+	NameDefaults = Type.optional(Type.map(CharacterType.IdentityKey, Type.string)),
 	Root = Types.PageDefinition,
 })
 

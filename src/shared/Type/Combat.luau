@@ -66,6 +66,8 @@ Types.MenuRefusal = Type.strictInterface({
 export type CombatRule = {
 	PlayerScale: number, -- what a hit on somebody's character is multiplied by
 	IsMenuSafe: boolean, -- nobody is hurt while they sit in a menu
+	IsOptional: boolean?, -- only two who both chose to fight hurt each other, everybody fights without
+	IsShieldSafe: boolean?, -- nobody is hurt under the force field their spot handed them, it stops nothing without
 	Fighting: Fighting?, -- nobody is kept out of a menu without
 	Knockback: Knockback?, -- nobody is sent off without
 	Regeneration: Regeneration?, -- health only comes back by a power without
@@ -74,6 +76,8 @@ Types.CombatRule = Type.intersection(
 	Type.strictInterface({
 		PlayerScale = Type.numberPositive,
 		IsMenuSafe = Type.boolean,
+		IsOptional = Type.optional(Type.boolean),
+		IsShieldSafe = Type.optional(Type.boolean),
 		Fighting = Type.optional(Types.Fighting),
 		Knockback = Type.optional(Types.Knockback),
 		Regeneration = Type.optional(Types.Regeneration),

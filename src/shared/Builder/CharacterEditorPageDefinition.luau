@@ -10,18 +10,21 @@ type ButtonStyle = CharacterEditorType.ButtonStyle
 type WearRule = CharacterEditorType.WearRule
 type ProfileBinding = CharacterEditorType.ProfileBinding
 type ChooseBinding = CharacterEditorType.ChooseBinding
-type PowersBinding = CharacterEditorType.PowersBinding
+type ChoiceListBinding = CharacterEditorType.ChoiceListBinding
 type PowerLimitBinding = CharacterEditorType.PowerLimitBinding
 type ColorBinding = CharacterEditorType.ColorBinding
 type ItemTextureBinding = CharacterEditorType.ItemTextureBinding
+type PatternBinding = CharacterEditorType.PatternBinding
 type FieldDefinition = CharacterEditorType.FieldDefinition
 type PageDefinition = CharacterEditorType.PageDefinition
+type PageRequirement = CharacterEditorType.PageRequirement
 
 -- the binding leads every field that has one, it's the piece of the character the field edits
 export type Builder = {
 	setTitle: (self: Builder, title: string?) -> Builder,
 	setShared: (self: Builder) -> Builder,
 	setStandIn: (self: Builder, definitionId: string) -> Builder,
+	setRequirement: (self: Builder, requirement: PageRequirement) -> Builder,
 	insertTextField: (
 		self: Builder,
 		binding: ProfileBinding,
@@ -46,7 +49,7 @@ export type Builder = {
 	) -> Builder,
 	insertChoiceListField: (
 		self: Builder,
-		binding: PowersBinding,
+		binding: ChoiceListBinding,
 		choices: { ChoiceDefinition },
 		description: string?,
 		exclusionTags: { Tag }?
@@ -67,7 +70,7 @@ export type Builder = {
 	) -> Builder,
 	insertPatternField: (
 		self: Builder,
-		binding: ItemTextureBinding,
+		binding: PatternBinding,
 		description: string?,
 		exclusionTags: { Tag }?
 	) -> Builder,
@@ -98,10 +101,16 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 
 	local function insertField(field: FieldDefinition): Builder
 		return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
+			if definition.Type == "Step" then
+				warn(`Cannot add a field to Step page "{definition.Key}"; nothing is edited on one`)
+				return definition
+			end
 			local properties = table.clone(definition.Fields or {})
 			table.insert(properties, field)
 			-- selene: allow(if_same_then_else)
 			if definition.Type == "Default" then
+				definition.Fields = properties
+			elseif definition.Type == "Item" then
 				definition.Fields = properties
 			else
 				definition.Fields = properties
@@ -113,18 +122,27 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 	local out: Builder = {
 		setTitle = function(_: Builder, title: string?): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
+				-- selene: allow(if_same_then_else)
 				if definition.Type == "Item" then
 					warn(`Cannot set Title on Item page "{definition.DefinitionId}"; only Default pages support Title`)
-					return definition
+				elseif definition.Type == "Default" then
+					definition.Title = title
+				elseif definition.Type == "Set" then
+					definition.Title = title
+				else
+					definition.Title = title
 				end
-				definition.Title = title
 				return definition
 			end)
 		end,
 		setShared = function(_: Builder): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
 				-- selene: allow(if_same_then_else)
-				if definition.Type == "Default" then
+				if definition.Type == "Step" then
+					warn(`Cannot share Step page "{definition.Key}"; nothing is edited on one`)
+				elseif definition.Type == "Default" then
+					definition.IsShared = true
+				elseif definition.Type == "Item" then
 					definition.IsShared = true
 				else
 					definition.IsShared = true
@@ -134,11 +152,23 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		setStandIn = function(_: Builder, definitionId: string): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
-				if definition.Type == "Default" then
+				if definition.Type ~= "Item" then
 					warn(`Cannot set a stand-in on page "{definition.Key}"; only Item pages are worn`)
 					return definition
 				end
 				definition.StandInId = definitionId
+				return definition
+			end)
+		end,
+		setRequirement = function(_: Builder, requirement: PageRequirement): Builder
+			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
+				if definition.Type ~= "Default" then
+					warn(
+						`Cannot set a requirement on a "{definition.Type}" page; only Default pages are left by a walk`
+					)
+					return definition
+				end
+				definition.Requirement = requirement
 				return definition
 			end)
 		end,
@@ -148,6 +178,10 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 				table.insert(tags, tag)
 				-- selene: allow(if_same_then_else)
 				if definition.Type == "Default" then
+					definition.ExclusionTags = tags
+				elseif definition.Type == "Item" then
+					definition.ExclusionTags = tags
+				elseif definition.Type == "Set" then
 					definition.ExclusionTags = tags
 				else
 					definition.ExclusionTags = tags
@@ -204,7 +238,7 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		insertChoiceListField = function(
 			_: Builder,
-			binding: PowersBinding,
+			binding: ChoiceListBinding,
 			choices: { ChoiceDefinition },
 			description: string?,
 			exclusionTags: { Tag }?
@@ -249,7 +283,7 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		insertPatternField = function(
 			_: Builder,
-			binding: ItemTextureBinding,
+			binding: PatternBinding,
 			description: string?,
 			exclusionTags: { Tag }?
 		): Builder
@@ -286,10 +320,8 @@ local function builder(priorDefinition: PageDefinition, fn: ((PageDefinition) ->
 		end,
 		addChild = function(_: Builder, child: PageDefinition): Builder
 			return builder(priorDefinition, function(definition: PageDefinition): PageDefinition
-				if definition.Type == "Item" then
-					warn(
-						`Cannot add Children to Item page "{definition.DefinitionId}"; only Default pages support Children`
-					)
+				if definition.Type ~= "Default" then
+					warn(`Cannot add Children to a "{definition.Type}" page; only Default pages support Children`)
 					return definition
 				end
 				local children = table.clone(definition.Children or {})
@@ -315,5 +347,13 @@ return table.freeze({
 	-- an item swaps out what's worn of its category unless a rule says otherwise
 	newItem = function(definitionId: string, wearRule: WearRule?): Builder
 		return builder({ Type = "Item", DefinitionId = definitionId, WearRule = wearRule or "Single" })
+	end,
+	-- a few items that go on + come off together, each swaps out what's worn of its own category
+	newSet = function(key: string, definitionIds: { string }): Builder
+		return builder({ Type = "Set", Key = key, DefinitionIds = definitionIds })
+	end,
+	-- a stop on the way through the pages where nothing of the character is edited
+	newStep = function(key: string): Builder
+		return builder({ Type = "Step", Key = key })
 	end,
 })

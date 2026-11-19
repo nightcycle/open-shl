@@ -97,7 +97,7 @@ function Module.getPage(path: string): Option<PageDefinition>
 	table.insert(segments, 1, ROOT_KEY)
 	local function getPage(pageDef: PageDefinition, index: number): Option<PageDefinition>
 		local segment = segments[index]
-		local key = if pageDef.Type == "Default" then pageDef.Key else pageDef.DefinitionId
+		local key = if pageDef.Type == "Item" then pageDef.DefinitionId else pageDef.Key
 		if key ~= segment then
 			return Option.none()
 		end
@@ -173,7 +173,7 @@ do
 	local function indexItemPaths(pageDef: PageDefinition, path: string)
 		if pageDef.Type == "Item" then
 			ItemPaths[pageDef.DefinitionId] = path
-		elseif pageDef.Children then
+		elseif pageDef.Type == "Default" and pageDef.Children then
 			for _, child in pageDef.Children do
 				indexItemPaths(child, Module.getChildPath(path, child))
 			end

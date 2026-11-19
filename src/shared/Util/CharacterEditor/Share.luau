@@ -38,10 +38,21 @@ local function indexFields(fields: { FieldDefinition }, isShared: boolean)
 end
 
 local function indexPage(page: PageDefinition)
+	-- nothing is edited on a step, so there's nothing of it to share
+	if page.Type == "Step" then
+		return
+	end
 	local isShared = page.IsShared == true
 	if page.Type == "Item" then
 		if isShared then
 			IsItemShared[page.DefinitionId] = true
+		end
+	elseif page.Type == "Set" then
+		-- what a set wears is shared the way an item of its own page is
+		if isShared then
+			for _, definitionId in page.DefinitionIds do
+				IsItemShared[definitionId] = true
+			end
 		end
 	elseif page.Children then
 		for _, child in page.Children do

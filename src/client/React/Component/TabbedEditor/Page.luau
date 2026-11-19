@@ -91,7 +91,12 @@ local function listPageFields(path: string): { FieldDefinition }
 	if pageOpt.IsNone then
 		return NO_FIELDS
 	end
-	local fields: { FieldDefinition }? = pageOpt.Value.Fields
+	local page = pageOpt.Value
+	-- nothing is edited on a step
+	if page.Type == "Step" then
+		return NO_FIELDS
+	end
+	local fields: { FieldDefinition }? = page.Fields
 	return fields or NO_FIELDS
 end
 
@@ -150,7 +155,12 @@ local function listPowers(state: EditorState, path: string, list: ListInfo): { P
 		return out
 	end
 	for _, field in listPageFields(path) do
-		if field.Type ~= "ChoiceList" or table.find(groups, field.Binding.Group) == nil then
+		if field.Type ~= "ChoiceList" then
+			continue
+		end
+		-- a tab lists the powers of its groups, a list by slot is none of them
+		local binding = field.Binding
+		if binding.Type ~= "Powers" or table.find(groups, binding.Group) == nil then
 			continue
 		end
 		local value = CharacterEditorUtil.read(state, field)

@@ -63,7 +63,9 @@ Module.getCurrencyName = function(currency: PseudoEnum.Currency): string
 end
 
 Module.getPowerLimit = function(entitlements: { EntitlementKey }): number
-	return if table.find(entitlements, PowerDefinition.PASS_ENTITLEMENT)
+	-- no pass raises the limit of a game that names none
+	local passEntitlement = PowerDefinition.PASS_ENTITLEMENT
+	return if passEntitlement ~= nil and table.find(entitlements, passEntitlement)
 		then PowerDefinition.PASS_LIMIT
 		else PowerDefinition.DEFAULT_LIMIT
 end

@@ -9,8 +9,10 @@ local StateUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/S
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
+local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local IdentityType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity")
 export type EditorState = CharacterEditorType.EditorState
+type IdentityKey = CharacterType.IdentityKey
 type ProfileKey = CharacterEditorType.ProfileKey
 type AlignmentAxis = CharacterEditorType.AlignmentAxis
 type Morality = CharacterEditorType.Morality
@@ -60,11 +62,17 @@ local function setAlignment(identity: Identity, alignment: PseudoEnum.Alignment)
 	return out
 end
 
+-- a field edits the profile of the identity in focus unless it names one the character has
+local function getIdentityKey(state: EditorState, identityKey: IdentityKey?): string
+	return if identityKey and state.Character.Identities[identityKey] then identityKey else state.IdentityKey
+end
+
 -- Class
 local Util = {}
 
-function Util.getText(state: EditorState, key: ProfileKey): string
-	local profile = StateUtil.getIdentity(state).Profile
+function Util.getText(state: EditorState, key: ProfileKey, identityKey: IdentityKey?): string
+	local identity = state.Character.Identities[getIdentityKey(state, identityKey)] or StateUtil.getIdentity(state)
+	local profile = identity.Profile
 	return if key == "Name" then profile.Name else profile.Backstory
 end
 
@@ -73,7 +81,8 @@ function Util.setText(
 	key: ProfileKey,
 	text: string,
 	maxLength: number?,
-	isMultiLine: boolean
+	isMultiLine: boolean,
+	identityKey: IdentityKey?
 ): Result<EditorState, string>
 	-- text that isn't utf8 can't be cut to length or shown by a label, the server turns it down as well
 	if not utf8.len(text) then
@@ -88,10 +97,11 @@ function Util.setText(
 			text = string.sub(text, 1, cutOff - 1)
 		end
 	end
-	if Util.getText(state, key) == text then
+	if Util.getText(state, key, identityKey) == text then
 		return Result.ok(state)
 	end
-	local identity = StateUtil.getIdentity(state)
+	local editedKey = getIdentityKey(state, identityKey)
+	local identity = state.Character.Identities[editedKey] or StateUtil.getIdentity(state)
 	local profile = table.clone(identity.Profile)
 	if key == "Name" then
 		profile.Name = text
@@ -102,7 +112,7 @@ function Util.setText(
 	local editedIdentity = table.clone(identity)
 	editedIdentity.Profile = profile
 	table.freeze(editedIdentity)
-	return Result.ok(StateUtil.setFocusedIdentity(state, editedIdentity))
+	return Result.ok(StateUtil.setCharacter(state, StateUtil.setIdentity(state.Character, editedKey, editedIdentity)))
 end
 
 function Util.getAlignment(state: EditorState, axis: AlignmentAxis): string
