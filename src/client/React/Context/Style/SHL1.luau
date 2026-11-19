@@ -104,8 +104,12 @@ local STYLE: Style = {
 				Size = UDim2.fromScale(1, 0.09),
 			},
 		},
-		-- it showed no version anywhere
+		-- it showed no version anywhere: the id stands the way the one line of its ticker did, white on a black bar
 		ServerId = {
+			Backing = {
+				BackgroundColor3 = Color3.new(),
+				BorderColor3 = DEFAULT_COLOR,
+			},
 			FontFace = BODY_FONT,
 			TextColor3 = WHITE,
 		},
