@@ -63,6 +63,8 @@ export type CharacterService = typeof(setmetatable(
 local HAIR_CATEGORY = "hair"
 local MAX_NAME_LENGTH = CharacterEditorDefinition.MAX_NAME_LENGTH
 local MAX_BACKSTORY_LENGTH = CharacterEditorDefinition.MAX_BACKSTORY_LENGTH
+-- the longest text an editor has looked at before it's saved: a game with no backstory still has its names
+local MAX_FILTERED_LENGTH = math.max(MAX_NAME_LENGTH, MAX_BACKSTORY_LENGTH)
 local FILTER_TIMEOUT = 5
 -- what an identity goes by when its name was left empty, nil in a game where an empty name stays empty
 local NAME_DEFAULTS = CharacterEditorDefinition.NAME_DEFAULTS
@@ -451,7 +453,7 @@ return ServiceLocker(function(): CharacterService
 		end
 	)
 	NetworkService:Handle(RemoteDefinition.FilterText, function(player: Player, text: string): Result<string, string>
-		local clippedText = clip(text, MAX_BACKSTORY_LENGTH)
+		local clippedText = clip(text, MAX_FILTERED_LENGTH)
 		if not clippedText then
 			return Result.err(`the text can't be read`)
 		end
