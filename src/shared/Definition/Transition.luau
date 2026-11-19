@@ -29,6 +29,12 @@ local FLINCH = table.freeze({
 local SWAP_COOLDOWN = 1
 local DEFAULT_TRANSFORMATION_STYLE: PseudoEnum.TransformationStyle = PseudoEnum.TransformationStyle.Spin
 local DEFAULT_DEATH_STYLE: PseudoEnum.DeathStyle = PseudoEnum.DeathStyle.FallForward
+-- a style is picked on a page of the editor. a game whose editor has no such page plays the one every character
+-- starts out with, whatever its character holds: a client can hand one in with any style there is
+local HAS_STYLES = GameDefinition.tune(true, {
+	shl1 = false,
+	shl3 = false,
+})
 local SPIN: TransformationDefinition = {
 	Style = PseudoEnum.TransformationStyle.Spin,
 	Name = "Spin",
@@ -152,11 +158,11 @@ Module.DEFAULT_DEATH_STYLE = DEFAULT_DEATH_STYLE
 Module.FLINCH = FLINCH
 
 Module.getTransformation = function(style: PseudoEnum.TransformationStyle?): TransformationDefinition
-	return TRANSFORMATIONS[style or DEFAULT_TRANSFORMATION_STYLE]
+	return TRANSFORMATIONS[if HAS_STYLES then style or DEFAULT_TRANSFORMATION_STYLE else DEFAULT_TRANSFORMATION_STYLE]
 end
 
 Module.getDeath = function(style: PseudoEnum.DeathStyle?): DeathDefinition
-	return DEATHS[style or DEFAULT_DEATH_STYLE]
+	return DEATHS[if HAS_STYLES then style or DEFAULT_DEATH_STYLE else DEFAULT_DEATH_STYLE]
 end
 
 Module.listTransformations = function(): { TransformationDefinition }
