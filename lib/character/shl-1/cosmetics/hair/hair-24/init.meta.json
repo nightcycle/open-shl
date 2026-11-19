@@ -1,0 +1,18 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Hair24"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl1/cosmetics/hair/hair-24/root"
+        }
+      }
+    },
+    "Tags": [
+      "Hair"
+    ]
+  }
+}

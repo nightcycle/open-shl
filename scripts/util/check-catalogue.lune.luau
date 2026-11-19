@@ -46,9 +46,10 @@ local TEXTURE_GROUP_KEYS = { "Primary", "Secondary", "Tertiary", "Hair", "Skin" 
 local ITEM_TAGS = { "IsMask", "Hood", "Mask", "MouthCover", "Hair" }
 -- pseudo-enum.toml
 local RARITIES = { "VeryCommon", "Common", "Uncommon", "Rare", "Legendary" }
--- a face item is an image, a template filed under one of these could never be reached by its id
+-- a face item is an image, a template filed under one of these could never be reached by its id. the slots are a
+-- game's own: SHL2 draws eyebrows, eyes + a mouth, SHL3 eyes + a mouth, SHL1 the whole face as one picture
 local FACE_GROUP = "cosmetics"
-local FACE_CATEGORIES = { "eyebrows", "eyes", "mouth" }
+local FACE_CATEGORIES = { "eyebrows", "eyes", "mouth", "face" }
 -- what an item can name as its anchor on an R15 rig
 local RIG_PART_NAMES = {
 	"Head",

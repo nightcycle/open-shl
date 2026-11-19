@@ -1,7 +1,9 @@
 --!strict
 -- turns the customization catalogue of a legacy place into item templates the way lib/character holds them, plus the
 -- tables a game keeps beside them: what an entry was called in a legacy save, what it cost + who started with it.
--- the place is only ever read. an entry the library of SHL2 already has is borrowed instead of written a second time
+-- the place is only ever read. an entry the library of SHL2 already has is borrowed instead of written a second time.
+-- a catalogue that was fitted to another body than the one its items are worn on is stood onto that one, where a
+-- shell that reaches across a joint is cut on it so each half moves with its own part of the limb
 -- Services
 local fs = require("@lune/fs")
 local process = require("@lune/process")
@@ -9,6 +11,7 @@ local roblox = require("@lune/roblox")
 local serde = require("@lune/serde")
 -- Packages
 -- Modules
+local Place = require("../modules/place")
 local game = require("../modules/game")
 local rojo = require("../modules/rojo")
 local rojoValue = require("../modules/rojo-value")
@@ -16,6 +19,7 @@ local rojoValue = require("../modules/rojo-value")
 -- lune hands out roblox datatypes without typing them
 type CFrameValue = any
 type Vector3Value = any
+type Color3Value = any
 type TextureGroupMap = { [string]: string }
 -- one item per limb group, each a set of pieces named after the body parts of that group
 type LimbCategoryRule = {
@@ -38,13 +42,70 @@ type MountCategoryRule = {
 	TextureGroups: TextureGroupMap,
 	Anchor: string,
 }
+-- a part of the body a piece is worn on: where its middle is from the middle of the root part while every joint is
+-- straight + the joint it hangs off the part above it by, with how high that one is
+type SegmentRule = {
+	Part: string,
+	Position: { number },
+	Size: { number },
+	Joint: string?,
+	Top: number?,
+}
+-- a limb of the body the legacy game ran + the parts that stand where it stood, from the top down
+type BodyLimbRule = {
+	Position: { number },
+	Segments: { SegmentRule },
+}
+-- where a piece that stays in one piece is worn
+type PlaceRule = {
+	Limb: string,
+	Part: string,
+}
+-- the list a legacy menu offered the entries of a category by. from a count of it on they had to be paid for
+type PickerRule = {
+	Path: string,
+	PaidFrom: number?,
+	-- what a character wears without ever picking, it isn't on the list
+	Default: string?,
+}
+-- one item per model of the entry, each welded to a limb of the legacy body + cut up into the parts that limb is now
+type SplitCategoryRule = {
+	Kind: "Split",
+	Group: string,
+	TextureGroups: TextureGroupMap,
+	Models: { { Name: string, Limb: string, Category: string } },
+	-- a part that's only there for another item to sit on, by its name: the attachment it becomes
+	Mounts: { [string]: string },
+}
+-- a single stiff piece: on a part of the body, or on an attachment another worn item brings along
+type WornCategoryRule = {
+	Kind: "Worn",
+	Group: string,
+	Category: string,
+	TextureGroups: TextureGroupMap,
+	-- the model inside of the entry, one named after its entry when there's none
+	PieceName: string?,
+	Place: PlaceRule?,
+	-- the entries that are worn somewhere else than the rest
+	Places: { [string]: PlaceRule }?,
+	Anchor: string?,
+	Tags: { string },
+}
+-- a single mesh the library of SHL2 may have under any name: borrowed when it does, written as its own piece when not
+type MeshBorrowCategoryRule = {
+	Kind: "MeshBorrow",
+	Group: string,
+	Category: string,
+	Own: WornCategoryRule,
+}
 -- a decal, it becomes an image instead of a template
 type FaceCategoryRule = {
 	Kind: "Face",
 	Group: string,
 	Category: string,
 	Slot: string,
-	PieceName: string,
+	-- the model of the entry whose stand-in holds the decal, an entry without one holds it itself
+	PieceName: string?,
 	NameSuffix: string,
 	TextureGroups: { string },
 }
@@ -55,7 +116,15 @@ type BorrowCategoryRule = {
 	Category: string,
 }
 -- how the entries of one legacy category are built + where they go
-type CategoryRule = LimbCategoryRule | PiecesCategoryRule | MountCategoryRule | FaceCategoryRule | BorrowCategoryRule
+type CategoryRule =
+	LimbCategoryRule
+	| PiecesCategoryRule
+	| MountCategoryRule
+	| FaceCategoryRule
+	| BorrowCategoryRule
+	| SplitCategoryRule
+	| WornCategoryRule
+	| MeshBorrowCategoryRule
 type LimbRule = {
 	-- the folder of a legacy save + the model inside of a suit
 	Name: string,
@@ -67,12 +136,29 @@ type LimbRule = {
 }
 type GameRules = {
 	CataloguePath: string,
-	RigPath: string,
-	PatternPath: string,
+	-- the body the pieces were fitted to, when the place holds one + it's the one they're worn on
+	RigPath: string?,
+	PatternPath: string?,
 	-- a module of the place that lists what every player owns from the start as { name, category } pairs
-	StarterPath: string,
-	StarterTableName: string,
-	PriceAdjustPath: string,
+	StarterPath: string?,
+	StarterTableName: string?,
+	PriceAdjustPath: string?,
+	-- the body the catalogue was fitted to when it's another one than the items are worn on: its limbs, by the name a
+	-- legacy piece was welded to
+	Body: { [string]: BodyLimbRule }?,
+	-- the menus the entries were picked from, by legacy category + the name of the list in the script of each
+	Pickers: { [string]: PickerRule }?,
+	PickerTableName: string?,
+	-- holds a value per channel: the color a new character wore it in. without it a part keeps the color it's stored in
+	DefaultColorPath: string?,
+	-- a value of a piece that says whether the hair still shows with it
+	HairShownName: string?,
+	-- a value of a piece that holds what a save calls it
+	SaveNameName: string?,
+	-- the legacy game never reset the material a part was authored with
+	IsMaterialKept: boolean?,
+	-- a body part with a shell on it was made invisible, the shell was all there was to see of the limb
+	IsBodyHidden: boolean?,
 	CategoryNames: { string },
 	Categories: { [string]: CategoryRule },
 	Limbs: { LimbRule },
@@ -82,15 +168,36 @@ type GameRules = {
 	MarkerNames: { string },
 	-- by the number a legacy entry stores, from 0
 	Rarities: { string },
-	BaseTextureGroup: string,
-	BaseColor: { number },
+	BaseTextureGroup: string?,
+	BaseColor: { number }?,
 	-- how much wider than the body part its painted layer is on every axis, so the two don't flicker
-	BaseInflation: number,
+	BaseInflation: number?,
 	-- a limb that wears no suit still needs something to paint
 	BareLimbKey: string?,
 	BareLimbName: string?,
 	-- the one pattern that is a material instead of an image
 	PatternMaterials: { [string]: string },
+}
+-- what a legacy part draws. a brick, a wedge or a cylinder is written as a part of the size it's drawn in, whatever
+-- mesh made it that size. anything else is carried over as it is
+type ShapeKind = "Block" | "Wedge" | "Cylinder" | "Carried"
+type Shape = {
+	Path: string,
+	Part: roblox.Instance,
+	Kind: ShapeKind,
+	Size: Vector3Value,
+	-- against the limb the piece was welded to
+	CFrame: CFrameValue,
+}
+-- where two parts of a limb meet
+type Joint = {
+	Name: string,
+	Height: number,
+}
+type Picker = {
+	Order: { [string]: number },
+	PaidFrom: number?,
+	Default: string?,
 }
 type Piece = {
 	Name: string,
@@ -101,8 +208,10 @@ type Piece = {
 type EntryRow = {
 	LegacyCategory: string,
 	LegacyName: string,
-	Rarity: string,
+	Rarity: string?,
 	Cost: number?,
+	-- its place on the list it was picked from
+	Order: number?,
 	IsStarter: boolean,
 	IsBorrowed: boolean,
 	ShaveHead: boolean?,
@@ -125,7 +234,7 @@ type PatternRow = {
 	Name: string,
 	Image: string,
 	LegacyAssetId: number,
-	Rarity: string,
+	Rarity: string?,
 	IsStarter: boolean,
 	Material: string?,
 }
@@ -135,14 +244,21 @@ type Context = {
 	game: string,
 	-- where the items of the game are written to
 	libraryPath: string,
-	rig: roblox.Instance,
+	rig: roblox.Instance?,
 	starters: { [string]: string },
+	pickers: { [string]: Picker },
+	-- the color a recolored part starts out in, by its texture group
+	defaultColors: { [string]: Color3Value },
 	-- the file each legacy image has under asset/image, by its id
 	imagePaths: { [string]: string },
 	outputs: { Output },
 	entries: { EntryRow },
 	faces: { FaceRow },
 	borrows: { string },
+	-- the entries that stand for wearing nothing
+	empties: { EntryRow },
+	-- what became of every part that reaches across a joint
+	joints: { string },
 	notes: { string },
 	failures: { string },
 	-- per category of the library, for the summary
@@ -169,7 +285,36 @@ local MATERIAL_SMOOTH_PLASTIC = 272
 -- what a computed offset is rounded to, a float that went through a matrix comes back with noise at the end
 local CFRAME_PRECISION = 1e6
 local SIZE_TOLERANCE = 1e-3
-local LIST_KEYS = { "Entries", "Extras", "ItemIds", "TextureGroups" }
+local LIST_KEYS = { "Entries", "Extras", "Empty", "ItemIds", "TextureGroups" }
+local UNION_EXTENSION = ".rbxm"
+-- a part can't be thinner than this, so nothing is cut off a shell that reaches less far across a joint
+local JOINT_TOLERANCE = 1e-3
+-- how far off an axis a part may be turned + still count as standing square to it
+local AXIS_TOLERANCE = 1e-4
+-- how fine a shape that can't be cut is sampled to find the part of the limb that holds most of it
+local SAMPLE_COUNT = 24
+-- the corners of a wedge in halves of its size: the slope climbs towards the back
+local WEDGE_CORNERS = {
+	{ -1, -1, -1 },
+	{ 1, -1, -1 },
+	{ -1, -1, 1 },
+	{ 1, -1, 1 },
+	{ -1, 1, 1 },
+	{ 1, 1, 1 },
+}
+local SHAPE_NAMES: { [ShapeKind]: string } = {
+	Block = "brick",
+	Wedge = "wedge",
+	Cylinder = "cylinder",
+	Carried = "mesh",
+}
+-- a part of SHL1 is named after the channel it's colored by, which are the texture groups of this codebase
+local CHANNEL_TEXTURE_GROUPS: TextureGroupMap = {
+	Primary = "Primary",
+	Secondary = "Secondary",
+	Tertiary = "Tertiary",
+	Hair = "Hair",
+}
 local RULES: { [string]: GameRules } = {
 	shl3 = {
 		CataloguePath = "ReplicatedStorage/Customization",
@@ -305,6 +450,222 @@ local RULES: { [string]: GameRules } = {
 		BareLimbName = "Bodysuit",
 		PatternMaterials = { Neon = "Neon" },
 	},
+	shl1 = {
+		CataloguePath = "ServerStorage/Customization",
+		-- the block body of an R15 avatar, read off the joints of the mannequin SHL3's pieces were fitted to. it stands
+		-- in the box of the R6 body this catalogue was built around: same torso, same head, arms + legs of the same
+		-- width in the same place, the arms 0.047 short of the shoulder line
+		Body = {
+			Head = {
+				Position = { 0, 2.15, 0 },
+				Segments = { { Part = "Head", Position = { 0, 2.15, 0 }, Size = { 2, 1, 1 } } },
+			},
+			Torso = {
+				Position = { 0, 0.65, 0 },
+				Segments = {
+					{ Part = "UpperTorso", Position = { 0, 0.84998, 0 }, Size = { 2, 1.60003, 1 } },
+					{
+						Part = "LowerTorso",
+						Position = { 0, -0.15003, 0 },
+						Size = { 2, 0.40006, 1 },
+						Joint = "waist",
+						Top = 0.05,
+					},
+				},
+			},
+			["Left Arm"] = {
+				Position = { -1.5, 0.65, 0 },
+				Segments = {
+					{ Part = "LeftUpperArm", Position = { -1.5, 1.01867, 0 }, Size = { 1, 1.16867, 1 } },
+					{
+						Part = "LeftLowerArm",
+						Position = { -1.5, 0.42593, 0 },
+						Size = { 1, 1.05192, 1 },
+						Joint = "elbow",
+						Top = 0.68462,
+					},
+					{
+						Part = "LeftHand",
+						Position = { -1.5, -0.20005, 0 },
+						Size = { 1, 0.30003, 1 },
+						Joint = "wrist",
+						Top = -0.075,
+					},
+				},
+			},
+			["Right Arm"] = {
+				Position = { 1.5, 0.65, 0 },
+				Segments = {
+					{ Part = "RightUpperArm", Position = { 1.5, 1.01867, 0 }, Size = { 1, 1.16867, 1 } },
+					{
+						Part = "RightLowerArm",
+						Position = { 1.5, 0.42593, 0 },
+						Size = { 1, 1.05192, 1 },
+						Joint = "elbow",
+						Top = 0.68462,
+					},
+					{
+						Part = "RightHand",
+						Position = { 1.5, -0.20005, 0 },
+						Size = { 1, 0.30003, 1 },
+						Joint = "wrist",
+						Top = -0.075,
+					},
+				},
+			},
+			["Left Leg"] = {
+				Position = { -0.5, -1.35, 0 },
+				Segments = {
+					{ Part = "LeftUpperLeg", Position = { -0.5, -0.77078, 0 }, Size = { 1, 1.21657, 1 } },
+					{
+						Part = "LeftLowerLeg",
+						Position = { -0.5, -1.5509, 0 },
+						Size = { 1, 1.19309, 1 },
+						Joint = "knee",
+						Top = -1.17188,
+					},
+					{
+						Part = "LeftFoot",
+						Position = { -0.5, -2.2, 0 },
+						Size = { 1, 0.3, 1 },
+						Joint = "ankle",
+						Top = -2.09806,
+					},
+				},
+			},
+			["Right Leg"] = {
+				Position = { 0.5, -1.35, 0 },
+				Segments = {
+					{ Part = "RightUpperLeg", Position = { 0.5, -0.77078, 0 }, Size = { 1, 1.21657, 1 } },
+					{
+						Part = "RightLowerLeg",
+						Position = { 0.5, -1.5509, 0 },
+						Size = { 1, 1.19309, 1 },
+						Joint = "knee",
+						Top = -1.17188,
+					},
+					{
+						Part = "RightFoot",
+						Position = { 0.5, -2.2, 0 },
+						Size = { 1, 0.3, 1 },
+						Joint = "ankle",
+						Top = -2.09806,
+					},
+				},
+			},
+		},
+		-- the scripts of the creator's pages, each with the list its arrows step through. what's past the free ones
+		-- took a pass, the emblems past theirs the group
+		Pickers = {
+			Bodies = { Path = "ServerStorage/MainGui/MainFrame/BodyParts/LeftButtons/Suits/Script", PaidFrom = 4 },
+			Hats = { Path = "ServerStorage/MainGui/MainFrame/BodyParts/LeftButtons/Mask/Script", PaidFrom = 7 },
+			Hair = { Path = "ServerStorage/MainGui/MainFrame/NormalChar/LeftButtons/Hair/Script", PaidFrom = 13 },
+			Faces = {
+				Path = "ServerStorage/MainGui/MainFrame/NormalChar/LeftButtons/Face/Script",
+				PaidFrom = 7,
+				Default = "Head0",
+			},
+			ChestPieces = {
+				Path = "ServerStorage/MainGui/MainFrame/BodyParts/LeftButtons/Emblems/Script",
+				PaidFrom = 4,
+			},
+			Capes = { Path = "ServerStorage/MainGui/MainFrame/BodyParts/LeftButtons/Capes/Script" },
+			Other = { Path = "ServerStorage/MainGui/MainFrame/BodyParts/LeftButtons/Other/Script" },
+		},
+		PickerTableName = "objects",
+		DefaultColorPath = "ServerStorage/MainGui",
+		HairShownName = "Hair",
+		SaveNameName = "Vader",
+		IsMaterialKept = true,
+		IsBodyHidden = true,
+		CategoryNames = { "Bodies", "Hats", "Hair", "Faces", "ChestPieces", "Capes", "Other" },
+		Categories = {
+			-- a suit is five shells that could be mixed, the limb categories are the ones SHL3 mixes its suits by
+			Bodies = {
+				Kind = "Split",
+				Group = "costume",
+				TextureGroups = CHANNEL_TEXTURE_GROUPS,
+				Models = {
+					{ Name = "Chest", Limb = "Torso", Category = "suit-torso" },
+					{ Name = "Arm1", Limb = "Left Arm", Category = "suit-left-arm" },
+					{ Name = "Arm2", Limb = "Right Arm", Category = "suit-right-arm" },
+					{ Name = "Leg1", Limb = "Left Leg", Category = "suit-left-leg" },
+					{ Name = "Leg2", Limb = "Right Leg", Category = "suit-right-leg" },
+				},
+				Mounts = { EmblemAnchor = "EmblemAttachment" },
+			},
+			Hats = {
+				Kind = "Worn",
+				Group = "costume",
+				Category = "hats",
+				TextureGroups = CHANNEL_TEXTURE_GROUPS,
+				PieceName = "Hat",
+				Place = { Limb = "Head", Part = "Head" },
+				Tags = {},
+			},
+			Hair = {
+				Kind = "MeshBorrow",
+				Group = "cosmetics",
+				Category = "hair",
+				Own = {
+					Kind = "Worn",
+					Group = "cosmetics",
+					Category = "hair",
+					TextureGroups = CHANNEL_TEXTURE_GROUPS,
+					PieceName = "Hair",
+					Place = { Limb = "Head", Part = "Head" },
+					Tags = { "Hair" },
+				},
+			},
+			-- a face is one picture of the whole of it, nothing of it is tinted
+			Faces = {
+				Kind = "Face",
+				Group = "cosmetics",
+				Category = "face",
+				Slot = "Face",
+				NameSuffix = "",
+				TextureGroups = {},
+			},
+			-- an emblem sits on the anchor the chest of the worn suit brings along
+			ChestPieces = {
+				Kind = "Worn",
+				Group = "costume",
+				Category = "emblems",
+				TextureGroups = CHANNEL_TEXTURE_GROUPS,
+				PieceName = "Emblem",
+				Anchor = "EmblemAttachment",
+				Tags = {},
+			},
+			Capes = {
+				Kind = "Worn",
+				Group = "costume",
+				Category = "capes",
+				TextureGroups = CHANNEL_TEXTURE_GROUPS,
+				PieceName = "Cape",
+				Place = { Limb = "Torso", Part = "UpperTorso" },
+				Tags = {},
+			},
+			-- what's strapped to the back rides on the chest, a gun on the forearm it's built around: neither bends
+			Other = {
+				Kind = "Worn",
+				Group = "costume",
+				Category = "extras",
+				TextureGroups = CHANNEL_TEXTURE_GROUPS,
+				Place = { Limb = "Torso", Part = "UpperTorso" },
+				Places = {
+					LeftGunArm = { Limb = "Left Arm", Part = "LeftLowerArm" },
+					RightGunArm = { Limb = "Right Arm", Part = "RightLowerArm" },
+				},
+				Tags = {},
+			},
+		},
+		Limbs = {},
+		StandInName = "Middle",
+		MarkerNames = {},
+		-- nothing of this catalogue has a rarity
+		Rarities = {},
+		PatternMaterials = {},
+	},
 }
 -- Variables
 -- References
@@ -338,15 +699,6 @@ local function read(inst: roblox.Instance, name: string): any
 	return (inst :: any)[name]
 end
 
-local function findInstance(place: roblox.DataModel, instPath: string): roblox.Instance
-	local inst: roblox.Instance? = nil
-	for _, name in instPath:split(PATH_DELIMITER) do
-		local parent: roblox.Instance = inst or place
-		inst = assert(parent:FindFirstChild(name), `No instance at "{name}" in "{instPath}"`)
-	end
-	return assert(inst, `Expected an instance path, received "{instPath}"`)
-end
-
 local function getSortedChildren(inst: roblox.Instance, className: string?): { roblox.Instance }
 	local children: { roblox.Instance } = {}
 	for _, child in inst:GetChildren() do
@@ -361,9 +713,9 @@ local function getSortedChildren(inst: roblox.Instance, className: string?): { r
 	return children
 end
 
--- "LeftLowerArm" + "Spaghetti Strap Top" both become what a file of the library is called
+-- "LeftLowerArm", "Spaghetti Strap Top" + "Hat12" all become what a file of the library is called
 local function toKebab(name: string): string
-	local spaced = name:gsub("(%l)(%u)", "%1 %2")
+	local spaced = name:gsub("(%l)(%u)", "%1 %2"):gsub("(%a)(%d)", "%1 %2")
 	local key = spaced:lower():gsub("[^%w]+", "-")
 	key = key:gsub("^%-+", ""):gsub("%-+$", "")
 	return key
@@ -471,26 +823,20 @@ local function newMeshNode(context: Context, mesh: roblox.Instance): rojo.ModelN
 	return { Name = MESH_NAME, ClassName = "SpecialMesh", Properties = properties }
 end
 
--- a part of a legacy piece, placed by where it sat against the stand-in
-local function newPartNode(
+-- how a part looks whatever its shape is. one that's recolored starts out in the color a new character wore it in,
+-- where the game kept one
+local function newSurface(
 	context: Context,
 	path: string,
 	part: roblox.Instance,
-	name: string,
-	origin: CFrameValue,
-	textureGroup: string?,
-	keptAttachmentNames: { string }
-): rojo.ModelNode
+	textureGroup: string?
+): rojo.NodeProperties
+	local defaultColor = if textureGroup then context.defaultColors[textureGroup] else nil
 	local properties: rojo.NodeProperties = {
-		Color = rojoValue.toValue(read(part, "Color")),
-		Size = rojoValue.toValue(read(part, "Size")),
+		Color = rojoValue.toValue(defaultColor or read(part, "Color")),
 	}
-	local offset: CFrameValue = origin:ToObjectSpace(read(part, "CFrame"))
-	if not getIfIdentity(offset) then
-		properties.CFrame = toCFrameValue(offset)
-	end
 	local material = read(part, "Material")
-	if textureGroup and material.Value ~= MATERIAL_SMOOTH_PLASTIC then
+	if textureGroup and material.Value ~= MATERIAL_SMOOTH_PLASTIC and not context.rules.IsMaterialKept then
 		-- the legacy game reset whatever it recolored to smooth plastic on every rebuild, what was authored never showed
 		note(context, `{path}: authored material {material.Name} of a "{textureGroup}" part dropped`)
 		properties.Material = { Enum = MATERIAL_SMOOTH_PLASTIC }
@@ -502,6 +848,28 @@ local function newPartNode(
 	end
 	if read(part, "Reflectance") ~= 0 then
 		properties.Reflectance = rojoValue.toValue(read(part, "Reflectance"), "Float32")
+	end
+	if textureGroup then
+		properties.Attributes = newAttributes({ [TEXTURE_GROUP_ATTRIBUTE] = textureGroup })
+	end
+	return properties
+end
+
+-- a part of a legacy piece, placed by where it sat against the stand-in
+local function newPartNode(
+	context: Context,
+	path: string,
+	part: roblox.Instance,
+	name: string,
+	origin: CFrameValue,
+	textureGroup: string?,
+	keptAttachmentNames: { string }
+): rojo.ModelNode
+	local properties = newSurface(context, path, part, textureGroup)
+	properties.Size = rojoValue.toValue(read(part, "Size"))
+	local offset: CFrameValue = origin:ToObjectSpace(read(part, "CFrame"))
+	if not getIfIdentity(offset) then
+		properties.CFrame = toCFrameValue(offset)
 	end
 	if part.ClassName == "MeshPart" then
 		local meshId = assert(getAssetId(read(part, "MeshContent")), `{path} is a MeshPart without a mesh`)
@@ -522,9 +890,6 @@ local function newPartNode(
 		end
 	else
 		error(`{path} is a {part.ClassName}, which can't be written as a model file`)
-	end
-	if textureGroup then
-		properties.Attributes = newAttributes({ [TEXTURE_GROUP_ATTRIBUTE] = textureGroup })
 	end
 
 	local children: { rojo.ModelNode } = {}
@@ -556,19 +921,22 @@ end
 -- the layer over a body part that takes the color the legacy game gave the body part itself
 local function newBaseNode(context: Context, bodyPart: roblox.Instance): rojo.ModelNode
 	local rules = context.rules
+	local color = assert(rules.BaseColor, "a painted layer needs a color")
+	local inflation = assert(rules.BaseInflation, "a painted layer needs to know how far it stands off the body")
+	local textureGroup = assert(rules.BaseTextureGroup, "a painted layer needs a texture group")
 	local meshId = assert(getAssetId(read(bodyPart, "MeshContent")), `rig part "{bodyPart.Name}" has no mesh`)
 	context.rigMeshIds[meshId] = true
 	return {
 		Name = BASE_NAME,
 		ClassName = "MeshPart",
 		Properties = {
-			Color = { Color3 = rules.BaseColor },
-			Size = rojoValue.toValue(read(bodyPart, "Size") + Vector3.one * rules.BaseInflation),
+			Color = { Color3 = color },
+			Size = rojoValue.toValue(read(bodyPart, "Size") + Vector3.one * inflation),
 			Material = { Enum = MATERIAL_SMOOTH_PLASTIC },
 			MeshContent = rojoValue.toValue(read(bodyPart, "MeshContent")),
 			InitialSize = rojoValue.toValue(read(bodyPart, "InitialSize")),
 			RenderFidelity = rojoValue.toValue(read(bodyPart, "RenderFidelity"), "Enum"),
-			Attributes = newAttributes({ [TEXTURE_GROUP_ATTRIBUTE] = rules.BaseTextureGroup }),
+			Attributes = newAttributes({ [TEXTURE_GROUP_ATTRIBUTE] = textureGroup }),
 		} :: rojo.NodeProperties,
 	}
 end
@@ -599,8 +967,33 @@ local function readPiece(context: Context, path: string, name: string, model: ro
 	return piece
 end
 
--- a piece the way an item wears it: an invisible root the size of what it was fitted to, holding the one attachment
--- that names its anchor, with everything else placed against it
+-- what a piece is worn by: an invisible part the size of what it was fitted to, holding the one attachment that
+-- names its anchor
+local function newRootNode(rojoId: string, size: rojo.StrictPropertyValue, anchorName: string): rojo.ModelNode
+	return {
+		Name = ROOT_NAME,
+		ClassName = "Part",
+		Properties = {
+			Size = size,
+			Transparency = { Float32 = 1 },
+			Attributes = newAttributes({ Rojo_Id = rojoId }),
+		} :: rojo.NodeProperties,
+		Children = { { Name = anchorName, ClassName = "Attachment" } },
+	}
+end
+
+local function newModelNode(name: string, rojoId: string, children: { rojo.ModelNode }): rojo.ModelNode
+	return {
+		Name = name,
+		ClassName = "Model",
+		Properties = {
+			Attributes = newAttributes({ Rojo_Target_PrimaryPart = rojoId }),
+		} :: rojo.NodeProperties,
+		Children = children,
+	}
+end
+
+-- a piece the way an item wears it: a root with everything else placed against it
 local function newPieceNode(
 	context: Context,
 	path: string,
@@ -623,16 +1016,7 @@ local function newPieceNode(
 	end
 
 	local children: { rojo.ModelNode } = {
-		{
-			Name = ROOT_NAME,
-			ClassName = "Part",
-			Properties = {
-				Size = rojoValue.toValue(read(fittedTo, "Size")),
-				Transparency = { Float32 = 1 },
-				Attributes = newAttributes({ Rojo_Id = rojoId }),
-			} :: rojo.NodeProperties,
-			Children = { { Name = anchorName, ClassName = "Attachment" } },
-		},
+		newRootNode(rojoId, rojoValue.toValue(read(fittedTo, "Size")), anchorName),
 	}
 	if baseBodyPart then
 		table.insert(children, newBaseNode(context, baseBodyPart))
@@ -656,14 +1040,7 @@ local function newPieceNode(
 			)
 		)
 	end
-	return {
-		Name = toKebab(piece.Name),
-		ClassName = "Model",
-		Properties = {
-			Attributes = newAttributes({ Rojo_Target_PrimaryPart = rojoId }),
-		} :: rojo.NodeProperties,
-		Children = children,
-	}
+	return newModelNode(toKebab(piece.Name), rojoId, children)
 end
 
 -- an item of one piece is that piece, one of several is a folder of them
@@ -735,28 +1112,57 @@ local function readImagePaths(path: string): { [string]: string }
 end
 
 local function getRigPart(context: Context, name: string): roblox.Instance?
-	local rigPart = context.rig:FindFirstChild(name)
+	local rig = context.rig
+	local rigPart = if rig then rig:FindFirstChild(name) else nil
 	return if rigPart and rigPart:IsA("BasePart") then rigPart else nil
 end
 
-local function getRarity(context: Context, entry: roblox.Instance): string
+local function getRarity(context: Context, entry: roblox.Instance): string?
+	-- a catalogue that has none names none
+	if #context.rules.Rarities == 0 then
+		return nil
+	end
 	local value = entry:FindFirstChild("Rarity")
 	local index = if value then read(value, "Value") + 1 else 1
 	return assert(context.rules.Rarities[index], `"{entry.Name}" has rarity {index - 1}, which has no name`)
 end
 
+-- what a menu handed out without a pass: the entries ahead of the paid ones + the one nobody has to pick
+local function getIfFree(picker: Picker, name: string): boolean
+	local order = picker.Order[name]
+	if order == nil then
+		return picker.Default == name
+	end
+	local paidFrom = picker.PaidFrom
+	return paidFrom == nil or order < paidFrom
+end
+
+local function getItemAttributes(name: string, rarity: string?): { [string]: string | boolean }
+	local attributes: { [string]: string | boolean } = { Name = name }
+	if rarity then
+		attributes.Rarity = rarity
+	end
+	return attributes
+end
+
 local function newEntryRow(context: Context, legacyCategory: string, entry: roblox.Instance): EntryRow
 	local cost = entry:FindFirstChild("Cost")
+	local picker = context.pickers[legacyCategory]
 	local row: EntryRow = {
 		LegacyCategory = legacyCategory,
 		LegacyName = entry.Name,
 		Rarity = getRarity(context, entry),
 		-- as stored, what a player paid was this times the price adjustment, rounded up to the next hundred
 		Cost = if cost then read(cost, "Value") else nil,
-		IsStarter = context.starters[entry.Name] ~= nil,
+		Order = if picker then picker.Order[entry.Name] else nil,
+		-- a game that sold by the menu started everybody with what the menu gave away
+		IsStarter = if picker then getIfFree(picker, entry.Name) else context.starters[entry.Name] ~= nil,
 		IsBorrowed = false,
 		ItemIds = {},
 	}
+	if picker and row.Order == nil and picker.Default ~= entry.Name then
+		note(context, `{legacyCategory}/{entry.Name}: not on the list of its menu, nobody could pick it`)
+	end
 	local starterCategory = context.starters[entry.Name]
 	if starterCategory and starterCategory ~= legacyCategory then
 		note(context, `{legacyCategory}/{entry.Name}: the starter list files it under "{starterCategory}"`)
@@ -804,7 +1210,7 @@ local function convertLimbEntry(
 			note(context, `{path}: the suit has no such limb`)
 			continue
 		end
-		local attributes: { [string]: string | boolean } = { Name = entry.Name, Rarity = row.Rarity }
+		local attributes = getItemAttributes(entry.Name, row.Rarity)
 		local pieces: { rojo.ModelNode } = {}
 		local isShown = false
 		for _, partName in limb.Parts do
@@ -859,7 +1265,7 @@ local function convertPiecesEntry(
 )
 	local key = toKebab(entry.Name)
 	local row = newEntryRow(context, legacyCategory, entry)
-	local attributes: { [string]: string | boolean } = { Name = entry.Name, Rarity = row.Rarity }
+	local attributes = getItemAttributes(entry.Name, row.Rarity)
 	local models = getSortedChildren(entry, "Model")
 	local pieces: { rojo.ModelNode } = {}
 	for _, model in models do
@@ -912,7 +1318,7 @@ local function convertMountEntry(
 	local key = toKebab(entry.Name)
 	local path = `{legacyCategory}/{entry.Name}`
 	local row = newEntryRow(context, legacyCategory, entry)
-	local attributes: { [string]: string | boolean } = { Name = entry.Name, Rarity = row.Rarity }
+	local attributes = getItemAttributes(entry.Name, row.Rarity)
 	local piece = readPiece(context, path, entry.Name, entry)
 	if piece.StandIn == nil or #piece.Parts == 0 then
 		fail(context, legacyCategory, entry.Name, `it needs a "{context.rules.StandInName}" and a part that shows`)
@@ -947,15 +1353,21 @@ local function convertFaceEntry(
 	local name = entry.Name
 	local keyName = if name:sub(-#rule.NameSuffix) == rule.NameSuffix then name:sub(1, -#rule.NameSuffix - 1) else name
 	local key = toKebab(keyName)
-	local pieceModel = entry:FindFirstChild(rule.PieceName)
+	local pieceName = rule.PieceName
+	local pieceModel = if pieceName then entry:FindFirstChild(pieceName) else nil
 	local standIn = pieceModel and pieceModel:FindFirstChild(context.rules.StandInName)
-	local decal = standIn and standIn:FindFirstChildOfClass("Decal")
+	-- an entry that's the head itself holds its picture
+	local holder = if pieceName then standIn else entry
+	local decal = holder and holder:FindFirstChildOfClass("Decal")
 	local assetId = decal and getAssetId(read(decal, "TextureContent"))
 	local imagePath = assetId and context.imagePaths[assetId]
 	if decal == nil or assetId == nil then
 		fail(context, legacyCategory, name, "no decal with an image")
 	elseif imagePath == nil then
 		fail(context, legacyCategory, name, `image {assetId} has no file in "{IMAGE_TABLE_PATH}"`)
+	elseif imagePath:match("([^/]+)%.%w+$") ~= key then
+		-- the game finds the image of a face by the key of its id
+		fail(context, legacyCategory, name, `its image is "{imagePath}", which isn't named "{key}"`)
 	else
 		local id = getItemId(rule.Group, rule.Category, key)
 		local color = read(decal, "Color3")
@@ -1196,12 +1608,843 @@ local function convertBareLimbs(context: Context): EntryRow?
 			limbGroup,
 			limb.Category,
 			key,
-			newItemNode(pieces, { Name = name, Rarity = row.Rarity }, limb.Tags)
+			newItemNode(pieces, getItemAttributes(name, row.Rarity), limb.Tags)
 		)
 		table.insert(row.ItemIds, id)
 		limbItemIds[limb.Name] = id
 	end
 	return row
+end
+
+local function newVector(values: { number }): Vector3Value
+	return Vector3.new(values[1], values[2], values[3])
+end
+
+local function toVectorValue(vector: Vector3Value): rojo.StrictPropertyValue
+	return { Vector3 = { round(vector.X), round(vector.Y), round(vector.Z) } }
+end
+
+local function roundCFrame(cframe: CFrameValue): CFrameValue
+	local components = { cframe:GetComponents() }
+	for index, value in components do
+		components[index] = round(value)
+	end
+	return CFrame.new(table.unpack(components))
+end
+
+local function getBody(context: Context): { [string]: BodyLimbRule }
+	return assert(context.rules.Body, `the rules of "{context.game}" don't say which body its catalogue was fitted to`)
+end
+
+local function getSegment(limb: BodyLimbRule, partName: string): SegmentRule
+	for _, segment in limb.Segments do
+		if segment.Part == partName then
+			return segment
+		end
+	end
+	error(`the limb has no "{partName}"`)
+end
+
+-- where the limb a piece was welded to is, seen from the part that stands there now
+local function getOffset(limb: BodyLimbRule, segment: SegmentRule): CFrameValue
+	return CFrame.new(newVector(limb.Position) - newVector(segment.Position))
+end
+
+-- the part of a limb that's at a height
+local function getSegmentIndex(limb: BodyLimbRule, height: number): number
+	local index = 1
+	while index < #limb.Segments and height < (limb.Segments[index + 1].Top or -math.huge) do
+		index += 1
+	end
+	return index
+end
+
+-- why a part draws nothing, nil for one that shows
+local function getHiddenReason(part: roblox.Instance): string?
+	if read(part, "Transparency") >= 1 then
+		return "is invisible"
+	end
+	for _, child in part:GetChildren() do
+		if child:IsA("DataModelMesh") then
+			local scale: Vector3Value = read(child, "Scale")
+			-- how the legacy game kept "none" on a list of things to wear
+			if scale.X == 0 or scale.Y == 0 or scale.Z == 0 then
+				return "is scaled to nothing"
+			end
+		end
+	end
+	return nil
+end
+
+-- what a part draws + where against the middle of its limb, nil for one that draws nothing
+local function readShape(context: Context, path: string, part: roblox.Instance, origin: CFrameValue): Shape?
+	local reason = getHiddenReason(part)
+	if reason then
+		note(context, `{path}: "{part.Name}" {reason}, dropped`)
+		return nil
+	end
+	local size: Vector3Value = read(part, "Size")
+	local kind: ShapeKind = if part.ClassName == "WedgePart"
+		then "Wedge"
+		elseif part.ClassName == "Part" and read(part, "Shape").Name == "Block" then "Block"
+		else "Carried"
+	local meshCount = 0
+	for _, child in getSortedChildren(part) do
+		if not child:IsA("DataModelMesh") then
+			continue
+		end
+		meshCount += 1
+		assert(meshCount == 1, `{path}: "{part.Name}" has two meshes`)
+		local meshType: string = if child.ClassName == "SpecialMesh"
+			then read(child, "MeshType").Name
+			else child.ClassName
+		if kind == "Carried" then
+			continue
+		elseif meshType == "Brick" or meshType == "BlockMesh" then
+			kind = "Block"
+		elseif meshType == "Wedge" then
+			kind = "Wedge"
+		elseif meshType == "CylinderMesh" then
+			kind = "Cylinder"
+		else
+			kind = "Carried"
+			continue
+		end
+		-- a mesh of these kinds fills its part, its scale is how much bigger than the part it's drawn
+		assert(read(child, "Offset") == Vector3.zero, `{path}: the mesh of "{part.Name}" is drawn off its part`)
+		size *= read(child, "Scale")
+	end
+	return {
+		Path = `{path}/{part.Name}`,
+		Part = part,
+		Kind = kind,
+		Size = size,
+		CFrame = origin:ToObjectSpace(read(part, "CFrame")),
+	}
+end
+
+-- everything of a legacy model that shows, but for its stand-in + the parts a rule has another use for
+local function readShapes(
+	context: Context,
+	path: string,
+	model: roblox.Instance,
+	standIn: roblox.Instance,
+	skippedNames: { [string]: string }
+): { Shape }
+	if getHiddenReason(standIn) == nil then
+		note(context, `{path}: the stand-in showed in the legacy game, it still isn't worn`)
+	end
+	for _, decal in getSortedChildren(standIn, "Decal") do
+		local assetId = getAssetId(read(decal, "TextureContent"))
+		if assetId then
+			note(context, `{path}: the stand-in holds the decal {assetId}, nothing of a stand-in is carried over`)
+		end
+	end
+	local origin: CFrameValue = read(standIn, "CFrame")
+	local shapes: { Shape } = {}
+	for _, child in getSortedChildren(model) do
+		if not child:IsA("BasePart") or child.Name == standIn.Name or skippedNames[child.Name] then
+			continue
+		end
+		local shape = readShape(context, path, child, origin)
+		if shape then
+			table.insert(shapes, shape)
+		end
+	end
+	return shapes
+end
+
+-- a shape as a part of a piece, placed against the root of that piece
+local function newShapeNode(
+	context: Context,
+	shape: Shape,
+	name: string,
+	cframe: CFrameValue,
+	textureGroup: string?
+): rojo.ModelNode
+	local part = shape.Part
+	local properties = newSurface(context, shape.Path, part, textureGroup)
+	if not getIfIdentity(cframe) then
+		properties.CFrame = toCFrameValue(cframe)
+	end
+	local className = "Part"
+	local children: { rojo.ModelNode } = {}
+	if shape.Kind == "Carried" then
+		assert(
+			part.ClassName == "Part" or part.ClassName == "WedgePart",
+			`{shape.Path} is a {part.ClassName}, which can't be written as a model file`
+		)
+		className = part.ClassName
+		properties.Size = rojoValue.toValue(read(part, "Size"))
+		if className == "Part" and read(part, "Shape").Name ~= "Block" then
+			properties.Shape = rojoValue.toValue(read(part, "Shape"), "Enum")
+		end
+		for _, child in getSortedChildren(part, "SpecialMesh") do
+			table.insert(children, newMeshNode(context, child))
+		end
+	else
+		properties.Size = toVectorValue(shape.Size)
+		if shape.Kind == "Wedge" then
+			className = "WedgePart"
+		elseif shape.Kind == "Cylinder" then
+			-- the mesh fills its part the way a cylinder that's wider one way than the other needs
+			table.insert(children, { Name = MESH_NAME, ClassName = "CylinderMesh" })
+		end
+	end
+	return {
+		Name = name,
+		ClassName = className,
+		Properties = properties,
+		Children = if #children > 0 then children else nil,
+	}
+end
+
+-- a union names the asset that holds its geometry, there's nothing of it to write down. it's taken out of the place
+-- as it is + names its asset the way every union of lib does
+local function newUnionOutput(
+	context: Context,
+	shape: Shape,
+	name: string,
+	cframe: CFrameValue,
+	textureGroup: string?
+): Output
+	local union = shape.Part:Clone()
+	for _, child in union:GetChildren() do
+		child:Destroy()
+	end
+	-- lune's Instance typedef leaves out dynamic property indexing
+	local properties = union :: any
+	union.Name = name
+	properties.CFrame = roundCFrame(cframe)
+	properties.Anchored = false
+	local defaultColor = if textureGroup then context.defaultColors[textureGroup] else nil
+	if defaultColor then
+		properties.Color = defaultColor
+	end
+	if textureGroup then
+		if not read(union, "UsePartColor") then
+			-- one that keeps the colors of the parts it was made of would never show the color it's given
+			note(context, `{shape.Path}: the union kept the colors of its parts, it takes the one of its channel now`)
+			properties.UsePartColor = true
+		end
+		union:SetAttribute(TEXTURE_GROUP_ATTRIBUTE, textureGroup)
+	end
+	local contents = Place.serialize(union)
+	return { path = name .. UNION_EXTENSION, contents = contents }
+end
+
+-- how high a shape reaches from the root part of the body, lowest + highest. the size of what's carried over as it
+-- is isn't known here, it counts as its middle
+local function getHeights(limb: BodyLimbRule, shape: Shape): (number, number)
+	local _, y, _, _, _, _, upX, upY, upZ = shape.CFrame:GetComponents()
+	local middle = limb.Position[2] + y
+	local size = shape.Size
+	if shape.Kind == "Carried" then
+		return middle, middle
+	elseif shape.Kind == "Wedge" then
+		local low, high = math.huge, -math.huge
+		for _, corner in WEDGE_CORNERS do
+			local height = middle + (upX * corner[1] * size.X + upY * corner[2] * size.Y + upZ * corner[3] * size.Z) / 2
+			low, high = math.min(low, height), math.max(high, height)
+		end
+		return low, high
+	end
+	local reach = if shape.Kind == "Cylinder"
+		then math.abs(upY) * size.Y / 2 + math.sqrt((upX * size.X / 2) ^ 2 + (upZ * size.Z / 2) ^ 2)
+		else (math.abs(upX) * size.X + math.abs(upY) * size.Y + math.abs(upZ) * size.Z) / 2
+	return middle - reach, middle + reach
+end
+
+-- the joints of a limb something that reaches from one height to another lies across, from the top down
+local function getCrossed(limb: BodyLimbRule, low: number, high: number): { Joint }
+	local crossed: { Joint } = {}
+	for _, segment in limb.Segments do
+		local name, top = segment.Joint, segment.Top
+		if name and top and top > low + JOINT_TOLERANCE and top < high - JOINT_TOLERANCE then
+			table.insert(crossed, { Name = name, Height = top })
+		end
+	end
+	return crossed
+end
+
+-- a brick that stands square to a joint comes apart on the plane of it into two bricks that share that face, a
+-- cylinder that stands on one into two cylinders. nothing else leaves whole parts behind
+local function cut(limb: BodyLimbRule, shape: Shape, crossed: { Joint }): { Shape }?
+	local _, y, _, _, _, _, upX, upY, upZ = shape.CFrame:GetComponents()
+	local axis: number? = nil
+	for index, up in { upX, upY, upZ } do
+		local isSquare = math.abs(math.abs(up) - 1) < AXIS_TOLERANCE
+		if isSquare and (shape.Kind == "Block" or (shape.Kind == "Cylinder" and index == 2)) then
+			axis = index
+		end
+	end
+	if axis == nil then
+		return nil
+	end
+	local sizes = { shape.Size.X, shape.Size.Y, shape.Size.Z }
+	local middle = limb.Position[2] + y
+	local heights = { middle + sizes[axis] / 2 }
+	for _, joint in crossed do
+		table.insert(heights, joint.Height)
+	end
+	table.insert(heights, middle - sizes[axis] / 2)
+	local shapes: { Shape } = {}
+	for index = 1, #heights - 1 do
+		local high, low = heights[index], heights[index + 1]
+		local cutSizes = table.clone(sizes)
+		cutSizes[axis] = high - low
+		table.insert(shapes, {
+			Path = shape.Path,
+			Part = shape.Part,
+			Kind = shape.Kind,
+			Size = newVector(cutSizes),
+			CFrame = shape.CFrame + Vector3.new(0, (high + low) / 2 - middle, 0),
+		})
+	end
+	return shapes
+end
+
+-- how much of a shape each part of a limb holds, as shares of 1
+local function getShares(limb: BodyLimbRule, shape: Shape): { number }
+	local _, y, _, _, _, _, upX, upY, upZ = shape.CFrame:GetComponents()
+	local size = shape.Size
+	local counts: { number } = table.create(#limb.Segments, 0)
+	local total = 0
+	for xIndex = 1, SAMPLE_COUNT do
+		local u = (xIndex - 0.5) / SAMPLE_COUNT - 0.5
+		for yIndex = 1, SAMPLE_COUNT do
+			local v = (yIndex - 0.5) / SAMPLE_COUNT - 0.5
+			for zIndex = 1, SAMPLE_COUNT do
+				local w = (zIndex - 0.5) / SAMPLE_COUNT - 0.5
+				local isInside = if shape.Kind == "Wedge"
+					then v <= w
+					elseif shape.Kind == "Cylinder" then u * u + w * w <= 0.25
+					else true
+				if isInside then
+					local height = limb.Position[2] + y + upX * u * size.X + upY * v * size.Y + upZ * w * size.Z
+					local index = getSegmentIndex(limb, height)
+					counts[index] += 1
+					total += 1
+				end
+			end
+		end
+	end
+	for index, count in counts do
+		counts[index] = count / total
+	end
+	return counts
+end
+
+local function describe(shape: Shape): string
+	local size = shape.Size
+	return string.format(
+		'"%s" (%s %g x %g x %g)',
+		shape.Part.Name,
+		SHAPE_NAMES[shape.Kind],
+		round(size.X),
+		round(size.Y),
+		round(size.Z)
+	)
+end
+
+-- the parts of a limb a shape ends up on. one that lies across a joint is cut on it when that leaves whole parts, or
+-- goes whole to the part that holds most of it + is listed for somebody to fix by hand
+local function split(context: Context, limb: BodyLimbRule, shape: Shape): { { Shape: Shape, Index: number } }
+	local low, high = getHeights(limb, shape)
+	local crossed = getCrossed(limb, low, high)
+	if #crossed == 0 then
+		return { { Shape = shape, Index = getSegmentIndex(limb, (low + high) / 2) } }
+	end
+	local jointNames: { string } = {}
+	for _, joint in crossed do
+		table.insert(jointNames, joint.Name)
+	end
+	-- two parts of a piece can share a name + a size, where it sat on the limb tells them apart
+	local position: Vector3Value = shape.CFrame.Position
+	local across = string.format(
+		"%s %s at %.3f, %.3f, %.3f: across the %s",
+		shape.Path:match("^(.*)/[^/]+$") or shape.Path,
+		describe(shape),
+		position.X,
+		position.Y,
+		position.Z,
+		table.concat(jointNames, " + ")
+	)
+	local halves = cut(limb, shape, crossed)
+	if halves then
+		local placed: { { Shape: Shape, Index: number } } = {}
+		local parts: { string } = {}
+		for _, half in halves do
+			local halfLow, halfHigh = getHeights(limb, half)
+			local index = getSegmentIndex(limb, (halfLow + halfHigh) / 2)
+			table.insert(placed, { Shape = half, Index = index })
+			table.insert(parts, string.format("%s %.3f", limb.Segments[index].Part, halfHigh - halfLow))
+		end
+		table.insert(context.joints, `{across}, cut: {table.concat(parts, " + ")}`)
+		return placed
+	end
+	local shares = getShares(limb, shape)
+	local best = 1
+	for index, share in shares do
+		if share > shares[best] then
+			best = index
+		end
+	end
+	table.insert(
+		context.joints,
+		string.format(
+			"%s, whole on %s which holds %d%% of it: TO FIX BY HAND",
+			across,
+			limb.Segments[best].Part,
+			math.round(shares[best] * 100)
+		)
+	)
+	return { { Shape = shape, Index = best } }
+end
+
+-- an item that holds a union can't be one text file, it's a folder of its parts the way the library of SHL2 keeps
+-- such an item
+local function writeItemFolder(
+	context: Context,
+	group: string,
+	category: string,
+	key: string,
+	item: rojo.ModelJSON,
+	files: { Output }
+): string
+	local id = getItemId(group, category, key)
+	local libraryCategory = `{group}/{category}`
+	local itemPath = `{context.libraryPath}/{libraryCategory}/{key}`
+	context.itemCounts[libraryCategory] = (context.itemCounts[libraryCategory] or 0) + 1
+	local meta: rojo.MetaJSON = { className = item.ClassName, properties = item.Properties }
+	table.insert(context.outputs, {
+		path = `{itemPath}/init.meta.json`,
+		contents = rojoValue.encode(meta :: any),
+	})
+	local children: { rojo.ModelNode } = item.Children or {}
+	for _, child in children do
+		local model: rojo.ModelJSON = {
+			ClassName = child.ClassName,
+			Properties = child.Properties,
+			Children = child.Children,
+		}
+		table.insert(context.outputs, {
+			path = `{itemPath}/{child.Name}.model.json`,
+			contents = rojoValue.encode(model :: any),
+		})
+	end
+	for _, file in files do
+		table.insert(context.outputs, { path = `{itemPath}/{file.path}`, contents = file.contents })
+	end
+	return id
+end
+
+-- the size a stand-in stands for: a brick mesh makes it as big as what the piece sits on
+local function getStandInSize(standIn: roblox.Instance): Vector3Value
+	local size: Vector3Value = read(standIn, "Size")
+	for _, child in standIn:GetChildren() do
+		local isBrick = child.ClassName == "BlockMesh"
+			or (child.ClassName == "SpecialMesh" and read(child, "MeshType").Name == "Brick")
+		if isBrick then
+			size *= read(child, "Scale")
+		end
+	end
+	return size
+end
+
+-- a save names a piece by a value the piece carries. that's the name of its entry, but for where a piece was copied
+-- + the value left as it was
+local function noteSaveName(context: Context, path: string, entry: roblox.Instance, model: roblox.Instance)
+	local name = context.rules.SaveNameName
+	local value = if name then model:FindFirstChild(name) else nil
+	if value and value.ClassName == "StringValue" and read(value, "Value") ~= entry.Name then
+		note(context, `{path}: a save calls it "{read(value, "Value")}", the name of another entry`)
+	end
+end
+
+-- a hat says whether the hair still shows under it, one that says no leaves no room for any
+local function addHairMarker(
+	context: Context,
+	row: EntryRow,
+	attributes: { [string]: string | boolean },
+	model: roblox.Instance
+)
+	local name = context.rules.HairShownName
+	if name == nil then
+		return
+	end
+	for _, child in model:GetChildren() do
+		if child.Name == name and child.ClassName == "BoolValue" and read(child, "Value") == false then
+			attributes.ShaveHead = true
+			row.ShaveHead = true
+		end
+	end
+end
+
+local function convertSplitEntry(
+	context: Context,
+	legacyCategory: string,
+	rule: SplitCategoryRule,
+	entry: roblox.Instance
+)
+	local rules = context.rules
+	local body = getBody(context)
+	local key = toKebab(entry.Name)
+	local row = newEntryRow(context, legacyCategory, entry)
+	local limbItemIds: { [string]: string } = {}
+	for _, modelRule in rule.Models do
+		local path = `{legacyCategory}/{entry.Name}/{modelRule.Name}`
+		local model = entry:FindFirstChild(modelRule.Name)
+		local standIn = model and model:FindFirstChild(rules.StandInName)
+		if model == nil or standIn == nil then
+			fail(context, legacyCategory, entry.Name, `no "{modelRule.Name}" with a "{rules.StandInName}"`)
+			continue
+		end
+		noteSaveName(context, path, entry, model)
+		local limb = assert(body[modelRule.Limb], `the body has no "{modelRule.Limb}"`)
+		local origin: CFrameValue = read(standIn, "CFrame")
+		local nodes: { { rojo.ModelNode } } = {}
+		local getNames: { (name: string) -> string } = {}
+		for index in limb.Segments do
+			nodes[index] = {}
+			getNames[index] = newNameGetter()
+		end
+
+		local shapes = readShapes(context, path, model, standIn, rule.Mounts)
+		for _, shape in shapes do
+			local textureGroup = rule.TextureGroups[shape.Part.Name]
+			if textureGroup == nil then
+				note(context, `{path}: "{shape.Part.Name}" was never recolored, it keeps its color`)
+			end
+			if shape.Kind == "Carried" then
+				note(context, `{path}: the size of "{shape.Part.Name}" isn't known, it's worn where its middle is`)
+			end
+			for _, placed in split(context, limb, shape) do
+				local index = placed.Index
+				table.insert(
+					nodes[index],
+					newShapeNode(
+						context,
+						placed.Shape,
+						getNames[index](toKebab(shape.Part.Name)),
+						getOffset(limb, limb.Segments[index]) * placed.Shape.CFrame,
+						textureGroup
+					)
+				)
+			end
+		end
+		-- what another item sits on stays a part of its own, so the attachment isn't taken for the one of the root
+		for _, child in getSortedChildren(model) do
+			local mountName = rule.Mounts[child.Name]
+			if mountName == nil or not child:IsA("BasePart") then
+				continue
+			end
+			local offset: CFrameValue = origin:ToObjectSpace(read(child, "CFrame"))
+			local index = getSegmentIndex(limb, limb.Position[2] + offset.Position.Y)
+			local cframe: CFrameValue = getOffset(limb, limb.Segments[index]) * offset
+			local properties: rojo.NodeProperties = {
+				Size = toVectorValue(getStandInSize(child)),
+				Transparency = { Float32 = 1 },
+			}
+			if not getIfIdentity(cframe) then
+				properties.CFrame = toCFrameValue(cframe)
+			end
+			table.insert(nodes[index], {
+				Name = getNames[index](toKebab(child.Name)),
+				ClassName = "Part",
+				Properties = properties,
+				Children = { { Name = mountName, ClassName = "Attachment" } },
+			})
+		end
+		if #shapes == 0 then
+			note(context, `{path}: nothing to show, no item written`)
+			continue
+		end
+
+		-- every part of the limb gets its piece, also one the shell leaves bare: the limb under it was hidden whole
+		local pieces: { rojo.ModelNode } = {}
+		for index, segment in limb.Segments do
+			local rojoId = getRojoId(
+				context,
+				rule.Group,
+				modelRule.Category,
+				key,
+				if #limb.Segments > 1 then segment.Part else nil
+			)
+			local children: { rojo.ModelNode } =
+				{ newRootNode(rojoId, toVectorValue(newVector(segment.Size)), segment.Part) }
+			table.move(nodes[index], 1, #nodes[index], 2, children)
+			table.insert(pieces, newModelNode(toKebab(segment.Part), rojoId, children))
+		end
+		local attributes = getItemAttributes(entry.Name, row.Rarity)
+		if rules.IsBodyHidden then
+			attributes.IsBodyHidden = true
+		end
+		local id = writeItem(context, rule.Group, modelRule.Category, key, newItemNode(pieces, attributes, {}))
+		limbItemIds[modelRule.Name] = id
+		table.insert(row.ItemIds, id)
+	end
+	row.LimbItemIds = limbItemIds
+	table.insert(context.entries, row)
+end
+
+-- a piece that stays in one piece, as the single item of its entry
+local function writeWorn(
+	context: Context,
+	legacyCategory: string,
+	rule: WornCategoryRule,
+	entry: roblox.Instance,
+	row: EntryRow,
+	model: roblox.Instance,
+	standIn: roblox.Instance,
+	shapes: { Shape }
+)
+	local key = toKebab(entry.Name)
+	local path = `{legacyCategory}/{entry.Name}`
+	local rojoId = getRojoId(context, rule.Group, rule.Category, key)
+	-- what sits on a worn attachment is placed against its own stand-in
+	local anchorName = rule.Anchor or ""
+	local rootSize: Vector3Value = getStandInSize(standIn)
+	local offset: CFrameValue = CFrame.identity
+	if rule.Anchor == nil then
+		-- on the body it stands where it stood on the limb it was welded to
+		local places = rule.Places
+		local place = assert((places and places[entry.Name]) or rule.Place, `{path} has nowhere to be worn`)
+		local limb = assert(getBody(context)[place.Limb], `the body has no "{place.Limb}"`)
+		local segment = getSegment(limb, place.Part)
+		anchorName = segment.Part
+		rootSize = newVector(segment.Size)
+		offset = getOffset(limb, segment)
+	end
+
+	local children: { rojo.ModelNode } = { newRootNode(rojoId, toVectorValue(rootSize), anchorName) }
+	local files: { Output } = {}
+	local getName = newNameGetter()
+	for _, shape in shapes do
+		local textureGroup = rule.TextureGroups[shape.Part.Name]
+		if textureGroup == nil then
+			note(context, `{path}: "{shape.Part.Name}" was never recolored, it keeps its color`)
+		end
+		local name = getName(toKebab(shape.Part.Name))
+		local cframe: CFrameValue = offset * shape.CFrame
+		if shape.Part.ClassName == "UnionOperation" then
+			table.insert(files, newUnionOutput(context, shape, name, cframe, textureGroup))
+		else
+			table.insert(children, newShapeNode(context, shape, name, cframe, textureGroup))
+		end
+	end
+	local attributes = getItemAttributes(entry.Name, row.Rarity)
+	addHairMarker(context, row, attributes, model)
+	local item = newItemNode({ newModelNode(key, rojoId, children) }, attributes, rule.Tags)
+	local id = if #files > 0
+		then writeItemFolder(context, rule.Group, rule.Category, key, item, files)
+		else writeItem(context, rule.Group, rule.Category, key, item)
+	table.insert(row.ItemIds, id)
+end
+
+-- the model of an entry that's worn in one piece + what it's placed against
+local function getWornModel(
+	context: Context,
+	legacyCategory: string,
+	rule: WornCategoryRule,
+	entry: roblox.Instance
+): (roblox.Instance?, roblox.Instance?)
+	local model = entry:FindFirstChild(rule.PieceName or entry.Name)
+	local standIn = model and model:FindFirstChild(context.rules.StandInName)
+	if model == nil or standIn == nil then
+		fail(context, legacyCategory, entry.Name, `no piece with a "{context.rules.StandInName}"`)
+		return nil, nil
+	end
+	noteSaveName(context, `{legacyCategory}/{entry.Name}`, entry, model)
+	return model, standIn
+end
+
+-- the legacy game kept "nothing" on its lists as a piece that draws nothing. what names it wears no item
+local function addEmpty(context: Context, row: EntryRow)
+	note(context, `{row.LegacyCategory}/{row.LegacyName}: nothing of it shows, it stands for wearing nothing`)
+	table.insert(context.empties, row)
+end
+
+local function convertWornEntry(
+	context: Context,
+	legacyCategory: string,
+	rule: WornCategoryRule,
+	entry: roblox.Instance
+)
+	local model, standIn = getWornModel(context, legacyCategory, rule, entry)
+	if model == nil or standIn == nil then
+		return
+	end
+	local row = newEntryRow(context, legacyCategory, entry)
+	local shapes = readShapes(context, `{legacyCategory}/{entry.Name}`, model, standIn, {})
+	if #shapes == 0 then
+		addEmpty(context, row)
+		return
+	end
+	writeWorn(context, legacyCategory, rule, entry, row, model, standIn, shapes)
+	table.insert(context.entries, row)
+end
+
+-- the items of a category of SHL2's library that are a single mesh, by the id of that mesh
+local function readBorrowableMeshes(
+	context: Context,
+	group: string,
+	category: string
+): { [string]: { Key: string, Item: rojo.ModelJSON } }
+	local items: { [string]: { Key: string, Item: rojo.ModelJSON } } = {}
+	local categoryPath = `{BORROW_PATH}/{group}/{category}`
+	assert(fs.isDir(categoryPath), `"{categoryPath}" isn't there to borrow from`)
+	local fileNames = fs.readDir(categoryPath)
+	table.sort(fileNames)
+	for _, fileName in fileNames do
+		local key = fileName:match("^(.*)%.model%.json$")
+		if key == nil then
+			continue
+		end
+		local item: rojo.ModelJSON = serde.decode("json", fs.readFile(`{categoryPath}/{fileName}`))
+		local meshId = getNodeAssetId(item.Properties)
+		if meshId == nil then
+			continue
+		end
+		local other = items[meshId]
+		if other then
+			note(context, `{categoryPath}: "{key}" is the mesh of "{other.Key}" again, the first one is borrowed`)
+		else
+			items[meshId] = { Key = key, Item = item }
+		end
+	end
+	return items
+end
+
+-- where a borrowed mesh differs from the legacy part it stands for. the legacy one is a mesh under a part, drawn
+-- around the origin the mesh was made with. the borrowed one is a mesh part, drawn around the middle of its box. so
+-- how far apart the two are also holds how far off its box the mesh was made, which isn't known here
+local function compareBorrowedMesh(context: Context, path: string, shape: Shape, key: string, item: rojo.ModelJSON)
+	local size = toVector3(item.Properties and item.Properties.Size)
+	local initialSize = toVector3(item.Properties and item.Properties.InitialSize)
+	local scale: Vector3Value = Vector3.one
+	for _, mesh in getSortedChildren(shape.Part, "SpecialMesh") do
+		scale = read(mesh, "Scale")
+		if read(mesh, "VertexColor") ~= Vector3.one then
+			note(context, `{path}: borrowed, the tint its mesh was drawn with isn't on "{key}"`)
+		end
+	end
+	if size == nil or initialSize == nil then
+		note(context, `{path}: borrowed as "{key}", which has no size of its own to compare`)
+		return
+	end
+	local anchor: CFrameValue = CFrame.identity
+	local children: { rojo.ModelNode } = item.Children or {}
+	for _, child in children do
+		if child.ClassName == "Attachment" then
+			anchor = toCFrame(child.Properties and child.Properties.CFrame)
+		end
+	end
+	local legacySize: Vector3Value = initialSize * scale
+	local drift = (anchor:Inverse().Position - shape.CFrame.Position).Magnitude
+	note(
+		context,
+		string.format(
+			'%s: borrowed as "%s", %.3f x %.3f x %.3f the legacy size, its middle %.3f studs from the legacy origin',
+			path,
+			key,
+			size.X / legacySize.X,
+			size.Y / legacySize.Y,
+			size.Z / legacySize.Z,
+			drift
+		)
+	)
+end
+
+local function convertMeshBorrowEntry(
+	context: Context,
+	legacyCategory: string,
+	rule: MeshBorrowCategoryRule,
+	entry: roblox.Instance,
+	borrowable: { [string]: { Key: string, Item: rojo.ModelJSON } }
+)
+	local model, standIn = getWornModel(context, legacyCategory, rule.Own, entry)
+	if model == nil or standIn == nil then
+		return
+	end
+	local path = `{legacyCategory}/{entry.Name}`
+	local row = newEntryRow(context, legacyCategory, entry)
+	local shapes = readShapes(context, path, model, standIn, {})
+	if #shapes == 0 then
+		addEmpty(context, row)
+		return
+	end
+	-- only an entry that's nothing but the mesh is the item of SHL2 that's nothing but the mesh
+	local meshId: string? = nil
+	if #shapes == 1 then
+		for _, mesh in getSortedChildren(shapes[1].Part, "SpecialMesh") do
+			meshId = getAssetId(read(mesh, "MeshContent"))
+		end
+	end
+	local match = if meshId then borrowable[meshId] else nil
+	if match then
+		local line = table.concat({ rule.Group, rule.Category, match.Key }, PATH_DELIMITER)
+		row.IsBorrowed = true
+		table.insert(row.ItemIds, getItemId(rule.Group, rule.Category, match.Key))
+		-- two entries can be the same mesh, the list names what's borrowed once
+		if table.find(context.borrows, line) == nil then
+			table.insert(context.borrows, line)
+		end
+		compareBorrowedMesh(context, path, shapes[1], match.Key, match.Item)
+	else
+		writeWorn(context, legacyCategory, rule.Own, entry, row, model, standIn, shapes)
+	end
+	table.insert(context.entries, row)
+end
+
+-- the color a new character wore each channel in, which is what a part of that channel is written in
+local function readDefaultColors(place: roblox.DataModel, rules: GameRules): { [string]: Color3Value }
+	local colors: { [string]: Color3Value } = {}
+	local path = rules.DefaultColorPath
+	if path == nil then
+		return colors
+	end
+	local holder = Place.findInstance(place, path)
+	for _, rule in rules.Categories do
+		local textureGroups: TextureGroupMap = if rule.Kind == "MeshBorrow"
+			then rule.Own.TextureGroups
+			elseif rule.Kind == "Split" or rule.Kind == "Worn" then rule.TextureGroups
+			else {}
+		for channel, textureGroup in textureGroups do
+			for _, value in holder:GetChildren() do
+				if value.Name == channel and value.ClassName == "BrickColorValue" then
+					colors[textureGroup] = read(value, "Value").Color
+				end
+			end
+			-- a part of a channel without one would be left in the placeholder it's stored in, which nobody ever saw
+			assert(colors[textureGroup], `"{path}" holds no color for "{channel}"`)
+		end
+	end
+	return colors
+end
+
+-- the lists the menus of the place stepped through, by legacy category
+local function readPickers(place: roblox.DataModel, rules: GameRules): { [string]: Picker }
+	local pickers: { [string]: Picker } = {}
+	local tableName = rules.PickerTableName
+	local pickerRules: { [string]: PickerRule } = rules.Pickers or {}
+	for legacyCategory, rule in pickerRules do
+		assert(tableName, "a menu is read by the name of the list its script keeps")
+		local source: string = read(Place.findInstance(place, rule.Path), "Source")
+		local body = assert(
+			source:match("local%s+" .. tableName .. "%s*=%s*(%b{})"),
+			`"{rule.Path}" keeps no list named "{tableName}"`
+		)
+		local order: { [string]: number } = {}
+		local count = 0
+		for name in body:gmatch('"([^"]+)"') do
+			count += 1
+			order[name] = count
+		end
+		assert(count > 0, `the list of "{rule.Path}" is empty`)
+		pickers[legacyCategory] = { Order = order, PaidFrom = rule.PaidFrom, Default = rule.Default }
+	end
+	return pickers
 end
 
 local function readStarters(source: string, tableName: string): { [string]: string }
@@ -1247,6 +2490,10 @@ end
 
 -- lune writes an empty table as an object, these are lists whether they hold something or not
 local function encodeRows(value: rojo.JSONValue): string
+	-- a game without faces or patterns still has the file, whoever reads the tables reads all three
+	if type(value) == "table" and next(value :: { [any]: any }) == nil then
+		return "[]"
+	end
 	local json = serde.encode("json", value, true)
 	for _, key in LIST_KEYS do
 		json = json:gsub('("' .. key .. '"%s*:%s*){}', "%1[]")
@@ -1278,18 +2525,25 @@ do
 	end
 
 	local place = roblox.deserializePlace(fs.readFile(placePath))
-	local catalogue = findInstance(place, rules.CataloguePath)
+	local catalogue = Place.findInstance(place, rules.CataloguePath)
+	local rigPath, starterPath, starterTableName = rules.RigPath, rules.StarterPath, rules.StarterTableName
 	local context: Context = {
 		rules = rules,
 		game = gameId,
 		libraryPath = libraryPath,
-		rig = findInstance(place, rules.RigPath),
-		starters = readStarters(read(findInstance(place, rules.StarterPath), "Source"), rules.StarterTableName),
+		rig = if rigPath then Place.findInstance(place, rigPath) else nil,
+		starters = if starterPath and starterTableName
+			then readStarters(read(Place.findInstance(place, starterPath), "Source"), starterTableName)
+			else {},
+		pickers = readPickers(place, rules),
+		defaultColors = readDefaultColors(place, rules),
 		imagePaths = readImagePaths(IMAGE_TABLE_PATH),
 		outputs = {},
 		entries = {},
 		faces = {},
 		borrows = {},
+		empties = {},
+		joints = {},
 		notes = {},
 		failures = {},
 		itemCounts = {},
@@ -1309,6 +2563,9 @@ do
 		local categoryFolder =
 			assert(catalogue:FindFirstChild(legacyCategory), `the catalogue has no "{legacyCategory}"`)
 		local borrowable = if rule.Kind == "Borrow" then readBorrowable(rule.Group, rule.Category) else {}
+		local borrowableMeshes = if rule.Kind == "MeshBorrow"
+			then readBorrowableMeshes(context, rule.Group, rule.Category)
+			else {}
 		local entries = getSortedChildren(categoryFolder)
 		entryCounts[legacyCategory] = #entries
 		for _, entry in entries do
@@ -1323,13 +2580,22 @@ do
 				convertMountEntry(context, legacyCategory, rule, entry)
 			elseif rule.Kind == "Face" then
 				convertFaceEntry(context, legacyCategory, rule, entry)
+			elseif rule.Kind == "Split" then
+				convertSplitEntry(context, legacyCategory, rule, entry)
+			elseif rule.Kind == "Worn" then
+				convertWornEntry(context, legacyCategory, rule, entry)
+			elseif rule.Kind == "MeshBorrow" then
+				convertMeshBorrowEntry(context, legacyCategory, rule, entry, borrowableMeshes)
 			else
 				convertBorrowEntry(context, legacyCategory, rule, entry, borrowable)
 			end
 		end
 	end
 	local bareLimbRow = convertBareLimbs(context)
-	local patterns = readPatterns(context, findInstance(place, rules.PatternPath))
+	local patternPath, priceAdjustPath = rules.PatternPath, rules.PriceAdjustPath
+	local patterns: { PatternRow } = if patternPath
+		then readPatterns(context, Place.findInstance(place, patternPath))
+		else {}
 	for name, category in context.starters do
 		if names[name] == nil and catalogue:FindFirstChild(category) then
 			note(context, `{category}/{name}: in the starter list, not in the catalogue`)
@@ -1348,10 +2614,12 @@ do
 		path = `{dataPath}/entry.json`,
 		contents = encodeRows({
 			-- what a cost was multiplied by before it was rounded up to the next hundred
-			PriceAdjust = read(findInstance(place, rules.PriceAdjustPath), "Value"),
+			PriceAdjust = if priceAdjustPath then read(Place.findInstance(place, priceAdjustPath), "Value") else nil,
 			Entries = context.entries,
 			-- what the catalogue never had + the library needs
 			Extras = { bareLimbRow },
+			-- what a save can name that leaves a character with nothing on
+			Empty = if #context.empties > 0 then context.empties else nil,
 		} :: any),
 	})
 	table.insert(context.outputs, { path = `{dataPath}/face.json`, contents = encodeRows(context.faces :: any) })
@@ -1373,6 +2641,10 @@ do
 	table.sort(context.notes)
 	table.sort(context.failures)
 	printList("notes", context.notes)
+	if rules.Body then
+		table.sort(context.joints)
+		printList("across a joint", context.joints)
+	end
 	printList("failed", context.failures)
 	print("\nlegacy entries")
 	local entryCount, pricedCount, borrowedCount = 0, 0, 0
@@ -1406,6 +2678,9 @@ do
 		`{entryCount} entries: {borrowedCount} borrowed, {#context.faces} faces, {pricedCount} priced, `
 			.. `{#context.failures} failed`
 	)
+	if #context.empties > 0 then
+		print(`{#context.empties} entries stand for wearing nothing`)
+	end
 	print(`{itemCount} new items, {#patterns} patterns, {#context.outputs} files written under "{outPath}"`)
 	print(`{contentMeshCount} mesh ids carried, {rigMeshCount} mesh ids of the rig used for the painted layers`)
 end

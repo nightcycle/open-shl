@@ -1,0 +1,870 @@
+{
+  "Empty": [
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat7",
+      "Order": 11
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair7",
+      "Order": 15
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [],
+      "LegacyCategory": "Capes",
+      "LegacyName": "Cape4",
+      "Order": 4
+    }
+  ],
+  "Entries": [
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-torso_cyborg",
+        "costume_suit-left-arm_cyborg",
+        "costume_suit-right-arm_cyborg",
+        "costume_suit-left-leg_cyborg",
+        "costume_suit-right-leg_cyborg"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Cyborg",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_cyborg",
+        "Arm2": "costume_suit-right-arm_cyborg",
+        "Chest": "costume_suit-torso_cyborg",
+        "Leg1": "costume_suit-left-leg_cyborg",
+        "Leg2": "costume_suit-right-leg_cyborg"
+      },
+      "Order": 1
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-torso_human",
+        "costume_suit-left-arm_human",
+        "costume_suit-right-arm_human",
+        "costume_suit-left-leg_human",
+        "costume_suit-right-leg_human"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Human",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_human",
+        "Arm2": "costume_suit-right-arm_human",
+        "Chest": "costume_suit-torso_human",
+        "Leg1": "costume_suit-left-leg_human",
+        "Leg2": "costume_suit-right-leg_human"
+      },
+      "Order": 2
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-torso_mercenary",
+        "costume_suit-left-arm_mercenary",
+        "costume_suit-right-arm_mercenary",
+        "costume_suit-left-leg_mercenary",
+        "costume_suit-right-leg_mercenary"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Mercenary",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_mercenary",
+        "Arm2": "costume_suit-right-arm_mercenary",
+        "Chest": "costume_suit-torso_mercenary",
+        "Leg1": "costume_suit-left-leg_mercenary",
+        "Leg2": "costume_suit-right-leg_mercenary"
+      },
+      "Order": 7
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_suit-torso_mutant",
+        "costume_suit-left-arm_mutant",
+        "costume_suit-right-arm_mutant",
+        "costume_suit-left-leg_mutant",
+        "costume_suit-right-leg_mutant"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Mutant",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_mutant",
+        "Arm2": "costume_suit-right-arm_mutant",
+        "Chest": "costume_suit-torso_mutant",
+        "Leg1": "costume_suit-left-leg_mutant",
+        "Leg2": "costume_suit-right-leg_mutant"
+      },
+      "Order": 3
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-torso_mutant-2",
+        "costume_suit-left-arm_mutant-2",
+        "costume_suit-right-arm_mutant-2",
+        "costume_suit-left-leg_mutant-2",
+        "costume_suit-right-leg_mutant-2"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Mutant2",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_mutant-2",
+        "Arm2": "costume_suit-right-arm_mutant-2",
+        "Chest": "costume_suit-torso_mutant-2",
+        "Leg1": "costume_suit-left-leg_mutant-2",
+        "Leg2": "costume_suit-right-leg_mutant-2"
+      },
+      "Order": 8
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-torso_mutant-3",
+        "costume_suit-left-arm_mutant-3",
+        "costume_suit-right-arm_mutant-3",
+        "costume_suit-left-leg_mutant-3",
+        "costume_suit-right-leg_mutant-3"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Mutant3",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_mutant-3",
+        "Arm2": "costume_suit-right-arm_mutant-3",
+        "Chest": "costume_suit-torso_mutant-3",
+        "Leg1": "costume_suit-left-leg_mutant-3",
+        "Leg2": "costume_suit-right-leg_mutant-3"
+      },
+      "Order": 4
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-torso_mutant-4",
+        "costume_suit-left-arm_mutant-4",
+        "costume_suit-right-arm_mutant-4",
+        "costume_suit-left-leg_mutant-4",
+        "costume_suit-right-leg_mutant-4"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Mutant4",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_mutant-4",
+        "Arm2": "costume_suit-right-arm_mutant-4",
+        "Chest": "costume_suit-torso_mutant-4",
+        "Leg1": "costume_suit-left-leg_mutant-4",
+        "Leg2": "costume_suit-right-leg_mutant-4"
+      },
+      "Order": 5
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-torso_mutant-5",
+        "costume_suit-left-arm_mutant-5",
+        "costume_suit-right-arm_mutant-5",
+        "costume_suit-left-leg_mutant-5",
+        "costume_suit-right-leg_mutant-5"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Mutant5",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_mutant-5",
+        "Arm2": "costume_suit-right-arm_mutant-5",
+        "Chest": "costume_suit-torso_mutant-5",
+        "Leg1": "costume_suit-left-leg_mutant-5",
+        "Leg2": "costume_suit-right-leg_mutant-5"
+      },
+      "Order": 6
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_suit-torso_tux",
+        "costume_suit-left-arm_tux",
+        "costume_suit-right-arm_tux",
+        "costume_suit-left-leg_tux",
+        "costume_suit-right-leg_tux"
+      ],
+      "LegacyCategory": "Bodies",
+      "LegacyName": "Tux",
+      "LimbItemIds": {
+        "Arm1": "costume_suit-left-arm_tux",
+        "Arm2": "costume_suit-right-arm_tux",
+        "Chest": "costume_suit-torso_tux",
+        "Leg1": "costume_suit-left-leg_tux",
+        "Leg2": "costume_suit-right-leg_tux"
+      },
+      "Order": 9
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_hats_hat-1"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat1",
+      "Order": 1,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-10"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat10",
+      "Order": 14,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-11"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat11",
+      "Order": 15,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-12"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat12",
+      "Order": 16,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-13"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat13",
+      "Order": 7,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-14"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat14",
+      "Order": 8,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-15"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat15",
+      "Order": 9,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-16"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat16",
+      "Order": 10,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_hats_hat-2"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat2",
+      "Order": 2,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_hats_hat-3"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat3",
+      "Order": 3,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_hats_hat-4"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat4",
+      "Order": 4,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_hats_hat-5"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat5",
+      "Order": 5
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_hats_hat-6"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat6",
+      "Order": 6,
+      "ShaveHead": true
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-8"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat8",
+      "Order": 12
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_hats_hat-9"
+      ],
+      "LegacyCategory": "Hats",
+      "LegacyName": "Hat9",
+      "Order": 13
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_roblohunk-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair1",
+      "Order": 1
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_dream-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair10",
+      "Order": 22
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_ultraflash-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair11",
+      "Order": 23
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_hair-12"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair12",
+      "Order": 19
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_animazinghair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair13",
+      "Order": 18
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_stylish-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair14",
+      "Order": 7
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_scene-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair15",
+      "Order": 8
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_wavy-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair16",
+      "Order": 4
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_wavy-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair17",
+      "Order": 5
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_lovely-locks-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair18",
+      "Order": 6
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_politician-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair19",
+      "Order": 9
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_swoosh-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair2",
+      "Order": 2
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_shaggy-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair20",
+      "Order": 13
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_princeton-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair21",
+      "Order": 14
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_manga-hero-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair22",
+      "Order": 10
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_miss-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair23",
+      "Order": 11
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_hair-24"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair24"
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_mohawk-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair3",
+      "Order": 3
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_hair_club-kid-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair4",
+      "Order": 12
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_fabulous-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair5",
+      "Order": 16
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_bob-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair6",
+      "Order": 17
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_beautiful-people-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair8",
+      "Order": 20
+    },
+    {
+      "IsBorrowed": true,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_hair_beautiful-hair"
+      ],
+      "LegacyCategory": "Hair",
+      "LegacyName": "Hair9",
+      "Order": 21
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_face_head-0"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head0"
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_face_head-1"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head1",
+      "Order": 1
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_face_head-10"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head10",
+      "Order": 10
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_face_head-11"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head11",
+      "Order": 11
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_face_head-12"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head12",
+      "Order": 12
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_face_head-2"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head2",
+      "Order": 2
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_face_head-3"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head3",
+      "Order": 3
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_face_head-4"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head4",
+      "Order": 4
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_face_head-5"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head5",
+      "Order": 5
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "cosmetics_face_head-6"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head6",
+      "Order": 6
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_face_head-7"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head7",
+      "Order": 7
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_face_head-8"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head8",
+      "Order": 8
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "cosmetics_face_head-9"
+      ],
+      "LegacyCategory": "Faces",
+      "LegacyName": "Head9",
+      "Order": 9
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_emblems_emblem-1"
+      ],
+      "LegacyCategory": "ChestPieces",
+      "LegacyName": "Emblem1",
+      "Order": 1
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_emblems_emblem-2"
+      ],
+      "LegacyCategory": "ChestPieces",
+      "LegacyName": "Emblem2",
+      "Order": 2
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_emblems_emblem-3"
+      ],
+      "LegacyCategory": "ChestPieces",
+      "LegacyName": "Emblem3",
+      "Order": 3
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_emblem-4"
+      ],
+      "LegacyCategory": "ChestPieces",
+      "LegacyName": "Emblem4",
+      "Order": 4
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_emblem-5"
+      ],
+      "LegacyCategory": "ChestPieces",
+      "LegacyName": "Emblem5",
+      "Order": 5
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": false,
+      "ItemIds": [
+        "costume_emblems_emblem-6"
+      ],
+      "LegacyCategory": "ChestPieces",
+      "LegacyName": "Emblem6",
+      "Order": 6
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_capes_cape-1"
+      ],
+      "LegacyCategory": "Capes",
+      "LegacyName": "Cape1",
+      "Order": 1
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_capes_cape-2"
+      ],
+      "LegacyCategory": "Capes",
+      "LegacyName": "Cape2",
+      "Order": 2
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_capes_cape-3"
+      ],
+      "LegacyCategory": "Capes",
+      "LegacyName": "Cape3",
+      "Order": 3
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_extras_jetpack"
+      ],
+      "LegacyCategory": "Other",
+      "LegacyName": "Jetpack",
+      "Order": 1
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_extras_katana-holder"
+      ],
+      "LegacyCategory": "Other",
+      "LegacyName": "KatanaHolder",
+      "Order": 2
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_extras_left-gun-arm"
+      ],
+      "LegacyCategory": "Other",
+      "LegacyName": "LeftGunArm",
+      "Order": 3
+    },
+    {
+      "IsBorrowed": false,
+      "IsStarter": true,
+      "ItemIds": [
+        "costume_extras_right-gun-arm"
+      ],
+      "LegacyCategory": "Other",
+      "LegacyName": "RightGunArm",
+      "Order": 4
+    }
+  ],
+  "Extras": []
+}

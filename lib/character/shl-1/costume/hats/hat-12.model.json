@@ -1,0 +1,128 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl1/costume/hats/hat-12/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "ClassName": "SpecialMesh",
+          "Name": "mesh",
+          "Properties": {
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=15158080"
+              }
+            },
+            "MeshType": {
+              "Enum": 5
+            },
+            "Scale": {
+              "Vector3": [
+                1,
+                1,
+                1.0099999904632568
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "primary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Primary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.000015,
+              0.399998,
+              0.020214
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.6392157077789307,
+            0.6352941393852234,
+            0.6470588445663452
+          ]
+        },
+        "Material": {
+          "Enum": 256
+        },
+        "Size": {
+          "Vector3": [
+            0.20000000298023224,
+            1.2000000476837158,
+            0.2600000202655792
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Hat12"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl1/costume/hats/hat-12/root"
+        },
+        "ShaveHead": {
+          "Bool": true
+        }
+      }
+    }
+  }
+}

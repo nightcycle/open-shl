@@ -1,0 +1,15 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Emblem5"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl1/costume/emblems/emblem-5/root"
+        }
+      }
+    }
+  }
+}

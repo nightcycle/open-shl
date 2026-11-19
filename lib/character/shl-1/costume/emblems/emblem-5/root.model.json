@@ -1,0 +1,28 @@
+{
+  "Children": [
+    {
+      "ClassName": "Attachment",
+      "Name": "EmblemAttachment"
+    }
+  ],
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Id": {
+          "String": "shl1/costume/emblems/emblem-5/root"
+        }
+      }
+    },
+    "Size": {
+      "Vector3": [
+        0.2,
+        0.2,
+        0.4
+      ]
+    },
+    "Transparency": {
+      "Float32": 1
+    }
+  }
+}

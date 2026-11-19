@@ -1,0 +1,125 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "UpperTorso"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl1/costume/capes/cape-3/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1.60003,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "ClassName": "SpecialMesh",
+          "Name": "mesh",
+          "Properties": {
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=114046169"
+              }
+            },
+            "MeshType": {
+              "Enum": 5
+            },
+            "Scale": {
+              "Vector3": [
+                1.399999976158142,
+                1.4500000476837158,
+                1.7999999523162842
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "tertiary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Tertiary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0.998563,
+                0.053599
+              ],
+              [
+                0,
+                -0.053599,
+                0.998563
+              ]
+            ],
+            "position": [
+              -2e-6,
+              -0.519913,
+              0.456124
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 256
+        },
+        "Size": {
+          "Vector3": [
+            0.4000000059604645,
+            0.20000000298023224,
+            0.20000000298023224
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Cape3"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl1/costume/capes/cape-3/root"
+        }
+      }
+    }
+  }
+}

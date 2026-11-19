@@ -1,0 +1,184 @@
+[
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-0",
+    "Image": "asset/image/shl-1/face/head-0.png",
+    "Key": "head-0",
+    "LegacyAssetId": 133620200,
+    "Name": "Head0",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-1",
+    "Image": "asset/image/shl-1/face/head-1.png",
+    "Key": "head-1",
+    "LegacyAssetId": 134745573,
+    "Name": "Head1",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-10",
+    "Image": "asset/image/shl-1/face/head-10.png",
+    "Key": "head-10",
+    "LegacyAssetId": 34818288,
+    "Name": "Head10",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-11",
+    "Image": "asset/image/shl-1/face/head-11.png",
+    "Key": "head-11",
+    "LegacyAssetId": 126513475,
+    "Name": "Head11",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-12",
+    "Image": "asset/image/shl-1/face/head-12.png",
+    "Key": "head-12",
+    "LegacyAssetId": 149883993,
+    "Name": "Head12",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-2",
+    "Image": "asset/image/shl-1/face/head-2.png",
+    "Key": "head-2",
+    "LegacyAssetId": 249994703,
+    "Name": "Head2",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-3",
+    "Image": "asset/image/shl-1/face/head-3.png",
+    "Key": "head-3",
+    "LegacyAssetId": 210739973,
+    "Name": "Head3",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-4",
+    "Image": "asset/image/shl-1/face/head-4.png",
+    "Key": "head-4",
+    "LegacyAssetId": 172769342,
+    "Name": "Head4",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-5",
+    "Image": "asset/image/shl-1/face/head-5.png",
+    "Key": "head-5",
+    "LegacyAssetId": 41273211,
+    "Name": "Head5",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-6",
+    "Image": "asset/image/shl-1/face/head-6.png",
+    "Key": "head-6",
+    "LegacyAssetId": 27722387,
+    "Name": "Head6",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-7",
+    "Image": "asset/image/shl-1/face/head-7.png",
+    "Key": "head-7",
+    "LegacyAssetId": 82770909,
+    "Name": "Head7",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-8",
+    "Image": "asset/image/shl-1/face/head-8.png",
+    "Key": "head-8",
+    "LegacyAssetId": 16580636,
+    "Name": "Head8",
+    "Slot": "Face",
+    "TextureGroups": []
+  },
+  {
+    "Color": [
+      1,
+      1,
+      1
+    ],
+    "Id": "cosmetics_face_head-9",
+    "Image": "asset/image/shl-1/face/head-9.png",
+    "Key": "head-9",
+    "LegacyAssetId": 205516942,
+    "Name": "Head9",
+    "Slot": "Face",
+    "TextureGroups": []
+  }
+]

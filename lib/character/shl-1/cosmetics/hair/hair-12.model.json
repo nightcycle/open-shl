@@ -1,0 +1,128 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "Head"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl1/cosmetics/hair/hair-12/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            2,
+            1,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "ClassName": "SpecialMesh",
+          "Name": "mesh",
+          "Properties": {
+            "MeshContent": {
+              "Content": {
+                "Uri": "http://www.roblox.com/asset/?id=41445619"
+              }
+            },
+            "MeshType": {
+              "Enum": 5
+            },
+            "Scale": {
+              "Vector3": [
+                0.949999988079071,
+                0.949999988079071,
+                0.949999988079071
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "hair",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Hair"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.000015,
+              -0.049988,
+              0.093613
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.10588235408067703,
+            0.16470588743686676,
+            0.2078431397676468
+          ]
+        },
+        "Material": {
+          "Enum": 256
+        },
+        "Size": {
+          "Vector3": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.20000000298023224
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "Hair12"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl1/cosmetics/hair/hair-12/root"
+        }
+      }
+    },
+    "Tags": [
+      "Hair"
+    ]
+  }
+}

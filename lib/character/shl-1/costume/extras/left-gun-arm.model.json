@@ -1,0 +1,356 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "LeftLowerArm"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl1/costume/extras/left-gun-arm/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            1,
+            1.05192,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "ClassName": "CylinderMesh",
+          "Name": "mesh"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -1,
+                -0.000094,
+                0
+              ],
+              [
+                -0.000094,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "position": [
+              -0.59977,
+              -0.999776,
+              -0.00001
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.8039215803146362,
+            0.8039215803146362,
+            0.8039215803146362
+          ]
+        },
+        "Material": {
+          "Enum": 288
+        },
+        "Size": {
+          "Vector3": [
+            0.2,
+            0.2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "ClassName": "CylinderMesh",
+          "Name": "mesh"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "tertiary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Tertiary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -1,
+                -0.000094,
+                0
+              ],
+              [
+                -0.000094,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "position": [
+              -0.399979,
+              -0.575983,
+              -6e-6
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.6,
+            0.2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "ClassName": "CylinderMesh",
+          "Name": "mesh"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "tertiary-2",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Tertiary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -1,
+                -0.000094,
+                0
+              ],
+              [
+                -0.000094,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "position": [
+              -0.399956,
+              -0.175983,
+              -6e-6
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.6,
+            0.2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "ClassName": "CylinderMesh",
+          "Name": "mesh"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "tertiary-3",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Tertiary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -1,
+                -0.000094,
+                0
+              ],
+              [
+                -0.000094,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "position": [
+              -0.599861,
+              -0.976002,
+              -0.00001
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.3,
+            0.2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "ClassName": "CylinderMesh",
+          "Name": "mesh"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "tertiary-4",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Tertiary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                -1,
+                -0.000094,
+                0
+              ],
+              [
+                -0.000094,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                -1
+              ]
+            ],
+            "position": [
+              -0.599983,
+              -0.476002,
+              -0.00001
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.9725490212440491,
+            0.9725490212440491,
+            0.9725490212440491
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            0.2,
+            0.8,
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Name": {
+          "String": "LeftGunArm"
+        },
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl1/costume/extras/left-gun-arm/root"
+        }
+      }
+    }
+  }
+}

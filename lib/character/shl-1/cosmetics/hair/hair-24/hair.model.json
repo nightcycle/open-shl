@@ -1,0 +1,71 @@
+{
+  "Children": [
+    {
+      "ClassName": "SpecialMesh",
+      "Name": "mesh",
+      "Properties": {
+        "MeshContent": {
+          "Content": {
+            "Uri": "http://www.roblox.com/asset/?id=13070796"
+          }
+        },
+        "MeshType": {
+          "Enum": 5
+        }
+      }
+    }
+  ],
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "TextureGroup": {
+          "String": "Hair"
+        }
+      }
+    },
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          0,
+          -0.299896,
+          0
+        ]
+      }
+    },
+    "Color": {
+      "Color3": [
+        0.10588235408067703,
+        0.16470588743686676,
+        0.2078431397676468
+      ]
+    },
+    "Material": {
+      "Enum": 256
+    },
+    "Size": {
+      "Vector3": [
+        0.20000000298023224,
+        0.20000000298023224,
+        0.20000000298023224
+      ]
+    }
+  }
+}

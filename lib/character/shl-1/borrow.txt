@@ -1,0 +1,22 @@
+# what shl1 wears out of the library of SHL2 (lib/character/shl-2), one <group>/<category>/<key> per line
+# written by scripts/util/convert-catalogue.lune.luau
+cosmetics/hair/animazinghair
+cosmetics/hair/beautiful-hair
+cosmetics/hair/beautiful-people-hair
+cosmetics/hair/bob-hair
+cosmetics/hair/club-kid-hair
+cosmetics/hair/dream-hair
+cosmetics/hair/fabulous-hair
+cosmetics/hair/lovely-locks-hair
+cosmetics/hair/manga-hero-hair
+cosmetics/hair/miss-hair
+cosmetics/hair/mohawk-hair
+cosmetics/hair/politician-hair
+cosmetics/hair/princeton-hair
+cosmetics/hair/roblohunk-hair
+cosmetics/hair/scene-hair
+cosmetics/hair/shaggy-hair
+cosmetics/hair/stylish-hair
+cosmetics/hair/swoosh-hair
+cosmetics/hair/ultraflash-hair
+cosmetics/hair/wavy-hair

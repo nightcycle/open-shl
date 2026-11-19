@@ -1,0 +1,61 @@
+{
+  "Children": [
+    {
+      "ClassName": "CylinderMesh",
+      "Name": "mesh"
+    }
+  ],
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "TextureGroup": {
+          "String": "Secondary"
+        }
+      }
+    },
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          0.000074,
+          0.050334,
+          0.005582
+        ]
+      }
+    },
+    "Color": {
+      "Color3": [
+        0.8039215803146362,
+        0.8039215803146362,
+        0.8039215803146362
+      ]
+    },
+    "Material": {
+      "Enum": 272
+    },
+    "Size": {
+      "Vector3": [
+        1.4,
+        0.2,
+        1.2416
+      ]
+    }
+  }
+}

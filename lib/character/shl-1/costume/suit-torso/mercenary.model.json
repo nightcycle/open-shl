@@ -1,0 +1,1497 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "UpperTorso"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl1/costume/suit-torso/mercenary/upper-torso/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                2,
+                1.60003,
+                1
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0.999999,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0.999999,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.750015,
+                  -0.199942,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1,
+                0.5,
+                0.8
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "primary-2",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.000031,
+                  -0.29997,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1,
+                1.000019,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "primary-3",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    -0.999999,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    -1,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  -0.749969,
+                  -0.199942,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1,
+                0.5,
+                0.8
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "primary-4",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0,
+                  0.499988,
+                  0
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                2,
+                0.6,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.750015,
+                  -0.699956,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.8039215803146362,
+                0.8039215803146362,
+                0.8039215803146362
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.5,
+                0.200049,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "secondary-2",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    -0.999999,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    -0.999999
+                  ],
+                  [
+                    0.999999,
+                    0,
+                    0
+                  ]
+                ],
+                "position": [
+                  0.750015,
+                  -0.199942,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.8039215803146362,
+                0.8039215803146362,
+                0.8039215803146362
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1,
+                0.5,
+                0.8
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "secondary-3",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.749969,
+                  -0.699956,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.8039215803146362,
+                0.8039215803146362,
+                0.8039215803146362
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.5,
+                0.200049,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "secondary-4",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0,
+                    0.999999,
+                    0
+                  ],
+                  [
+                    2e-6,
+                    0,
+                    -0.999999
+                  ],
+                  [
+                    -0.999999,
+                    0,
+                    -2e-6
+                  ]
+                ],
+                "position": [
+                  -0.749969,
+                  -0.199942,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.8039215803146362,
+                0.8039215803146362,
+                0.8039215803146362
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1,
+                0.5,
+                0.8
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "tertiary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -9e-6,
+                    0.447249,
+                    0.894409
+                  ],
+                  [
+                    0,
+                    0.894409,
+                    -0.447249
+                  ],
+                  [
+                    -1,
+                    -4e-6,
+                    -8e-6
+                  ]
+                ],
+                "position": [
+                  -0.000031,
+                  0.100015,
+                  0.000011
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.100002,
+                0.357765,
+                2.057144
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "tertiary-2",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -0.00001,
+                    0.57345,
+                    -0.819241
+                  ],
+                  [
+                    0,
+                    -0.819241,
+                    -0.57345
+                  ],
+                  [
+                    -1,
+                    -5e-6,
+                    8e-6
+                  ]
+                ],
+                "position": [
+                  0.999954,
+                  0.600017,
+                  0
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.100002,
+                0.327697,
+                0.229381
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "tertiary-3",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    9e-6,
+                    -0.57345,
+                    -0.819241
+                  ],
+                  [
+                    0,
+                    0.819241,
+                    -0.57345
+                  ],
+                  [
+                    1,
+                    5e-6,
+                    8e-6
+                  ]
+                ],
+                "position": [
+                  -0.000031,
+                  0.300058,
+                  0.000011
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.100002,
+                0.327698,
+                2.211886
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "tertiary-4",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -9e-6,
+                    -0.57345,
+                    0.819241
+                  ],
+                  [
+                    0,
+                    0.819241,
+                    0.57345
+                  ],
+                  [
+                    -1,
+                    5e-6,
+                    -8e-6
+                  ]
+                ],
+                "position": [
+                  -1.000031,
+                  -0.399924,
+                  0.000019
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.100002,
+                0.327698,
+                0.229381
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "tertiary-5",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0.00001,
+                    0.57345,
+                    0.819241
+                  ],
+                  [
+                    0,
+                    -0.819241,
+                    0.57345
+                  ],
+                  [
+                    1,
+                    -5e-6,
+                    -8e-6
+                  ]
+                ],
+                "position": [
+                  -0.000031,
+                  -0.099951,
+                  0.000011
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.100002,
+                0.327697,
+                2.211886
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "tertiary-6",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    9e-6,
+                    0.447249,
+                    -0.894409
+                  ],
+                  [
+                    0,
+                    0.894409,
+                    0.447249
+                  ],
+                  [
+                    1,
+                    -4e-6,
+                    8e-6
+                  ]
+                ],
+                "position": [
+                  0.999954,
+                  -0.399985,
+                  0
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.1,
+                0.3578,
+                0.179
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "tertiary-7",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    -0.00001,
+                    -0.447249,
+                    -0.894409
+                  ],
+                  [
+                    0,
+                    -0.894409,
+                    0.447249
+                  ],
+                  [
+                    -1,
+                    4e-6,
+                    9e-6
+                  ]
+                ],
+                "position": [
+                  -0.000031,
+                  0.100015,
+                  0.000011
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.100002,
+                0.357765,
+                2.057144
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "tertiary-8",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -1.000031,
+                  -0.399916,
+                  8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.05,
+                0.4,
+                1.1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "WedgePart",
+          "Name": "tertiary-9",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    0.00001,
+                    -0.447249,
+                    0.894409
+                  ],
+                  [
+                    0,
+                    -0.894409,
+                    -0.447249
+                  ],
+                  [
+                    1,
+                    4e-6,
+                    -9e-6
+                  ]
+                ],
+                "position": [
+                  -0.999969,
+                  0.600078,
+                  0.000019
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1.1,
+                0.3578,
+                0.179
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "tertiary-10",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -1.000031,
+                  0.600078,
+                  8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.05,
+                0.4,
+                1.1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "tertiary-11",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.999954,
+                  0.600086,
+                  8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.05,
+                0.4,
+                1.1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "tertiary-12",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.999954,
+                  -0.399924,
+                  8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.05,
+                0.4,
+                1.1
+              ]
+            }
+          }
+        },
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "EmblemAttachment"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "emblem-anchor",
+          "Properties": {
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0,
+                  0.100015,
+                  -0.500002
+                ]
+              }
+            },
+            "Size": {
+              "Vector3": [
+                0.2,
+                0.2,
+                0.4
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "upper-torso",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl1/costume/suit-torso/mercenary/upper-torso/root"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Children": [
+        {
+          "Children": [
+            {
+              "ClassName": "Attachment",
+              "Name": "LowerTorso"
+            }
+          ],
+          "ClassName": "Part",
+          "Name": "root",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "Rojo_Id": {
+                  "String": "shl1/costume/suit-torso/mercenary/lower-torso/root"
+                }
+              }
+            },
+            "Size": {
+              "Vector3": [
+                2,
+                0.40006,
+                1
+              ]
+            },
+            "Transparency": {
+              "Float32": 1
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "primary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Primary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.000031,
+                  0.00004,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.6392157077789307,
+                0.6352941393852234,
+                0.6470588445663452
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                1,
+                0.399981,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "secondary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  0.750015,
+                  0.000054,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.8039215803146362,
+                0.8039215803146362,
+                0.8039215803146362
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.5,
+                0.399951,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "secondary-2",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Secondary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.749969,
+                  0.000054,
+                  -8e-6
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.8039215803146362,
+                0.8039215803146362,
+                0.8039215803146362
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                0.5,
+                0.399951,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "ClassName": "Part",
+          "Name": "tertiary",
+          "Properties": {
+            "Attributes": {
+              "Attributes": {
+                "TextureGroup": {
+                  "String": "Tertiary"
+                }
+              }
+            },
+            "CFrame": {
+              "CFrame": {
+                "orientation": [
+                  [
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "position": [
+                  -0.000031,
+                  -0.199978,
+                  -0.000015
+                ]
+              }
+            },
+            "Color": {
+              "Color3": [
+                0.9725490212440491,
+                0.9725490212440491,
+                0.9725490212440491
+              ]
+            },
+            "Material": {
+              "Enum": 272
+            },
+            "Size": {
+              "Vector3": [
+                2.04,
+                0.2,
+                1.04
+              ]
+            }
+          }
+        }
+      ],
+      "ClassName": "Model",
+      "Name": "lower-torso",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Target_PrimaryPart": {
+              "String": "shl1/costume/suit-torso/mercenary/lower-torso/root"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "ClassName": "Folder",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "IsBodyHidden": {
+          "Bool": true
+        },
+        "Name": {
+          "String": "Mercenary"
+        }
+      }
+    }
+  }
+}
