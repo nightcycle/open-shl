@@ -309,6 +309,19 @@ local function addItem(state: EditorState, definitionId: string): Result<EditorS
 	return Result.ok(StateUtil.setFocusedAppearance(stateRes.Value, shownAppearance))
 end
 
+-- every item of a set goes on the way it would by itself, or every one of them comes off
+local function setSet(state: EditorState, definitionIds: { string }, isWorn: boolean): Result<EditorState, string>
+	local out = state
+	for _, definitionId in definitionIds do
+		local stateRes = if isWorn then ItemUtil.add(out, definitionId) else ItemUtil.remove(out, definitionId)
+		if stateRes.IsErr then
+			return stateRes
+		end
+		out = stateRes.Value
+	end
+	return Result.ok(out)
+end
+
 -- Class
 local Util = {}
 
@@ -316,6 +329,18 @@ function Util.getTags(state: EditorState): Tags
 	local tags: Tags = {}
 	tags[PageUtil.getIdentityTag(state.IdentityKey)] = true
 	local hasLenses = false
+	local page = PageUtil.get(state.Path)
+	if page and page.Type == "Set" then
+		-- a set counts as worn while every item of it is
+		local appearance = StateUtil.getIdentity(state).Appearance
+		local isWorn = true
+		for _, definitionId in page.DefinitionIds do
+			isWorn = isWorn and ItemUtil.find(appearance, definitionId) ~= nil
+		end
+		if isWorn then
+			tags["IsItemAdded" :: Tag] = true
+		end
+	end
 	local itemDef = PageUtil.getItemDefinition(state)
 	if itemDef then
 		if ItemUtil.find(StateUtil.getIdentity(state).Appearance, itemDef.Id) then
@@ -443,8 +468,11 @@ function Util.setTag(state: EditorState, tag: Tag, isSelected: boolean): Result<
 	end
 	local page = PageUtil.get(state.Path)
 	if page and page.Type == "Set" then
-		-- stub: the items of a set don't go on or come off together yet, the press is turned down
-		return Result.err(`a set can't be worn yet`)
+		-- a set is worn or it isn't, there's nothing else about it to switch
+		if tag ~= "IsItemAdded" then
+			return Result.err(`a set has nothing like that to change`)
+		end
+		return share(setSet(state, page.DefinitionIds, isSelected))
 	end
 	local itemDef = PageUtil.getItemDefinition(state)
 	if not itemDef then
@@ -489,8 +517,7 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 		if binding.Type == "Powers" then
 			powers = PowerUtil.list(state, binding.Group)
 		else
-			-- stub: the power a slot holds isn't read yet, a list by slot shows none of its powers picked
-			powers = {}
+			powers = PowerUtil.listSlot(state, binding.Slot)
 		end
 		out = {
 			Type = "Powers",
@@ -597,8 +624,10 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 	elseif field.Type == "ChoiceList" and (edit.Type == "Power" or edit.Type == "PowerColor") then
 		local binding = field.Binding
 		if binding.Type == "PowerSlot" then
-			-- stub: a slot doesn't take a power yet, the pick is turned down
-			return Result.err(`the power of a slot can't be picked yet`)
+			if edit.Type == "Power" then
+				return PowerUtil.setSlotted(state, binding.Slot, edit.Id, edit.IsSelected)
+			end
+			return PowerUtil.setSlotColor(state, binding.Slot, edit.Id, edit.Color)
 		end
 		if edit.Type == "Power" then
 			return PowerUtil.setSelected(state, binding.Group, edit.Id, edit.IsSelected)
