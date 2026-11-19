@@ -13,7 +13,7 @@ export type Buttons = HUDTypes.Buttons
 -- what's on the hud is the game's own, the buttons of another game are never required
 local BUTTONS: Buttons = GameDefinition.pick({
 	shl1 = function(): Buttons
-		error(`shl1 has no hud buttons yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): Buttons
 		return require("@self/SHL2")
