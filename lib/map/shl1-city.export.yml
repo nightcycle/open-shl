@@ -111,12 +111,15 @@ adds:
 rules:
   # --- where players show up
   # an avatar comes in on one of the 4 spots at random, the first time + after every death. the points themselves are
-  # the middle of a legacy character, 3 studs above the sidewalk: they're only counted, a spot is laid under each
+  # the middle of a legacy character, 3 studs above the sidewalk: a spot is laid under each. a point is a box nobody
+  # sees, right where an avatar stands: left as it was, it's what the click of whoever just came in lands on + what
+  # their shot is aimed at
   - at: Workspace/Coordinates
     count: 1
     persistent: true
   - at: Workspace/Coordinates/Part
     count: 4
+    untouchable: true
 
   # --- a tag the services of superhero life 2 already read (src/server/Definition/Map.luau)
   # the hulls came on all at once at 18:15 at a transparency of 0.3 + went out at 6:15. to the windows of SHL2 each

@@ -41,6 +41,8 @@ type Rule = {
 	contents: { [string]: string }?,
 	move: { number }?, -- how far a part is shifted from where the place has it, in studs along the axes of the world
 	turn: { number }?, -- how far it's turned on the spot it has, in degrees around the axes of the world
+	-- a part that's only there to say where something is: nothing runs into it, touches it or is clicked on through it
+	untouchable: boolean?,
 }
 type AddedPart = {
 	name: string,
@@ -107,6 +109,7 @@ local RULE_KEYS = {
 	"contents",
 	"move",
 	"turn",
+	"untouchable",
 }
 local WHERE_KEYS = { "class", "is_a", "has_child" }
 local DEFAULT_ADDED_CLASS = "Part"
@@ -285,6 +288,7 @@ local function readConfig(path: string): Config
 		assert(rule.contents == nil or getIfContents(rule.contents), `{at} has contents that aren't addresses`)
 		assert(rule.move == nil or getIfOffset(rule.move), `{at} has a move that isn't 3 numbers`)
 		assert(rule.turn == nil or getIfOffset(rule.turn), `{at} has a turn that isn't 3 numbers`)
+		assert(rule.untouchable == nil or type(rule.untouchable) == "boolean", `{at}: untouchable`)
 	end
 	return config
 end
@@ -398,6 +402,13 @@ local function apply(rule: Rule, inst: roblox.Instance, order: number, wrappers:
 		local position = properties.CFrame.Position
 		local rotation = CFrame.Angles(math.rad(turn[1]), math.rad(turn[2]), math.rad(turn[3]))
 		properties.CFrame = CFrame.new(position) * rotation * (properties.CFrame - position)
+	end
+	if rule.untouchable then
+		assert(inst:IsA("BasePart"), `"{rule.at}": only a part is untouchable, "{inst.Name}" is a {inst.ClassName}`)
+		local properties = inst :: any
+		properties.CanCollide = false
+		properties.CanTouch = false
+		properties.CanQuery = false
 	end
 	local target = inst
 	if rule.wrap then
