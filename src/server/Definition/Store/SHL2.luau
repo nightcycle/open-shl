@@ -11,11 +11,18 @@ local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Pro
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type PlayerSave = SaveType.PlayerSave
 -- Constants
+-- the version a save first said which game wrote it at
+local STAMP_VERSION = 3
 -- one entry per version that came before the current one: [1] takes a version 1 save to version 2
-local MIGRATIONS = table.freeze({
+local MIGRATIONS: { (document: { [string]: any }) -> { [string]: any } } = table.freeze({
 	-- a version 1 save listed the artifacts its player owned, every artifact is anybody's to wear since
 	function(document: { [string]: any }): { [string]: any }
 		document.ArtifactIds = nil
+		return document
+	end,
+	-- a version 2 save didn't say which game wrote it, this was the only one there was to write it
+	function(document: { [string]: any }): { [string]: any }
+		document.Game = "shl2"
 		return document
 	end,
 })
@@ -25,7 +32,8 @@ local MIGRATIONS = table.freeze({
 local function newPlayerSave(): PlayerSave
 	local characters = CharacterSlotUtil.newStarters()
 	local out: PlayerSave = {
-		Version = SaveType.CURRENT_VERSION,
+		Version = SaveType.SHL2_VERSION,
+		Game = "shl2",
 		Characters = characters,
 		ActiveCharacterId = characters[1].Id,
 		Balances = ProductDefinition.STARTING_BALANCES,
@@ -49,8 +57,9 @@ return table.freeze({
 	GetKey = function(userId: number): string
 		return `Player_{userId}`
 	end,
-	Version = SaveType.CURRENT_VERSION,
-	Validator = SaveType.PlayerSave,
+	Version = SaveType.SHL2_VERSION,
+	Validator = SaveType.SHL2PlayerSave,
 	Default = newPlayerSave,
 	Migrations = MIGRATIONS,
+	StampVersion = STAMP_VERSION,
 })

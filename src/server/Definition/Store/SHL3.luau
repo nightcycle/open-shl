@@ -11,14 +11,11 @@ local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Pro
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type PlayerSave = SaveType.PlayerSave
 -- Constants
--- one entry per version that came before the current one. no save of this game was ever written at version 1: its
--- saves are in the shape of the game this code was written for, which is at version 2, so the one step there is to
--- hand the document back as it is
-local MIGRATIONS = table.freeze({
-	function(document: { [string]: any }): { [string]: any }
-		return document
-	end,
-})
+-- a save of this game said which game wrote it from the first one on, one that doesn't is another game's
+local STAMP_VERSION = 1
+-- one entry per version that came before the current one. the game is at its first: no save of it is kept yet, so
+-- until it's given its universe what it keeps is changed in place + there's nothing to catch up
+local MIGRATIONS: { (document: { [string]: any }) -> { [string]: any } } = table.freeze({})
 -- Variables
 -- References
 -- Private Functions
@@ -26,7 +23,8 @@ local MIGRATIONS = table.freeze({
 local function newPlayerSave(): PlayerSave
 	local characters = CharacterSlotUtil.newStarters()
 	local out: PlayerSave = {
-		Version = SaveType.CURRENT_VERSION,
+		Version = SaveType.SHL3_VERSION,
+		Game = "shl3",
 		Characters = characters,
 		ActiveCharacterId = characters[1].Id,
 		Balances = ProductDefinition.STARTING_BALANCES,
@@ -44,14 +42,15 @@ local function newPlayerSave(): PlayerSave
 end
 -- Class
 -- the store + the key every game of this code saves under. a data store belongs to a universe + each game is one, so
--- no other game finds these. the saves it holds so far are from before the game had a shape of its own to keep them in
+-- no other game finds these unless a place ends up in the wrong one
 return table.freeze({
 	Name = "PlayerSave",
 	GetKey = function(userId: number): string
 		return `Player_{userId}`
 	end,
-	Version = SaveType.CURRENT_VERSION,
-	Validator = SaveType.PlayerSave,
+	Version = SaveType.SHL3_VERSION,
+	Validator = SaveType.SHL3PlayerSave,
 	Default = newPlayerSave,
 	Migrations = MIGRATIONS,
+	StampVersion = STAMP_VERSION,
 })

@@ -22,6 +22,7 @@ export type Spec<V> = {
 	Validator: Validator,
 	Default: () -> V,
 	Migrations: { Migration }, -- one per version that came before, in order
+	StampVersion: number?,
 }
 -- _Signature is never set, it only carries the type of what a key holds.
 -- one document per user that a single server holds at a time, it carries its Version so an older one can be caught up
@@ -33,6 +34,9 @@ export type Store<V> = {
 	Validator: Validator,
 	Default: () -> V, -- what a user who was never saved starts out with
 	Migrations: { Migration },
+	-- the version from which a document names the game that wrote it, nil for one that never does. a document from
+	-- before it is the game's own all the same, the migration that takes it there is what names it
+	StampVersion: number?,
 	_Signature: (V) -> (),
 }
 -- values this game only reads, they're never locked, versioned or written
@@ -46,6 +50,8 @@ export type ReadOnlyStore<V> = {
 -- Constants
 -- a data store only holds what json can spell, a datatype goes in as a table tagged with what it was
 local DATATYPE_KEY = "_Datatype"
+-- where a document names the game that wrote it
+local GAME_KEY = "Game"
 local isColor3Value = Type.strictArray(Type.number, Type.number, Type.number)
 local isCFrameValue = Type.strictArray(table.unpack(table.create(12, Type.number)))
 local isEnumItemValue = Type.strictArray(Type.string, Type.string)
@@ -53,8 +59,8 @@ local isVersioned = Type.interface({
 	Version = Type.intersection(Type.integer, Type.numberMin(1)),
 })
 -- where a game keeps its players, under which key + in which shape is its own to say, even where two say the same: a
--- data store belongs to a universe + each game is one, so neither reads what the other wrote. the save of another
--- game is never required
+-- data store belongs to a universe + each game is one, so neither finds what the other wrote unless a place ends up
+-- in the wrong one. a save names its game for that day. the save of another game is never required
 local PLAYER: Spec<PlayerSave> = GameDefinition.pick({
 	shl1 = function(): Spec<PlayerSave>
 		error(`shl1 has no save yet`)
@@ -185,10 +191,15 @@ Module.new = function(
 	version: number,
 	validator: Validator,
 	default: () -> any,
-	migrations: { Migration }
+	migrations: { Migration },
+	stampVersion: number?
 ): any
 	register(name)
 	assert(#migrations == version - 1, `"{name}" needs a migration from every version before {version}`)
+	assert(
+		stampVersion == nil or (stampVersion >= 1 and stampVersion <= version),
+		`"{name}" can't name its game from version {stampVersion}`
+	)
 	return table.freeze({
 		Name = name,
 		IsReadOnly = false,
@@ -197,6 +208,7 @@ Module.new = function(
 		Validator = validator,
 		Default = default,
 		Migrations = table.freeze(table.clone(migrations)),
+		StampVersion = stampVersion,
 	})
 end
 
@@ -216,8 +228,20 @@ Module.Player = Module.new(
 	PLAYER.Version,
 	PLAYER.Validator,
 	PLAYER.Default,
-	PLAYER.Migrations
+	PLAYER.Migrations,
+	PLAYER.StampVersion
 ) :: Store<PlayerSave>
+
+-- a data store belongs to a universe + every game keeps its saves under the same name, so the universe a place runs in
+-- is all that keeps the saves of two games apart. a place knows the one it was built for: in any other one the saves
+-- aren't its own. 0 is no universe: a place that was built for none (from a terminal, for a game that isn't on roblox
+-- yet) is at home wherever it's opened, + one that isn't published has no data store to get wrong
+Module.getUniverseProblem = function(builtForId: number, universeId: number): string?
+	if builtForId == 0 or universeId == 0 or builtForId == universeId then
+		return nil
+	end
+	return `this place was built for the universe {builtForId} of {GameDefinition.ID}, it runs in {universeId}`
+end
 
 -- nothing is stored that the validator of its store turns down
 Module.encode = function<V>(store: Store<V>, value: V): Result<unknown, string>
@@ -228,6 +252,10 @@ Module.encode = function<V>(store: Store<V>, value: V): Result<unknown, string>
 	-- a document that's behind or ahead of its store could be written, but never read again
 	if type(value) ~= "table" or (value :: any).Version ~= store.Version then
 		return Result.err(`a "{store.Name}" document is at version {store.Version}`)
+	end
+	-- nor is the document of another game ever written under the name of this one
+	if store.StampVersion ~= nil and (value :: any)[GAME_KEY] ~= GameDefinition.ID then
+		return Result.err(`a "{store.Name}" document of this server names {GameDefinition.ID}`)
 	end
 	local data, dataMsg = toStored(value)
 	if dataMsg then
@@ -248,6 +276,16 @@ Module.decode = function<V>(store: Store<V>, data: unknown): Result<V, string>
 		return Result.err(`{documentMsg}`)
 	end
 	local out = document :: { [string]: any }
+	-- the document of another game isn't this server's to catch up, to read or to write over, whatever version it's
+	-- at. one that names no game past the version its store named it from was never this game's either
+	local stampVersion = store.StampVersion
+	local stamp = out[GAME_KEY]
+	if stampVersion ~= nil and (stamp ~= nil or out.Version >= stampVersion) and stamp ~= GameDefinition.ID then
+		if stamp == nil then
+			return Result.err(`it doesn't name the game that wrote it, this server is {GameDefinition.ID}`)
+		end
+		return Result.err(`it was written by {stamp}, this server is {GameDefinition.ID}`)
+	end
 	if out.Version > store.Version then
 		return Result.err(`version {out.Version} is ahead of this server, it's at {store.Version}`)
 	end

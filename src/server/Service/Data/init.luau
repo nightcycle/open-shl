@@ -11,6 +11,7 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 local Option = TypeUnionLib.Option
 -- Modules
+local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local FakeDataStoreUtil = require("@game/ServerScriptService/Server/Util/FakeDataStore")
 local StoreDefinition = require("@game/ServerScriptService/Server/Definition/Store")
 -- Types
@@ -56,11 +57,14 @@ type DataServiceImpl = {
 	Release: <V>(self: DataService, store: Store<V>, userId: number) -> Result<true, string>,
 	Read: <V>(self: DataService, store: ReadOnlyStore<V>, userId: number) -> Result<Option<V>, string>,
 	SetDataStoreService: (self: DataService, dataStoreService: DataStoreService) -> (),
+	SetUniverseIds: (self: DataService, builtForId: number, universeId: number) -> (),
 }
 export type DataService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
 		_DataStoreService: DataStoreService,
+		-- why none of the data stores here is this place's to ask, nil in the universe it was built for
+		_UniverseProblem: string?,
 		_Documents: { [string]: Document },
 		_Loading: { [string]: Loading },
 		_Connections: { RBXScriptConnection },
@@ -148,6 +152,11 @@ local function try(call: () -> (), deadline: number?): Result<true, string>
 end
 
 local function getDataStore(self: DataService, name: string): Result<DataStore, string>
+	-- every game keeps its saves under the same name. in the universe of another one what's there under it is that
+	-- game's, a place that asked would take it for its own: so it doesn't ask, to read or to write
+	if self._UniverseProblem then
+		return Result.err(`no "{name}" data store: {self._UniverseProblem}`)
+	end
 	-- the real service throws for a place that has no data stores
 	local success, res = pcall(function(): DataStore
 		return self._DataStoreService:GetDataStore(name)
@@ -498,10 +507,23 @@ function DataService:SetDataStoreService(dataStoreService: DataStoreService)
 	self._DataStoreService = getDataStoreService(dataStoreService)
 end
 
+-- for a test: the universe the place was built for + the one it finds itself in, in place of the real two
+function DataService:SetUniverseIds(builtForId: number, universeId: number)
+	assert(next(self._Documents) == nil and next(self._Loading) == nil, `a document is loaded`)
+	self._UniverseProblem = StoreDefinition.getUniverseProblem(builtForId, universeId)
+end
+
 return ServiceLocker(function(): DataService
+	-- said once + before anybody's save is asked for: every load from here on fails, which is a kick for its player
+	local universeProblem = StoreDefinition.getUniverseProblem(BUILD_CONFIG.UNIVERSE_ID, game.GameId)
+	if universeProblem then
+		warn(`no save is read or written: {universeProblem}`)
+	end
 	local self = setmetatable({
 		IsInitialized = true :: true,
-		_DataStoreService = getDataStoreService(nil),
+		-- the data stores of another game aren't even asked whether they can be reached
+		_DataStoreService = if universeProblem then FakeDataStoreUtil.new() else getDataStoreService(nil),
+		_UniverseProblem = universeProblem,
 		_Documents = {},
 		_Loading = {},
 		_CleanUpCallbacks = {},

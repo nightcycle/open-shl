@@ -5,6 +5,7 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local DataService = require("@game/ServerScriptService/Server/Service/Data")
 local FakeDataStoreUtil = require("@game/ServerScriptService/Server/Util/FakeDataStore")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local SpecUtil = require("@game/ServerScriptService/Server/Util/Spec")
 local StoreDefinition = require("@game/ServerScriptService/Server/Definition/Store")
 -- Types
@@ -27,8 +28,20 @@ local LOCK_RETRY_DELAY = 2
 -- past it a lock belongs to a server that crashed
 local LOCK_TIMEOUT = 300
 local MAX_ATTEMPTS = 4
+-- the universe a place was built for + another one
+local UNIVERSE_ID = 123
+local OTHER_UNIVERSE_ID = 456
+-- a game this server isn't
+local OTHER_GAME_ID: GameDefinition.GameId = if GameDefinition.ID == "shl2" then "shl3" else "shl2"
 local isHero = Type.strictInterface({
 	Version = Type.literal(2),
+	Coins = Type.integer,
+	Name = Type.string,
+})
+-- a hero that says which game it's of, the way a save does
+local isGameHero = Type.strictInterface({
+	Version = Type.literal(2),
+	Game = Type.string,
 	Coins = Type.integer,
 	Name = Type.string,
 })
@@ -81,6 +94,9 @@ end, {
 local DEFAULTLESS = StoreDefinition.new("DataSpecDefaultless", getHeroKey, 2, isHero, function(): Hero
 	error(`a default that can't be made`)
 end, HERO.Migrations) :: Store<Hero>
+local GAME_HERO = StoreDefinition.new("DataSpecGameHero", getHeroKey, 2, isGameHero, function(): { [string]: any }
+	return { Version = 2, Game = GameDefinition.ID, Coins = 0, Name = "" }
+end, HERO.Migrations, 1) :: Store<{ [string]: any }>
 local SCORE = StoreDefinition.newReadOnly("DataSpecScore", getScoreKey, Type.number) :: ReadOnlyStore<number>
 local TAGS =
 	StoreDefinition.newReadOnly("DataSpecTags", getScoreKey, Type.array(Type.string)) :: ReadOnlyStore<{ string }>
@@ -288,6 +304,70 @@ return {
 				assert(SpecUtil.getIfEqual(fake:Peek(HERO.Name, HERO_KEY), value), `{name} was written over`)
 				assert(dataService:Save(HERO, USER_ID, newHero(0, "blank")).IsErr, `a hero was saved over {name}`)
 			end
+		end)
+	end),
+
+	-- every game keeps its saves under one name, what's there under it in the universe of another game is that game's.
+	-- a place that ends up there asks its data stores for nothing: not to read, not to lock, not to write
+	WrongUniverse = SpecUtil.newScenario(function()
+		run(function(dataService: DataService, fake: FakeDataStoreService)
+			fake:Plant(HERO.Name, HERO_KEY, { Data = newHero(7, "theirs") })
+			fake:Plant(SCORE.Name, SCORE_KEY, 12)
+			dataService:SetUniverseIds(UNIVERSE_ID, OTHER_UNIVERSE_ID)
+			local heroRes = dataService:Load(HERO, USER_ID)
+			assert(heroRes.IsErr, `a hero was loaded in the universe of another game`)
+			assert(
+				string.find(heroRes.Value, tostring(OTHER_UNIVERSE_ID), 1, true),
+				`the load err doesn't name the universe: {heroRes.Value}`
+			)
+			assert(dataService:Load(HERO, USER_ID + 1).IsErr, `a new hero was made in the universe of another game`)
+			assert(dataService:Save(HERO, USER_ID, newHero(0, "blank")).IsErr, `a hero that didn't load was saved`)
+			assert(dataService:Read(SCORE, USER_ID).IsErr, `a score was read in the universe of another game`)
+			assert(dataService:Release(HERO, USER_ID).IsOk, `releasing a hero that didn't load is an error`)
+			assert(#fake:GetCalls() == 0, `a data store was called in the universe of another game`)
+			assert(
+				SpecUtil.getIfEqual(fake:Peek(HERO.Name, HERO_KEY), { Data = newHero(7, "theirs") }),
+				`a hero of another universe was written`
+			)
+
+			-- at home, + wherever a place that was built for no universe is opened, it's as it ever was
+			for _, builtForId in { OTHER_UNIVERSE_ID, 0 } do
+				dataService:SetUniverseIds(builtForId, OTHER_UNIVERSE_ID)
+				local homeRes = dataService:Load(HERO, USER_ID)
+				assert(homeRes.IsOk, `a hero wasn't loaded at home: {tostring(homeRes.Value)}`)
+				assert(dataService:Release(HERO, USER_ID).IsOk, `a hero wasn't released at home`)
+			end
+		end)
+	end),
+
+	-- a document that names another game is left for that game: it isn't caught up, locked or written over
+	OtherGame = SpecUtil.newScenario(function()
+		run(function(dataService: DataService, fake: FakeDataStoreService)
+			local values: { [string]: unknown } = {
+				["a hero of another game"] = {
+					Data = { Version = 2, Game = OTHER_GAME_ID, Coins = 7, Name = "theirs" },
+				},
+				["a hero of another game that's behind"] = {
+					Data = { Version = 1, Game = OTHER_GAME_ID, Coins = 7, Label = "theirs" },
+				},
+				["a hero that names no game"] = { Data = { Version = 2, Coins = 7, Name = "nobody's" } },
+			}
+			for name, value in values do
+				fake:Plant(GAME_HERO.Name, HERO_KEY, value)
+				local heroRes = dataService:Load(GAME_HERO, USER_ID)
+				assert(heroRes.IsErr, `{name} was loaded`)
+				assert(SpecUtil.getIfEqual(fake:Peek(GAME_HERO.Name, HERO_KEY), value), `{name} was written over`)
+				local blank = { Version = 2, Game = GameDefinition.ID, Coins = 0, Name = "blank" }
+				assert(dataService:Save(GAME_HERO, USER_ID, blank).IsErr, `a hero was saved over {name}`)
+			end
+
+			local own = { Version = 2, Game = GameDefinition.ID, Coins = 7, Name = "ours" }
+			fake:Plant(GAME_HERO.Name, HERO_KEY, { Data = own })
+			local ownRes = dataService:Load(GAME_HERO, USER_ID)
+			assert(ownRes.IsOk, `a hero of this game wasn't loaded: {tostring(ownRes.Value)}`)
+			assert(SpecUtil.getIfEqual(ownRes.Value, own), `what was loaded isn't what was stored`)
+			local stolen = { Version = 2, Game = OTHER_GAME_ID, Coins = 8, Name = "ours" }
+			assert(dataService:Save(GAME_HERO, USER_ID, stolen).IsErr, `a hero was saved as another game's`)
 		end)
 	end),
 

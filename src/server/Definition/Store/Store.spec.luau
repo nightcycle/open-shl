@@ -30,11 +30,12 @@ type Note = {
 	Title: string,
 	Tags: { string },
 }
--- where a game keeps its saves + what a save of its first version held that one of today doesn't
+-- where a game keeps its saves, the version it's at + how a save of today looked when its first version wrote it
 type PlayerStore = {
 	Name: string,
 	KeyFormat: string,
-	FirstVersionFields: { [string]: any },
+	Version: number,
+	ToFirstVersion: (document: { [string]: any }) -> (),
 }
 -- Constants
 local MATERIALS = table.freeze({ Enum.Material.Plastic, Enum.Material.Neon, Enum.Material.Wood })
@@ -45,25 +46,33 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 	shl1 = function(): PlayerStore
 		error(`shl1 has no save yet`)
 	end,
-	-- the first version of the game listed the artifacts its player owned
+	-- the first version of the game listed the artifacts its player owned + didn't say which game wrote it
 	shl2 = function(): PlayerStore
 		return {
 			Name = "PlayerSave",
 			KeyFormat = "Player_%d",
-			FirstVersionFields = { ArtifactIds = { "costume_artifacts_a-bright-presence" } },
+			Version = SaveType.SHL2_VERSION,
+			ToFirstVersion = function(document: { [string]: any })
+				document.Version = 1
+				document.ArtifactIds = { "costume_artifacts_a-bright-presence" }
+				document.Game = nil
+			end,
 		}
 	end,
-	-- no save of it was ever written at its first version, one would have been in the shape of today
+	-- it's still at its first version, a save of today is one
 	shl3 = function(): PlayerStore
 		return {
 			Name = "PlayerSave",
 			KeyFormat = "Player_%d",
-			FirstVersionFields = {},
+			Version = SaveType.SHL3_VERSION,
+			ToFirstVersion = function(_document: { [string]: any }) end,
 		}
 	end,
 })
 local PLAYER_STORE_NAME = PLAYER_STORE.Name
 local PLAYER_KEY_FORMAT = PLAYER_STORE.KeyFormat
+-- a game this server isn't
+local OTHER_GAME_ID: GameDefinition.GameId = if GameDefinition.ID == "shl2" then "shl3" else "shl2"
 local isSample = Type.strictInterface({
 	Version = Type.literal(1),
 	Color = Type.Color3,
@@ -85,6 +94,8 @@ local isLoose = Type.interface({
 	Version = Type.integer,
 })
 -- Variables
+-- how many steps the migrations of the store that names its game were asked for
+local StampedMigrationCount = 0
 -- References
 -- Private Functions
 local function getKey(userId: number): string
@@ -136,6 +147,20 @@ end, {
 		error(`a migration that can't be done`)
 	end,
 }) :: Store<{ [string]: any }>
+-- a document that named its game from version 2 on: version 1 was written before there was a second game
+local STAMPED = StoreDefinition.new("StoreSpecStamped", getKey, 3, isLoose, function(): { [string]: any }
+	return { Version = 3, Game = GameDefinition.ID }
+end, {
+	function(document: { [string]: any }): { [string]: any }
+		StampedMigrationCount += 1
+		document.Game = GameDefinition.ID
+		return document
+	end,
+	function(document: { [string]: any }): { [string]: any }
+		StampedMigrationCount += 1
+		return document
+	end,
+}, 2) :: Store<{ [string]: any }>
 
 return {
 	-- whatever a save holds comes back out of the data store the way it went in
@@ -301,13 +326,117 @@ return {
 			`a read only store was made under the name of another`
 		)
 		assert(table.isfrozen(NOTE) and table.isfrozen(NOTE.Migrations), `a store isn't frozen`)
+		local stampVersions: { [string]: number } = { ["before its first version"] = 0, ["past its own version"] = 4 }
+		for name, stampVersion in stampVersions do
+			assert(
+				not pcall(
+					StoreDefinition.new,
+					"StoreSpecStampless",
+					getKey,
+					3,
+					isNote,
+					newNote,
+					NOTE.Migrations,
+					stampVersion
+				),
+				`a store was made that names its game from {name}`
+			)
+		end
+	end),
+
+	-- every game keeps its saves under one name, so a document says which game wrote it. the document of another game
+	-- isn't caught up, read or stored
+	Stamp = SpecUtil.newScenario(function()
+		local theirs: { [string]: { [string]: any } } = {
+			["a document of another game"] = { Version = 3, Game = OTHER_GAME_ID },
+			["a document of another game that's behind"] = { Version = 1, Game = OTHER_GAME_ID },
+			["a document of another game that's ahead"] = { Version = 4, Game = OTHER_GAME_ID },
+		}
+		for name, data in theirs do
+			local res = StoreDefinition.decode(STAMPED, data)
+			assert(res.IsErr, `{name} was decoded`)
+			assert(
+				string.find(res.Value, OTHER_GAME_ID, 1, true),
+				`{name} was turned down without naming it: {res.Value}`
+			)
+		end
+		local nameless: { [string]: { [string]: any } } = {
+			["a document that names no game"] = { Version = 3 },
+			["a document that names no game at the version they were first named"] = { Version = 2 },
+			["a document that names no game + is ahead"] = { Version = 4 },
+		}
+		for name, data in nameless do
+			assert(StoreDefinition.decode(STAMPED, data).IsErr, `{name} was decoded`)
+		end
+		assert(StampedMigrationCount == 0, `a document of another game was caught up`)
+
+		-- from before a document named its game: it's this game's all the same, catching it up is what names it
+		local firstRes = StoreDefinition.decode(STAMPED, { Version = 1 })
+		assert(firstRes.IsOk, `a document from before they named their game wasn't decoded: {tostring(firstRes.Value)}`)
+		assert(firstRes.Value.Game == GameDefinition.ID and StampedMigrationCount == 2, `it wasn't caught up`)
+		assert(
+			StoreDefinition.decode(STAMPED, { Version = 3, Game = GameDefinition.ID }).IsOk,
+			`its own was turned down`
+		)
+
+		assert(
+			StoreDefinition.encode(STAMPED, { Version = 3, Game = OTHER_GAME_ID }).IsErr,
+			`another game's was encoded`
+		)
+		assert(StoreDefinition.encode(STAMPED, { Version = 3 }).IsErr, `a document that names no game was encoded`)
+		assert(StoreDefinition.encode(STAMPED, STAMPED.Default()).IsOk, `its own wasn't encoded`)
+
+		-- a store that never names its game takes the field for any other
+		assert(
+			StoreDefinition.decode(LOOSE, { Version = 1, Game = OTHER_GAME_ID }).IsOk,
+			`a field was taken for a game`
+		)
+		assert(
+			StoreDefinition.encode(LOOSE, { Version = 1, Game = OTHER_GAME_ID }).IsOk,
+			`a field was taken for a game`
+		)
+
+		-- the saves themselves
+		local store = StoreDefinition.Player
+		assert(store.StampVersion ~= nil, `a save doesn't name its game`)
+		local dataRes = StoreDefinition.encode(store, store.Default())
+		assert(dataRes.IsOk, `a new save wasn't encoded: {tostring(dataRes.Value)}`)
+		local own = dataRes.Value :: { [string]: any }
+		assert(own.Game == GameDefinition.ID, `a new save names "{own.Game}"`)
+		local other = TableUtil.deepCopy(own)
+		other.Game = OTHER_GAME_ID
+		local otherRes = StoreDefinition.decode(store, other)
+		assert(otherRes.IsErr, `the save of another game was decoded`)
+		assert(string.find(otherRes.Value, OTHER_GAME_ID, 1, true), `it wasn't said whose it is: {otherRes.Value}`)
+		local unnamed = TableUtil.deepCopy(own)
+		unnamed.Game = nil
+		assert(StoreDefinition.decode(store, unnamed).IsErr, `a save of today that names no game was decoded`)
+	end),
+
+	-- a data store belongs to a universe, a place that runs in another one than it was built for has no saves there
+	Universe = SpecUtil.newScenario(function()
+		local homes: { [string]: { number } } = {
+			["a place that was built for no universe"] = { 0, 123 },
+			["a place that isn't published"] = { 123, 0 },
+			["a place that's neither"] = { 0, 0 },
+			["a place in its own universe"] = { 123, 123 },
+		}
+		for name, ids in homes do
+			assert(StoreDefinition.getUniverseProblem(ids[1], ids[2]) == nil, `{name} was kept from its saves`)
+		end
+		local problem = StoreDefinition.getUniverseProblem(123, 456)
+		assert(problem ~= nil, `a place in the universe of another game was let at the saves there`)
+		assert(
+			string.find(problem, "123", 1, true) and string.find(problem, "456", 1, true),
+			`the two universes aren't named: {problem}`
+		)
 	end),
 
 	Player = SpecUtil.newScenario(function()
 		local store = StoreDefinition.Player
 		assert(store.Name == PLAYER_STORE_NAME, `the saves moved to the "{store.Name}" store`)
 		assert(store.GetKey(42) == string.format(PLAYER_KEY_FORMAT, 42), `the saves moved to "{store.GetKey(42)}"`)
-		assert(store.Version == SaveType.CURRENT_VERSION, `the store is at version {store.Version}`)
+		assert(store.Version == PLAYER_STORE.Version, `the store is at version {store.Version}`)
 
 		local save = store.Default()
 		local dataRes = StoreDefinition.encode(store, save)
@@ -319,19 +448,16 @@ return {
 		-- a starter suit comes with an id that's baked in, a slot that kept it would share it with everybody
 		assert(store.Default().Characters[1].Id ~= save.Characters[1].Id, `two new saves share the id of a slot`)
 
-		-- what the first version of the game wrote: the same save + whatever it held on top of it
+		-- what the first version of the game wrote: the same save, the way it was kept then
 		local first = TableUtil.deepCopy(dataRes.Value :: { [string]: any })
-		first.Version = 1
-		for key, value in PLAYER_STORE.FirstVersionFields do
-			first[key] = value
-		end
+		PLAYER_STORE.ToFirstVersion(first)
 		local firstRes = StoreDefinition.decode(store, first)
 		assert(firstRes.IsOk, `a version 1 save wasn't decoded: {tostring(firstRes.Value)}`)
-		assert(firstRes.Value.Version == SaveType.CURRENT_VERSION, `a version 1 save wasn't caught up`)
+		assert(firstRes.Value.Version == PLAYER_STORE.Version, `a version 1 save wasn't caught up`)
 		assert(SpecUtil.getIfEqual(firstRes.Value, save), `a version 1 save lost more than its artifacts on the way`)
 
 		local ahead = TableUtil.deepCopy(dataRes.Value :: { [string]: any })
-		ahead.Version = SaveType.CURRENT_VERSION + 1
+		ahead.Version = PLAYER_STORE.Version + 1
 		local aheadRes = StoreDefinition.decode(store, ahead)
 		assert(aheadRes.IsErr, `a save ahead of the server was decoded`)
 		assert(string.find(aheadRes.Value, "ahead", 1, true), `it wasn't said to be ahead: {aheadRes.Value}`)
