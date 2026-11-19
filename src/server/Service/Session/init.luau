@@ -286,7 +286,10 @@ local function add(self: SessionService, player: Player)
 	local session: Session = {
 		Save = saveRes.Value,
 		ActiveIdentityKey = "Main",
-		IsInMenu = false,
+		-- a client comes up in its menus + says so, but its avatar is in the world before that word is, + the word
+		-- can get here before the session does. where a menu shelters, whoever joins starts out in one: a hit that
+		-- lands first would be a fight that keeps them out of the menu they were put in
+		IsInMenu = CombatDefinition.IS_MENU_SAFE,
 		PassEntitlements = table.freeze({}),
 	}
 	table.freeze(session)

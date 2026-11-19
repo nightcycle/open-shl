@@ -40,6 +40,9 @@ Module.KNOCKBACK = RULE.Knockback
 -- what everybody gets back by themselves, nil in a game where health only comes back by a power
 Module.REGENERATION = RULE.Regeneration
 
+-- if nobody is hurt while they sit in a menu
+Module.IS_MENU_SAFE = RULE.IsMenuSafe
+
 -- how long a loss of health keeps somebody out of the menus, nil in a game where they get into one whenever
 Module.FIGHTING = RULE.Fighting
 

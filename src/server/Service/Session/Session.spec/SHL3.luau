@@ -144,7 +144,8 @@ local function walk(destroyCallbacks: { () -> () })
 		SpecUtil.getIfEqual(save.SHL3, { OwnedItemIds = {}, ApartmentTier = 0, RedeemedCodeIds = {} }),
 		`a new save doesn't start out with the section of the game`
 	)
-	assert(session.ActiveIdentityKey == "Main" and not session.IsInMenu, `the session didn't start out fresh`)
+	-- a menu of this game shelters, whoever joins is in one before their client can say so
+	assert(session.ActiveIdentityKey == "Main" and session.IsInMenu, `the session didn't start out fresh`)
 	assert(
 		AttributeDefinition.get(player, AttributeDefinition.ActiveCharacterId) == save.ActiveCharacterId,
 		`the player wasn't told their active character`
