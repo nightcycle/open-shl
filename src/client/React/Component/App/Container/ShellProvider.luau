@@ -11,6 +11,7 @@ local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Se
 local useSignalState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useSignalState")
 -- Contexts
 local AppBootPhaseContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/BootPhase")
+local AppHasHudShownContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/HasHudShown")
 local AppIsCameraModeAvailableContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/IsCameraModeAvailable")
 local AppIsCameraModeContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/IsCameraMode")
@@ -73,6 +74,12 @@ return function(props: Properties): React.ReactNode
 	local isGameplayHudVisible = useSignalState(ShellService.GameplayHudVisibleChanged, function(): boolean
 		return ShellService:GetIsGameplayHudVisible()
 	end)
+	-- a screen that's drawn another way before the player was ever let into the game can't ask the shell: it's
+	-- remembered from the first time the hud is up
+	local hasHudShownRef = React.useRef(false)
+	if isGameplayHudVisible then
+		hasHudShownRef.current = true
+	end
 	local topInset = useTopInset()
 
 	return e(AppBootPhaseContext.Provider, {
@@ -98,7 +105,11 @@ return function(props: Properties): React.ReactNode
 							}, {
 								TopInset = e(AppTopInsetContext.Provider, {
 									value = topInset,
-								}, props.children),
+								}, {
+									HasHudShown = e(AppHasHudShownContext.Provider, {
+										value = hasHudShownRef.current,
+									}, props.children),
+								}),
 							}),
 						}),
 					}),
