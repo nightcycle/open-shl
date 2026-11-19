@@ -5,6 +5,7 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 local Future = TypeUnionLib.Future
 -- Modules
+local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local BodyUtil = require("@self/Body")
 local FaceUtil = require("@self/Face")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
@@ -16,6 +17,7 @@ local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 export type Appearance = AppearanceType.Appearance
+export type Clothes = BodyUtil.Clothes
 type Item = AppearanceType.Item
 type HiddenTag = AppearanceType.HiddenTag
 -- Constants
@@ -59,16 +61,22 @@ local function getIfHairShows(appearance: Appearance): boolean
 	return false
 end
 
--- the body is built for the look that goes onto it, without one it's the body the game starts a look on
-local function clear(rig: Model, skinColor: Color3?, appearance: Appearance?, getIfCanceled: () -> boolean): boolean
+-- yields. the body is built for the look that goes onto it, without one it's the body the game starts a look on
+local function describe(
+	rig: Model,
+	skinColor: Color3?,
+	appearance: Appearance?,
+	clothes: Clothes?,
+	getIfCanceled: () -> boolean
+): boolean
 	local builder = BodyUtil.describe(HumanoidDescriptionBuilder.new(), appearance)
 	if skinColor then
 		builder = builder:addBodyColor(skinColor)
 	end
 	if appearance then
-		builder = BodyUtil.describeBare(builder, appearance)
+		builder = BodyUtil.describeBare(builder, appearance, clothes)
 	end
-	local desc = builder:build()
+	local desc = BodyUtil.describeClothes(builder, clothes):build()
 	local f = Future.awaitUntil(RigUtil.applyDescription(rig, desc), getIfCanceled)
 	if f.IsCanceled then
 		-- the request may still be reading the description, it's collected once nothing holds it
@@ -76,7 +84,21 @@ local function clear(rig: Model, skinColor: Color3?, appearance: Appearance?, ge
 	end
 	desc:Destroy()
 	-- a newer request can start + finish in the frame it takes to notice the description is done
-	if getIfCanceled() then
+	return not getIfCanceled()
+end
+
+local function clear(
+	rig: Model,
+	skinColor: Color3?,
+	appearance: Appearance?,
+	clothes: Clothes?,
+	getIfCanceled: () -> boolean
+): boolean
+	if not describe(rig, skinColor, appearance, clothes, getIfCanceled) then
+		return false
+	end
+	-- a shirt or pants the engine wouldn't put on leaves the body it had before: it's built again without them
+	if not BodyUtil.getIfClothesWorn(rig, clothes) and not describe(rig, skinColor, appearance, nil, getIfCanceled) then
 		return false
 	end
 	for _, v in rig:QueryDescendants(`.{ItemUtil.ITEM_TAG}`) do
@@ -87,11 +109,16 @@ local function clear(rig: Model, skinColor: Color3?, appearance: Appearance?, ge
 	return true
 end
 
-local function apply(rig: Model, appearance: Appearance, getIfCanceled: () -> boolean): Result<true, { string }>?
+local function apply(
+	rig: Model,
+	appearance: Appearance,
+	clothes: Clothes?,
+	getIfCanceled: () -> boolean
+): Result<true, { string }>?
 	if not rig:FindFirstChildWhichIsA("Humanoid") then
 		return Result.err({ `rig "{rig.Name}" has no humanoid` })
 	end
-	if not clear(rig, appearance.SkinColor, appearance, getIfCanceled) then
+	if not clear(rig, appearance.SkinColor, appearance, clothes, getIfCanceled) then
 		return nil
 	end
 	local errs = {}
@@ -128,9 +155,26 @@ end
 -- Class
 local Util = {}
 
+-- whether a body of the game wears the shirt + the pants of its player's account, they're no items of it
+Util.HAS_OWN_CLOTHES = BodyUtil.HAS_OWN_CLOTHES
+
+-- what the account of a player has on, for a rig that's dressed as a character of theirs. nil in a game whose
+-- bodies wear no such thing + until the server has asked
+function Util.getClothes(player: Player): Clothes?
+	if not BodyUtil.HAS_OWN_CLOTHES then
+		return nil
+	end
+	local shirt = AttributeDefinition.get(player, AttributeDefinition.ShirtAssetId)
+	local pants = AttributeDefinition.get(player, AttributeDefinition.PantsAssetId)
+	if not shirt or not pants then
+		return nil
+	end
+	return table.freeze({ Shirt = shirt, Pants = pants })
+end
+
 function Util.clear(rig: Model, skinColor: Color3?): TypeUnionLib.ToDo<true>
 	return Future.toDo(function(getIfCanceled): true?
-		local success, isCleared = pcall(clear, rig, skinColor, nil, newGetIfStopped(rig, getIfCanceled))
+		local success, isCleared = pcall(clear, rig, skinColor, nil, nil, newGetIfStopped(rig, getIfCanceled))
 		if not success then
 			warn(`rig "{rig.Name}" failed to clear: {isCleared}`)
 			return nil
@@ -139,10 +183,11 @@ function Util.clear(rig: Model, skinColor: Color3?): TypeUnionLib.ToDo<true>
 	end)
 end
 
-function Util.apply(rig: Model, appearance: Appearance): TypeUnionLib.ToDo<Result<true, { string }>>
+-- the clothes only go on in a game whose bodies wear the ones of an account, a rig that's handed none is bare
+function Util.apply(rig: Model, appearance: Appearance, clothes: Clothes?): TypeUnionLib.ToDo<Result<true, { string }>>
 	return Future.toDo(function(getIfCanceled): Result<true, { string }>?
 		-- a throw inside of a future leaves it incomplete forever, so it has to come back as an error
-		local success, res = pcall(apply, rig, appearance, newGetIfStopped(rig, getIfCanceled))
+		local success, res = pcall(apply, rig, appearance, clothes, newGetIfStopped(rig, getIfCanceled))
 		if not success then
 			return Result.err({ `appearance threw: {res}` })
 		end

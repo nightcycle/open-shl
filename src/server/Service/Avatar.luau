@@ -152,6 +152,32 @@ local function getLook(self: AvatarService, player: Player): Option<Look>
 	return Option.some(look)
 end
 
+-- yields. what the account of the player has on is asked for once, as their session starts: it's on no save. the
+-- avatar that's out by the time the answer is in gets dressed once more
+local function loadClothes(self: AvatarService, player: Player)
+	-- a player of a test server has no account to ask about
+	if player.UserId < 1 then
+		return
+	end
+	local success, shirt, pants = pcall(function(): (number, number)
+		local description = Players:GetHumanoidDescriptionFromUserIdAsync(player.UserId)
+		local shirtId, pantsId = description.Shirt, description.Pants
+		description:Destroy()
+		return shirtId, pantsId
+	end)
+	if not success then
+		-- the body stays the one of somebody who wears neither
+		warn(`clothes err: {shirt}`)
+		return
+	end
+	if not self.IsInitialized or not self._PlayerConnections[player] then
+		return
+	end
+	AttributeDefinition.set(player, AttributeDefinition.ShirtAssetId, shirt)
+	AttributeDefinition.set(player, AttributeDefinition.PantsAssetId, pants)
+	self:Dress(player)
+end
+
 -- a player inside of a full screen menu isn't looking at their avatar, it stands still until they're back
 local function setInMenu(player: Player, character: Model, isInMenu: boolean)
 	AttributeDefinition.set(character, AttributeDefinition.IsInMenu, isInMenu)
@@ -236,6 +262,9 @@ local function add(self: AvatarService, player: Player)
 	if player.Character then
 		onCharacter(self, player, player.Character)
 	end
+	if AppearanceUtil.HAS_OWN_CLOTHES then
+		task.spawn(loadClothes, self, player)
+	end
 end
 
 local function remove(self: AvatarService, player: Player)
@@ -269,7 +298,8 @@ function AvatarService:Dress(player: Player)
 	end
 	-- the description is a web call, whoever asked for the dress can't wait on it
 	task.spawn(function()
-		local f = Future.timeout(AppearanceUtil.apply(character, look.Appearance), DRESS_TIMEOUT)
+		local clothes = AppearanceUtil.getClothes(player)
+		local f = Future.timeout(AppearanceUtil.apply(character, look.Appearance, clothes), DRESS_TIMEOUT)
 		if f.IsCanceled then
 			return
 		end

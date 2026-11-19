@@ -22,6 +22,17 @@ type Bare = {
 	Group: AppearanceType.ItemGroup,
 	Parts: { [string]: { Enum.BodyPart } },
 }
+-- the shirt + the pants a body wears that are no items of the game: what the account of its player has on, by their
+-- asset ids. 0 for one it wears none of
+export type Clothes = {
+	Shirt: number,
+	Pants: number,
+}
+-- what the torso + the legs of a body look like for as long as it wears neither
+type Unclothed = {
+	TorsoColor: Color3,
+	LegColor: Color3,
+}
 -- Constants
 local HEAD_NAME = "Head"
 -- the pieces of a game are fitted to the body it builds. a game that names no build has the one a description comes
@@ -45,6 +56,16 @@ local BARE: Bare? = GameDefinition.tune(nil :: Bare?, {
 		}),
 	}),
 })
+-- where a body wears the shirt + the pants of its player's account: with either on it's skin all over, with neither
+-- its torso + its legs are the ones of the mannequin the old game started a character on. nil in a game whose
+-- clothes are items
+local UNCLOTHED: Unclothed? = GameDefinition.tune(nil :: Unclothed?, {
+	shl1 = table.freeze({
+		TorsoColor = Color3.fromRGB(17, 17, 17),
+		LegColor = Color3.fromRGB(13, 105, 172),
+	}),
+})
+local LEGS: { Enum.BodyPart } = table.freeze({ Enum.BodyPart.LeftLeg, Enum.BodyPart.RightLeg })
 -- the sizes a body can have are the game's own, in a game without any every body is the size it comes in
 local SCALE = CharacterEditorDefinition.SCALE
 local SCALE_EPSILON = CharacterEditorDefinition.SCALE_EPSILON
@@ -91,12 +112,19 @@ local function getIfWorn(appearance: Appearance, group: AppearanceType.ItemGroup
 	return false
 end
 
+local function getIfClothed(clothes: Clothes?): boolean
+	return clothes ~= nil and (clothes.Shirt > 0 or clothes.Pants > 0)
+end
+
 -- a head grows with the height of its body + all but keeps its size as the body broadens
 local function getHeadScale(scale: Scale): number
 	return scale.Height * (scale.Width - 0.05) * (0.925 / scale.Width ^ 1.075)
 end
 -- Class
 local Util = {}
+
+-- whether a body of the game wears the shirt + the pants of its player's account
+Util.HAS_OWN_CLOTHES = UNCLOTHED ~= nil
 
 -- the body of the game onto a description, in the size of the look where the game has sizes
 function Util.describe(builder: Builder, appearance: Appearance?): Builder
@@ -117,7 +145,13 @@ end
 
 -- the color of a bare body onto the parts of a description no clothing of the look puts skin on. a suit covers them
 -- anyway, the head is skin whatever is worn
-function Util.describeBare(builder: Builder, appearance: Appearance): Builder
+function Util.describeBare(builder: Builder, appearance: Appearance, clothes: Clothes?): Builder
+	if UNCLOTHED and not getIfClothed(clothes) then
+		builder = builder:addBodyColor(UNCLOTHED.TorsoColor, Enum.BodyPart.Torso)
+		for _, bodyPart in LEGS do
+			builder = builder:addBodyColor(UNCLOTHED.LegColor, bodyPart)
+		end
+	end
 	if not BARE then
 		return builder
 	end
@@ -130,6 +164,37 @@ function Util.describeBare(builder: Builder, appearance: Appearance): Builder
 		end
 	end
 	return builder
+end
+
+-- the shirt + the pants of its player's account onto a description, in a game that has a body wear them
+function Util.describeClothes(builder: Builder, clothes: Clothes?): Builder
+	if not UNCLOTHED or not clothes then
+		return builder
+	end
+	if clothes.Shirt > 0 then
+		builder = builder:addTexture(clothes.Shirt, "Shirt")
+	end
+	if clothes.Pants > 0 then
+		builder = builder:addTexture(clothes.Pants, "Pants")
+	end
+	return builder
+end
+
+-- whether the body of the rig took the description those went onto. the engine turns a whole description down over
+-- a shirt it won't load, the one the rig had before is then still the one it has
+function Util.getIfClothesWorn(rig: Model, clothes: Clothes?): boolean
+	if not UNCLOTHED or not getIfClothed(clothes) or not clothes then
+		return true
+	end
+	local humanoid = rig:FindFirstChildWhichIsA("Humanoid")
+	-- a copy of the one it took last, none for a body that never took any
+	local description = if humanoid then humanoid:GetAppliedDescription() else nil
+	if not description then
+		return false
+	end
+	local isWorn = description.Shirt == clothes.Shirt and description.Pants == clothes.Pants
+	description:Destroy()
+	return isWorn
 end
 
 -- a piece that stands for the part of the body it's worn on is all there is to see of it. the part stays where it is,
