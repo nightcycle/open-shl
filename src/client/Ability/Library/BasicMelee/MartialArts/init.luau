@@ -25,5 +25,10 @@ return MeleeFactory.new(
 			config.IsRooted = false
 			return config
 		end),
+		-- so does the one of shl1, by the moves the way they are
+		shl1 = FreezeUtil.delta(CONFIG, function(config: MeleeFactory.Config): MeleeFactory.Config
+			config.IsRooted = false
+			return config
+		end),
 	})
 ):Build()

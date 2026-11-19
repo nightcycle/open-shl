@@ -73,5 +73,10 @@ return MeleeFactory.new(
 			config.Streaks = streaks
 			return config
 		end),
+		-- the same fists + foot, a move a second
+		shl1 = FreezeUtil.delta(CONFIG, function(config: MeleeFactory.Config): MeleeFactory.Config
+			config.Duration = 1
+			return config
+		end),
 	})
 )
