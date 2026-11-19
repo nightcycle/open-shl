@@ -12,7 +12,7 @@ type ClientDefinition = AbilityType.ClientDefinition
 -- looks for a power this game doesn't have
 local DEFINITIONS: { ClientDefinition } = GameDefinition.pick({
 	shl1 = function(): { ClientDefinition }
-		error(`shl1 has no abilities yet`)
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Set/SHL1")
 	end,
 	shl2 = function(): { ClientDefinition }
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Set/SHL2")

@@ -12,7 +12,7 @@ type ServerDefinition = AbilityType.ServerDefinition
 -- looks for a power this game doesn't have
 local DEFINITIONS: { ServerDefinition } = GameDefinition.pick({
 	shl1 = function(): { ServerDefinition }
-		error(`shl1 has no abilities yet`)
+		return require("@game/ServerScriptService/Server/Ability/Set/SHL1")
 	end,
 	shl2 = function(): { ServerDefinition }
 		return require("@game/ServerScriptService/Server/Ability/Set/SHL2")
