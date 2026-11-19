@@ -13,9 +13,9 @@ local WeldUtil = require("@game/ReplicatedStorage/Shared/Util/Weld")
 local IN_PROGRESS_TAG = "IN_PROGRESS"
 local FAKE_HEAD_NAME = "FAKE_HEAD"
 local DATA_MODEL_TIMEOUT = 10
--- studs the middle of a body of height 1 is over the ground it stands on. the plain block body of shl3 has the
--- longer hip, at the height of the other bodies its feet would be in the floor
-local STAND_HEIGHT = GameDefinition.tune(2.5, { shl3 = 3 })
+-- studs the middle of a body of height 1 is over the ground it stands on. the plain block body of shl1 + shl3 has the
+-- longer hip, at the height of the other body its feet would be in the floor
+local STAND_HEIGHT = GameDefinition.tune(2.5, { shl1 = 3, shl3 = 3 })
 -- Variables
 -- References
 -- Private Functions

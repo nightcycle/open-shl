@@ -26,9 +26,12 @@ type Bare = {
 local HEAD_NAME = "Head"
 -- the pieces of a game are fitted to the body it builds. a game that names no build has the one a description comes
 -- with, which is the body the pieces of shl2 were fitted to
+-- the plain block body: next to it the one a description comes with has arms a quarter + legs nearly a third longer
+local BLOCK_BUILD: Build = table.freeze({ BodyType = 0, Proportion = 0 })
 local BUILD: Build? = GameDefinition.tune(nil :: Build?, {
-	-- the plain block body: next to it the one a description comes with has arms a quarter + legs nearly a third longer
-	shl3 = table.freeze({ BodyType = 0, Proportion = 0 }),
+	-- its suits were cut at the joints of that body
+	shl1 = BLOCK_BUILD,
+	shl3 = BLOCK_BUILD,
 })
 -- where a body with nothing on is a mannequin: its torso + arms are only skin under a shirt, its legs under pants. a
 -- game that names no such color has skin all over
