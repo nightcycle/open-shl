@@ -10,6 +10,7 @@ local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Se
 -- Components
 -- Hooks
 local useIsMounted = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsMounted")
+local usePeaceful = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/usePeaceful")
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
 local AppScreenContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/Screen")
@@ -61,6 +62,9 @@ return function(): React.ReactNode
 	local filteredText: FilteredText?, setFilteredText: (FilteredText?) -> () = React.useState(nil :: FilteredText?)
 	local isMountedRef = useIsMounted()
 	local isBusyRef = React.useRef(false)
+	-- whether the layout last asked for its player to sit fights out, nil for one that never asks
+	local isPeacefulRef = React.useRef(nil :: boolean?)
+	local _, setPeaceful = usePeaceful()
 
 	-- back to where the edit was asked for, the draft is dropped
 	local function leave()
@@ -103,6 +107,7 @@ return function(): React.ReactNode
 						setIsSaving(true)
 						setErrorMessage(nil)
 						local draft = action.Character
+						local isPeaceful = isPeacefulRef.current
 						task.spawn(function()
 							local saveRes = SessionService:SaveCharacter(draft)
 							local errorLine: string? = if saveRes.IsErr then saveRes.Value else nil
@@ -119,6 +124,10 @@ return function(): React.ReactNode
 							if errorLine then
 								setErrorMessage(errorLine)
 								return
+							end
+							-- the mode that was picked with the character goes into the game with it
+							if isPeaceful ~= nil then
+								setPeaceful(isPeaceful)
 							end
 							ShellService:CloseScreen()
 						end)
@@ -138,6 +147,8 @@ return function(): React.ReactNode
 								Text = filterRes.Value,
 							}))
 						end)
+					elseif action.Type == "SetPeaceful" then
+						isPeacefulRef.current = action.IsPeaceful
 					elseif action.Type == "Back" then
 						ShellService:FireTutorialTrigger("EditorBack")
 					elseif action.Type == "Exit" then

@@ -38,6 +38,10 @@ export type ActionInfo =
 	| {
 		Type: "Randomize", -- asks for the draft to be rolled all over again
 	}
+	| {
+		Type: "SetPeaceful", -- asks for the player to sit fights out or not, in a game where that's a player's pick
+		IsPeaceful: boolean,
+	}
 -- what the app hands the editor of every game, however that game lays it out
 export type Properties = RobloxComponents.FrameProperties & {
 	ErrorMessage: string?,
