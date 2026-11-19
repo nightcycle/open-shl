@@ -202,6 +202,9 @@ Module.CharacterChanged = newServerEvent("CharacterChanged", isCharacter) :: Ser
 Module.SetInMenu = newClientEvent("SetInMenu", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
 -- the server didn't take a client's word for being in a menu, this is why. being out of one is never turned down
 Module.MenuRefused = newServerEvent("MenuRefused", CombatType.MenuRefusal) :: ServerEvent<MenuRefusal>
+-- whether the player sits fights out, only taken in a game where that's each player's own pick. what the server made
+-- of it is read off the avatar
+Module.SetPeaceful = newClientEvent("SetPeaceful", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
 
 -- roleplay
 Module.SetExpression =
