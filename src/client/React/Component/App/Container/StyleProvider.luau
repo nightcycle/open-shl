@@ -20,7 +20,7 @@ export type Properties = {
 -- how the game that's built looks. what the context holds by itself is only read by what's mounted without the app
 local STYLE: Style = GameDefinition.pick({
 	shl1 = function(): Style
-		error(`shl1 has no style yet`)
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/SHL1")
 	end,
 	shl2 = function(): Style
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/SHL2")

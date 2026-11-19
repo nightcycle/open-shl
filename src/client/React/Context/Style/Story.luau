@@ -10,12 +10,15 @@ local StyleContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/Re
 -- Types
 local StyleTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/Types")
 type Style = StyleTypes.Style
--- "none" is the story as it mounts with nothing around it
-export type StyleName = "none" | "shl2" | "shl3"
+-- "none" is the story as it mounts with nothing around it, in the look of the game the place is built for
+export type StyleName = "none" | "shl1" | "shl2" | "shl3"
 -- Constants
-local NAMES: { StyleName } = table.freeze({ "none" :: StyleName, "shl2", "shl3" })
+local NAMES: { StyleName } = table.freeze({ "none" :: StyleName, "shl1", "shl2", "shl3" })
 -- a style is nothing but values, so a story can be looked at in the look of a game the place isn't built for
 local LOADERS: { [StyleName]: () -> Style } = table.freeze({
+	shl1 = function(): Style
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/SHL1")
+	end,
 	shl2 = function(): Style
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/SHL2")
 	end,
