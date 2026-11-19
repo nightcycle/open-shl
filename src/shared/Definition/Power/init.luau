@@ -10,9 +10,12 @@ local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 -- Types
 type Option<V> = TypeUnionLib.Option<V>
 type Result<V, E> = TypeUnionLib.Result<V, E>
+local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local PowerType = require("@game/ReplicatedStorage/Shared/Type/Power")
 export type PowerGroup = PowerType.PowerGroup
 export type PowerDefinition = PowerType.PowerDefinition
+export type PowerSlot = PowerType.PowerSlot
+type IdentityKey = CharacterType.IdentityKey
 type PowerCatalogue = PowerType.PowerCatalogue
 -- Constants
 local ID_DELIMITER = "_"
@@ -21,7 +24,7 @@ local TOOL_ID_ATTRIBUTE = "PowerId"
 -- required
 local CATALOGUE: PowerCatalogue = GameDefinition.pick({
 	shl1 = function(): PowerCatalogue
-		error(`shl1 has no powers yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): PowerCatalogue
 		return require("@self/SHL2")
@@ -35,12 +38,17 @@ TableUtil.deepFreeze(CATALOGUE)
 local GROUPS = CATALOGUE.Groups
 local DEFINITIONS = CATALOGUE.Definitions
 local UPCOMING: { PowerDefinition } = CATALOGUE.Upcoming or table.freeze({})
+local SLOTS: { PowerSlot } = CATALOGUE.Slots or table.freeze({})
 local DEFAULT_LIMIT = CATALOGUE.DefaultLimit
 local PASS_LIMIT = CATALOGUE.PassLimit
 local PASS_ENTITLEMENT = CATALOGUE.PassEntitlement
+local IDENTITY_KEY: IdentityKey? = CATALOGUE.IdentityKey
 -- Variables
 local DefinitionsById: { [string]: PowerDefinition? } = {}
 local DefinitionsByGroup: { [PowerGroup]: { PowerDefinition } } = {}
+-- the slots of the game, each down to the powers of it that are offered. none in a game without
+local Slots: { PowerSlot } = {}
+local SlotsByPowerId: { [string]: PowerSlot? } = {}
 -- References
 -- Private Functions
 -- Class
@@ -74,12 +82,44 @@ do
 		)
 		upcomingIds[definition.Id] = true
 	end
+	-- a slot lists every power that's ever going to be in it. what the game has of slots is those lists down to the
+	-- powers that are offered, so a power moves into its slot with its row
+	local slotKeys: { [string]: true } = {}
+	local slottedIds: { [string]: true } = {}
+	for _, slot in SLOTS do
+		assert(not slotKeys[slot.Key], `duplicate power slot "{slot.Key}"`)
+		slotKeys[slot.Key] = true
+		local offered: PowerSlot = { Key = slot.Key, Caption = slot.Caption, PowerIds = {} }
+		for _, id in slot.PowerIds do
+			assert(
+				DefinitionsById[id] ~= nil or upcomingIds[id],
+				`the "{slot.Key}" slot lists "{id}", which is no power`
+			)
+			assert(not slottedIds[id], `"{id}" is in two slots`)
+			slottedIds[id] = true
+			if DefinitionsById[id] then
+				table.insert(offered.PowerIds, id)
+				SlotsByPowerId[id] = offered
+			end
+		end
+		TableUtil.deepFreeze(offered)
+		table.insert(Slots, offered)
+	end
+	if CATALOGUE.Slots then
+		-- a power outside of every slot is one no character could hold
+		for _, definition in DEFINITIONS do
+			assert(SlotsByPowerId[definition.Id] ~= nil, `"{definition.Id}" is in no slot`)
+		end
+	end
+	table.freeze(Slots)
 end
 
 Module.DEFAULT_LIMIT = DEFAULT_LIMIT
 Module.PASS_LIMIT = PASS_LIMIT
--- what a player holds once they bought the pass that raises the limit
+-- what a player holds once they bought the pass that raises the limit, nil in a game where no pass does
 Module.PASS_ENTITLEMENT = PASS_ENTITLEMENT
+-- the one identity that carries the powers, nil in a game where every identity does
+Module.IDENTITY_KEY = IDENTITY_KEY
 Module.TOOL_ID_ATTRIBUTE = TOOL_ID_ATTRIBUTE
 
 Module.get = function(id: string): Result<PowerDefinition, string>
@@ -95,6 +135,49 @@ Module.list = function(group: PowerGroup?): { PowerDefinition }
 		return DEFINITIONS
 	end
 	return DefinitionsByGroup[group]
+end
+
+-- in the order the editor lists them, each with the powers of it that are offered. none in a game whose characters
+-- take any of its powers
+Module.listSlots = function(): { PowerSlot }
+	return Slots
+end
+
+-- nil for a power that's in none, which is every power of a game without slots
+Module.getSlot = function(id: string): PowerSlot?
+	return SlotsByPowerId[id]
+end
+
+-- whether an identity has the powers of its character to use
+Module.getIfCarried = function(identityKey: IdentityKey): boolean
+	return IDENTITY_KEY == nil or IDENTITY_KEY == identityKey
+end
+
+-- what's wrong with the powers a character holds, nil when nothing is: no more than the limit of its player, each a
+-- power of the game, none twice + one of a slot at most. the editor + the server ask the same thing
+Module.getLoadoutError = function(powerIds: { string }, limit: number): string?
+	if #powerIds > limit then
+		return `a character holds up to {limit} powers`
+	end
+	local isHeld: { [string]: true } = {}
+	local isFilled: { [PowerSlot]: true } = {}
+	for _, id in powerIds do
+		if DefinitionsById[id] == nil then
+			return `no power "{id}"`
+		end
+		if isHeld[id] then
+			return `power "{id}" is held twice`
+		end
+		isHeld[id] = true
+		local slot = SlotsByPowerId[id]
+		if slot then
+			if isFilled[slot] then
+				return `a character holds one "{slot.Caption}" power`
+			end
+			isFilled[slot] = true
+		end
+	end
+	return nil
 end
 
 Module.getColor = function(definition: PowerDefinition, color: Color3?): Option<Color3>
