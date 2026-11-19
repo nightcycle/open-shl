@@ -46,7 +46,7 @@ local STYLE: Style = {
 	-- the art of its yes / no dialog, which is what any panel without a picture of its own was drawn on
 	Panel = {
 		Type = "Image",
-		Image = Image.shl3.ui["team-change"]["panel.png"],
+		Image = Image["shl-3"].ui["team-change"]["panel.png"],
 		ImageColor3 = WHITE,
 		ScaleType = Enum.ScaleType.Stretch,
 		Body = {
@@ -73,10 +73,10 @@ local STYLE: Style = {
 		},
 		-- the grey bar its yes, no + okay were written on
 		Dialog = {
-			ButtonImage = Image.shl3.ui.common["button-template-3.png"],
+			ButtonImage = Image["shl-3"].ui.common["button-template-3.png"],
 		},
 		ExitButton = {
-			Image = Image.shl3.ui.common["exit.png"],
+			Image = Image["shl-3"].ui.common["exit.png"],
 			Size = UDim2.fromOffset(40, 40),
 		},
 		-- the label every character had over its head: read from up close only, the name gives way to the backstory

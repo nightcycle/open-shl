@@ -6,7 +6,7 @@
       0
     ],
     "Id": "cosmetics_eyes_alert",
-    "Image": "asset/image/shl3/face/eyes/alert.png",
+    "Image": "asset/image/shl-3/face/eyes/alert.png",
     "Key": "alert",
     "LegacyAssetId": 2136027139,
     "Name": "Alert Eyes",
@@ -22,7 +22,7 @@
       0
     ],
     "Id": "cosmetics_eyes_angry",
-    "Image": "asset/image/shl3/face/eyes/angry.png",
+    "Image": "asset/image/shl-3/face/eyes/angry.png",
     "Key": "angry",
     "LegacyAssetId": 2136030597,
     "Name": "Angry Eyes",
@@ -38,7 +38,7 @@
       0
     ],
     "Id": "cosmetics_eyes_brave",
-    "Image": "asset/image/shl3/face/eyes/brave.png",
+    "Image": "asset/image/shl-3/face/eyes/brave.png",
     "Key": "brave",
     "LegacyAssetId": 2136031616,
     "Name": "Brave Eyes",
@@ -54,7 +54,7 @@
       0
     ],
     "Id": "cosmetics_eyes_daring",
-    "Image": "asset/image/shl3/face/eyes/daring.png",
+    "Image": "asset/image/shl-3/face/eyes/daring.png",
     "Key": "daring",
     "LegacyAssetId": 2136032893,
     "Name": "Daring Eyes",
@@ -70,7 +70,7 @@
       0
     ],
     "Id": "cosmetics_eyes_evil",
-    "Image": "asset/image/shl3/face/eyes/evil.png",
+    "Image": "asset/image/shl-3/face/eyes/evil.png",
     "Key": "evil",
     "LegacyAssetId": 2136033943,
     "Name": "Evil Eyes",
@@ -86,7 +86,7 @@
       0
     ],
     "Id": "cosmetics_eyes_neutral",
-    "Image": "asset/image/shl3/face/eyes/neutral.png",
+    "Image": "asset/image/shl-3/face/eyes/neutral.png",
     "Key": "neutral",
     "LegacyAssetId": 2136037719,
     "Name": "Neutral Eyes",
@@ -102,7 +102,7 @@
       0
     ],
     "Id": "cosmetics_eyes_normal",
-    "Image": "asset/image/shl3/face/eyes/normal.png",
+    "Image": "asset/image/shl-3/face/eyes/normal.png",
     "Key": "normal",
     "LegacyAssetId": 2136039583,
     "Name": "Normal Eyes",
@@ -118,7 +118,7 @@
       0
     ],
     "Id": "cosmetics_eyes_scared",
-    "Image": "asset/image/shl3/face/eyes/scared.png",
+    "Image": "asset/image/shl-3/face/eyes/scared.png",
     "Key": "scared",
     "LegacyAssetId": 2136040557,
     "Name": "Scared Eyes",
@@ -134,7 +134,7 @@
       0
     ],
     "Id": "cosmetics_eyes_worried",
-    "Image": "asset/image/shl3/face/eyes/worried.png",
+    "Image": "asset/image/shl-3/face/eyes/worried.png",
     "Key": "worried",
     "LegacyAssetId": 2136041922,
     "Name": "Worried Eyes",
@@ -150,7 +150,7 @@
       1
     ],
     "Id": "cosmetics_mouth_angry",
-    "Image": "asset/image/shl3/face/mouth/angry.png",
+    "Image": "asset/image/shl-3/face/mouth/angry.png",
     "Key": "angry",
     "LegacyAssetId": 517998818,
     "Name": "Angry Mouth",
@@ -164,7 +164,7 @@
       1
     ],
     "Id": "cosmetics_mouth_brave",
-    "Image": "asset/image/shl3/face/mouth/brave.png",
+    "Image": "asset/image/shl-3/face/mouth/brave.png",
     "Key": "brave",
     "LegacyAssetId": 2136049102,
     "Name": "Brave Mouth",
@@ -178,7 +178,7 @@
       1
     ],
     "Id": "cosmetics_mouth_grimace",
-    "Image": "asset/image/shl3/face/mouth/grimace.png",
+    "Image": "asset/image/shl-3/face/mouth/grimace.png",
     "Key": "grimace",
     "LegacyAssetId": 2136049860,
     "Name": "Grimace",
@@ -192,7 +192,7 @@
       1
     ],
     "Id": "cosmetics_mouth_joyful",
-    "Image": "asset/image/shl3/face/mouth/joyful.png",
+    "Image": "asset/image/shl-3/face/mouth/joyful.png",
     "Key": "joyful",
     "LegacyAssetId": 2136050891,
     "Name": "Joyful Mouth",
@@ -206,7 +206,7 @@
       1
     ],
     "Id": "cosmetics_mouth_monster-smile",
-    "Image": "asset/image/shl3/face/mouth/monster-smile.png",
+    "Image": "asset/image/shl-3/face/mouth/monster-smile.png",
     "Key": "monster-smile",
     "LegacyAssetId": 2136052466,
     "Name": "Monster Smile",
@@ -220,7 +220,7 @@
       1
     ],
     "Id": "cosmetics_mouth_normal-smile",
-    "Image": "asset/image/shl3/face/mouth/normal-smile.png",
+    "Image": "asset/image/shl-3/face/mouth/normal-smile.png",
     "Key": "normal-smile",
     "LegacyAssetId": 2136053631,
     "Name": "Normal Smile",

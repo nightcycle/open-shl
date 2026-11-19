@@ -28,7 +28,7 @@ export type Properties = RobloxComponents.FrameProperties & {
 }
 -- Constants
 -- the strip a caption is written on: its art is a square as wide as the caption, hung so the strip is behind the text
-local LABEL_IMAGE = Image.shl3.ui.common["label.png"]
+local LABEL_IMAGE = Image["shl-3"].ui.common["label.png"]
 local LABEL_POSITION = UDim2.fromScale(0.5, 0.75)
 -- the text of a caption was never given a color, so it had the one the engine starts a text on
 local CAPTION_COLOR = Color3.fromRGB(27, 42, 53)

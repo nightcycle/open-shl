@@ -14,12 +14,12 @@ local BUTTONS: Buttons = {
 	LEFT = {
 		{
 			MenuId = PseudoEnum.MenuId.Swap,
-			Image = Image.shl3.ui.switch["open.png"],
+			Image = Image["shl-3"].ui.switch["open.png"],
 			Position = 0.4986,
 		},
 		{
 			MenuId = PseudoEnum.MenuId.Characters,
-			Image = Image.shl3.ui["suit-manager"]["open.png"],
+			Image = Image["shl-3"].ui["suit-manager"]["open.png"],
 			Position = 0.6,
 		},
 	},
@@ -27,12 +27,12 @@ local BUTTONS: Buttons = {
 	RIGHT = {
 		{
 			MenuId = PseudoEnum.MenuId.Database,
-			Image = Image.shl3.ui.info["open.png"],
+			Image = Image["shl-3"].ui.info["open.png"],
 			Position = 0.5,
 		},
 		{
 			MenuId = PseudoEnum.MenuId.Shop,
-			Image = Image.shl3.ui.shop["open.png"],
+			Image = Image["shl-3"].ui.shop["open.png"],
 			Position = 0.7,
 		},
 	},

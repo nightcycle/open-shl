@@ -187,7 +187,7 @@ rules:
     count: 2
     tags: [ImageCycle]
     attributes:
-      ImageKeys: shl1/gag/tv-static-2.png,shl1/gag/tv-static-1.png
+      ImageKeys: shl-1/gag/tv-static-2.png,shl-1/gag/tv-static-1.png
       ImageFace: Left
       ImageInterval: 0.2
       ImageDuration: 3
@@ -196,7 +196,7 @@ rules:
     count: 2
     tags: [FaceSwap]
     attributes:
-      ImageKeys: shl1/gag/toilet-face-1.png,shl1/gag/toilet-face-2.png,shl1/gag/toilet-face-3.png,shl1/gag/toilet-face-4.png,shl1/gag/toilet-face-5.png,shl1/gag/toilet-face-6.png,shl1/gag/toilet-face-7.png
+      ImageKeys: shl-1/gag/toilet-face-1.png,shl-1/gag/toilet-face-2.png,shl-1/gag/toilet-face-3.png,shl-1/gag/toilet-face-4.png,shl-1/gag/toilet-face-5.png,shl-1/gag/toilet-face-6.png,shl-1/gag/toilet-face-7.png
 
   # --- seats
   # every seat is the engine's own + sat on as it is, there's nothing to mark. this only keeps count of them

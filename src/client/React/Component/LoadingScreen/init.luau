@@ -15,7 +15,7 @@ local LoadingScreenTypes = require("@self/Types")
 export type ActionInfo = LoadingScreenTypes.ActionInfo
 export type Properties = LoadingScreenTypes.Properties
 -- Constants
-local LOGO_URL = Image.ui["loading-logo.png"]
+local LOGO_URL = Image["shl-2"].ui["loading-logo.png"]
 local PROMO_TEXT = "Join Deadly Pineapple Games for free gems!"
 local MIN_FILL = 0.01
 local FILL_TWEEN_INFO = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)

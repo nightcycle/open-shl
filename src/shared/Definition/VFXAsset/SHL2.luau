@@ -65,19 +65,19 @@ local MESHES: { [MeshKey]: MeshDefinition } = {
 	Sword = { MeshUrl = "rbxasset://fonts/sword.mesh", TextureUrl = "" },
 	ThrowingStar = { MeshUrl = "rbxassetid://11376946", TextureUrl = "" },
 	Claw = { MeshUrl = "rbxassetid://10681506", TextureUrl = "" },
-	Hammer = { MeshUrl = "rbxassetid://12592754", TextureUrl = Image.mesh["hammer.png"] },
+	Hammer = { MeshUrl = "rbxassetid://12592754", TextureUrl = Image["shl-2"].mesh["hammer.png"] },
 	Katana = { MeshUrl = "rbxassetid://11442510", TextureUrl = "" },
 	Knife = { MeshUrl = "rbxassetid://121944778", TextureUrl = "" },
 	Trident = { MeshUrl = "rbxassetid://53926151", TextureUrl = "" },
-	Rifle = { MeshUrl = "rbxassetid://72012671", TextureUrl = Image.mesh["rifle.png"] },
-	Handgun = { MeshUrl = "rbxassetid://72012879", TextureUrl = Image.mesh["handgun.png"] },
+	Rifle = { MeshUrl = "rbxassetid://72012671", TextureUrl = Image["shl-2"].mesh["rifle.png"] },
+	Handgun = { MeshUrl = "rbxassetid://72012879", TextureUrl = Image["shl-2"].mesh["handgun.png"] },
 	Bow = { MeshUrl = "rbxassetid://55709693", TextureUrl = "" },
 	Arrow = { MeshUrl = "rbxassetid://1036682", TextureUrl = "" },
-	Icicle = { MeshUrl = "rbxassetid://20518365", TextureUrl = Image.mesh["icicle.png"] },
+	Icicle = { MeshUrl = "rbxassetid://20518365", TextureUrl = Image["shl-2"].mesh["icicle.png"] },
 }
 local PARTICLES: { [ParticleKey]: ParticleDefinition } = {
 	LightningLeft = {
-		TextureUrl = Image.fx["lightning-left.png"],
+		TextureUrl = Image["shl-2"].fx["lightning-left.png"],
 		Rate = 30,
 		Lifetime = NumberRange.new(0.1, 0.2),
 		Size = 2,
@@ -87,7 +87,7 @@ local PARTICLES: { [ParticleKey]: ParticleDefinition } = {
 		IsLockedToPart = true,
 	},
 	LightningRight = {
-		TextureUrl = Image.fx["lightning-right.png"],
+		TextureUrl = Image["shl-2"].fx["lightning-right.png"],
 		Rate = 30,
 		Lifetime = NumberRange.new(0.1, 0.2),
 		Size = 2,
@@ -122,8 +122,8 @@ local PARTICLES: { [ParticleKey]: ParticleDefinition } = {
 	},
 }
 local DECALS: { [DecalKey]: DecalDefinition } = {
-	PsychicWave = { TextureUrl = Image.fx["shockwave.png"] },
-	Shockwave = { TextureUrl = Image.fx["psychic-boom.png"] },
+	PsychicWave = { TextureUrl = Image["shl-2"].fx["shockwave.png"] },
+	Shockwave = { TextureUrl = Image["shl-2"].fx["psychic-boom.png"] },
 }
 local CATALOGUE: VFXAssetCatalogue = {
 	Sounds = SOUNDS,

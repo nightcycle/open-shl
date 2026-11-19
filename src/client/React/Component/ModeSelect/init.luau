@@ -123,7 +123,7 @@ return function(props: Properties): React.ReactNode
 			}),
 
 			Combat = e(modeButton, {
-				Image = Image.ui["combat-mode.png"],
+				Image = Image["shl-2"].ui["combat-mode.png"],
 				Position = COMBAT_POSITION,
 				AwayPosition = COMBAT_AWAY_POSITION,
 				IsLeaving = props.IsLeaving,
@@ -136,7 +136,7 @@ return function(props: Properties): React.ReactNode
 			}),
 
 			Roleplay = e(modeButton, {
-				Image = Image.ui["roleplay-mode.png"],
+				Image = Image["shl-2"].ui["roleplay-mode.png"],
 				Position = ROLEPLAY_POSITION,
 				AwayPosition = ROLEPLAY_AWAY_POSITION,
 				IsLeaving = props.IsLeaving,

@@ -34,10 +34,10 @@ export type Properties = RobloxComponents.FrameProperties & {
 local CONSTANTS = require("@self/CONSTANTS")
 local WHITE = Color3.new(1, 1, 1)
 -- the art is a square canvas with the panel drawn across its middle, 1.8 times as tall as the frame it's centered on
-local PANEL_IMAGE = Image.shl3.ui.shop["panel.png"]
+local PANEL_IMAGE = Image["shl-3"].ui.shop["panel.png"]
 local PANEL_SIZE = UDim2.fromScale(1.8, 1.8)
 -- the rule under the cards is the thin sidebar of the other panels laid on its side
-local RULE_IMAGE = Image.shl3.ui.common["sidebar-thin.png"]
+local RULE_IMAGE = Image["shl-3"].ui.common["sidebar-thin.png"]
 local RULE_POSITION = UDim2.fromScale(0.5, 0.725)
 local RULE_SIZE = UDim2.fromScale(1.15, 0.92)
 local RULE_ROTATION = 90
@@ -59,12 +59,12 @@ local LIST_POSITION = UDim2.fromScale(0.5, 0.932)
 local LIST_SIZE = UDim2.fromScale(1.087, 0.6112)
 -- three lists wide whatever is in it
 local CANVAS_SIZE = UDim2.fromScale(3, 0)
-local SCROLL_BAR_IMAGE = Image.shl3.ui.shop["scroll-bar.png"]
+local SCROLL_BAR_IMAGE = Image["shl-3"].ui.shop["scroll-bar.png"]
 -- how thick the scroll bar is in scale of the width of its list + in pixels until that's known
 local SCROLL_BAR_SCALE = 0.03
 local SCROLL_BAR_THICKNESS = 14
 -- the exit of this panel is the old one of the kit, hung on the top right corner of the art
-local EXIT_IMAGE = Image.ui["exit.png"]
+local EXIT_IMAGE = Image.core.ui["exit.png"]
 local EXIT_ANCHOR_POINT = Vector2.new(0.7, 0.3)
 local EXIT_POSITION = UDim2.fromScale(1.11, 0.0568)
 local EXIT_SIZE = UDim2.fromScale(0.08, 0.08)

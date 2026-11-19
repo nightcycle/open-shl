@@ -17,8 +17,8 @@ type SwatchInfo = Types.SwatchInfo
 type TabInfo = Types.TabInfo
 type ToggleInfo = Types.ToggleInfo
 -- Constants
-local ART = Image.shl3.ui["suit-creation"]
-local COMMON_ART = Image.shl3.ui.common
+local ART = Image["shl-3"].ui["suit-creation"]
+local COMMON_ART = Image["shl-3"].ui.common
 local WHITE = Color3.new(1, 1, 1)
 -- the folders of the suit pieces, in the order the application button steps through them
 local LIMBS: { string } = table.freeze({
@@ -368,7 +368,7 @@ return {
 	LIST_PADDING = 0.13,
 	LIST_SCROLL_BAR_WIDTH = 0.05,
 	-- the bar the lists had is an image of the place that can't be fetched, this one is the shop's
-	LIST_SCROLL_BAR_IMAGE = Image.shl3.ui.shop["scroll-bar.png"],
+	LIST_SCROLL_BAR_IMAGE = Image["shl-3"].ui.shop["scroll-bar.png"],
 
 	SLOT_ART = ART["power-slot.png"],
 	SLOT_ART_SIZE = 1.3,

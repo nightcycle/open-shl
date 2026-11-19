@@ -19,7 +19,7 @@ export type Home = TutorialType.Home
 export type StepDefinition = TutorialType.StepDefinition
 export type SectionDefinition = TutorialType.SectionDefinition
 -- Constants
-local CAPTAIN_IMAGES = Image["captain-coolguy"]
+local CAPTAIN_IMAGES = Image["shl-2"]["captain-coolguy"]
 -- there is one flying image, he uses it whichever way he goes
 local POSE_IMAGES: { [Pose]: string } = table.freeze({
 	Fly = CAPTAIN_IMAGES["fly-right.png"],

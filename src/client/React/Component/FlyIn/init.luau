@@ -21,7 +21,7 @@ export type Properties = RobloxComponents.FrameProperties & {
 	OnAction: (ActionInfo) -> (),
 }
 -- Constants
-local LOGO_URL = Image.shl3.ui.intro["logo.png"]
+local LOGO_URL = Image["shl-3"].ui.intro["logo.png"]
 -- every screen before it ends on a blank one, this is how that clears off the city
 local CLEAR_TWEEN_INFO = TweenInfo.new(1, Enum.EasingStyle.Linear)
 -- the logo takes this much of the flight to come + as much of its end to go

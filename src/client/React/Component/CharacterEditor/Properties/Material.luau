@@ -27,30 +27,30 @@ local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React
 local GRID_COLUMNS = 5
 local BUTTON_SIZE = 1 / GRID_COLUMNS
 local MATERIALS: { MaterialInfo } = {
-	{ MATERIAL = Enum.Material.Plastic, ICON = Image.material["plastic.png"] },
-	{ MATERIAL = Enum.Material.Neon, ICON = Image.material["neon.png"] },
-	{ MATERIAL = Enum.Material.WoodPlanks, ICON = Image.material["wood-planks.png"] },
-	{ MATERIAL = Enum.Material.Slate, ICON = Image.material["slate.png"] },
-	{ MATERIAL = Enum.Material.Granite, ICON = Image.material["granite.png"] },
+	{ MATERIAL = Enum.Material.Plastic, ICON = Image["shl-2"].material["plastic.png"] },
+	{ MATERIAL = Enum.Material.Neon, ICON = Image["shl-2"].material["neon.png"] },
+	{ MATERIAL = Enum.Material.WoodPlanks, ICON = Image["shl-2"].material["wood-planks.png"] },
+	{ MATERIAL = Enum.Material.Slate, ICON = Image["shl-2"].material["slate.png"] },
+	{ MATERIAL = Enum.Material.Granite, ICON = Image["shl-2"].material["granite.png"] },
 
-	{ MATERIAL = Enum.Material.Pebble, ICON = Image.material["pebble.png"] },
-	{ MATERIAL = Enum.Material.CorrodedMetal, ICON = Image.material["corroded-metal.png"] },
-	{ MATERIAL = Enum.Material.Foil, ICON = Image.material["foil.png"] },
-	{ MATERIAL = Enum.Material.Grass, ICON = Image.material["grass.png"] },
-	{ MATERIAL = Enum.Material.Fabric, ICON = Image.material["fabric.png"] },
+	{ MATERIAL = Enum.Material.Pebble, ICON = Image["shl-2"].material["pebble.png"] },
+	{ MATERIAL = Enum.Material.CorrodedMetal, ICON = Image["shl-2"].material["corroded-metal.png"] },
+	{ MATERIAL = Enum.Material.Foil, ICON = Image["shl-2"].material["foil.png"] },
+	{ MATERIAL = Enum.Material.Grass, ICON = Image["shl-2"].material["grass.png"] },
+	{ MATERIAL = Enum.Material.Fabric, ICON = Image["shl-2"].material["fabric.png"] },
 
-	{ MATERIAL = Enum.Material.SmoothPlastic, ICON = Image.material["smooth-plastic.png"] },
-	{ MATERIAL = Enum.Material.Wood, ICON = Image.material["wood.png"] },
-	{ MATERIAL = Enum.Material.Marble, ICON = Image.material["marble.png"] },
-	{ MATERIAL = Enum.Material.Concrete, ICON = Image.material["concrete.png"] },
+	{ MATERIAL = Enum.Material.SmoothPlastic, ICON = Image["shl-2"].material["smooth-plastic.png"] },
+	{ MATERIAL = Enum.Material.Wood, ICON = Image["shl-2"].material["wood.png"] },
+	{ MATERIAL = Enum.Material.Marble, ICON = Image["shl-2"].material["marble.png"] },
+	{ MATERIAL = Enum.Material.Concrete, ICON = Image["shl-2"].material["concrete.png"] },
 
-	{ MATERIAL = Enum.Material.Brick, ICON = Image.material["brick.png"] },
-	{ MATERIAL = Enum.Material.Cobblestone, ICON = Image.material["cobblestone.png"] },
-	{ MATERIAL = Enum.Material.DiamondPlate, ICON = Image.material["diamond-plate.png"] },
-	{ MATERIAL = Enum.Material.Metal, ICON = Image.material["metal.png"] },
-	{ MATERIAL = Enum.Material.Sand, ICON = Image.material["sand.png"] },
+	{ MATERIAL = Enum.Material.Brick, ICON = Image["shl-2"].material["brick.png"] },
+	{ MATERIAL = Enum.Material.Cobblestone, ICON = Image["shl-2"].material["cobblestone.png"] },
+	{ MATERIAL = Enum.Material.DiamondPlate, ICON = Image["shl-2"].material["diamond-plate.png"] },
+	{ MATERIAL = Enum.Material.Metal, ICON = Image["shl-2"].material["metal.png"] },
+	{ MATERIAL = Enum.Material.Sand, ICON = Image["shl-2"].material["sand.png"] },
 
-	{ MATERIAL = Enum.Material.Ice, ICON = Image.material["ice.png"] },
+	{ MATERIAL = Enum.Material.Ice, ICON = Image["shl-2"].material["ice.png"] },
 }
 local GRID_ROWS = math.ceil(#MATERIALS / GRID_COLUMNS)
 -- Variables

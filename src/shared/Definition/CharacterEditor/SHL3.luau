@@ -79,7 +79,7 @@ local function getPatternChoices(): { PatternChoice }
 	table.insert(out, NEON_PATTERN_INDEX, {
 		Name = "Neon",
 		Material = Enum.Material.Neon,
-		Icon = IconDefinitionConstructor.decal(Image.shl3.ui["suit-creation"]["neon-swatch.png"]),
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].ui["suit-creation"]["neon-swatch.png"]),
 	})
 	return out
 end

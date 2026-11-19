@@ -72,7 +72,7 @@ local STYLE: Style = {
 		-- it never had one, what's asked in it stands in a box like any of its panels
 		Dialog = {},
 		ExitButton = {
-			Image = Image.ui["exit.png"],
+			Image = Image.core.ui["exit.png"],
 			Size = UDim2.fromOffset(40, 40),
 		},
 		NameTag = {

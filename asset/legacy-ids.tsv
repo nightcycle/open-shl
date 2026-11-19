@@ -2,24 +2,24 @@ id	games	type	target	sha256	batch	note
 1008743	shl1	Image	dropped	0d951094552130fe39e95a2479684612058a60533ca6850c11ce13ad532a8973		a billboard texture kept in ServerStorage that nothing uses
 1008745	shl1	Image	dropped	8b0653d2e060dc76571b4e4b777e5855f4605277519a8bbe9d4f481cfa821d09		a billboard texture kept in ServerStorage that nothing uses
 1008748	shl1	Image	dropped	628388cbe39a03de642d85cdb40846444a9ce313c008c59a74156b7ef454ba74		a billboard texture kept in ServerStorage that nothing uses
-1010385	shl3,shl3-big-map	Image	asset/image/shl3/sky/cloudy/right.png	f04eae822af8a0be347f05f573605308201a9772d7362808493682b4f3276963	shl3-sky	
-1010386	shl3,shl3-big-map	Image	asset/image/shl3/sky/cloudy/front.png	e2a22ff5d31df55017b71fe4cb4e0f96a942a620a68ae47ea72acda0aef5a5a4	shl3-sky	
-1010387	shl3,shl3-big-map	Image	asset/image/shl3/sky/cloudy/left.png	e584df048b1103b93e241ffe53a91166b5f53db583c7fe6e8cfc1d9d3e142c77	shl3-sky	
-1010388	shl3,shl3-big-map	Image	asset/image/shl3/sky/cloudy/back.png	9a64d92ede3cadf1387bbbd8b40c9785d845dbbd8703c724d37fff7311109bfe	shl3-sky	
-1010389	shl3,shl3-big-map	Image	asset/image/shl3/sky/cloudy/down.png	96a8a7738fe4b117ede5e8a908be3a98f70f1d1fccbc1b93c11e5b9261efdc1b	shl3-sky	
-1010390	shl3,shl3-big-map	Image	asset/image/shl3/sky/cloudy/up.png	0d08df50eb12cffb89906e7e6dcd3a4c1c0772faec00e89853ff6f840c0b94c6	shl3-sky	
-1013841	shl3,shl3-big-map	Image	asset/image/shl3/sky/apocalypse/right.png	da5f350c5fa9350b1e02fe5f39e07bd2f717eb781bf457e662e2e098f2834810	shl3-sky	
-1013842	shl3,shl3-big-map	Image	asset/image/shl3/sky/apocalypse/front.png	ada197f8be831f6901bfa156c1eb88c457e23ef6cd456b57c16490a4ba43ad05	shl3-sky	
-1013843	shl3,shl3-big-map	Image	asset/image/shl3/sky/apocalypse/left.png	45f92071b48a4675b309dfe6d2a41902d283cfcef49096296d30117b22c1178a	shl3-sky	
-1013844	shl3,shl3-big-map	Image	asset/image/shl3/sky/apocalypse/back.png	37b727c99e9cca06ecc91be9e0f2b05a518847dc233f1d1a135f02a48933e003	shl3-sky	
-1013845	shl3,shl3-big-map	Image	asset/image/shl3/sky/apocalypse/down.png	148003b70881da2b87b7cddca8784a82bb6d11465800faa790d4826553c47239	shl3-sky	
-1013848	shl3,shl3-big-map	Image	asset/image/shl3/sky/apocalypse/up.png	d1ef82086df3f44f78f3a2d12f7f94a9ed255fb846d92ddc39c4f5f7da022bb1	shl3-sky	
-1014347	shl1	Image	asset/image/shl1/sky/default/right.png	db7c340756a2c4672d2497f8d208a3e9958cab6e63833c9db7162142b7e548d0	shl1-sky	
-1014348	shl1	Image	asset/image/shl1/sky/default/front.png	f16d17f8fda9f6a065c25ad20519ec0e09e6bfa3f18a52084ad71bad6692f5d2	shl1-sky	
-1014349	shl1	Image	asset/image/shl1/sky/default/left.png	58e5fdc061751cd287956f8fb3ddc83f16f5966f5b36de7e224181e00d39d71a	shl1-sky	
-1014350	shl1	Image	asset/image/shl1/sky/default/back.png	889912b4465a18895d543860455e7b7b3d4d8e00a5a8fbe341fe44c8160aa4b8	shl1-sky	
-1014351	shl1	Image	asset/image/shl1/sky/default/down.png	9e86e76f2dc948c9c559d0e1f221557eaaee4b51d1f2461e13938c73ef073fad	shl1-sky	
-1014352	shl1	Image	asset/image/shl1/sky/default/up.png	c4ad80de01ffbadd0540768ba4b51085a010f1b5f84fc5550962459baa540883	shl1-sky	
+1010385	shl3,shl3-big-map	Image	asset/image/shl-3/sky/cloudy/right.png	f04eae822af8a0be347f05f573605308201a9772d7362808493682b4f3276963	shl3-sky	
+1010386	shl3,shl3-big-map	Image	asset/image/shl-3/sky/cloudy/front.png	e2a22ff5d31df55017b71fe4cb4e0f96a942a620a68ae47ea72acda0aef5a5a4	shl3-sky	
+1010387	shl3,shl3-big-map	Image	asset/image/shl-3/sky/cloudy/left.png	e584df048b1103b93e241ffe53a91166b5f53db583c7fe6e8cfc1d9d3e142c77	shl3-sky	
+1010388	shl3,shl3-big-map	Image	asset/image/shl-3/sky/cloudy/back.png	9a64d92ede3cadf1387bbbd8b40c9785d845dbbd8703c724d37fff7311109bfe	shl3-sky	
+1010389	shl3,shl3-big-map	Image	asset/image/shl-3/sky/cloudy/down.png	96a8a7738fe4b117ede5e8a908be3a98f70f1d1fccbc1b93c11e5b9261efdc1b	shl3-sky	
+1010390	shl3,shl3-big-map	Image	asset/image/shl-3/sky/cloudy/up.png	0d08df50eb12cffb89906e7e6dcd3a4c1c0772faec00e89853ff6f840c0b94c6	shl3-sky	
+1013841	shl3,shl3-big-map	Image	asset/image/shl-3/sky/apocalypse/right.png	da5f350c5fa9350b1e02fe5f39e07bd2f717eb781bf457e662e2e098f2834810	shl3-sky	
+1013842	shl3,shl3-big-map	Image	asset/image/shl-3/sky/apocalypse/front.png	ada197f8be831f6901bfa156c1eb88c457e23ef6cd456b57c16490a4ba43ad05	shl3-sky	
+1013843	shl3,shl3-big-map	Image	asset/image/shl-3/sky/apocalypse/left.png	45f92071b48a4675b309dfe6d2a41902d283cfcef49096296d30117b22c1178a	shl3-sky	
+1013844	shl3,shl3-big-map	Image	asset/image/shl-3/sky/apocalypse/back.png	37b727c99e9cca06ecc91be9e0f2b05a518847dc233f1d1a135f02a48933e003	shl3-sky	
+1013845	shl3,shl3-big-map	Image	asset/image/shl-3/sky/apocalypse/down.png	148003b70881da2b87b7cddca8784a82bb6d11465800faa790d4826553c47239	shl3-sky	
+1013848	shl3,shl3-big-map	Image	asset/image/shl-3/sky/apocalypse/up.png	d1ef82086df3f44f78f3a2d12f7f94a9ed255fb846d92ddc39c4f5f7da022bb1	shl3-sky	
+1014347	shl1	Image	asset/image/shl-1/sky/default/right.png	db7c340756a2c4672d2497f8d208a3e9958cab6e63833c9db7162142b7e548d0	shl1-sky	
+1014348	shl1	Image	asset/image/shl-1/sky/default/front.png	f16d17f8fda9f6a065c25ad20519ec0e09e6bfa3f18a52084ad71bad6692f5d2	shl1-sky	
+1014349	shl1	Image	asset/image/shl-1/sky/default/left.png	58e5fdc061751cd287956f8fb3ddc83f16f5966f5b36de7e224181e00d39d71a	shl1-sky	
+1014350	shl1	Image	asset/image/shl-1/sky/default/back.png	889912b4465a18895d543860455e7b7b3d4d8e00a5a8fbe341fe44c8160aa4b8	shl1-sky	
+1014351	shl1	Image	asset/image/shl-1/sky/default/down.png	9e86e76f2dc948c9c559d0e1f221557eaaee4b51d1f2461e13938c73ef073fad	shl1-sky	
+1014352	shl1	Image	asset/image/shl-1/sky/default/up.png	c4ad80de01ffbadd0540768ba4b51085a010f1b5f84fc5550962459baa540883	shl1-sky	
 1014476	shl1	Lua	dropped			a LinkedSource, no legacy script is ported
 1017330	shl1	Image	dropped	e3c113b19fc647167f850c9eec8da9f32436d3814724095dd40311768febe8bb		a billboard texture kept in ServerStorage that nothing uses
 1017331	shl1	Image	dropped	b4ad9ccb5597cc8620ec4104610d0fa90d260980e03ead30efbf147252a239a6		a billboard texture kept in ServerStorage that nothing uses
@@ -36,31 +36,31 @@ id	games	type	target	sha256	batch	note
 1017349	shl1	Image	dropped	14ccea0052b79bb2357946a4cb29266b289fe08f668d73929caa83ee35747f51		a billboard texture kept in ServerStorage that nothing uses
 1028713	shl3,shl3-big-map	Mesh	legacy			
 1051545	shl3,shl3-big-map	Mesh	legacy			
-1073671	shl3,shl3-big-map	Image	asset/image/shl3/mesh/clothing-pickup.png	adefc215dd0e589353146b415c4d0d047fef7342c5c53c3ae5f33fd2076b5634	shl3-mesh	
+1073671	shl3,shl3-big-map	Image	asset/image/shl-3/mesh/clothing-pickup.png	adefc215dd0e589353146b415c4d0d047fef7342c5c53c3ae5f33fd2076b5634	shl3-mesh	
 1082802	shl3	Mesh	legacy			
-1082804	shl3	Image	asset/image/shl3/mesh/traffic-cone.png	3cf2d0a3e15ba94e6b38a8bc35721822e9a8ddcc2b69e30213aa119b573f833f	shl3-mesh	
+1082804	shl3	Image	asset/image/shl-3/mesh/traffic-cone.png	3cf2d0a3e15ba94e6b38a8bc35721822e9a8ddcc2b69e30213aa119b573f833f	shl3-mesh	
 1082816	shl3	Mesh	legacy			
-1279012	shl3,shl3-big-map	Image	asset/image/shl3/mesh/hammer.png	965601edcd2de90cb4ce9fcd020fa7523e425ae7ede759dde59436f3d6f90e70	shl3-mesh	
+1279012	shl3,shl3-big-map	Image	asset/image/shl-3/mesh/hammer.png	965601edcd2de90cb4ce9fcd020fa7523e425ae7ede759dde59436f3d6f90e70	shl3-mesh	
 1279013	shl3,shl3-big-map	Mesh	legacy			
 1285237	shl3,shl3-big-map	Mesh	legacy			
-1285242	shl1	Image	asset/image/shl1/mesh/paper.png	ae0b1bc40f607cb64748fed5ec8d63ae9cb587e10d8b7328c79c683ed9f88feb	shl1-mesh	
+1285242	shl1	Image	asset/image/shl-1/mesh/paper.png	ae0b1bc40f607cb64748fed5ec8d63ae9cb587e10d8b7328c79c683ed9f88feb	shl1-mesh	
 1285245	shl1	Mesh	legacy			
 1286427	shl1	Mesh	legacy			
 2101137	shl1	Audio	legacy			
 2466803	shl1	Image	dropped			refused: Asset is not approved for the requester; the cash texture of the Bank safe, SHL3's bill 16658163 stands in for it
 2697431	shl1	Audio	legacy			
 3270017	shl1	Mesh	legacy			
-3270066	shl1	Image	asset/image/shl1/mesh/portal-beam.png	e4015da0c4902b2e197f2f7db90415ac9d4824432d33dac05aeefb00825611e7	shl1-mesh	
+3270066	shl1	Image	asset/image/shl-1/mesh/portal-beam.png	e4015da0c4902b2e197f2f7db90415ac9d4824432d33dac05aeefb00825611e7	shl1-mesh	
 3835506	shl3,shl3-big-map	Mesh	legacy			
-8329421	shl1	Image	asset/image/shl1/gag/toilet-face-7.png	24e207f81faac976c0b6108e8915878d463525e7b0ae76dd3be4f198273fbb0d	shl1-gag	
+8329421	shl1	Image	asset/image/shl-1/gag/toilet-face-7.png	24e207f81faac976c0b6108e8915878d463525e7b0ae76dd3be4f198273fbb0d	shl1-gag	
 8570385	shl1	Mesh	legacy			
 9879704	shl3	Image	dropped	e5d3179aa567b9713b9f0516da6d4800dc7908ad27dc12a40ab257ceb19a2a8d		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 9939963	shl3	Image	dropped	7f1a4cf9fd02ec7a5d1ac0bd74df51b7b0443d87b32789ee3b1a85da350e348c		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
-10061209	shl1	Image	asset/image/shl1/mesh/globe.png	d9bbb7fcf0353e3191ec9c943474a91ee83085deac319876a2b6e85d4930f5a6	shl1-mesh	
+10061209	shl1	Image	asset/image/shl-1/mesh/globe.png	d9bbb7fcf0353e3191ec9c943474a91ee83085deac319876a2b6e85d4930f5a6	shl1-mesh	
 10061232	shl1	Mesh	legacy			
-10470600	shl3	Image	asset/image/shl3/mesh/bloxy-cola.png	8c3ed85323a0910b07066f08b5a87caa74ba616e560ec00372417d6e99023c11	shl3-mesh	
+10470600	shl3	Image	asset/image/shl-3/mesh/bloxy-cola.png	8c3ed85323a0910b07066f08b5a87caa74ba616e560ec00372417d6e99023c11	shl3-mesh	
 10470609	shl3	Mesh	legacy			
-10504421	shl3	Image	asset/image/shl3/mesh/electric-guitar.png	036376b8a01ec3b1d76bf2c7e96b34da919fcd0e59a59303e4c1fc74e6e8d66a	shl3-mesh	
+10504421	shl3	Image	asset/image/shl-3/mesh/electric-guitar.png	036376b8a01ec3b1d76bf2c7e96b34da919fcd0e59a59303e4c1fc74e6e8d66a	shl3-mesh	
 10548108	shl1,shl3	Audio	legacy			
 10681506	shl3,shl3-big-map	Mesh	legacy			
 10721950	shl3	Audio	legacy			
@@ -74,7 +74,7 @@ id	games	type	target	sha256	batch	note
 11387922	shl1	Audio	legacy			
 11419729	shl3,shl3-big-map	Mesh	legacy			
 11442510	shl1,shl3,shl3-big-map	Mesh	legacy			
-11442524	shl1,shl3,shl3-big-map	Image	asset/image/mesh/katana.png	bb2d5805d50266b7e2d2b32450a668ae08ba814e355913900e79e68a75147bce	mesh	
+11442524	shl1,shl3,shl3-big-map	Image	asset/image/core/mesh/katana.png	bb2d5805d50266b7e2d2b32450a668ae08ba814e355913900e79e68a75147bce	mesh	
 11944350	shl1	Audio	legacy			
 11945266	shl1	Audio	legacy			
 12212520	shl1,shl3,shl3-big-map	Mesh	legacy			
@@ -84,7 +84,7 @@ id	games	type	target	sha256	batch	note
 12259089	shl1,shl3,shl3-big-map	Mesh	legacy			
 12259117	shl1,shl3,shl3-big-map	Mesh	legacy			
 12259127	shl3-big-map	Mesh	legacy			
-12592745	shl1	Image	asset/image/mesh/hammer.png	cafd16cb56979c09c767937ff2413149323f899067a6d83d833b9fa25d685b71		byte-identical to the file already in the repo
+12592745	shl1	Image	asset/image/shl-2/mesh/hammer.png	cafd16cb56979c09c767937ff2413149323f899067a6d83d833b9fa25d685b71		byte-identical to the file already in the repo
 12592754	shl1	Mesh	legacy			
 12722518	shl1	Audio	legacy			
 13070796	shl1,shl3-big-map	Mesh	legacy			
@@ -93,56 +93,56 @@ id	games	type	target	sha256	batch	note
 13510737	shl1	Audio	legacy			
 13640868	shl3-big-map	Mesh	legacy			
 13775494	shl1,shl3,shl3-big-map	Audio	legacy			
-14123340	shl1	Image	asset/image/shl1/gag/toilet-face-3.png	7b35c6016c93c6793271ee5055164e776d0289129d33537539fcd95070758f3a	shl1-gag	
-14393560	shl3,shl3-big-map	Image	asset/image/shl3/mesh/bob-brick-accessory.png	fe690185de9a59ed303f81c02867c335498e01421c8d7f024b5af1a6cd236fad	shl3-mesh	named after its instance (BobBrick/Handle): what it shows was not identified
+14123340	shl1	Image	asset/image/shl-1/gag/toilet-face-3.png	7b35c6016c93c6793271ee5055164e776d0289129d33537539fcd95070758f3a	shl1-gag	
+14393560	shl3,shl3-big-map	Image	asset/image/shl-3/mesh/bob-brick-accessory.png	fe690185de9a59ed303f81c02867c335498e01421c8d7f024b5af1a6cd236fad	shl3-mesh	named after its instance (BobBrick/Handle): what it shows was not identified
 14393590	shl3,shl3-big-map	Mesh	legacy			
-14846834	shl3	Image	asset/image/shl3/mesh/taco.png	8f970ed21f92470709bf440c508d3f8e822084ce23ff0d1f4fa776be8c631124	shl3-mesh	also on a Cheeseburger pad of the map
+14846834	shl3	Image	asset/image/shl-3/mesh/taco.png	8f970ed21f92470709bf440c508d3f8e822084ce23ff0d1f4fa776be8c631124	shl3-mesh	also on a Cheeseburger pad of the map
 14846869	shl3	Mesh	legacy			
 15047813	shl3	Audio	legacy			
 15158080	shl1	Mesh	legacy			
 15174422	shl3	Audio	legacy			
-15324447	shl1	Image	asset/image/shl1/gag/toilet-face-1.png	938363ec9c23805fce037e58069ced7b3bf58b78a6e88066eb212e4d1d66b15f	shl1-gag	
+15324447	shl1	Image	asset/image/shl-1/gag/toilet-face-1.png	938363ec9c23805fce037e58069ced7b3bf58b78a6e88066eb212e4d1d66b15f	shl1-gag	
 15730710	shl1,shl3,shl3-big-map	Mesh	legacy			
 15887356	shl1	Mesh	legacy			
-15929949	shl3	Image	asset/image/shl3/mesh/latte.png	1175b2ac9091f01185edaa37a1d8dc1c337197a33141d7906d38d8c0706de5c9	shl3-mesh	
+15929949	shl3	Image	asset/image/shl-3/mesh/latte.png	1175b2ac9091f01185edaa37a1d8dc1c337197a33141d7906d38d8c0706de5c9	shl3-mesh	
 15929962	shl1,shl3	Mesh	legacy			
 16190466	shl3,shl3-big-map	Mesh	legacy			
 16211030	shl1,shl3,shl3-big-map	Audio	legacy			
 16211041	shl1	Audio	legacy			
-16432575	shl3	Image	asset/image/shl3/mesh/cheeseburger.png	bf6a5624418e2a5b8a18f60de3a1b4d000534423ffcd5e1b4a0d40c446b0bdcf	shl3-mesh	
+16432575	shl3	Image	asset/image/shl-3/mesh/cheeseburger.png	bf6a5624418e2a5b8a18f60de3a1b4d000534423ffcd5e1b4a0d40c446b0bdcf	shl3-mesh	
 16433315	shl1	Audio	legacy			
-16580636	shl1	Image	asset/image/shl1/face/head-8.png	cc5a2959c36b179fd0c5f468274edd06991ff9f43bc5f53e284a9dfe310ac64a	shl1-face	
+16580636	shl1	Image	asset/image/shl-1/face/head-8.png	cc5a2959c36b179fd0c5f468274edd06991ff9f43bc5f53e284a9dfe310ac64a	shl1-face	
 16627529	shl1,shl3,shl3-big-map	Mesh	legacy			
 16646125	shl3	Mesh	legacy			
 16647570	shl3	Audio	legacy			
 16647579	shl3	Audio	legacy			
-16657057	shl3	Image	asset/image/shl3/mesh/moneybag.png	5d4791fc50d899d70879b45b5aa6f0eb224d39422ddb6ea91594763feb27dcfd	shl3-mesh	
+16657057	shl3	Image	asset/image/shl-3/mesh/moneybag.png	5d4791fc50d899d70879b45b5aa6f0eb224d39422ddb6ea91594763feb27dcfd	shl3-mesh	
 16657069	shl3	Mesh	legacy			
-16658163	shl3	Image	asset/image/shl3/prop/moneybag/bill.png	70319b0590f0338bd8b7d91a9109134f9bc5b4d5c1a2242494b786d70e5e2584	shl3-prop	also stands in for SHL1's safe cash texture 2466803, which could not be downloaded
+16658163	shl3	Image	asset/image/shl-3/prop/moneybag/bill.png	70319b0590f0338bd8b7d91a9109134f9bc5b4d5c1a2242494b786d70e5e2584	shl3-prop	also stands in for SHL1's safe cash texture 2466803, which could not be downloaded
 16720281	shl3	Audio	legacy			
 16720502	shl3	Audio	legacy			
 16720508	shl3	Audio	legacy			
-17230185	shl3	Image	asset/image/shl3/mesh/bloxiade.png	a4252ea144bdfd32bfedbbbedaba36e1c6c98bb051dee6ea6e382b87b669196b	shl3-mesh	
+17230185	shl3	Image	asset/image/shl-3/mesh/bloxiade.png	a4252ea144bdfd32bfedbbbedaba36e1c6c98bb051dee6ea6e382b87b669196b	shl3-mesh	
 17230208	shl3	Mesh	legacy			
 18478970	shl3	Audio	legacy			
-19287687	shl1	Image	asset/image/mesh/icicle.png	eb5a76a68cd802a5afb192180349122aa15dbed77fc04b3423fafe9bd7fb2682		byte-identical to the file already in the repo
+19287687	shl1	Image	asset/image/shl-2/mesh/icicle.png	eb5a76a68cd802a5afb192180349122aa15dbed77fc04b3423fafe9bd7fb2682		byte-identical to the file already in the repo
 19380683	shl3-big-map	Mesh	legacy			
 19999424	shl1,shl3,shl3-big-map	Mesh	legacy			
 20518365	shl1	Mesh	legacy			
 20572821	shl3	Image	dropped	df0d1d6d98b62aa3b3f00bc3fe1df3a30fa9a508346b28679c1b7083f80ae512		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
-22589467	shl3	Image	asset/image/shl3/mesh/pizza.png	2ed76dd62ed8d9e8fa35e4b22082d4e5b341659a1d135d03385a5e28aa35e3a1	shl3-mesh	
+22589467	shl3	Image	asset/image/shl-3/mesh/pizza.png	2ed76dd62ed8d9e8fa35e4b22082d4e5b341659a1d135d03385a5e28aa35e3a1	shl3-mesh	
 22589477	shl3	Mesh	legacy			
 22593428	shl3	Audio	legacy			
 22593942	shl3	Audio	legacy			
-22770653	shl3	Image	asset/image/shl3/mesh/watermelon.png	c1431e639bf73103018e575e15b12e6419caa4690708554f357feb57156bc504	shl3-mesh	
+22770653	shl3	Image	asset/image/shl-3/mesh/watermelon.png	c1431e639bf73103018e575e15b12e6419caa4690708554f357feb57156bc504	shl3-mesh	
 22770654	shl3	Mesh	legacy			
 22772750	shl3	Audio	legacy			
-23931977	shl1	Image	asset/image/shl1/gag/toilet-face-6.png	7164125a5797c2cb1b5ff612fe45399ccb630589924f1599a5589d62d20a4ddc	shl1-gag	
-24067663	shl1	Image	asset/image/shl1/gag/toilet-face-5.png	84a2c2462bf0ddd393c0d93163c356a68d44a2e253ccf80c5581db1987906bb4	shl1-gag	
+23931977	shl1	Image	asset/image/shl-1/gag/toilet-face-6.png	7164125a5797c2cb1b5ff612fe45399ccb630589924f1599a5589d62d20a4ddc	shl1-gag	
+24067663	shl1	Image	asset/image/shl-1/gag/toilet-face-5.png	84a2c2462bf0ddd393c0d93163c356a68d44a2e253ccf80c5581db1987906bb4	shl1-gag	
 25212400	shl1	Mesh	legacy			
-25920406	shl1	Image	asset/image/shl1/mesh/potted-plant.png	21aaa53c08cbea54d943a13ec547e20b856b2b7cb7aeca55e72058802a545437	shl1-mesh	
+25920406	shl1	Image	asset/image/shl-1/mesh/potted-plant.png	21aaa53c08cbea54d943a13ec547e20b856b2b7cb7aeca55e72058802a545437	shl1-mesh	
 25920418	shl1	Mesh	legacy			
-26639722	shl3	Image	asset/image/shl3/mesh/acoustic-guitar.png	2d3d48263aca0192e3cb7421e79be5d25953304b926e5499ce663a558ac754a2	shl3-mesh	
+26639722	shl3	Image	asset/image/shl-3/mesh/acoustic-guitar.png	2d3d48263aca0192e3cb7421e79be5d25953304b926e5499ce663a558ac754a2	shl3-mesh	
 26639749	shl3	Mesh	legacy			
 26960022	shl3	Image	dropped	915f2d25683e81f1cec35378125b25e81283469844c4e86b99ecdf544b61f7b1		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 26980860	shl3	Image	dropped	bc9ef446705db5ab9bb3d49cce6ee97ae7721a5f992ba9a6399e659fd83e0202		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
@@ -154,10 +154,10 @@ id	games	type	target	sha256	batch	note
 27039641	shl3	Image	dropped	41a799178d0ec01dd314e3d6fe167bf61739fd25663764d65c11709fb569e05f		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 27041544	shl3	Audio	dropped			an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 27075775	shl3	Image	dropped	48c8e62931ece80e475903a1315a7819732e152a06f5ba470908e071fab23c86		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
-27722387	shl1	Image	asset/image/shl1/face/head-6.png	afa270826f8fa95b63f51e4c69b703d1881d36d45220c4a3bafbfc9b5fc97b81	shl1-face	
-28118994	shl1	Image	asset/image/shl1/gag/toilet-face-4.png	90b6cc37bdfd4a28a9ecbdb86558cd1249f4fb19caa4c7c8d9453f329c0f3ee8	shl1-gag	
+27722387	shl1	Image	asset/image/shl-1/face/head-6.png	afa270826f8fa95b63f51e4c69b703d1881d36d45220c4a3bafbfc9b5fc97b81	shl1-face	
+28118994	shl1	Image	asset/image/shl-1/gag/toilet-face-4.png	90b6cc37bdfd4a28a9ecbdb86558cd1249f4fb19caa4c7c8d9453f329c0f3ee8	shl1-gag	
 28463033	shl1	Mesh	legacy			
-29073295	shl1	Image	asset/image/shl1/ui/cursor/bow.png	332e793d96aa417fed4ee69d6fb9131593d9e5f47cc4e42c8b30b63cdd6951e9	shl1-ui	
+29073295	shl1	Image	asset/image/shl-1/ui/cursor/bow.png	332e793d96aa417fed4ee69d6fb9131593d9e5f47cc4e42c8b30b63cdd6951e9	shl1-ui	
 29329443	shl3	Image	dropped	b2db47a05dbf0b02da8e5b51b4f5829028801776c1db4fe8b6493eb14927483d		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 29329629	shl3	Image	dropped	a365f7235413ed95eeaa87d9fad8c2170932eed7102acd74a1871cea029c6e4d		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 29329916	shl3	Image	dropped	f65fe580de96c43622c513a6b5a2de798ce4d34c1ba9dac7a585cdbd2b0dca00		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
@@ -180,65 +180,65 @@ id	games	type	target	sha256	batch	note
 29447139	shl3	Audio	dropped			an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 29896287	shl3	Mesh	dropped			an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 29896653	shl3	Image	dropped	489142574f75593fee7f87c147f8fca4620892014960aaf0d840f36c7b90423a		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
-29915491	shl3	Image	asset/image/shl3/ui/intro/roleplay-icon.png	c362e0a83b015da2853d2493ab38e8e12e541e841a88eb60494a4a91e8af7933	shl3-ui	
-30090729	shl1	Image	asset/image/shl1/mesh/coffee-cup.png	06e6618869b8376f038d3e8ac3d36852226d8f181f33d21b850000c1275fde26	shl1-mesh	
+29915491	shl3	Image	asset/image/shl-3/ui/intro/roleplay-icon.png	c362e0a83b015da2853d2493ab38e8e12e541e841a88eb60494a4a91e8af7933	shl3-ui	
+30090729	shl1	Image	asset/image/shl-1/mesh/coffee-cup.png	06e6618869b8376f038d3e8ac3d36852226d8f181f33d21b850000c1275fde26	shl1-mesh	
 30166087	shl1,shl3,shl3-big-map	Mesh	legacy			
-30265036	shl1	Image	asset/image/shl1/gag/toilet-face-2.png	3708e9e6895d207ecc1c6c850f7ee9410c4b90b9b62a67a286a14189b7421701	shl1-gag	
-30307531	shl1,shl3	Image	asset/image/mesh/grappling-hook.png	1722521e50adc8654ae7ce0f39829453c940d1b0157ec4e4c69fd28c65a4efc1	mesh	
+30265036	shl1	Image	asset/image/shl-1/gag/toilet-face-2.png	3708e9e6895d207ecc1c6c850f7ee9410c4b90b9b62a67a286a14189b7421701	shl1-gag	
+30307531	shl1,shl3	Image	asset/image/core/mesh/grappling-hook.png	1722521e50adc8654ae7ce0f39829453c940d1b0157ec4e4c69fd28c65a4efc1	mesh	
 30307623	shl1,shl3	Mesh	legacy			
 30308256	shl1	Mesh	legacy			
 30624426	shl1	Audio	legacy			
 32656754	shl1	Audio	legacy			
 32788850	shl1	Audio	legacy			
-33397509	shl3	Image	asset/image/shl3/mesh/museum-egg.png	c1592e88ab39fcecbdeeea520694f9b92ee26c16a95d8314d524af19e8384845	shl3-mesh	
-33803004	shl1	Image	asset/image/shl1/mesh/bow-bolt.png	a43e10cd6bedabae1a80114e50d92ba114027b87038f87d31abcaca1ba28e830	shl1-mesh	
+33397509	shl3	Image	asset/image/shl-3/mesh/museum-egg.png	c1592e88ab39fcecbdeeea520694f9b92ee26c16a95d8314d524af19e8384845	shl3-mesh	
+33803004	shl1	Image	asset/image/shl-1/mesh/bow-bolt.png	a43e10cd6bedabae1a80114e50d92ba114027b87038f87d31abcaca1ba28e830	shl1-mesh	
 34065729	shl3	Image	dropped	999a615584b7709ffe75d6229ff1e1a9e6d3e81852451f3488cf49140a293069		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
 34312118	shl1	Mesh	legacy			
-34312142	shl1	Image	asset/image/shl1/mesh/portal.png	c192c2748f946ac5780e0f5dd7cee10dd441cb8329fcbff7f16fa5994c868f95	shl1-mesh	
+34312142	shl1	Image	asset/image/shl-1/mesh/portal.png	c192c2748f946ac5780e0f5dd7cee10dd441cb8329fcbff7f16fa5994c868f95	shl1-mesh	
 34320952	shl1	Audio	legacy			
 34320976	shl1	Audio	legacy			
 34365512	shl1	Audio	legacy			
-34818288	shl1	Image	asset/image/shl1/face/head-10.png	dbed51564333ed894ee61143b7e79c08090964d1a06c760a5cc273d5afea96cd	shl1-face	
+34818288	shl1	Image	asset/image/shl-1/face/head-10.png	dbed51564333ed894ee61143b7e79c08090964d1a06c760a5cc273d5afea96cd	shl1-face	
 36870078	shl1,shl3,shl3-big-map	Mesh	legacy			
-37037765	shl3,shl3-big-map	Image	asset/image/shl3/map/job-marker.png	1561350dee042e4dea230b5f3607d9cd955951e1d76b77ebb2ef3715405f633b	shl3-map	
-41273211	shl1	Image	asset/image/shl1/face/head-5.png	01dcdf4df97557a910145cde38ce511cc47f74088845dada38dea1a6ee1f901b	shl1-face	
+37037765	shl3,shl3-big-map	Image	asset/image/shl-3/map/job-marker.png	1561350dee042e4dea230b5f3607d9cd955951e1d76b77ebb2ef3715405f633b	shl3-map	
+41273211	shl1	Image	asset/image/shl-1/face/head-5.png	01dcdf4df97557a910145cde38ce511cc47f74088845dada38dea1a6ee1f901b	shl1-face	
 41445619	shl1	Mesh	legacy			
 45728702	shl1	Mesh	legacy			
-45728877	shl1	Image	asset/image/shl1/mesh/kunai.png	8a364ac49ed8685912736523bdd556687a34c8221795030bad2113323975eda3	shl1-mesh	
+45728877	shl1	Image	asset/image/shl-1/mesh/kunai.png	8a364ac49ed8685912736523bdd556687a34c8221795030bad2113323975eda3	shl1-mesh	
 45916884	shl1,shl3,shl3-big-map	Mesh	legacy			
 46668969	shl3,shl3-big-map	Mesh	legacy			
-48009444	shl3	Image	asset/image/shl3/map/scorch.png	ba9a5134103770172c716952fd79289db8ee2238c79590ed0873cc4cc75999e9	shl3-map	
-50911776	shl1	Image	asset/image/shl1/ui/cursor/machine-gun-purple.png	f3ad05c884ce08e69fe3dc8e430cf2ab78f43fc5107d7980e8d266ff403ddc3b	shl1-ui	
-50912619	shl1	Image	asset/image/shl1/ui/cursor/machine-gun-red.png	d0831ec003562f2e863e5f6d7c25a20c8c04575d27449fb802c24f60558c24f9	shl1-ui	
-50912641	shl1	Image	asset/image/shl1/ui/cursor/machine-gun-blue.png	d7c685284c88aba56695405f25b40a315a71730e6ac1d745316214b623ad11ff	shl1-ui	
+48009444	shl3	Image	asset/image/shl-3/map/scorch.png	ba9a5134103770172c716952fd79289db8ee2238c79590ed0873cc4cc75999e9	shl3-map	
+50911776	shl1	Image	asset/image/shl-1/ui/cursor/machine-gun-purple.png	f3ad05c884ce08e69fe3dc8e430cf2ab78f43fc5107d7980e8d266ff403ddc3b	shl1-ui	
+50912619	shl1	Image	asset/image/shl-1/ui/cursor/machine-gun-red.png	d0831ec003562f2e863e5f6d7c25a20c8c04575d27449fb802c24f60558c24f9	shl1-ui	
+50912641	shl1	Image	asset/image/shl-1/ui/cursor/machine-gun-blue.png	d7c685284c88aba56695405f25b40a315a71730e6ac1d745316214b623ad11ff	shl1-ui	
 51177557	shl3,shl3-big-map	Mesh	legacy			
 51229672	shl1	Mesh	legacy			
-51229767	shl1	Image	asset/image/shl1/mesh/sai.png	23947015f8adcebea0ae50a79a4d8823388550a990d7b7d7f0bd37f805e5fa07	shl1-mesh	
+51229767	shl1	Image	asset/image/shl-1/mesh/sai.png	23947015f8adcebea0ae50a79a4d8823388550a990d7b7d7f0bd37f805e5fa07	shl1-mesh	
 51335610	shl1	Animation	legacy			
 56844224	shl3	Mesh	legacy			
-57046668	shl3	Image	asset/image/shl3/ui/intro/combat-icon.png	2e6e9c931b6c52e616090e28d3fb7b9fbf602073655a236147a0b1225f768639	shl3-ui	
-57718243	shl3	Image	asset/image/shl3/prop/ice-cream/cone.png	37dd5de80a6e47fbd9fccbcd6e5ae044e0f6c8a9298ef7eaf663a1403af0bba9	shl3-prop	
-57718359	shl3	Image	asset/image/shl3/mesh/ice-cream.png	adbf54fb0fbded8a9c7cdacd99d55b7813b674a59217f9306adffba9b21a8b18	shl3-mesh	
+57046668	shl3	Image	asset/image/shl-3/ui/intro/combat-icon.png	2e6e9c931b6c52e616090e28d3fb7b9fbf602073655a236147a0b1225f768639	shl3-ui	
+57718243	shl3	Image	asset/image/shl-3/prop/ice-cream/cone.png	37dd5de80a6e47fbd9fccbcd6e5ae044e0f6c8a9298ef7eaf663a1403af0bba9	shl3-prop	
+57718359	shl3	Image	asset/image/shl-3/mesh/ice-cream.png	adbf54fb0fbded8a9c7cdacd99d55b7813b674a59217f9306adffba9b21a8b18	shl3-mesh	
 57718450	shl3	Mesh	legacy			
 57720291	shl3	Animation	legacy			
 57723734	shl3	Audio	legacy			
-58247550	shl1	Image	asset/image/shl1/gag/tv-static-1.png	abe5955ed99184c5229ca70f6672de636cbce13c2c977f8b081fe5f9f106685d	shl1-gag	
-58247679	shl1	Image	asset/image/shl1/gag/tv-static-2.png	27155e775f0302b5027b1f900aa3418b3f5bc092d2165760a7b00625ef9733eb	shl1-gag	
-58372690	shl3,shl3-big-map	Image	asset/image/shl3/sky/sunny/back.png	6604368c4088c559cb070ed215050f86400f2a74c7dd2ad2bfa50ac84c98aa10	shl3-sky	
-58372722	shl3,shl3-big-map	Image	asset/image/shl3/sky/sunny/down.png	0b368ddc3c083e9cca94fe09a6ab683372d90baa953e084f47bc799fbe78f9c9	shl3-sky	
-58372742	shl3,shl3-big-map	Image	asset/image/shl3/sky/sunny/front.png	f7e56c19defcb7225e5fb26548f27cf05329a52f6ceaa4f9de85ea3b68c33cda	shl3-sky	
-58372777	shl3,shl3-big-map	Image	asset/image/shl3/sky/sunny/left.png	d2750f9f0bb412af25a7b4513b2bfa9c87821442440e733aa0f3fc1b89152c5b	shl3-sky	
-58372794	shl3,shl3-big-map	Image	asset/image/shl3/sky/sunny/right.png	62fe8c2999739a3ca2604e770b2611e3b1d50ad4fd79717a30269ed0dc40c07f	shl3-sky	
-58372812	shl3,shl3-big-map	Image	asset/image/shl3/sky/sunny/up.png	63a7cc526a157383896fd31d32112c2ef410dd806a7208fc65d4aa093c57ce4e	shl3-sky	
+58247550	shl1	Image	asset/image/shl-1/gag/tv-static-1.png	abe5955ed99184c5229ca70f6672de636cbce13c2c977f8b081fe5f9f106685d	shl1-gag	
+58247679	shl1	Image	asset/image/shl-1/gag/tv-static-2.png	27155e775f0302b5027b1f900aa3418b3f5bc092d2165760a7b00625ef9733eb	shl1-gag	
+58372690	shl3,shl3-big-map	Image	asset/image/shl-3/sky/sunny/back.png	6604368c4088c559cb070ed215050f86400f2a74c7dd2ad2bfa50ac84c98aa10	shl3-sky	
+58372722	shl3,shl3-big-map	Image	asset/image/shl-3/sky/sunny/down.png	0b368ddc3c083e9cca94fe09a6ab683372d90baa953e084f47bc799fbe78f9c9	shl3-sky	
+58372742	shl3,shl3-big-map	Image	asset/image/shl-3/sky/sunny/front.png	f7e56c19defcb7225e5fb26548f27cf05329a52f6ceaa4f9de85ea3b68c33cda	shl3-sky	
+58372777	shl3,shl3-big-map	Image	asset/image/shl-3/sky/sunny/left.png	d2750f9f0bb412af25a7b4513b2bfa9c87821442440e733aa0f3fc1b89152c5b	shl3-sky	
+58372794	shl3,shl3-big-map	Image	asset/image/shl-3/sky/sunny/right.png	62fe8c2999739a3ca2604e770b2611e3b1d50ad4fd79717a30269ed0dc40c07f	shl3-sky	
+58372812	shl3,shl3-big-map	Image	asset/image/shl-3/sky/sunny/up.png	63a7cc526a157383896fd31d32112c2ef410dd806a7208fc65d4aa093c57ce4e	shl3-sky	
 63234156	shl1	Animation	legacy			
 63692129	shl3,shl3-big-map	Mesh	legacy			
 69427262	shl1	Animation	legacy			
 69430030	shl3,shl3-big-map	Mesh	legacy			
-72012859	shl3,shl3-big-map	Image	asset/image/mesh/handgun.png	8098a9a26ab71a566781dd306ed96ea2605bc79d5fad2b591a465eb83efefb9f		byte-identical to the file already in the repo
+72012859	shl3,shl3-big-map	Image	asset/image/shl-2/mesh/handgun.png	8098a9a26ab71a566781dd306ed96ea2605bc79d5fad2b591a465eb83efefb9f		byte-identical to the file already in the repo
 72012879	shl3,shl3-big-map	Mesh	legacy			
 72424418	shl3-big-map	Mesh	legacy			
 74167995	shl3,shl3-big-map	Mesh	legacy			
-74168059	shl3,shl3-big-map	Image	asset/image/shl3/mesh/bob-brick-hair.png	45bd2aa80b9e9e97f2fb8f744ccad7901d4b444e42963361c5f4c00f820f16cc	shl3-mesh	
+74168059	shl3,shl3-big-map	Image	asset/image/shl-3/mesh/bob-brick-hair.png	45bd2aa80b9e9e97f2fb8f744ccad7901d4b444e42963361c5f4c00f820f16cc	shl3-mesh	
 74220237	shl1,shl3,shl3-big-map	Mesh	legacy			
 74322484	shl1	Animation	legacy			
 74813494	shl1	Animation	legacy			
@@ -248,7 +248,7 @@ id	games	type	target	sha256	batch	note
 74901237	shl1	Animation	legacy			
 75494297	shl1	Audio	legacy			
 75992638	shl1	Audio	legacy			
-75995665	shl1	Image	asset/image/shl1/ui/black-hole.png	bc470469a02dd5df88e638e80e284bf79321d2a829af090f3289714dda951587	shl1-ui	
+75995665	shl1	Image	asset/image/shl-1/ui/black-hole.png	bc470469a02dd5df88e638e80e284bf79321d2a829af090f3289714dda951587	shl1-ui	
 76056263	shl1,shl3,shl3-big-map	Mesh	legacy			
 76062497	shl1	Mesh	legacy			
 81097186	shl3	Image	dropped	7aa8b14d893e1732548222b6b2d8ed023773af098ba00acf5af962e1d526197c		an item that does not return as a prop (Hand Console, Hot Dog, Binoculars, Hoverboard, Boombox)
@@ -256,7 +256,7 @@ id	games	type	target	sha256	batch	note
 81487710	shl3,shl3-big-map	Mesh	legacy			
 82186933	shl1,shl3,shl3-big-map	Mesh	legacy			
 82348216	shl1,shl3,shl3-big-map	Mesh	legacy			
-82770909	shl1	Image	asset/image/shl1/face/head-7.png	404e950a64bec338b19cc60cd2cae133c01ebdea0b63a9ac153b9cdd1300479b	shl1-face	
+82770909	shl1	Image	asset/image/shl-1/face/head-7.png	404e950a64bec338b19cc60cd2cae133c01ebdea0b63a9ac153b9cdd1300479b	shl1-face	
 82907945	shl3,shl3-big-map	Mesh	legacy			
 82907977	shl3,shl3-big-map	Mesh	legacy			
 82908019	shl3,shl3-big-map	Mesh	legacy			
@@ -324,67 +324,67 @@ id	games	type	target	sha256	batch	note
 92089024	shl1	Audio	dropped			the Laser Sword, cut in the legacy game
 92145857	shl1	Image	dropped	774558fcb935a80787ddd3594692ef83e76b28b00f131c0f670fcfc17caba43b		the Laser Sword, cut in the legacy game
 92145966	shl1	Mesh	dropped			the Laser Sword, cut in the legacy game
-92548618	shl1	Image	asset/image/shl1/mesh/streetlamp.png	37278fe781b660c44c781cdd7bbfd79fc579603a06786aa4e087932f712e6551	shl1-mesh	
+92548618	shl1	Image	asset/image/shl-1/mesh/streetlamp.png	37278fe781b660c44c781cdd7bbfd79fc579603a06786aa4e087932f712e6551	shl1-mesh	
 92548770	shl1	Mesh	legacy			
 93077951	shl1	Mesh	legacy			
-95920067	shl3,shl3-big-map	Image	asset/image/shl3/mesh/arrow.png	a06ecd451fabfeea3eab0ca0f7ff4041a943c4c3fd322dbb07ae44c0e5ff4088	shl3-mesh	
+95920067	shl3,shl3-big-map	Image	asset/image/shl-3/mesh/arrow.png	a06ecd451fabfeea3eab0ca0f7ff4041a943c4c3fd322dbb07ae44c0e5ff4088	shl3-mesh	
 95920149	shl3,shl3-big-map	Mesh	legacy			
 96065544	shl1	Mesh	legacy			
-96065600	shl1	Image	asset/image/shl1/mesh/desk-model.png	434e17509e5738e67b4e8ec8da08d916016bc0076c1736445ed06764a36fbf06	shl1-mesh	named after its instance (Desk/Model/Part): what it shows was not identified
-97689055	shl3	Image	asset/image/shl3/mesh/tablet.png	a57d7550025bb541a2ca7223f1f2c943014dd7d3e6ad7a8a94e0d065f1ad93ee	shl3-mesh	
+96065600	shl1	Image	asset/image/shl-1/mesh/desk-model.png	434e17509e5738e67b4e8ec8da08d916016bc0076c1736445ed06764a36fbf06	shl1-mesh	named after its instance (Desk/Model/Part): what it shows was not identified
+97689055	shl3	Image	asset/image/shl-3/mesh/tablet.png	a57d7550025bb541a2ca7223f1f2c943014dd7d3e6ad7a8a94e0d065f1ad93ee	shl3-mesh	
 97689497	shl3	Mesh	legacy			
-97698443	shl3	Image	asset/image/shl3/prop/tablet/frame.png	093297d279370fe2a74319ee01d2be63c27944b93f6d1134d65552b3059a9da1	shl3-prop	1350x1016: larger than 1024 px, Roblox scales it down on upload
-97698868	shl3	Image	asset/image/shl3/prop/tablet/slide-1.png	69f13383a07e68bc3ac71a616dbe8f3c96e5002970bee8d244bbf4fe23b63e0d	shl3-prop	
-97700362	shl3	Image	asset/image/shl3/prop/tablet/slide-3.png	0b9e58f5750d753cde7e6d9b0b81004042166fedb23da43610030bc56fff57e5	shl3-prop	
-97701247	shl3	Image	asset/image/shl3/prop/tablet/slide-4.png	b0fefbd7ce6958bd49161950d71c1fed6a2825807092e8f885163966393771cd	shl3-prop	
-97701469	shl3	Image	asset/image/shl3/prop/tablet/slide-2.png	1da5954cedd00f80a2a393214fbc50bdc57cf15047ab73bbb2d7001fd41a2660	shl3-prop	
+97698443	shl3	Image	asset/image/shl-3/prop/tablet/frame.png	093297d279370fe2a74319ee01d2be63c27944b93f6d1134d65552b3059a9da1	shl3-prop	1350x1016: larger than 1024 px, Roblox scales it down on upload
+97698868	shl3	Image	asset/image/shl-3/prop/tablet/slide-1.png	69f13383a07e68bc3ac71a616dbe8f3c96e5002970bee8d244bbf4fe23b63e0d	shl3-prop	
+97700362	shl3	Image	asset/image/shl-3/prop/tablet/slide-3.png	0b9e58f5750d753cde7e6d9b0b81004042166fedb23da43610030bc56fff57e5	shl3-prop	
+97701247	shl3	Image	asset/image/shl-3/prop/tablet/slide-4.png	b0fefbd7ce6958bd49161950d71c1fed6a2825807092e8f885163966393771cd	shl3-prop	
+97701469	shl3	Image	asset/image/shl-3/prop/tablet/slide-2.png	1da5954cedd00f80a2a393214fbc50bdc57cf15047ab73bbb2d7001fd41a2660	shl3-prop	
 98400644	shl1	Mesh	legacy			
 98448791	shl1	Mesh	legacy			
 99856331	shl3-big-map	Mesh	legacy			
 100523197	shl3,shl3-big-map	Mesh	legacy			
 107432887	shl3	Mesh	legacy			
-107432992	shl3	Image	asset/image/shl3/mesh/cafe-food.png	ad0cf0dd2e3d46369d138054bf42ad9a563cb1b311b117196e517ada76d63817	shl3-mesh	
-110287880	shl3,shl3-big-map	Image	asset/image/shl3/npc/bob-brick-face.png	f42eb845bfc04b18990338ac94a53c786a6c91075aebaf799fab52a41cabae1f	shl3-npc	
+107432992	shl3	Image	asset/image/shl-3/mesh/cafe-food.png	ad0cf0dd2e3d46369d138054bf42ad9a563cb1b311b117196e517ada76d63817	shl3-mesh	
+110287880	shl3,shl3-big-map	Image	asset/image/shl-3/npc/bob-brick-face.png	f42eb845bfc04b18990338ac94a53c786a6c91075aebaf799fab52a41cabae1f	shl3-npc	
 114046169	shl1,shl3,shl3-big-map	Mesh	legacy			
 114332049	shl1	Image	dropped	23341c3ff60036e5fab714263cb72b5206f6a920074934e90821edbd48bfe2f3		the Swagga clothing templates, which nothing references
 114332231	shl1	Image	dropped	85059583b1534cf6dd80e5707e3ced39344e71b30fee986cd0e81a5610d6c189		the Swagga clothing templates, which nothing references
 115327352	shl1	Audio	legacy			
-116620938	shl3	Image	asset/image/shl3/map/stop-sign.png	a7866af0aab4f5d2232c6217a74a7ce1f0ede70df41f0d32e56b4de64b21e2cb	shl3-map	
-116620941	shl3	Image	asset/image/shl3/map/stop-sign-back.png	c1ac51b9399fa72254db164d184e141bae1a8431913742b5abf0dce7cffff625	shl3-map	
-118322059	shl3,shl3-big-map	Image	asset/image/shl3/fx/flash.png	1ccf14e8a24f8471f98fa6315fe958b196d090ac0e6d5299ea9f2c694b62937c	shl3-fx	
+116620938	shl3	Image	asset/image/shl-3/map/stop-sign.png	a7866af0aab4f5d2232c6217a74a7ce1f0ede70df41f0d32e56b4de64b21e2cb	shl3-map	
+116620941	shl3	Image	asset/image/shl-3/map/stop-sign-back.png	c1ac51b9399fa72254db164d184e141bae1a8431913742b5abf0dce7cffff625	shl3-map	
+118322059	shl3,shl3-big-map	Image	asset/image/shl-3/fx/flash.png	1ccf14e8a24f8471f98fa6315fe958b196d090ac0e6d5299ea9f2c694b62937c	shl3-fx	
 121945106	shl3,shl3-big-map	Mesh	legacy	db13c050c7dd00137d8edd73deb2ebf8061f32c25c02e4f6cd37ef2867df32ad		Roblox lists it as an Image but it holds mesh data: the Bow and Grapple Hook handle mesh
 124987271	shl3,shl3-big-map	Mesh	legacy			
-125728597	shl3	Image	asset/image/shl3/mesh/pizza-box.png	9b0186ccebc074b272e99f5efd191fddf8c668d0c403d620d692650c5a1b08aa	shl3-mesh	
+125728597	shl3	Image	asset/image/shl-3/mesh/pizza-box.png	9b0186ccebc074b272e99f5efd191fddf8c668d0c403d620d692650c5a1b08aa	shl3-mesh	
 125732887	shl3	Mesh	legacy			
 125736357	shl3	Mesh	legacy			
 125750702	shl1	Animation	legacy			
 125887676	shl3	Mesh	legacy			
-126513475	shl1	Image	asset/image/shl1/face/head-11.png	532f1de0a0ad3a40dcb054ee2038786632091d8716ae5b2caae41501eece2b8e	shl1-face	
+126513475	shl1	Image	asset/image/shl-1/face/head-11.png	532f1de0a0ad3a40dcb054ee2038786632091d8716ae5b2caae41501eece2b8e	shl1-face	
 128777973	shl1	Animation	legacy			
 128853357	shl1	Animation	legacy			
-129110349	shl3,shl3-big-map	Image	asset/image/shl3/fx/precipitation-snow.png	d061127308114cec065a90e1a6076f02d08ad45642e67daa8e8e147b645bf231	shl3-fx	
-129219998	shl3,shl3-big-map	Image	asset/image/shl3/npc/bob-brick-shirt.png	3bd1b61bbe0bcd5ba5ca719330896f76fbffec49ae3d69a4af6216498b29c836	shl3-npc	
+129110349	shl3,shl3-big-map	Image	asset/image/shl-3/fx/precipitation-snow.png	d061127308114cec065a90e1a6076f02d08ad45642e67daa8e8e147b645bf231	shl3-fx	
+129219998	shl3,shl3-big-map	Image	asset/image/shl-3/npc/bob-brick-shirt.png	3bd1b61bbe0bcd5ba5ca719330896f76fbffec49ae3d69a4af6216498b29c836	shl3-npc	
 129423030	shl1	Animation	legacy			
 129423131	shl1	Animation	legacy			
 129967390	shl1	Animation	legacy			
 129967478	shl1	Animation	legacy			
-130033772	shl3,shl3-big-map	Image	asset/image/shl3/npc/bob-brick-pants.png	42571bbcc51f4d492b1c587a57b7fbc35d4ad7f226121477bf8fe2987a698e78	shl3-npc	
-133620200	shl1	Image	asset/image/shl1/face/head-0.png	933eb5c8cf9c56c70a12c0c284db5da9d959a6e9a7f496f595c8d36fca563e5a	shl1-face	
-134745573	shl1	Image	asset/image/shl1/face/head-1.png	e70abc78903d687a823698aefa0fc20787384d0a429aefa90623bea1b187017c	shl1-face	
-138994719	shl3,shl3-big-map	Image	asset/image/shl3/fx/snow.png	ccd32bf469cc1e063f24fd877a1e0e76d8164618bee0f007d788aeec1cdfa5a4	shl3-fx	
+130033772	shl3,shl3-big-map	Image	asset/image/shl-3/npc/bob-brick-pants.png	42571bbcc51f4d492b1c587a57b7fbc35d4ad7f226121477bf8fe2987a698e78	shl3-npc	
+133620200	shl1	Image	asset/image/shl-1/face/head-0.png	933eb5c8cf9c56c70a12c0c284db5da9d959a6e9a7f496f595c8d36fca563e5a	shl1-face	
+134745573	shl1	Image	asset/image/shl-1/face/head-1.png	e70abc78903d687a823698aefa0fc20787384d0a429aefa90623bea1b187017c	shl1-face	
+138994719	shl3,shl3-big-map	Image	asset/image/shl-3/fx/snow.png	ccd32bf469cc1e063f24fd877a1e0e76d8164618bee0f007d788aeec1cdfa5a4	shl3-fx	
 144516762	shl1	Animation	legacy			
 144643579	shl1	Animation	legacy			
 145283773	shl1,shl3,shl3-big-map	Mesh	legacy			
-145716575	shl1	Image	asset/image/shl1/mesh/hat-13-decal.png	398c433094b83ca60f8bc7aa93026e80af539c4867efa3d89a053940f3fb2945	shl1-mesh	
-149118644	shl3	Image	asset/image/shl3/npc/zombie-face.png	3b77da54bc01e7bf0b8c641e677f1b9b630d3f0a61a22c748ef571a774af7fc4	shl3-npc	
-149883993	shl1	Image	asset/image/shl1/face/head-12.png	7caf309313922240341e68de4955553f9b735f114ed909311fbe8cefddb857b8	shl1-face	
+145716575	shl1	Image	asset/image/shl-1/mesh/hat-13-decal.png	398c433094b83ca60f8bc7aa93026e80af539c4867efa3d89a053940f3fb2945	shl1-mesh	
+149118644	shl3	Image	asset/image/shl-3/npc/zombie-face.png	3b77da54bc01e7bf0b8c641e677f1b9b630d3f0a61a22c748ef571a774af7fc4	shl3-npc	
+149883993	shl1	Image	asset/image/shl-1/face/head-12.png	7caf309313922240341e68de4955553f9b735f114ed909311fbe8cefddb857b8	shl1-face	
 156292119	shl3,shl3-big-map	Mesh	legacy			
 157959108	shl3,shl3-big-map	Mesh	legacy			
-158549481	shl3	Image	asset/image/shl3/map/picnic-rug.png	2b157b38b62b5910970ef957ff1e3d8b0f8ba65184556919c0d52ce64048c68d	shl3-map	
+158549481	shl3	Image	asset/image/shl-3/map/picnic-rug.png	2b157b38b62b5910970ef957ff1e3d8b0f8ba65184556919c0d52ce64048c68d	shl3-map	
 164382853	shl1,shl3,shl3-big-map	Mesh	legacy			
 167549828	shl1,shl3,shl3-big-map	Mesh	legacy			
 167554431	shl1,shl3,shl3-big-map	Mesh	legacy			
-172769342	shl1	Image	asset/image/shl1/face/head-4.png	ba1862f2d1db2e6d229fa6e6778368473f398150b82cdf509bc255b87106dfdd	shl1-face	
+172769342	shl1	Image	asset/image/shl-1/face/head-4.png	ba1862f2d1db2e6d229fa6e6778368473f398150b82cdf509bc255b87106dfdd	shl1-face	
 178130996	shl1	Animation	legacy			
 180426354	shl1	Animation	legacy			
 180435571	shl1	Animation	legacy			
@@ -416,17 +416,17 @@ id	games	type	target	sha256	batch	note
 197131115	shl1	SolidModel	legacy			
 199372961	shl1	SolidModel	legacy			
 199372964	shl1	SolidModel	legacy			
-202875349	shl1	Image	asset/image/shl1/map/lockers.png	6f7c6520a1adfa91104f3a18b81eb4982a5f3397893009012b4a76ad905b5ea7	shl1-map	
-205516942	shl1	Image	asset/image/shl1/face/head-9.png	d2cb4c929571ececba639d564d61ac525fd3d3dded1205a1a9dfeb11a9ffe4b3	shl1-face	
+202875349	shl1	Image	asset/image/shl-1/map/lockers.png	6f7c6520a1adfa91104f3a18b81eb4982a5f3397893009012b4a76ad905b5ea7	shl1-map	
+205516942	shl1	Image	asset/image/shl-1/face/head-9.png	d2cb4c929571ececba639d564d61ac525fd3d3dded1205a1a9dfeb11a9ffe4b3	shl1-face	
 210112900	shl3,shl3-big-map	Audio	legacy			
-210739973	shl1	Image	asset/image/shl1/face/head-3.png	12b4b82e0d1e9d130e9650f71b9db405c9e843f9116ad5f9d7b23af1778c6634	shl1-face	
+210739973	shl1	Image	asset/image/shl-1/face/head-3.png	12b4b82e0d1e9d130e9650f71b9db405c9e843f9116ad5f9d7b23af1778c6634	shl1-face	
 210789851	shl3,shl3-big-map	SolidModel	legacy			
 212348733	shl1,shl3,shl3-big-map	Mesh	legacy			
 223735655	shl3,shl3-big-map	Mesh	legacy			
 228103284	shl3	Audio	dropped			the 2019 event launchers, which are not ported
 236360464	shl1	SolidModel	legacy			
-241876428	shl3,shl3-big-map	Image	asset/image/shl3/fx/precipitation-rain.png	87eefbdade9d81b79e270003b03ca1f4a0bb83f95fb028f21a782296e2c0f572	shl3-fx	
-242201991	shl3,shl3-big-map	Image	asset/image/shl3/map/graveyard-smoke.png	d6170c213c35e887ec22f98cf2bbc9d1a7bb549aa6aad86d54bb9769d710f690	shl3-map	
+241876428	shl3,shl3-big-map	Image	asset/image/shl-3/fx/precipitation-rain.png	87eefbdade9d81b79e270003b03ca1f4a0bb83f95fb028f21a782296e2c0f572	shl3-fx	
+242201991	shl3,shl3-big-map	Image	asset/image/shl-3/map/graveyard-smoke.png	d6170c213c35e887ec22f98cf2bbc9d1a7bb549aa6aad86d54bb9769d710f690	shl3-map	
 242324503	shl1	SolidModel	legacy			
 242324857	shl1	SolidModel	legacy			
 242324860	shl1	SolidModel	legacy			
@@ -448,7 +448,7 @@ id	games	type	target	sha256	batch	note
 243937216	shl1	SolidModel	legacy			
 243937218	shl1	SolidModel	legacy			
 248341525	shl3,shl3-big-map	Mesh	legacy			
-249994703	shl1	Image	asset/image/shl1/face/head-2.png	2c7ed4186118bd572efa90b930dfd7f781aea49d2675c155a939de5e2622eb70	shl1-face	
+249994703	shl1	Image	asset/image/shl-1/face/head-2.png	2c7ed4186118bd572efa90b930dfd7f781aea49d2675c155a939de5e2622eb70	shl1-face	
 253227251	shl1	SolidModel	legacy			
 253232746	shl1	SolidModel	legacy			
 253232749	shl1	SolidModel	legacy			
@@ -458,13 +458,13 @@ id	games	type	target	sha256	batch	note
 253234548	shl1	SolidModel	legacy			
 253234549	shl1	SolidModel	legacy			
 254878652	shl1	SolidModel	legacy			
-255027923	shl3,shl3-big-map	Image	asset/image/shl3/sky/storm/front.png	5d467b555a213c7a5c063eea9fbe2ec0651806842148695d4d09c1b2c52db12c	shl3-sky	
-255027929	shl3,shl3-big-map	Image	asset/image/shl3/sky/storm/back.png	bca54269c072be0169fdaa793a82cd9715c16ab7731a8689a96925113036fc5b	shl3-sky	
-255027938	shl3,shl3-big-map	Image	asset/image/shl3/sky/storm/left.png	1f2b83eb604dd2ec146d63b01d4bb1728d8144cb8ce4ba3c3ec8d67193d256a3	shl3-sky	
-255027946	shl3,shl3-big-map	Image	asset/image/shl3/sky/storm/right.png	53b2bad13b75771135a7184b3152326b5e2a10c14570817b980f609782e7349a	shl3-sky	
-255027960	shl3,shl3-big-map	Image	asset/image/shl3/sky/storm/up.png	076f3d42eb0dbdc6ff22785c0160cc3b5a3bfccdb260ca1659ffd06c0a1f55c0	shl3-sky	
-255027967	shl3,shl3-big-map	Image	asset/image/shl3/sky/storm/down.png	36f4436929b4fa21ebea6582d34b703266b632ae8745a9f8bf1492e18651a002	shl3-sky	
-256782083	shl3-big-map	Image	asset/image/shl3/map/satellite-ground.png	e9537997c6b89bf4ffc512d4f07c92f7b20778260b1b64a89bef9087f9e733b3	shl3-map	only on valor-city-big
+255027923	shl3,shl3-big-map	Image	asset/image/shl-3/sky/storm/front.png	5d467b555a213c7a5c063eea9fbe2ec0651806842148695d4d09c1b2c52db12c	shl3-sky	
+255027929	shl3,shl3-big-map	Image	asset/image/shl-3/sky/storm/back.png	bca54269c072be0169fdaa793a82cd9715c16ab7731a8689a96925113036fc5b	shl3-sky	
+255027938	shl3,shl3-big-map	Image	asset/image/shl-3/sky/storm/left.png	1f2b83eb604dd2ec146d63b01d4bb1728d8144cb8ce4ba3c3ec8d67193d256a3	shl3-sky	
+255027946	shl3,shl3-big-map	Image	asset/image/shl-3/sky/storm/right.png	53b2bad13b75771135a7184b3152326b5e2a10c14570817b980f609782e7349a	shl3-sky	
+255027960	shl3,shl3-big-map	Image	asset/image/shl-3/sky/storm/up.png	076f3d42eb0dbdc6ff22785c0160cc3b5a3bfccdb260ca1659ffd06c0a1f55c0	shl3-sky	
+255027967	shl3,shl3-big-map	Image	asset/image/shl-3/sky/storm/down.png	36f4436929b4fa21ebea6582d34b703266b632ae8745a9f8bf1492e18651a002	shl3-sky	
+256782083	shl3-big-map	Image	asset/image/shl-3/map/satellite-ground.png	e9537997c6b89bf4ffc512d4f07c92f7b20778260b1b64a89bef9087f9e733b3	shl3-map	only on valor-city-big
 261880743	shl3,shl3-big-map	Image	dropped	415073313002d04d2d31cfa5f1cf309d04c70607736d2bc6551cb7b65803a92c		an icon of the forked stock chat, which is not ported
 262562442	shl3	Audio	legacy			
 263370706	shl3	SolidModel	legacy			
@@ -472,11 +472,11 @@ id	games	type	target	sha256	batch	note
 263370708	shl3	SolidModel	legacy			
 263370712	shl3	SolidModel	legacy			
 263370714	shl3	SolidModel	legacy			
-264216433	shl1	Image	asset/image/shl1/ui/load-screen-logo.png	8b6d5d6e61b9aba497c1b982dae8c61d8222b0e7686172421007648e9b60d1d4	shl1-ui	
+264216433	shl1	Image	asset/image/shl-1/ui/load-screen-logo.png	8b6d5d6e61b9aba497c1b982dae8c61d8222b0e7686172421007648e9b60d1d4	shl1-ui	
 272535025	shl1	Mesh	legacy			
-272535101	shl1	Image	asset/image/shl1/mesh/laser-vision.png	aad63a942b091c3768f823cd5a1cb6954b14ec08bc8461b7623cb3b32102bf99	shl1-mesh	
-272625413	shl3	Image	asset/image/shl3/mesh/fish-green.png	96cd48b90cfb22ccf717dce367558ed2683bf2a219764f295849527ae58902f2	shl3-mesh	
-273864126	shl3	Image	asset/image/shl3/mesh/fish-silver.png	764cac6f027bf98f45c042ddbaa544d5314483a273a32cadc0e0e9034d9a5b55	shl3-mesh	
+272535101	shl1	Image	asset/image/shl-1/mesh/laser-vision.png	aad63a942b091c3768f823cd5a1cb6954b14ec08bc8461b7623cb3b32102bf99	shl1-mesh	
+272625413	shl3	Image	asset/image/shl-3/mesh/fish-green.png	96cd48b90cfb22ccf717dce367558ed2683bf2a219764f295849527ae58902f2	shl3-mesh	
+273864126	shl3	Image	asset/image/shl-3/mesh/fish-silver.png	764cac6f027bf98f45c042ddbaa544d5314483a273a32cadc0e0e9034d9a5b55	shl3-mesh	
 275579030	shl1	SolidModel	legacy			
 275579046	shl1	SolidModel	legacy			
 275579070	shl1	SolidModel	legacy			
@@ -492,22 +492,22 @@ id	games	type	target	sha256	batch	note
 275709827	shl1	SolidModel	legacy			
 275709838	shl1	SolidModel	legacy			
 275709845	shl1	SolidModel	legacy			
-275958498	shl3	Image	asset/image/shl3/mesh/fish-orange.png	ac43b104bdaa44e0177cbce7402000d71216b1154cac756806779510254468ff	shl3-mesh	
+275958498	shl3	Image	asset/image/shl-3/mesh/fish-orange.png	ac43b104bdaa44e0177cbce7402000d71216b1154cac756806779510254468ff	shl3-mesh	
 279195943	shl1	SolidModel	legacy			
 279195951	shl1	SolidModel	legacy			
 279195955	shl1	SolidModel	legacy			
 279214342	shl1	SolidModel	legacy			
 279745305	shl1	SolidModel	legacy			
-280294638	shl1	Image	asset/image/fx/lightning-right.png	ca222fc1034d917a32ac1b332291e15abe9f87ec46e98ce02c8e8edb39fd9f58		same pixels as the file already in the repo, encoded differently
-280294650	shl1	Image	asset/image/fx/lightning-left.png	46777631883471f2263b60573e9a38b3a35c933ac8d430f781f94619f3746b03		same pixels as the file already in the repo, encoded differently
+280294638	shl1	Image	asset/image/shl-2/fx/lightning-right.png	ca222fc1034d917a32ac1b332291e15abe9f87ec46e98ce02c8e8edb39fd9f58		same pixels as the file already in the repo, encoded differently
+280294650	shl1	Image	asset/image/shl-2/fx/lightning-left.png	46777631883471f2263b60573e9a38b3a35c933ac8d430f781f94619f3746b03		same pixels as the file already in the repo, encoded differently
 283714534	shl1,shl3,shl3-big-map	Mesh	legacy			
-290556384	shl3,shl3-big-map	Image	asset/image/shl3/fx/fire.png	55ca47a3f4c416605c0e62132f6f466d68bbd826add7bf0028dca3a6fb832668	shl3-fx	
-296981321	shl3	Image	asset/image/shl3/map/fountain-water.png	1951b09e8a56417258b3f3cb7ec04f2cb5637794fa92ca84be09745aac09cc45	shl3-map	
-298984512	shl3,shl3-big-map	Image	asset/image/shl3/map/pickup-sparkle.png	8bd22e47ea0b31f0944cd47d025774f2185881a290bd4026e1467b8f1ed0fb86	shl3-map	
+290556384	shl3,shl3-big-map	Image	asset/image/shl-3/fx/fire.png	55ca47a3f4c416605c0e62132f6f466d68bbd826add7bf0028dca3a6fb832668	shl3-fx	
+296981321	shl3	Image	asset/image/shl-3/map/fountain-water.png	1951b09e8a56417258b3f3cb7ec04f2cb5637794fa92ca84be09745aac09cc45	shl3-map	
+298984512	shl3,shl3-big-map	Image	asset/image/shl-3/map/pickup-sparkle.png	8bd22e47ea0b31f0944cd47d025774f2185881a290bd4026e1467b8f1ed0fb86	shl3-map	
 319337852	shl3,shl3-big-map	Mesh	legacy			
 319354652	shl3,shl3-big-map	Mesh	legacy			
 319415431	shl1	SolidModel	legacy			
-325898493	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/neon-swatch.png	36cc4ac969d8059bbac60211296e744d1e6d728ce78028e736a366b97a020275	shl3-ui	the Neon picker button, not a pattern (SuitModule treats this id as the Neon material)
+325898493	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/neon-swatch.png	36cc4ac969d8059bbac60211296e744d1e6d728ce78028e736a366b97a020275	shl3-ui	the Neon picker button, not a pattern (SuitModule treats this id as the Neon material)
 330553414	shl1	SolidModel	legacy			
 330553417	shl1	SolidModel	legacy			
 347395476	shl3	SolidModel	legacy			
@@ -561,7 +561,7 @@ id	games	type	target	sha256	batch	note
 507777826	shl3	Animation	legacy			
 507784897	shl3	Animation	legacy			
 507785072	shl3	Animation	legacy			
-517998818	shl3,shl3-big-map	Image	asset/image/shl3/face/mouth/angry.png	3d38cc9a08e7c3e1c1dda428c614bed52aa94d87eada18216783749aeee2a041	shl3-face	byte-identical to asset/image/face/mouth/angry.png, filed again so the mouths of shl3 are one folder
+517998818	shl3,shl3-big-map	Image	asset/image/shl-3/face/mouth/angry.png	3d38cc9a08e7c3e1c1dda428c614bed52aa94d87eada18216783749aeee2a041	shl3-face	byte-identical to asset/image/shl-2/face/mouth/angry.png, filed again so the mouths of shl3 are one folder
 519116054	shl3	SolidModel	legacy			
 519974618	shl3,shl3-big-map	SolidModel	legacy			
 519974619	shl3,shl3-big-map	SolidModel	legacy			
@@ -639,17 +639,17 @@ id	games	type	target	sha256	batch	note
 890071652	shl3	SolidModel	legacy			
 890071664	shl3	SolidModel	legacy			
 890205182	shl3	SolidModel	legacy			
-915250609	shl3	Image	asset/image/shl3/mesh/fidget-spinner.png	fad50e9a604f72587d1eea0177c2d2bda0c80c6c294deb3ef73550ff2e182ffd	shl3-mesh	
+915250609	shl3	Image	asset/image/shl-3/mesh/fidget-spinner.png	fad50e9a604f72587d1eea0177c2d2bda0c80c6c294deb3ef73550ff2e182ffd	shl3-mesh	
 915251142	shl3	Mesh	legacy			
 924320031	shl3,shl3-big-map	Image	dropped	c72396bb96b59cef1c5661a3aeabeaf7ec245b65bad8033f0cd69d8450c0ccd7		a blank filler: 8 of its 9 legacy uses have ImageTransparency 1 and the id now returns Roblox's 'no image' placeholder
 938913337	shl3,shl3-big-map	Animation	legacy			
 1045082547	shl3	SolidModel	legacy			
-1215692793	shl3,shl3-big-map	Image	asset/image/shl3/map/pad-dots.png	a2da6c70f350caebe0fcbb5b86de4704b4d6c47e45d136f1154596018e74b1b6	shl3-map	
+1215692793	shl3,shl3-big-map	Image	asset/image/shl-3/map/pad-dots.png	a2da6c70f350caebe0fcbb5b86de4704b4d6c47e45d136f1154596018e74b1b6	shl3-map	
 1297943656	shl3-big-map	Mesh	legacy			
 1373218745	shl3-big-map	SolidModel	legacy			
 1373218750	shl3-big-map	SolidModel	legacy			
-1373549749	shl3,shl3-big-map	Image	asset/image/ui/exit.png	4e2135eda76e7605a9135ef189564ff16986d6513edb103790cdfcd03e1b00fd		same pixels as the file already in the repo, encoded differently
-1611107318	shl3,shl3-big-map	Image	asset/image/shl3/map/pad-glow.png	e42412879e50f630dcc1ea306da5f2d2f403ac2566d36d98d8242d5ea1024f1e	shl3-map	
+1373549749	shl3,shl3-big-map	Image	asset/image/core/ui/exit.png	4e2135eda76e7605a9135ef189564ff16986d6513edb103790cdfcd03e1b00fd		same pixels as the file already in the repo, encoded differently
+1611107318	shl3,shl3-big-map	Image	asset/image/shl-3/map/pad-glow.png	e42412879e50f630dcc1ea306da5f2d2f403ac2566d36d98d8242d5ea1024f1e	shl3-map	
 1660648264	shl3-big-map	Mesh	legacy			
 1660648303	shl3-big-map	Mesh	legacy			
 1660648319	shl3-big-map	Mesh	legacy			
@@ -678,12 +678,12 @@ id	games	type	target	sha256	batch	note
 1699715632	shl3,shl3-big-map	Mesh	legacy			
 1699715641	shl3,shl3-big-map	Mesh	legacy			
 1699715652	shl3,shl3-big-map	Mesh	legacy			
-1828619570	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/currency-coins.png	d612d3bf2bc27f772e3d94541772ecbea615601f62d18163156ffedf443aef0d	shl3-ui	
-1828619984	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/currency-coin-stack.png	feb3ec93325e042edd5eb022989270d185111a95d1ff116e5cb68c64ff92d782	shl3-ui	
-1828620512	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/currency-bill.png	44c1d93dd38112d850bd7c16fad2e3e80b400f464642c33a84842330587acfab	shl3-ui	
-1828622096	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/currency-bill-stack.png	2e326e2d1dd658d2db835e60717bba6cd4f510477e562fa8d39572b3258706fb	shl3-ui	
-1828622373	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/currency-bills-and-coins.png	80eb50ad337d5c3bd8703aa5885143d799295614b809bd0700cced014875cf46	shl3-ui	
-1828648136	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/currency-pile.png	1137140e779f202600fba273e4e45a4b63925c73147ade63beabfecf337d7243	shl3-ui	
+1828619570	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/currency-coins.png	d612d3bf2bc27f772e3d94541772ecbea615601f62d18163156ffedf443aef0d	shl3-ui	
+1828619984	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/currency-coin-stack.png	feb3ec93325e042edd5eb022989270d185111a95d1ff116e5cb68c64ff92d782	shl3-ui	
+1828620512	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/currency-bill.png	44c1d93dd38112d850bd7c16fad2e3e80b400f464642c33a84842330587acfab	shl3-ui	
+1828622096	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/currency-bill-stack.png	2e326e2d1dd658d2db835e60717bba6cd4f510477e562fa8d39572b3258706fb	shl3-ui	
+1828622373	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/currency-bills-and-coins.png	80eb50ad337d5c3bd8703aa5885143d799295614b809bd0700cced014875cf46	shl3-ui	
+1828648136	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/currency-pile.png	1137140e779f202600fba273e4e45a4b63925c73147ade63beabfecf337d7243	shl3-ui	
 1892350670	shl3,shl3-big-map	Mesh	legacy			
 1892350940	shl3,shl3-big-map	Mesh	legacy			
 1892355413	shl3,shl3-big-map	Mesh	legacy			
@@ -717,30 +717,30 @@ id	games	type	target	sha256	batch	note
 1956912364	shl3-big-map	Mesh	legacy			
 1956914778	shl3-big-map	Mesh	legacy			
 1956933822	shl3-big-map	Mesh	legacy			
-2015125134	shl3,shl3-big-map	Image	asset/image/shl3/tools/bo-staff.png	95eb08f0dc43014272bfc42797e8c72ff379709f2f650a6693b2f5842d80beef	shl3-tools	
-2015125679	shl3,shl3-big-map	Image	asset/image/shl3/tools/claws.png	e0e835f9993e744176750c4b796d721146f29655c11e628e55b5cca273745713	shl3-tools-slice	
-2015127605	shl3,shl3-big-map	Image	asset/image/shl3/tools/hammer.png	73fce507803f266505cc7cda5dfb9665e6881fb366b0bf5d7b35bbd8b6b5994c	shl3-tools	
-2015128282	shl3,shl3-big-map	Image	asset/image/shl3/tools/katanas.png	3a145fd0697ed81e2a4aecc35f741a518397a779fed0fa170d4fdd206a1e63ef	shl3-tools-slice	
-2015129040	shl3,shl3-big-map	Image	asset/image/shl3/tools/martial-arts.png	ff1f14199edbbe29aa18132233bf4c112ef5af10ea7264444c7ed4ede8b953aa	shl3-tools-slice	
-2015129703	shl3,shl3-big-map	Image	asset/image/shl3/tools/sword.png	4ca1e3ecf932de7313b9cb5cbc7b9428c023ab9839fa9912983d291e8264a5af	shl3-tools	
+2015125134	shl3,shl3-big-map	Image	asset/image/shl-3/tools/bo-staff.png	95eb08f0dc43014272bfc42797e8c72ff379709f2f650a6693b2f5842d80beef	shl3-tools	
+2015125679	shl3,shl3-big-map	Image	asset/image/shl-3/tools/claws.png	e0e835f9993e744176750c4b796d721146f29655c11e628e55b5cca273745713	shl3-tools-slice	
+2015127605	shl3,shl3-big-map	Image	asset/image/shl-3/tools/hammer.png	73fce507803f266505cc7cda5dfb9665e6881fb366b0bf5d7b35bbd8b6b5994c	shl3-tools	
+2015128282	shl3,shl3-big-map	Image	asset/image/shl-3/tools/katanas.png	3a145fd0697ed81e2a4aecc35f741a518397a779fed0fa170d4fdd206a1e63ef	shl3-tools-slice	
+2015129040	shl3,shl3-big-map	Image	asset/image/shl-3/tools/martial-arts.png	ff1f14199edbbe29aa18132233bf4c112ef5af10ea7264444c7ed4ede8b953aa	shl3-tools-slice	
+2015129703	shl3,shl3-big-map	Image	asset/image/shl-3/tools/sword.png	4ca1e3ecf932de7313b9cb5cbc7b9428c023ab9839fa9912983d291e8264a5af	shl3-tools	
 2015134067	shl3,shl3-big-map	Image	dropped	6eb06e441ac91138455388d2c8b9e60129f1c5648f8fc5b7c79432dbf00d4a0c		Camouflage, Climb and Shapeshifting were shelved in the legacy game
-2015134991	shl3,shl3-big-map	Image	asset/image/shl3/tools/force-field.png	9a55c40acb4c6b7da348bda5f03a267fd5684f041c8d723df7bfd3dae79ab982	shl3-tools	
-2015135836	shl3,shl3-big-map	Image	asset/image/shl3/tools/invisibility.png	8139d991d1441303cb67b2a428e85a17f3588ed98f5d728f7ebb2d7e0f8672da	shl3-tools-slice	
-2015136751	shl3,shl3-big-map	Image	asset/image/shl3/tools/mind-reading.png	4944fadbcb05502fd92da3d2c061a7736e591ea4209b35fbda1292a51b2daa9e	shl3-tools	
+2015134991	shl3,shl3-big-map	Image	asset/image/shl-3/tools/force-field.png	9a55c40acb4c6b7da348bda5f03a267fd5684f041c8d723df7bfd3dae79ab982	shl3-tools	
+2015135836	shl3,shl3-big-map	Image	asset/image/shl-3/tools/invisibility.png	8139d991d1441303cb67b2a428e85a17f3588ed98f5d728f7ebb2d7e0f8672da	shl3-tools-slice	
+2015136751	shl3,shl3-big-map	Image	asset/image/shl-3/tools/mind-reading.png	4944fadbcb05502fd92da3d2c061a7736e591ea4209b35fbda1292a51b2daa9e	shl3-tools	
 2015138128	shl3,shl3-big-map	Image	dropped	3bfcf7674d6e6172d1614ec9325f44526e1142634e4e742488ef1238cdd7cfc0		Camouflage, Climb and Shapeshifting were shelved in the legacy game
-2015138719	shl3,shl3-big-map	Image	asset/image/shl3/tools/x-ray-vision.png	ecec792668e793adeeb6930705c43523b07de4a873e9c871247d78efafbf24c9	shl3-tools	
-2015142966	shl3,shl3-big-map	Image	asset/image/shl3/tools/bow.png	70fe4eb91c9e174c0b88177e0cdabcd9c91eb92c3d0e6529d0875edcd29ebeda	shl3-tools	
-2015143913	shl3,shl3-big-map	Image	asset/image/shl3/tools/fire-ray.png	0ca28819500324bc7f507fa78b00f377dfd56e3938357a3e9d13b1c373012697	shl3-tools	
-2015144350	shl3,shl3-big-map	Image	asset/image/shl3/tools/freeze-ray.png	ec2c7b37243033972b1c9146a3d18890fcff8e6b63249d603fe6b6f64b63dfd9	shl3-tools	
-2015145672	shl3,shl3-big-map	Image	asset/image/shl3/tools/laser-ray.png	893f2fa7e5bbc1b66b5f0e38543aba8eb29fd49ab35958e6731078650bd1788c	shl3-tools-slice	
-2015146120	shl3,shl3-big-map	Image	asset/image/shl3/tools/lightning.png	6931d02e59db5efd3d1f503dfdc4128aa8f932b6b5ac4a7669ae6a09f29d0b06	shl3-tools	
-2015146663	shl3,shl3-big-map	Image	asset/image/shl3/tools/minigun.png	778f552f8c4a9e8a9f418dd08ced20f17459da50717f378d5bbe02a22a9ad7e0	shl3-tools	
+2015138719	shl3,shl3-big-map	Image	asset/image/shl-3/tools/x-ray-vision.png	ecec792668e793adeeb6930705c43523b07de4a873e9c871247d78efafbf24c9	shl3-tools	
+2015142966	shl3,shl3-big-map	Image	asset/image/shl-3/tools/bow.png	70fe4eb91c9e174c0b88177e0cdabcd9c91eb92c3d0e6529d0875edcd29ebeda	shl3-tools	
+2015143913	shl3,shl3-big-map	Image	asset/image/shl-3/tools/fire-ray.png	0ca28819500324bc7f507fa78b00f377dfd56e3938357a3e9d13b1c373012697	shl3-tools	
+2015144350	shl3,shl3-big-map	Image	asset/image/shl-3/tools/freeze-ray.png	ec2c7b37243033972b1c9146a3d18890fcff8e6b63249d603fe6b6f64b63dfd9	shl3-tools	
+2015145672	shl3,shl3-big-map	Image	asset/image/shl-3/tools/laser-ray.png	893f2fa7e5bbc1b66b5f0e38543aba8eb29fd49ab35958e6731078650bd1788c	shl3-tools-slice	
+2015146120	shl3,shl3-big-map	Image	asset/image/shl-3/tools/lightning.png	6931d02e59db5efd3d1f503dfdc4128aa8f932b6b5ac4a7669ae6a09f29d0b06	shl3-tools	
+2015146663	shl3,shl3-big-map	Image	asset/image/shl-3/tools/minigun.png	778f552f8c4a9e8a9f418dd08ced20f17459da50717f378d5bbe02a22a9ad7e0	shl3-tools	
 2015147622	shl3,shl3-big-map	Image	dropped	d027e2e744ecb157b3519e603e88e5f30dd7b6b4a65870c645594f7be4191f37		Camouflage, Climb and Shapeshifting were shelved in the legacy game
-2015148130	shl3,shl3-big-map	Image	asset/image/shl3/tools/flight.png	2938279593548451f004f9fede420338dfbb517af03aab783ce66a6a59a9bd6a	shl3-tools-slice	
-2015149069	shl3,shl3-big-map	Image	asset/image/shl3/tools/grapple-hook.png	b621b823eea885335d9c91f8bd24200d61ec9b4e994c08ae342a8e6d8f8a1180	shl3-tools	
-2015149808	shl3,shl3-big-map	Image	asset/image/shl3/tools/super-jump.png	6900e51ab98a41eec1db6192267e764acf3bcefda5e874da420bfc1f90179ebe	shl3-tools	
-2015151421	shl3,shl3-big-map	Image	asset/image/shl3/tools/super-speed.png	1c46dc554e1edcd31fdc8ebf44079961e4491f3d3ea4d292d911634016c4d7df	shl3-tools-slice	
-2015152767	shl3,shl3-big-map	Image	asset/image/shl3/tools/teleport.png	a54572c3639f6fa7e3ec7b0be9c3b1a13ab2ac6f482ab9c484d8d60522616e4f	shl3-tools	
+2015148130	shl3,shl3-big-map	Image	asset/image/shl-3/tools/flight.png	2938279593548451f004f9fede420338dfbb517af03aab783ce66a6a59a9bd6a	shl3-tools-slice	
+2015149069	shl3,shl3-big-map	Image	asset/image/shl-3/tools/grapple-hook.png	b621b823eea885335d9c91f8bd24200d61ec9b4e994c08ae342a8e6d8f8a1180	shl3-tools	
+2015149808	shl3,shl3-big-map	Image	asset/image/shl-3/tools/super-jump.png	6900e51ab98a41eec1db6192267e764acf3bcefda5e874da420bfc1f90179ebe	shl3-tools	
+2015151421	shl3,shl3-big-map	Image	asset/image/shl-3/tools/super-speed.png	1c46dc554e1edcd31fdc8ebf44079961e4491f3d3ea4d292d911634016c4d7df	shl3-tools-slice	
+2015152767	shl3,shl3-big-map	Image	asset/image/shl-3/tools/teleport.png	a54572c3639f6fa7e3ec7b0be9c3b1a13ab2ac6f482ab9c484d8d60522616e4f	shl3-tools	
 2015248098	shl3-big-map	Mesh	legacy			
 2015248371	shl3-big-map	Mesh	legacy			
 2015256898	shl3-big-map	Mesh	legacy			
@@ -754,7 +754,7 @@ id	games	type	target	sha256	batch	note
 2019266536	shl3,shl3-big-map	Mesh	legacy			
 2032023955	shl3-big-map	Mesh	legacy			
 2032037066	shl3-big-map	Mesh	legacy			
-2035994990	shl3,shl3-big-map	Image	asset/image/shl3/ui/common/button-template-2.png	72833573421afbfcf1433647951bb495d909ef0311355c9222dd0b578cea410e	shl3-ui	
+2035994990	shl3,shl3-big-map	Image	asset/image/shl-3/ui/common/button-template-2.png	72833573421afbfcf1433647951bb495d909ef0311355c9222dd0b578cea410e	shl3-ui	
 2039781643	shl3,shl3-big-map	SolidModel	legacy			
 2041868500	shl3,shl3-big-map	Mesh	legacy			
 2041868852	shl3,shl3-big-map	Mesh	legacy			
@@ -821,8 +821,8 @@ id	games	type	target	sha256	batch	note
 2068589573	shl3,shl3-big-map	Image	dropped	7533b0224a1e16c492e2b06eb85652705a718ea2bbc1b9bad258a5a1a410bbee		the Face assets set, which no legacy script reads
 2068590534	shl3,shl3-big-map	Image	dropped	bf896ebe109357b087670448073d6377f3bddf7a9ffff74b60184526475700d5		the Face assets set, which no legacy script reads
 2068591232	shl3,shl3-big-map	Image	dropped	c26818a311c45bcbb8f62879ab9d92ceabcd6bfa2dcabbe1d0c850edf76fd32c		the Face assets set, which no legacy script reads
-2068727435	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/team-hero.png	79bdedde87a34692310308ee5850143ab5ab08ab06d0141a117ecb70f2e109b9	shl3-ui	
-2068729038	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/team-villain.png	4958d7af45e4d2889d1ab587dbe6f17854565f5a3c0c54a9bf8dab10ff7b4aff	shl3-ui	
+2068727435	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/team-hero.png	79bdedde87a34692310308ee5850143ab5ab08ab06d0141a117ecb70f2e109b9	shl3-ui	
+2068729038	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/team-villain.png	4958d7af45e4d2889d1ab587dbe6f17854565f5a3c0c54a9bf8dab10ff7b4aff	shl3-ui	
 2069983790	shl3,shl3-big-map	Mesh	legacy			
 2069985026	shl3,shl3-big-map	Mesh	legacy			
 2069985691	shl3,shl3-big-map	Mesh	legacy			
@@ -855,32 +855,32 @@ id	games	type	target	sha256	batch	note
 2123543653	shl3,shl3-big-map	Mesh	legacy			
 2123543949	shl3,shl3-big-map	Mesh	legacy			
 2123643855	shl3,shl3-big-map	Animation	legacy			
-2136027139	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/alert.png	560de7118c2219c89befa092fb061e43fc9df6c092c1a14705ed52fef36c527e	shl3-face	
-2136030597	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/angry.png	0e514583122128734827e454e21273a05a2f457dd9a1d4ac58e2ff31bee7f4cd	shl3-face	
-2136031616	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/brave.png	6f69fb6f863bf58e4af4745a01ce750cb3bc53fedd0812f907456d6c8af809da	shl3-face	
-2136032893	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/daring.png	9afbc6805e3fc4f66f6d133d8827193820e2cd76ba0a43e2975a92dd599eeacd	shl3-face	
-2136033943	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/evil.png	aa9f15cbfe0698d03b9975dd88d9c94a4bb226b5fd82b975911ec77cbf0b64f7	shl3-face	
-2136037719	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/neutral.png	d5653b0be5cd4a7c395994b82be3eaa95e2708474e48e29db32ce298d2f28804	shl3-face	
-2136039583	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/normal.png	9ecafaaf64e0b32c281aa2a3eb01569e055654c0d9a28007fe12f651282ad37f	shl3-face	
-2136040557	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/scared.png	fb71f05bd7c6fbda7627d0463ecba3c5be74004f919dcc0c09f57064509a9ed8	shl3-face	
-2136041922	shl3,shl3-big-map	Image	asset/image/shl3/face/eyes/worried.png	d08ab7ed5f0932edf6da595f0a5a75e4a8a088a91b758c101be5a48ca75c94e4	shl3-face	
-2136049102	shl3,shl3-big-map	Image	asset/image/shl3/face/mouth/brave.png	783079de6e3d7a4d53d71ab2fc61ed7284cbd47a49490028a868707bc2c946ad	shl3-face	
-2136049860	shl3,shl3-big-map	Image	asset/image/shl3/face/mouth/grimace.png	2e9887c3afdb8c7bc5e733ba233d9c14bb6139c16785e8127caa32ac230915dc	shl3-face	
-2136050891	shl3,shl3-big-map	Image	asset/image/shl3/face/mouth/joyful.png	ae22099332397343d8c71ab545f8554cf17eda49841a0a90e5bd34a20224b7db	shl3-face	
-2136052466	shl3,shl3-big-map	Image	asset/image/shl3/face/mouth/monster-smile.png	bd93286ceabd2039cbf1472bbb4643a4a9a85ad378da84f3bd345822ebf598ae	shl3-face	
-2136053631	shl3,shl3-big-map	Image	asset/image/shl3/face/mouth/normal-smile.png	9feecfefceb726c5ff20c366fe8986f3af57e95a5805a683b5b43b6a9ce014f1	shl3-face	
-2144550758	shl3,shl3-big-map	Image	asset/image/shl3/pattern/camouflage.png	3259ae642df7e14be2aef1d4b0391282fa329559a7f22606654d70e3ceab8582	shl3-pattern	
-2144659139	shl3,shl3-big-map	Image	asset/image/shl3/pattern/scales.png	8bc3fe021d1d5bb64884fe9a7b2a5a7d3a3c5308227c7d026ca34158a6deb94b	shl3-pattern	
-2146272694	shl3,shl3-big-map	Image	asset/image/shl3/ui/mode-changer/mode-image.png	af56b76e295325a05517bf493ac5c6d8dcf061e774b94f0c8bc6c305c158ce6d	shl3-ui	
-2162469354	shl3,shl3-big-map	Image	asset/image/shl3/pattern/leather.png	b19590a123ef6220418f0687fed134395174ac14d9e079b1b828d0e092f42309	shl3-pattern	
-2162470268	shl3,shl3-big-map	Image	asset/image/shl3/pattern/pinstriped.png	ec282dc025c0ec716cf017f87c95e74b4a5eda3f068fbd1a6183c0e145d34831	shl3-pattern	
-2162519888	shl3,shl3-big-map	Image	asset/image/shl3/pattern/leopard.png	c593efd644e25802edfc9d900051a2a1f0c18ddbcfd80598555c98d60157d836	shl3-pattern	
+2136027139	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/alert.png	560de7118c2219c89befa092fb061e43fc9df6c092c1a14705ed52fef36c527e	shl3-face	
+2136030597	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/angry.png	0e514583122128734827e454e21273a05a2f457dd9a1d4ac58e2ff31bee7f4cd	shl3-face	
+2136031616	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/brave.png	6f69fb6f863bf58e4af4745a01ce750cb3bc53fedd0812f907456d6c8af809da	shl3-face	
+2136032893	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/daring.png	9afbc6805e3fc4f66f6d133d8827193820e2cd76ba0a43e2975a92dd599eeacd	shl3-face	
+2136033943	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/evil.png	aa9f15cbfe0698d03b9975dd88d9c94a4bb226b5fd82b975911ec77cbf0b64f7	shl3-face	
+2136037719	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/neutral.png	d5653b0be5cd4a7c395994b82be3eaa95e2708474e48e29db32ce298d2f28804	shl3-face	
+2136039583	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/normal.png	9ecafaaf64e0b32c281aa2a3eb01569e055654c0d9a28007fe12f651282ad37f	shl3-face	
+2136040557	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/scared.png	fb71f05bd7c6fbda7627d0463ecba3c5be74004f919dcc0c09f57064509a9ed8	shl3-face	
+2136041922	shl3,shl3-big-map	Image	asset/image/shl-3/face/eyes/worried.png	d08ab7ed5f0932edf6da595f0a5a75e4a8a088a91b758c101be5a48ca75c94e4	shl3-face	
+2136049102	shl3,shl3-big-map	Image	asset/image/shl-3/face/mouth/brave.png	783079de6e3d7a4d53d71ab2fc61ed7284cbd47a49490028a868707bc2c946ad	shl3-face	
+2136049860	shl3,shl3-big-map	Image	asset/image/shl-3/face/mouth/grimace.png	2e9887c3afdb8c7bc5e733ba233d9c14bb6139c16785e8127caa32ac230915dc	shl3-face	
+2136050891	shl3,shl3-big-map	Image	asset/image/shl-3/face/mouth/joyful.png	ae22099332397343d8c71ab545f8554cf17eda49841a0a90e5bd34a20224b7db	shl3-face	
+2136052466	shl3,shl3-big-map	Image	asset/image/shl-3/face/mouth/monster-smile.png	bd93286ceabd2039cbf1472bbb4643a4a9a85ad378da84f3bd345822ebf598ae	shl3-face	
+2136053631	shl3,shl3-big-map	Image	asset/image/shl-3/face/mouth/normal-smile.png	9feecfefceb726c5ff20c366fe8986f3af57e95a5805a683b5b43b6a9ce014f1	shl3-face	
+2144550758	shl3,shl3-big-map	Image	asset/image/shl-3/pattern/camouflage.png	3259ae642df7e14be2aef1d4b0391282fa329559a7f22606654d70e3ceab8582	shl3-pattern	
+2144659139	shl3,shl3-big-map	Image	asset/image/shl-3/pattern/scales.png	8bc3fe021d1d5bb64884fe9a7b2a5a7d3a3c5308227c7d026ca34158a6deb94b	shl3-pattern	
+2146272694	shl3,shl3-big-map	Image	asset/image/shl-3/ui/mode-changer/mode-image.png	af56b76e295325a05517bf493ac5c6d8dcf061e774b94f0c8bc6c305c158ce6d	shl3-ui	
+2162469354	shl3,shl3-big-map	Image	asset/image/shl-3/pattern/leather.png	b19590a123ef6220418f0687fed134395174ac14d9e079b1b828d0e092f42309	shl3-pattern	
+2162470268	shl3,shl3-big-map	Image	asset/image/shl-3/pattern/pinstriped.png	ec282dc025c0ec716cf017f87c95e74b4a5eda3f068fbd1a6183c0e145d34831	shl3-pattern	
+2162519888	shl3,shl3-big-map	Image	asset/image/shl-3/pattern/leopard.png	c593efd644e25802edfc9d900051a2a1f0c18ddbcfd80598555c98d60157d836	shl3-pattern	
 2163105155	shl3-big-map	Mesh	legacy			
 2176136919	shl3,shl3-big-map	Mesh	legacy			
 2176137530	shl3,shl3-big-map	Mesh	legacy			
 2176137968	shl3,shl3-big-map	Mesh	legacy			
-2179436850	shl3,shl3-big-map	Image	asset/image/shl3/pattern/fur.png	c6ec8a2a5bec2a47f1a9ad1fbffec7ed2b343b58a57f623f6d434cbb0f282fc7	shl3-pattern	
-2179439295	shl3,shl3-big-map	Image	asset/image/shl3/pattern/honeycomb.png	032e63b849c82eec6d41d36271ed606c6baedca5cf386272092eacdea759c565	shl3-pattern	
+2179436850	shl3,shl3-big-map	Image	asset/image/shl-3/pattern/fur.png	c6ec8a2a5bec2a47f1a9ad1fbffec7ed2b343b58a57f623f6d434cbb0f282fc7	shl3-pattern	
+2179439295	shl3,shl3-big-map	Image	asset/image/shl-3/pattern/honeycomb.png	032e63b849c82eec6d41d36271ed606c6baedca5cf386272092eacdea759c565	shl3-pattern	
 2195052495	shl3,shl3-big-map	Mesh	legacy			
 2195053185	shl3,shl3-big-map	Mesh	legacy			
 2195054811	shl3,shl3-big-map	Mesh	legacy			
@@ -889,9 +889,9 @@ id	games	type	target	sha256	batch	note
 2195056848	shl3,shl3-big-map	Mesh	legacy			
 2195057243	shl3,shl3-big-map	Mesh	legacy			
 2195057712	shl3,shl3-big-map	Mesh	legacy			
-2201427901	shl3,shl3-big-map	Image	asset/image/shl3/pattern/circuits.png	6da090d42a295d3430944939ff3dbc361c29f54de15ce25c9c1913e3340a0874	shl3-pattern	
+2201427901	shl3,shl3-big-map	Image	asset/image/shl-3/pattern/circuits.png	6da090d42a295d3430944939ff3dbc361c29f54de15ce25c9c1913e3340a0874	shl3-pattern	
 2202041940	shl3-big-map	Mesh	legacy			
-2205273571	shl3,shl3-big-map	Image	asset/image/shl3/ui/common/exit.png	1320aee8557479b5025efc9b4084f0c33dc373be71baf2a8e3cd8d38d8740deb	shl3-ui	
+2205273571	shl3,shl3-big-map	Image	asset/image/shl-3/ui/common/exit.png	1320aee8557479b5025efc9b4084f0c33dc373be71baf2a8e3cd8d38d8740deb	shl3-ui	
 2213405858	shl3,shl3-big-map	Image	dropped	7b85f6e66d302436205a6655d08b6151754fb86a2e873a6bf6f11181ea207d28		crates, never finished in the legacy game
 2213407797	shl3,shl3-big-map	Image	dropped	1f5829e99c8cae3ffe629959e229aeff63a5192c0b53051183a4c0697b5a5d20		crates, never finished in the legacy game
 2213408384	shl3,shl3-big-map	Image	dropped	c6cab093ea1ad00b6ef51dea9d640e6a0353dac79912066d533c55de01bf717f		crates, never finished in the legacy game
@@ -971,7 +971,7 @@ id	games	type	target	sha256	batch	note
 2287127556	shl3-big-map	Mesh	legacy			
 2287129521	shl3-big-map	Mesh	legacy			
 2288061152	shl3-big-map	Mesh	legacy			
-2439633334	shl3,shl3-big-map	Image	asset/image/shl3/tools/keycard.png	02f8ac312ffbe790670a6366dce676a6ac3f075b878619a5cfa44018f489082d	shl3-tools	
+2439633334	shl3,shl3-big-map	Image	asset/image/shl-3/tools/keycard.png	02f8ac312ffbe790670a6366dce676a6ac3f075b878619a5cfa44018f489082d	shl3-tools	
 2529454812	shl3,shl3-big-map	Mesh	legacy			
 2529454927	shl3,shl3-big-map	Mesh	legacy			
 2529455019	shl3,shl3-big-map	Mesh	legacy			
@@ -996,35 +996,35 @@ id	games	type	target	sha256	batch	note
 2529459091	shl3,shl3-big-map	Mesh	legacy			
 2529459179	shl3,shl3-big-map	Mesh	legacy			
 2529459265	shl3,shl3-big-map	Mesh	legacy			
-2529567240	shl3,shl3-big-map	Image	asset/image/shl3/billboard/vn-news.png	3ebbee2782259c69464c083e6dee520b22077c3dd8d529d27a611f2d0b3a0792	shl3-poster-big	
-2529568661	shl3,shl3-big-map	Image	asset/image/shl3/billboard/oculusblox-vr.png	e69e29b11f1dfe23ad25e34096a7567cf7266101e17ba86b8039d69bbce54745	shl3-poster-big	
-2529569921	shl3,shl3-big-map	Image	asset/image/shl3/billboard/loxtech-helmet.png	b640794647f9d1917f03210f70cdbce5d5d53b28179c5c31e810b3b0e8e34ae1	shl3-poster-big	
-2529572721	shl3,shl3-big-map	Image	asset/image/shl3/billboard/atomic-watch-the-movie.png	479ed232a3c4fdcd07b0283e28c19007932b6cadd84b6a40131822a686764e22	shl3-poster-big	
-2529573086	shl3,shl3-big-map	Image	asset/image/shl3/billboard/chad-muller.png	62dd75f6d106f3028e0eccb90a26fcf83c234a111534e7c0d38155b035bdf979	shl3-poster	
-2529573569	shl3,shl3-big-map	Image	asset/image/shl3/billboard/elvin-speight-wanted.png	9d2d1c55b1276e3bd9b31bc46b9e9a6d1b239c61cd06142d799b5d53787bccfe	shl3-poster-big	
-2529573898	shl3,shl3-big-map	Image	asset/image/shl3/billboard/vote-cj-for-mayor.png	1e2897362a0f07fd15f4a5955d67e01bc6c50d26606fc95aee834b1bfb06e4f4	shl3-poster-big	
-2529575440	shl3,shl3-big-map	Image	asset/image/shl3/billboard/velocity.png	bca659cf0be7bc81c4843e55d66611368b814e0b25a0884ae1349f5f03ab32a3	shl3-poster	
-2529577760	shl3,shl3-big-map	Image	asset/image/shl3/billboard/oyer-gum.png	f553f4d35765be943f16011de5517ffb41ec4cb211e89ce0ba0aa979dcd5290a	shl3-poster-big	
-2529578353	shl3,shl3-big-map	Image	asset/image/shl3/billboard/billboard-injury-lawyer.png	0816c318edb611268ec40b574fc88a80a13e745ecec557a4ba1012986c43a94b	shl3-poster-big	
-2529578912	shl3,shl3-big-map	Image	asset/image/shl3/billboard/lazer-toes.png	a623da1060b57d865014c682ec9fefc6c3e4d650a82125702a7065e6a6df5219	shl3-poster-big	
-2529579456	shl3,shl3-big-map	Image	asset/image/shl3/billboard/have-you-seen-these-stones.png	7d0a58bb8fc7d1cdf40cfad7418cccb424cc2fa7a342d4d3b91c5c1574bd7fce	shl3-poster-big	
-2529580118	shl3,shl3-big-map	Image	asset/image/shl3/billboard/syndicorp.png	cacbbc52cc2b55220a3f846bbf9989dcc4eadee6308187926ac056d69f1f0e0a	shl3-poster-big	
-2529580652	shl3-big-map	Image	asset/image/shl3/billboard/red-rage.png	7fd0264d5aeb3ed9be6efb094a87c607d5568166b70e04d9b5d51ca3cb0c403f	shl3-poster-big	
-2529581654	shl3,shl3-big-map	Image	asset/image/shl3/billboard/the-star-alliance.png	a2f026ccbae10d31f1dce501e53de7764f5dce12d272e1729319684bd7d6ed9f	shl3-poster	
-2529582289	shl3,shl3-big-map	Image	asset/image/shl3/billboard/the-striker.png	2fda1c4f1fbb31ae45fba860e7f243a3307c3f814f74aa2b0c81e305b1dd4066	shl3-poster	
-2529583375	shl3,shl3-big-map	Image	asset/image/shl3/billboard/super-movers.png	b2625ae324ae4c6eabfd27431b0175fdbfaf04bbf3cfdd11612a8305ed757318	shl3-poster-big	
-2529584064	shl3,shl3-big-map	Image	asset/image/shl3/billboard/kit-and-tac-hero-suit-shop.png	0e9a3ea2d7f616338695cfd257855312961ebfe19ad6fe94aba1ab3cd059e26d	shl3-poster-big	
-2529586046	shl3,shl3-big-map	Image	asset/image/shl3/billboard/tech-pop.png	67dd3e73ccfdb0a653bedcd8351fbad4515df0a21d16412b35a6c69a6e7311a6	shl3-poster-big	
-2529586763	shl3,shl3-big-map	Image	asset/image/shl3/billboard/the-smell-of-extraterrestrials.png	cc00dc4c88bc70a3e4941f7c9b8639691440281820894037ab22f05b2c03ab65	shl3-poster-big	
-2529587269	shl3,shl3-big-map	Image	asset/image/shl3/billboard/thunderbolt.png	6a272e27e842e295baf00096b236bfc461e73e061df4a402e40007bb97d03d9d	shl3-poster-big	
-2529587783	shl3,shl3-big-map	Image	asset/image/shl3/billboard/heroes-are-a-danger-to-society.png	21e429be2e7b549dc21b661ff31e994b14d57a6c11ab8e4cf5c9f8f336d22a1b	shl3-poster-big	
-2529588304	shl3,shl3-big-map	Image	asset/image/shl3/billboard/robloxia-news.png	f7cb6ed481cf76f3287a492ea91918718007a07904d3cb942de2fb33a289c4d4	shl3-poster	
-2529589119	shl3,shl3-big-map	Image	asset/image/shl3/billboard/azures-flakes.png	d2096569a1f90daf559f150f1e24193d30077e8093aaf79b269c4e1e3640068c	shl3-poster-big	
-2529590142	shl3,shl3-big-map	Image	asset/image/shl3/billboard/valiant.png	0a89271f92912ce606a3f95d76380b6cba076fb01fb9234065fe8efc5771deb1	shl3-poster-big	
-2529590599	shl3-big-map	Image	asset/image/shl3/billboard/welcome-to-valor-city.png	db8b37b75fdb99033e8df3b8cee170775790e11646351edee8d422e0883a75dc	shl3-poster-big	
-2529591157	shl3,shl3-big-map	Image	asset/image/shl3/billboard/valor-city-news.png	3a25a1ced20bfae0fbc73f27cc5892f7fd30654c3372d38de5d806a968c2cffd	shl3-poster-big	
-2529591692	shl3,shl3-big-map	Image	asset/image/shl3/billboard/dj-oyer.png	f27e8dcab84e4ea9152cb33a3408775dbdcbddf19096dbe5f717eaea391b81b0	shl3-poster-big	
-2529592194	shl3,shl3-big-map	Image	asset/image/shl3/billboard/blox-burger.png	b694d7a90503421df1fdb7980fd20d4cbb7d5cbb93471bf1c199fc50327ce257	shl3-poster-big	
+2529567240	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/vn-news.png	3ebbee2782259c69464c083e6dee520b22077c3dd8d529d27a611f2d0b3a0792	shl3-poster-big	
+2529568661	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/oculusblox-vr.png	e69e29b11f1dfe23ad25e34096a7567cf7266101e17ba86b8039d69bbce54745	shl3-poster-big	
+2529569921	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/loxtech-helmet.png	b640794647f9d1917f03210f70cdbce5d5d53b28179c5c31e810b3b0e8e34ae1	shl3-poster-big	
+2529572721	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/atomic-watch-the-movie.png	479ed232a3c4fdcd07b0283e28c19007932b6cadd84b6a40131822a686764e22	shl3-poster-big	
+2529573086	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/chad-muller.png	62dd75f6d106f3028e0eccb90a26fcf83c234a111534e7c0d38155b035bdf979	shl3-poster	
+2529573569	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/elvin-speight-wanted.png	9d2d1c55b1276e3bd9b31bc46b9e9a6d1b239c61cd06142d799b5d53787bccfe	shl3-poster-big	
+2529573898	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/vote-cj-for-mayor.png	1e2897362a0f07fd15f4a5955d67e01bc6c50d26606fc95aee834b1bfb06e4f4	shl3-poster-big	
+2529575440	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/velocity.png	bca659cf0be7bc81c4843e55d66611368b814e0b25a0884ae1349f5f03ab32a3	shl3-poster	
+2529577760	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/oyer-gum.png	f553f4d35765be943f16011de5517ffb41ec4cb211e89ce0ba0aa979dcd5290a	shl3-poster-big	
+2529578353	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/billboard-injury-lawyer.png	0816c318edb611268ec40b574fc88a80a13e745ecec557a4ba1012986c43a94b	shl3-poster-big	
+2529578912	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/lazer-toes.png	a623da1060b57d865014c682ec9fefc6c3e4d650a82125702a7065e6a6df5219	shl3-poster-big	
+2529579456	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/have-you-seen-these-stones.png	7d0a58bb8fc7d1cdf40cfad7418cccb424cc2fa7a342d4d3b91c5c1574bd7fce	shl3-poster-big	
+2529580118	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/syndicorp.png	cacbbc52cc2b55220a3f846bbf9989dcc4eadee6308187926ac056d69f1f0e0a	shl3-poster-big	
+2529580652	shl3-big-map	Image	asset/image/shl-3/billboard/red-rage.png	7fd0264d5aeb3ed9be6efb094a87c607d5568166b70e04d9b5d51ca3cb0c403f	shl3-poster-big	
+2529581654	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/the-star-alliance.png	a2f026ccbae10d31f1dce501e53de7764f5dce12d272e1729319684bd7d6ed9f	shl3-poster	
+2529582289	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/the-striker.png	2fda1c4f1fbb31ae45fba860e7f243a3307c3f814f74aa2b0c81e305b1dd4066	shl3-poster	
+2529583375	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/super-movers.png	b2625ae324ae4c6eabfd27431b0175fdbfaf04bbf3cfdd11612a8305ed757318	shl3-poster-big	
+2529584064	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/kit-and-tac-hero-suit-shop.png	0e9a3ea2d7f616338695cfd257855312961ebfe19ad6fe94aba1ab3cd059e26d	shl3-poster-big	
+2529586046	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/tech-pop.png	67dd3e73ccfdb0a653bedcd8351fbad4515df0a21d16412b35a6c69a6e7311a6	shl3-poster-big	
+2529586763	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/the-smell-of-extraterrestrials.png	cc00dc4c88bc70a3e4941f7c9b8639691440281820894037ab22f05b2c03ab65	shl3-poster-big	
+2529587269	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/thunderbolt.png	6a272e27e842e295baf00096b236bfc461e73e061df4a402e40007bb97d03d9d	shl3-poster-big	
+2529587783	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/heroes-are-a-danger-to-society.png	21e429be2e7b549dc21b661ff31e994b14d57a6c11ab8e4cf5c9f8f336d22a1b	shl3-poster-big	
+2529588304	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/robloxia-news.png	f7cb6ed481cf76f3287a492ea91918718007a07904d3cb942de2fb33a289c4d4	shl3-poster	
+2529589119	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/azures-flakes.png	d2096569a1f90daf559f150f1e24193d30077e8093aaf79b269c4e1e3640068c	shl3-poster-big	
+2529590142	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/valiant.png	0a89271f92912ce606a3f95d76380b6cba076fb01fb9234065fe8efc5771deb1	shl3-poster-big	
+2529590599	shl3-big-map	Image	asset/image/shl-3/billboard/welcome-to-valor-city.png	db8b37b75fdb99033e8df3b8cee170775790e11646351edee8d422e0883a75dc	shl3-poster-big	
+2529591157	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/valor-city-news.png	3a25a1ced20bfae0fbc73f27cc5892f7fd30654c3372d38de5d806a968c2cffd	shl3-poster-big	
+2529591692	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/dj-oyer.png	f27e8dcab84e4ea9152cb33a3408775dbdcbddf19096dbe5f717eaea391b81b0	shl3-poster-big	
+2529592194	shl3,shl3-big-map	Image	asset/image/shl-3/billboard/blox-burger.png	b694d7a90503421df1fdb7980fd20d4cbb7d5cbb93471bf1c199fc50327ce257	shl3-poster-big	
 2536858735	shl3,shl3-big-map	Mesh	legacy			
 2536859063	shl3,shl3-big-map	Mesh	legacy			
 2536859266	shl3,shl3-big-map	Mesh	legacy			
@@ -1098,60 +1098,60 @@ id	games	type	target	sha256	batch	note
 2564483370	shl3,shl3-big-map	Mesh	legacy			
 2564483943	shl3,shl3-big-map	Mesh	legacy			
 2564484132	shl3,shl3-big-map	Mesh	legacy			
-2564676227	shl3,shl3-big-map	Image	asset/image/shl3/ui/team-change/open.png	e6209739f2c466d6f6561469dc9c4466fa86a8b0f15abf966a1e569e33c2438a	shl3-ui	
-2564676612	shl3,shl3-big-map	Image	asset/image/shl3/ui/info/open.png	2b89f8bc357c5b5d719cace0962667120574e15edbf37a29c52c627f6a083aa2	shl3-ui	
-2564676954	shl3,shl3-big-map	Image	asset/image/shl3/ui/mode-changer/open.png	186ccfbb7393d0ee249ba5fe8eca3338739250e2de26bbbda6383ea4d1cdda40	shl3-ui	
-2564677318	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/open.png	91ee54f4dd887976fd9976aa2114cf83204828ce9a1a10a17c0e7ec8c72f09f9	shl3-ui	
-2564688716	shl3,shl3-big-map	Image	asset/image/shl3/ui/common/sidebar-thin.png	704713b3e3536abcb932afaff5d950743beb7fdb2565501341d85be3951f9b4e	shl3-ui	
+2564676227	shl3,shl3-big-map	Image	asset/image/shl-3/ui/team-change/open.png	e6209739f2c466d6f6561469dc9c4466fa86a8b0f15abf966a1e569e33c2438a	shl3-ui	
+2564676612	shl3,shl3-big-map	Image	asset/image/shl-3/ui/info/open.png	2b89f8bc357c5b5d719cace0962667120574e15edbf37a29c52c627f6a083aa2	shl3-ui	
+2564676954	shl3,shl3-big-map	Image	asset/image/shl-3/ui/mode-changer/open.png	186ccfbb7393d0ee249ba5fe8eca3338739250e2de26bbbda6383ea4d1cdda40	shl3-ui	
+2564677318	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/open.png	91ee54f4dd887976fd9976aa2114cf83204828ce9a1a10a17c0e7ec8c72f09f9	shl3-ui	
+2564688716	shl3,shl3-big-map	Image	asset/image/shl-3/ui/common/sidebar-thin.png	704713b3e3536abcb932afaff5d950743beb7fdb2565501341d85be3951f9b4e	shl3-ui	
 2564708324	shl3,shl3-big-map	Image	dropped	f1ad75b19b51bc2778471c5c889a8df23115c4c454b61c557e282995ba010f6e		crates, never finished in the legacy game
 2564719077	shl3,shl3-big-map	Image	dropped	ccb07585912b3b400673e29d3baa2ddf7d94460595613d79af522d8668c71a14		crates, never finished in the legacy game
 2564730106	shl3,shl3-big-map	Image	dropped	b98119985ffb1a9fe3441930a5d00949a207aa635263ba2820ab1a51ca055f51		crates, never finished in the legacy game
 2564733597	shl3,shl3-big-map	Image	dropped	05379a4ca453d71abb4fa0a480d660b5f7d415bfb12436183ab19bcc018f00dd		crates, never finished in the legacy game
-2564814060	shl3,shl3-big-map	Image	asset/image/shl3/ui/team-change/panel.png	d173f1b96ae1e13c26f627266bec379889303e1c1e711b16364e920d0a74fa27	shl3-ui	
-2564821424	shl3,shl3-big-map	Image	asset/image/shl3/ui/info/panel.png	63700a2e136b30e782ed7d9ade1fc37a997e80d83ea36fb086e08ccc1fec4d53	shl3-ui	
-2564911279	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-manager/slot-free.png	5a65ae9b531141d44143bdc9f0a4fcf9123b795a11f1e9fdc4843e175694bf7c	shl3-ui	
-2564915135	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-manager/slot-paid.png	6305a0362f80f9f0ba6a6d79ca750428e32244634a37156ac02e39d06c74ee67	shl3-ui	
-2564930672	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-manager/edit.png	935f5e5b7cfdeb26483525d9a69be31ef0a924973ca0fe6e4d3996f8a9944865	shl3-ui	
-2564935268	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-manager/select.png	3a87286fa4df57e52e5fca78211d77d49c835d34eac734d23ad164a23beb2cbd	shl3-ui	
-2564945085	shl3,shl3-big-map	Image	asset/image/shl3/ui/common/button-template-3.png	b23cd47e2f1ba61c337709f58db22c5c3b664213a250c99f9763b3ff15b3c95e	shl3-ui	
-2566285344	shl3,shl3-big-map	Image	asset/image/shl3/ui/common/button-template.png	0fca6c06b4c91c2d81975e7eb4b6998ca4ed4b515863befa52834b00ec9df173	shl3-ui	
-2566475436	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-accessories.png	1c746fe802e18298e9d23e7fcffca2d2aa9ccb81dcbd557a03148cb9b935b40e	shl3-ui	
-2566475872	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-done.png	144d31e0fab413e0b6ceb5e96496ce7e6fc08c93ec9cafa252a2adcc851bef26	shl3-ui	
-2566476253	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-emblem.png	44752662f5a2d89afa932c47e4cbe0083ecb5c5f5ca4c46dde6e27abd317324d	shl3-ui	
-2566476688	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-face.png	4a90294d1287fc52ac8a121c2718177b138e4bb8c547e9c43b8f91683182c416	shl3-ui	
-2566477625	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-race-hair.png	110e09557a3baa7d5b17ef9592cf2df0b0ea66d540038c01840f590f5733dbf8	shl3-ui	
-2566477985	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-shirt-pants.png	a178af2c54956752acff5854afacdb7b45eea83571ccb0626a65fa126b1b00e3	shl3-ui	
-2566478466	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-size-name.png	dbb28156f52995e1435c18a161efc589d1ab704c0b92a7c6b20456262e2f9c52	shl3-ui	
-2566479005	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-suit-cape.png	c71eda919a6273ebb739b8b4fd27ce925c106a4a97d1d4769664527397cbbe61	shl3-ui	
-2566480839	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-team-story.png	05756c07a15e829ee16e0d77f63574e63397dfef1caea682f6bbd6cb57897bb2	shl3-ui	
-2566495281	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/race-hair-background.png	ee9b89a5d48002bf7b79d37a41a6ea76641a40a980425b9f034ffcdaa4e6348d	shl3-ui	
-2566501308	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/skin-color.png	b1c76119d8340d71dfa327bedc9717c17d8f5d87dfc46e13038958948e8d83f0	shl3-ui	
-2566501750	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/hair-color.png	e98c4e333d08e50eb6655d165cae5f02fb1f213f4549698cfe3ce4a0a8f24fe1	shl3-ui	
-2566582333	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/face-background.png	19c28289096d8e8bdc2460f8b826fea268e8b23431a72dd38da524b9060bc146	shl3-ui	
-2566594942	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/eye-color.png	f1e1c02ef62053026671900a909e41cfba317313c1b6f9a6da74ef5bbaf502e1	shl3-ui	
-2566604682	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/shirt-pants-background.png	afacc612dbd564858d241ebb6505490b46c4f25a229e4c6be744e955e68ecfdd	shl3-ui	
-2566615465	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/pants-secondary-color.png	7d55db3c8dcde41beb7d8b8047ea0eed0845f977ac8d1a807466f57a4c833e46	shl3-ui	
-2566616040	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/pants-primary-color.png	d33edc480f8cc4059bd112c65254b34b85e91de4fe1ca7ad359765040093d46b	shl3-ui	
-2566617969	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/shirt-secondary-color.png	7dc6862d877f0cc9484f95fbe216fb38c4930e46766718f8030afab96b849992	shl3-ui	
-2566618618	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/shirt-primary-color.png	01f57f6cae1f65cd708633251b256b21997f389496f2bdfa331a5272d47daefc	shl3-ui	
-2566624449	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/accessories-background.png	8a063db5ec4b838d8639b79aeca259d3aefcebdad01cdc58446db6c92611cd47	shl3-ui	
-2566643857	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/size-name-background.png	901dd1404a48d706cb0674e818d9964bffc83a673579fe5797ea04bbfd7fc106	shl3-ui	
-2566780678	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/suit-cape-background.png	078e026303da4776d9cc97eb39d78458e5137b15e4e15bfed4540b16c09ef545	shl3-ui	
-2566784598	shl3,shl3-big-map	Image	asset/image/shl3/ui/common/label.png	3cac2058ec444675b6081a9bb6a83b93e8ff02657536a99eef6c358442270949	shl3-ui	
-2566815062	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/suit-primary-color.png	d52af64692449d5ce3db14d1aceccecd63beb54c03733b38c026cee36ca28a93	shl3-ui	
-2566815421	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/suit-base-color.png	4d3de27eab27fadbf4b7df4fe6a10adb54da3ee42587fdb33d6b378d7e03f3f8	shl3-ui	
-2566816124	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/suit-secondary-color.png	fb52f07696621381791833f4b6e538a908def7d69835fba087858d2bcda667b5	shl3-ui	
-2566828299	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/emblem-secondary-color.png	46b513e001335c4f30a46ea85585323aae6922e207cdaea7f7b308367a6a2210	shl3-ui	
-2566828988	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/emblem-primary-color.png	55371f4efd812751eb24721c38ebea2b8d2fa5fac238676abbc9b26a0ed99f23	shl3-ui	
-2566831222	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/emblem-background.png	1e17cfcf5dbe5ea1ebddaf400b5a579cff066265f001af559e98d6a7de64019a	shl3-ui	
-2566837997	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/team-story-background.png	b202885e7ace83821bb51b5f0529f67c89ffc4ecab8128cda166fd81b5d51bde	shl3-ui	
-2566896922	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/powers-background.png	c61662215a53125ac5af121aa48239c721ddbe46a2b2bda160f60c71d019c66c	shl3-ui	
-2566903359	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/power-slot.png	468df9ca7325bd64b4e9c4d92d9b590fc82ce914ebc89136c527c1f7c67c038e	shl3-ui	
-2566928315	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/menu-powers.png	ee868684feb02934d56ff70eaccd97ce0a92fb842d1ee1d65228f59a435fb544	shl3-ui	
-2566941572	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-manager/open.png	1d05c08b0955e80081dfa1f96ec708bc90af2a31c378661d99e833833f4b88b3	shl3-ui	
-2566943644	shl3,shl3-big-map	Image	asset/image/shl3/ui/switch/open.png	c9a1a51568ea7245b1e098f3eeee87d6a5ccf08a0f715db4bb7e546d00fdcfe5	shl3-ui	
+2564814060	shl3,shl3-big-map	Image	asset/image/shl-3/ui/team-change/panel.png	d173f1b96ae1e13c26f627266bec379889303e1c1e711b16364e920d0a74fa27	shl3-ui	
+2564821424	shl3,shl3-big-map	Image	asset/image/shl-3/ui/info/panel.png	63700a2e136b30e782ed7d9ade1fc37a997e80d83ea36fb086e08ccc1fec4d53	shl3-ui	
+2564911279	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-manager/slot-free.png	5a65ae9b531141d44143bdc9f0a4fcf9123b795a11f1e9fdc4843e175694bf7c	shl3-ui	
+2564915135	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-manager/slot-paid.png	6305a0362f80f9f0ba6a6d79ca750428e32244634a37156ac02e39d06c74ee67	shl3-ui	
+2564930672	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-manager/edit.png	935f5e5b7cfdeb26483525d9a69be31ef0a924973ca0fe6e4d3996f8a9944865	shl3-ui	
+2564935268	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-manager/select.png	3a87286fa4df57e52e5fca78211d77d49c835d34eac734d23ad164a23beb2cbd	shl3-ui	
+2564945085	shl3,shl3-big-map	Image	asset/image/shl-3/ui/common/button-template-3.png	b23cd47e2f1ba61c337709f58db22c5c3b664213a250c99f9763b3ff15b3c95e	shl3-ui	
+2566285344	shl3,shl3-big-map	Image	asset/image/shl-3/ui/common/button-template.png	0fca6c06b4c91c2d81975e7eb4b6998ca4ed4b515863befa52834b00ec9df173	shl3-ui	
+2566475436	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-accessories.png	1c746fe802e18298e9d23e7fcffca2d2aa9ccb81dcbd557a03148cb9b935b40e	shl3-ui	
+2566475872	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-done.png	144d31e0fab413e0b6ceb5e96496ce7e6fc08c93ec9cafa252a2adcc851bef26	shl3-ui	
+2566476253	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-emblem.png	44752662f5a2d89afa932c47e4cbe0083ecb5c5f5ca4c46dde6e27abd317324d	shl3-ui	
+2566476688	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-face.png	4a90294d1287fc52ac8a121c2718177b138e4bb8c547e9c43b8f91683182c416	shl3-ui	
+2566477625	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-race-hair.png	110e09557a3baa7d5b17ef9592cf2df0b0ea66d540038c01840f590f5733dbf8	shl3-ui	
+2566477985	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-shirt-pants.png	a178af2c54956752acff5854afacdb7b45eea83571ccb0626a65fa126b1b00e3	shl3-ui	
+2566478466	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-size-name.png	dbb28156f52995e1435c18a161efc589d1ab704c0b92a7c6b20456262e2f9c52	shl3-ui	
+2566479005	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-suit-cape.png	c71eda919a6273ebb739b8b4fd27ce925c106a4a97d1d4769664527397cbbe61	shl3-ui	
+2566480839	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-team-story.png	05756c07a15e829ee16e0d77f63574e63397dfef1caea682f6bbd6cb57897bb2	shl3-ui	
+2566495281	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/race-hair-background.png	ee9b89a5d48002bf7b79d37a41a6ea76641a40a980425b9f034ffcdaa4e6348d	shl3-ui	
+2566501308	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/skin-color.png	b1c76119d8340d71dfa327bedc9717c17d8f5d87dfc46e13038958948e8d83f0	shl3-ui	
+2566501750	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/hair-color.png	e98c4e333d08e50eb6655d165cae5f02fb1f213f4549698cfe3ce4a0a8f24fe1	shl3-ui	
+2566582333	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/face-background.png	19c28289096d8e8bdc2460f8b826fea268e8b23431a72dd38da524b9060bc146	shl3-ui	
+2566594942	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/eye-color.png	f1e1c02ef62053026671900a909e41cfba317313c1b6f9a6da74ef5bbaf502e1	shl3-ui	
+2566604682	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/shirt-pants-background.png	afacc612dbd564858d241ebb6505490b46c4f25a229e4c6be744e955e68ecfdd	shl3-ui	
+2566615465	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/pants-secondary-color.png	7d55db3c8dcde41beb7d8b8047ea0eed0845f977ac8d1a807466f57a4c833e46	shl3-ui	
+2566616040	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/pants-primary-color.png	d33edc480f8cc4059bd112c65254b34b85e91de4fe1ca7ad359765040093d46b	shl3-ui	
+2566617969	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/shirt-secondary-color.png	7dc6862d877f0cc9484f95fbe216fb38c4930e46766718f8030afab96b849992	shl3-ui	
+2566618618	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/shirt-primary-color.png	01f57f6cae1f65cd708633251b256b21997f389496f2bdfa331a5272d47daefc	shl3-ui	
+2566624449	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/accessories-background.png	8a063db5ec4b838d8639b79aeca259d3aefcebdad01cdc58446db6c92611cd47	shl3-ui	
+2566643857	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/size-name-background.png	901dd1404a48d706cb0674e818d9964bffc83a673579fe5797ea04bbfd7fc106	shl3-ui	
+2566780678	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/suit-cape-background.png	078e026303da4776d9cc97eb39d78458e5137b15e4e15bfed4540b16c09ef545	shl3-ui	
+2566784598	shl3,shl3-big-map	Image	asset/image/shl-3/ui/common/label.png	3cac2058ec444675b6081a9bb6a83b93e8ff02657536a99eef6c358442270949	shl3-ui	
+2566815062	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/suit-primary-color.png	d52af64692449d5ce3db14d1aceccecd63beb54c03733b38c026cee36ca28a93	shl3-ui	
+2566815421	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/suit-base-color.png	4d3de27eab27fadbf4b7df4fe6a10adb54da3ee42587fdb33d6b378d7e03f3f8	shl3-ui	
+2566816124	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/suit-secondary-color.png	fb52f07696621381791833f4b6e538a908def7d69835fba087858d2bcda667b5	shl3-ui	
+2566828299	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/emblem-secondary-color.png	46b513e001335c4f30a46ea85585323aae6922e207cdaea7f7b308367a6a2210	shl3-ui	
+2566828988	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/emblem-primary-color.png	55371f4efd812751eb24721c38ebea2b8d2fa5fac238676abbc9b26a0ed99f23	shl3-ui	
+2566831222	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/emblem-background.png	1e17cfcf5dbe5ea1ebddaf400b5a579cff066265f001af559e98d6a7de64019a	shl3-ui	
+2566837997	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/team-story-background.png	b202885e7ace83821bb51b5f0529f67c89ffc4ecab8128cda166fd81b5d51bde	shl3-ui	
+2566896922	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/powers-background.png	c61662215a53125ac5af121aa48239c721ddbe46a2b2bda160f60c71d019c66c	shl3-ui	
+2566903359	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/power-slot.png	468df9ca7325bd64b4e9c4d92d9b590fc82ce914ebc89136c527c1f7c67c038e	shl3-ui	
+2566928315	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/menu-powers.png	ee868684feb02934d56ff70eaccd97ce0a92fb842d1ee1d65228f59a435fb544	shl3-ui	
+2566941572	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-manager/open.png	1d05c08b0955e80081dfa1f96ec708bc90af2a31c378661d99e833833f4b88b3	shl3-ui	
+2566943644	shl3,shl3-big-map	Image	asset/image/shl-3/ui/switch/open.png	c9a1a51568ea7245b1e098f3eeee87d6a5ccf08a0f715db4bb7e546d00fdcfe5	shl3-ui	
 2566954569	shl3,shl3-big-map	Image	dropped	b2e5e1a82d6ee5588994bb1fd4bb5cef1d35c1b705fffe8241e6269b288d7ef3		the minimap, retired in the legacy game
-2566961096	shl3,shl3-big-map	Image	asset/image/shl3/ui/codes/text-box.png	104ec30f063afa1456ac21234f44b64d55c7df40b752208362cd91a25a186a2f	shl3-ui	
+2566961096	shl3,shl3-big-map	Image	asset/image/shl-3/ui/codes/text-box.png	104ec30f063afa1456ac21234f44b64d55c7df40b752208362cd91a25a186a2f	shl3-ui	
 2566997482	shl3,shl3-big-map	Mesh	legacy			
 2566997919	shl3,shl3-big-map	Mesh	legacy			
 2566998039	shl3,shl3-big-map	Mesh	legacy			
@@ -1200,59 +1200,59 @@ id	games	type	target	sha256	batch	note
 2569811227	shl3-big-map	Mesh	legacy			
 2569811356	shl3-big-map	Mesh	legacy			
 2569811459	shl3-big-map	Mesh	legacy			
-2571859108	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/color-picker-color-background.png	a1ec5034e0f6faf65b483b9ac9a465fa555708969e2ac718eec6121516b39c61	shl3-ui	
-2571861059	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/color-picker-texture-background.png	9ebe78ef733e38a9b8d44a247224c0c2c4cdacc0f57bd7c37530e7448b2e04b3	shl3-ui	
-2571878392	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/color-picker-colors-label.png	43aee4b4b7b32bdc938ff616b4c3e2e6eee7d20cec4d791af27d3aab9d23a05e	shl3-ui	
-2571881049	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/color-picker-textures-label.png	753389e9483f096ff23abace43008ef59f6e7e25210f04782230450f0cf7d95c	shl3-ui	
-2571893511	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/color-picker-pick-label.png	3f1b1f3c04d0b6f9df1d2c70ef30853cda4751cab3e7ca5bf64a8e6fc0633764	shl3-ui	
-2571915788	shl3,shl3-big-map	Image	asset/image/shl3/ui/mode-changer/panel.png	256b9249e1d923c0a0d853c5b3e82b995f2c2317e565b07380eaf272c9103b08	shl3-ui	
-2571938793	shl3,shl3-big-map	Image	asset/image/shl3/ui/mode-changer/card.png	0ca3e9eae398cf186edbf895f3207340d1a668627f91d8e9c06cec5aaaae05e2	shl3-ui	
-2571962097	shl3,shl3-big-map	Image	asset/image/shl3/ui/mode-changer/teleport-button.png	4a90fd3c66bd0ef9f4f3fbc72259807093feab62c060e30a9dd57053697bd163	shl3-ui	
-2572065145	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/panel.png	d883bc59589f7067d58057429a56f4a6d9e5a184153cafc4cad950ea14a78854	shl3-ui	
-2572071007	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/accessories-sidebar.png	3552cf242819aeed3c6a9d75fe9db48d04b53ac021f7ae077eada2d05ecc4195	shl3-ui	
-2572075649	shl3,shl3-big-map	Image	asset/image/shl3/ui/common/sidebar.png	183614b5335e92ab8b80c770788d47fae4396b0b813a77409bac489f7ee32c13	shl3-ui	
-2572121832	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/gamepass-tile.png	a5161328e0710448423294e9cc8d0d33548d8a95d1fd623cddab04039d15d875	shl3-ui	
-2572180433	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/scroll-bar.png	f8c49d156968ededb234ba9ab7a8b39888bbc1974f6c4060b6f208ad2d8b0bcf	shl3-ui	
-2572201571	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/currency-tile.png	d9eba5397917be674fdbba36a52e1744a6c78b6c4cd36d96ab5a2192e27c12da	shl3-ui	
-2572207960	shl3,shl3-big-map	Image	asset/image/shl3/ui/common/button-template-3.png	e5cb2958526f91fc13d7eb53a1ede5805576491334bc19ef1dfd1cdeb0bd2d8c	shl3-ui	same pixels as 2564945085, encoded differently: one file serves both
-2572275689	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/credits-button.png	9f73370e546816afe23b38168b7f6ac40752bd40eea2069f7b45b6ff8c8b6510	shl3-ui	
-2572276586	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/gamepasses-button.png	c73b1f7a23fe559e2cc665262a9f4dccce6f074bb56b0de54d7a751897d61f9f	shl3-ui	
-2572560121	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/matching-separate.png	7d23d9a5c8b08af922dd7714c3ad1951702d0d944284679d9d246bfb6163a290	shl3-ui	
-2572561028	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/matching-combine.png	649bf4c4c90d7e9337103f47856fbccd7de4fcd740098d2b8737dc6016c00898	shl3-ui	
-2572618284	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/background.png	c4f6c7fbc2f0c1e111087a7f9170d8b97e6647efb5dc45740c03382557881b57	shl3-ui	
-2572643648	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/season-autumn.png	6df7cee156a3ff909c1208b4b1859126db909e4b1b43497cfc352f9c0de2677d	shl3-ui	
-2572644314	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/season-spring.png	41f5a8a3890cc3ef6a3008fad4c21dd0c360c5a316ba7e5b749d0b8e5c12ba31	shl3-ui	
-2572644715	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/season-summer.png	7f1e0c14bcf0cf42fd28e1de2a47ab4f13261303b0f39e797ef61b7a5c6efdd7	shl3-ui	
-2572645082	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/season-winter.png	7b38af3d5bf2707d921c9dd8f63ef26fd41e118fd57bbf166130837398d27664	shl3-ui	
-2572646723	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/time-dawn.png	edf077758dbf925caadbaa38ee1d533b67576063e71f5bb063e4bad1da21ac74	shl3-ui	
-2572647087	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/time-day.png	42ef37f07f99eb817ed99e077ef2d35245fa3431542d9eaacdfa521e53079ed5	shl3-ui	
-2572647596	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/time-dusk.png	cea09ce448645e4482f0159363ce040a5e32d6c5760c0a701920b0eba5b31b35	shl3-ui	
-2572660361	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-blizzard.png	381cfd77ed0c25c298252d2122924efb19fc56c204fe57a31fcaf66161fad0d7	shl3-ui	
-2572661151	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-cloudy.png	5b4430dc65dd41e89d11d103e063e02b790a5f0c7f279424275c24042b5b08a5	shl3-ui	
-2572661889	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-rain.png	093af62d555fa5b8e576cabf1468cf827ea153fc939f7d538c5c5510d2ef4e31	shl3-ui	
-2572662365	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-rainstorm.png	a64e092afee1f04d56d34a2d731e49caf11ff107eec3d467e4861b5de8ef9872	shl3-ui	
-2572663394	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-snow.png	6ccfae8acce329a04494016f123732b4c4ef505fa119ccbc5e2e43957d00e26a	shl3-ui	
-2572663793	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-thunder.png	4263e55c3c47b0131df3d26c436b9e4a17f4fe9433f45c98eb7350ad92199abb	shl3-ui	
-2572664252	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-thunderstorm.png	84cd889c252b031f720b326dfc045f228faa24770408c788b0d566be1b5c9c00	shl3-ui	
-2572723214	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/time-night.png	728a804875c9c265113b300e31d1254b7a185e013ce9da2825d6b29e9d824478	shl3-ui	
-2572745301	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-fog.png	bf02b2e130d4468d36ef1da07a598f4ccd1928c7ddfdb48aa0d35334be66af26	shl3-ui	
-2572753090	shl3,shl3-big-map	Image	asset/image/shl3/ui/rp-top-bar/weather-sunny.png	0fc644db9959ffc59fe6406447b9ff7312ba435cc0cd01313191f84e31965965	shl3-ui	
+2571859108	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/color-picker-color-background.png	a1ec5034e0f6faf65b483b9ac9a465fa555708969e2ac718eec6121516b39c61	shl3-ui	
+2571861059	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/color-picker-texture-background.png	9ebe78ef733e38a9b8d44a247224c0c2c4cdacc0f57bd7c37530e7448b2e04b3	shl3-ui	
+2571878392	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/color-picker-colors-label.png	43aee4b4b7b32bdc938ff616b4c3e2e6eee7d20cec4d791af27d3aab9d23a05e	shl3-ui	
+2571881049	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/color-picker-textures-label.png	753389e9483f096ff23abace43008ef59f6e7e25210f04782230450f0cf7d95c	shl3-ui	
+2571893511	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/color-picker-pick-label.png	3f1b1f3c04d0b6f9df1d2c70ef30853cda4751cab3e7ca5bf64a8e6fc0633764	shl3-ui	
+2571915788	shl3,shl3-big-map	Image	asset/image/shl-3/ui/mode-changer/panel.png	256b9249e1d923c0a0d853c5b3e82b995f2c2317e565b07380eaf272c9103b08	shl3-ui	
+2571938793	shl3,shl3-big-map	Image	asset/image/shl-3/ui/mode-changer/card.png	0ca3e9eae398cf186edbf895f3207340d1a668627f91d8e9c06cec5aaaae05e2	shl3-ui	
+2571962097	shl3,shl3-big-map	Image	asset/image/shl-3/ui/mode-changer/teleport-button.png	4a90fd3c66bd0ef9f4f3fbc72259807093feab62c060e30a9dd57053697bd163	shl3-ui	
+2572065145	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/panel.png	d883bc59589f7067d58057429a56f4a6d9e5a184153cafc4cad950ea14a78854	shl3-ui	
+2572071007	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/accessories-sidebar.png	3552cf242819aeed3c6a9d75fe9db48d04b53ac021f7ae077eada2d05ecc4195	shl3-ui	
+2572075649	shl3,shl3-big-map	Image	asset/image/shl-3/ui/common/sidebar.png	183614b5335e92ab8b80c770788d47fae4396b0b813a77409bac489f7ee32c13	shl3-ui	
+2572121832	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/gamepass-tile.png	a5161328e0710448423294e9cc8d0d33548d8a95d1fd623cddab04039d15d875	shl3-ui	
+2572180433	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/scroll-bar.png	f8c49d156968ededb234ba9ab7a8b39888bbc1974f6c4060b6f208ad2d8b0bcf	shl3-ui	
+2572201571	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/currency-tile.png	d9eba5397917be674fdbba36a52e1744a6c78b6c4cd36d96ab5a2192e27c12da	shl3-ui	
+2572207960	shl3,shl3-big-map	Image	asset/image/shl-3/ui/common/button-template-3.png	e5cb2958526f91fc13d7eb53a1ede5805576491334bc19ef1dfd1cdeb0bd2d8c	shl3-ui	same pixels as 2564945085, encoded differently: one file serves both
+2572275689	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/credits-button.png	9f73370e546816afe23b38168b7f6ac40752bd40eea2069f7b45b6ff8c8b6510	shl3-ui	
+2572276586	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/gamepasses-button.png	c73b1f7a23fe559e2cc665262a9f4dccce6f074bb56b0de54d7a751897d61f9f	shl3-ui	
+2572560121	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/matching-separate.png	7d23d9a5c8b08af922dd7714c3ad1951702d0d944284679d9d246bfb6163a290	shl3-ui	
+2572561028	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/matching-combine.png	649bf4c4c90d7e9337103f47856fbccd7de4fcd740098d2b8737dc6016c00898	shl3-ui	
+2572618284	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/background.png	c4f6c7fbc2f0c1e111087a7f9170d8b97e6647efb5dc45740c03382557881b57	shl3-ui	
+2572643648	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/season-autumn.png	6df7cee156a3ff909c1208b4b1859126db909e4b1b43497cfc352f9c0de2677d	shl3-ui	
+2572644314	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/season-spring.png	41f5a8a3890cc3ef6a3008fad4c21dd0c360c5a316ba7e5b749d0b8e5c12ba31	shl3-ui	
+2572644715	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/season-summer.png	7f1e0c14bcf0cf42fd28e1de2a47ab4f13261303b0f39e797ef61b7a5c6efdd7	shl3-ui	
+2572645082	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/season-winter.png	7b38af3d5bf2707d921c9dd8f63ef26fd41e118fd57bbf166130837398d27664	shl3-ui	
+2572646723	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/time-dawn.png	edf077758dbf925caadbaa38ee1d533b67576063e71f5bb063e4bad1da21ac74	shl3-ui	
+2572647087	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/time-day.png	42ef37f07f99eb817ed99e077ef2d35245fa3431542d9eaacdfa521e53079ed5	shl3-ui	
+2572647596	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/time-dusk.png	cea09ce448645e4482f0159363ce040a5e32d6c5760c0a701920b0eba5b31b35	shl3-ui	
+2572660361	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-blizzard.png	381cfd77ed0c25c298252d2122924efb19fc56c204fe57a31fcaf66161fad0d7	shl3-ui	
+2572661151	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-cloudy.png	5b4430dc65dd41e89d11d103e063e02b790a5f0c7f279424275c24042b5b08a5	shl3-ui	
+2572661889	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-rain.png	093af62d555fa5b8e576cabf1468cf827ea153fc939f7d538c5c5510d2ef4e31	shl3-ui	
+2572662365	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-rainstorm.png	a64e092afee1f04d56d34a2d731e49caf11ff107eec3d467e4861b5de8ef9872	shl3-ui	
+2572663394	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-snow.png	6ccfae8acce329a04494016f123732b4c4ef505fa119ccbc5e2e43957d00e26a	shl3-ui	
+2572663793	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-thunder.png	4263e55c3c47b0131df3d26c436b9e4a17f4fe9433f45c98eb7350ad92199abb	shl3-ui	
+2572664252	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-thunderstorm.png	84cd889c252b031f720b326dfc045f228faa24770408c788b0d566be1b5c9c00	shl3-ui	
+2572723214	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/time-night.png	728a804875c9c265113b300e31d1254b7a185e013ce9da2825d6b29e9d824478	shl3-ui	
+2572745301	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-fog.png	bf02b2e130d4468d36ef1da07a598f4ccd1928c7ddfdb48aa0d35334be66af26	shl3-ui	
+2572753090	shl3,shl3-big-map	Image	asset/image/shl-3/ui/rp-top-bar/weather-sunny.png	0fc644db9959ffc59fe6406447b9ff7312ba435cc0cd01313191f84e31965965	shl3-ui	
 2572763721	shl3-big-map	SolidModel	legacy			
 2573170358	shl3,shl3-big-map	Image	dropped	bd38a87a084ae06d1398e4f72e01f3d3ef89ed4fc0ba2b646e6202e34865081f		the minimap, retired in the legacy game
-2594070322	shl3-big-map	Image	asset/image/shl3/meme/bug-reports.png	770372d7c540caeb3f27f1542fe9c02f94e1b0f05958094e61b50ae8160651ce	shl3-poster-big	
-2594097705	shl3,shl3-big-map	Image	asset/image/shl3/meme/godmodding-facts.png	e4a83afa0817983ae2a8434e94d08d58021e61ef9b945efa4e2dee3d01aa9f2e	shl3-poster	
-2594131403	shl3-big-map	Image	asset/image/shl3/meme/huge-map-parking.png	abc3bfaa48fbff306e48014440de19b97fc33080be012fb382a4cec0b681f055	shl3-poster-big	
-2594146534	shl3,shl3-big-map	Image	asset/image/shl3/meme/surprised-game-lags.png	13b1987fb35bc896a9d8eba06ccb94acb97738f71a0f8ebc32a59693418ae29d	shl3-poster	
-2594154648	shl3,shl3-big-map	Image	asset/image/shl3/meme/presentation.png	d3506df08e45e8d1f0972f7ad77311add9d545c19a7c1083473603b556a6437a	shl3-poster	
-2654523721	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/retire.png	9676d6b8c9a35f61c4ee2f622ad137c5494fc1b4f8922205aee27dafcaf0c5f6	shl3-ui	
-2654528582	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/yes.png	86dab2fdfc2900db0ef3c75535e1a2c71fa3dfa6c50ef17867107c5fbb571015	shl3-ui	
-2654532229	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/no.png	ba4d3cf69cc571dfa9baeccf6d91473d5169416a34cad7542bbde02daa49bdb2	shl3-ui	
-2654537624	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/scenario-label.png	873ac4082b0806d33a34d7607e7ebc6a2a326b28631be30f46cb2ded37e76f10	shl3-ui	
-2654567786	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/paycheck-amount.png	d6b2d4905cb205e2ebda8c6df812ef19bea2040a96d86e32933c3ef937998616	shl3-ui	
-2655279834	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/stat-morality.png	8b3e08318bb09fb330cf87a2d3c3fd33f7167e894a4196e3a6c9aa81dd25983a	shl3-ui	
-2655281358	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/stat-happiness.png	96247e080034df8d84db798f8c4bf5b52fdcc245bf4e03dbdcb01f60b1e41ce3	shl3-ui	
-2655290770	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/stat-colleagues.png	c709df434a87ad349ae7b9924266a5793a44514bcd08503d32cedd88f5862a27	shl3-ui	
-2655293512	shl3,shl3-big-map	Image	asset/image/shl3/ui/job/stat-accomplishments.png	a1ec83ae627247276e605548a2a2ac7ef2a35932655f9202e81c2649c2293289	shl3-ui	
+2594070322	shl3-big-map	Image	asset/image/shl-3/meme/bug-reports.png	770372d7c540caeb3f27f1542fe9c02f94e1b0f05958094e61b50ae8160651ce	shl3-poster-big	
+2594097705	shl3,shl3-big-map	Image	asset/image/shl-3/meme/godmodding-facts.png	e4a83afa0817983ae2a8434e94d08d58021e61ef9b945efa4e2dee3d01aa9f2e	shl3-poster	
+2594131403	shl3-big-map	Image	asset/image/shl-3/meme/huge-map-parking.png	abc3bfaa48fbff306e48014440de19b97fc33080be012fb382a4cec0b681f055	shl3-poster-big	
+2594146534	shl3,shl3-big-map	Image	asset/image/shl-3/meme/surprised-game-lags.png	13b1987fb35bc896a9d8eba06ccb94acb97738f71a0f8ebc32a59693418ae29d	shl3-poster	
+2594154648	shl3,shl3-big-map	Image	asset/image/shl-3/meme/presentation.png	d3506df08e45e8d1f0972f7ad77311add9d545c19a7c1083473603b556a6437a	shl3-poster	
+2654523721	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/retire.png	9676d6b8c9a35f61c4ee2f622ad137c5494fc1b4f8922205aee27dafcaf0c5f6	shl3-ui	
+2654528582	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/yes.png	86dab2fdfc2900db0ef3c75535e1a2c71fa3dfa6c50ef17867107c5fbb571015	shl3-ui	
+2654532229	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/no.png	ba4d3cf69cc571dfa9baeccf6d91473d5169416a34cad7542bbde02daa49bdb2	shl3-ui	
+2654537624	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/scenario-label.png	873ac4082b0806d33a34d7607e7ebc6a2a326b28631be30f46cb2ded37e76f10	shl3-ui	
+2654567786	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/paycheck-amount.png	d6b2d4905cb205e2ebda8c6df812ef19bea2040a96d86e32933c3ef937998616	shl3-ui	
+2655279834	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/stat-morality.png	8b3e08318bb09fb330cf87a2d3c3fd33f7167e894a4196e3a6c9aa81dd25983a	shl3-ui	
+2655281358	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/stat-happiness.png	96247e080034df8d84db798f8c4bf5b52fdcc245bf4e03dbdcb01f60b1e41ce3	shl3-ui	
+2655290770	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/stat-colleagues.png	c709df434a87ad349ae7b9924266a5793a44514bcd08503d32cedd88f5862a27	shl3-ui	
+2655293512	shl3,shl3-big-map	Image	asset/image/shl-3/ui/job/stat-accomplishments.png	a1ec83ae627247276e605548a2a2ac7ef2a35932655f9202e81c2649c2293289	shl3-ui	
 2655784330	shl3-big-map	Mesh	legacy			
 2658469063	shl3,shl3-big-map	Mesh	legacy			
 2658469742	shl3,shl3-big-map	Mesh	legacy			
@@ -1291,26 +1291,26 @@ id	games	type	target	sha256	batch	note
 2662173120	shl3,shl3-big-map	Mesh	legacy			
 2664243572	shl3,shl3-big-map	Mesh	legacy			
 2664296645	shl3-big-map	Mesh	legacy			
-2669429962	shl3,shl3-big-map	Image	asset/image/shl3/ui/intro/logo.png	40df96a843fbafdedf030f74375c5c89858bdbd69d2b2b7319a57ebd3e638f1d	shl3-ui	
-2674595583	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/gamepass-double-slots.png	ee0e29cb857a38b4326cd1a7712a9e1147ee50249a97c762d8dc4307a845846c	shl3-ui	
-2674596957	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/gamepass-adv-rp.png	ab52d34efe0ecaf01f625f0a45c0d59aa2dafc9da602ec26ef07e577f1f4e595	shl3-ui	
-2674598156	shl3,shl3-big-map	Image	asset/image/shl3/ui/shop/gamepass-extra-power-slots.png	edb7f9e02647269bf4c832c864ec3ebe29a7053206174cacce91ff809c566025	shl3-ui	
+2669429962	shl3,shl3-big-map	Image	asset/image/shl-3/ui/intro/logo.png	40df96a843fbafdedf030f74375c5c89858bdbd69d2b2b7319a57ebd3e638f1d	shl3-ui	
+2674595583	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/gamepass-double-slots.png	ee0e29cb857a38b4326cd1a7712a9e1147ee50249a97c762d8dc4307a845846c	shl3-ui	
+2674596957	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/gamepass-adv-rp.png	ab52d34efe0ecaf01f625f0a45c0d59aa2dafc9da602ec26ef07e577f1f4e595	shl3-ui	
+2674598156	shl3,shl3-big-map	Image	asset/image/shl-3/ui/shop/gamepass-extra-power-slots.png	edb7f9e02647269bf4c832c864ec3ebe29a7053206174cacce91ff809c566025	shl3-ui	
 2674777817	shl3,shl3-big-map	Image	dropped	a14133e95538fa5325cdf0aa64f2b41ec01097d295b3d73e7bae411405dc22d7		the minimap, retired in the legacy game
 2674778279	shl3,shl3-big-map	Image	dropped	72737b4ad4e97c8d4175c3b9a317989fe8f29759aa3bc75633390eac3ba2e0ef		the minimap, retired in the legacy game
 2674788564	shl3,shl3-big-map	Image	dropped	aa35b8acfe5980d3e355957a28d1bbbfda204586b320c3dde3ec1c653dc729d7		the minimap, retired in the legacy game
 2674807598	shl3,shl3-big-map	Mesh	legacy			
 2674807807	shl3,shl3-big-map	Mesh	legacy			
-2674983916	shl3,shl3-big-map	Image	asset/image/shl3/ui/intro/studio-logo-space.png	fc57adfecfb91c67c5352d19e1aba7ac3a491dfc2062a0f5d9c4c60d4944df3d	shl3-ui	
-2675009596	shl3,shl3-big-map	Image	asset/image/shl3/ui/intro/studio-logo.png	f55e6c4955794a5a1a60ab77885546f9584c95fe097fb59138f15b016e1490c8	shl3-ui	
-2677217984	shl3,shl3-big-map	Image	asset/image/shl3/ui/suit-creation/team-story-logo.png	91b7a7d07692f4a3cc9ba3ed3513d4d9ae0eb5ddff1412aacc1445127bcc0ef7	shl3-ui	
-2709536093	shl3	Image	asset/image/shl3/meme/brain-activity.png	1d6cadbf7b70e873a21365578daafb11ed6300d02bf30e17f0335593a7e8f219	shl3-poster	
-2709539619	shl3	Image	asset/image/shl3/meme/pros-and-cons.png	1503f8e10815d056e1e8e68600b7df6a197b481c9d9fc63a8713d4eafad054fa	shl3-poster	
-2709541006	shl3	Image	asset/image/shl3/meme/geologic-faults.png	3f6875d9fa6484ff0014b691032253875d57f1b9377cf863dc3f597c29858da1	shl3-poster	
-2709542685	shl3	Image	asset/image/shl3/meme/fish-tank.png	6f0a3a6f1437d75c69ea4ff867c8bde0041d4f74ac127965c1aef05de8b1cc18	shl3-poster	
-2709546141	shl3	Image	asset/image/shl3/meme/soda-fountain.png	050ac9d4bdc662256c39630f5b387b1fa0b4000678b973f11ea18cb6c9eb1961	shl3-poster	
-2709547244	shl3	Image	asset/image/shl3/meme/copyrighted-heroes.png	d888222c11186c8e0784bb8179087a91225569b1b54b4cddba87526d46c46453	shl3-poster	
-2712481396	shl3	Image	asset/image/shl3/ui/suit-creation/color-picker-saturation-value.png	697c6a5e4f0c39d2025aa38c2dcfe5e0a2e1297079ef9926f1269130ec13d371	shl3-ui	legacy instance AllColors
-2712483369	shl3	Image	asset/image/shl3/ui/suit-creation/color-picker-hue.png	ba6e33b3539fb7a80191f521e968f765599dbac6d6ee34b9902c15307fab648c	shl3-ui	legacy instance Grayscale
+2674983916	shl3,shl3-big-map	Image	asset/image/shl-3/ui/intro/studio-logo-space.png	fc57adfecfb91c67c5352d19e1aba7ac3a491dfc2062a0f5d9c4c60d4944df3d	shl3-ui	
+2675009596	shl3,shl3-big-map	Image	asset/image/shl-3/ui/intro/studio-logo.png	f55e6c4955794a5a1a60ab77885546f9584c95fe097fb59138f15b016e1490c8	shl3-ui	
+2677217984	shl3,shl3-big-map	Image	asset/image/shl-3/ui/suit-creation/team-story-logo.png	91b7a7d07692f4a3cc9ba3ed3513d4d9ae0eb5ddff1412aacc1445127bcc0ef7	shl3-ui	
+2709536093	shl3	Image	asset/image/shl-3/meme/brain-activity.png	1d6cadbf7b70e873a21365578daafb11ed6300d02bf30e17f0335593a7e8f219	shl3-poster	
+2709539619	shl3	Image	asset/image/shl-3/meme/pros-and-cons.png	1503f8e10815d056e1e8e68600b7df6a197b481c9d9fc63a8713d4eafad054fa	shl3-poster	
+2709541006	shl3	Image	asset/image/shl-3/meme/geologic-faults.png	3f6875d9fa6484ff0014b691032253875d57f1b9377cf863dc3f597c29858da1	shl3-poster	
+2709542685	shl3	Image	asset/image/shl-3/meme/fish-tank.png	6f0a3a6f1437d75c69ea4ff867c8bde0041d4f74ac127965c1aef05de8b1cc18	shl3-poster	
+2709546141	shl3	Image	asset/image/shl-3/meme/soda-fountain.png	050ac9d4bdc662256c39630f5b387b1fa0b4000678b973f11ea18cb6c9eb1961	shl3-poster	
+2709547244	shl3	Image	asset/image/shl-3/meme/copyrighted-heroes.png	d888222c11186c8e0784bb8179087a91225569b1b54b4cddba87526d46c46453	shl3-poster	
+2712481396	shl3	Image	asset/image/shl-3/ui/suit-creation/color-picker-saturation-value.png	697c6a5e4f0c39d2025aa38c2dcfe5e0a2e1297079ef9926f1269130ec13d371	shl3-ui	legacy instance AllColors
+2712483369	shl3	Image	asset/image/shl-3/ui/suit-creation/color-picker-hue.png	ba6e33b3539fb7a80191f521e968f765599dbac6d6ee34b9902c15307fab648c	shl3-ui	legacy instance Grayscale
 2761981248	shl3	SolidModel	legacy			
 2840103027	shl3	SolidModel	legacy			
 2840103047	shl3	SolidModel	legacy			

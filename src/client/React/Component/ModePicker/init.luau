@@ -26,13 +26,13 @@ type CardInfo = {
 local CARDS: { CardInfo } = table.freeze({
 	table.freeze({
 		Mode = "roleplay" :: Mode,
-		Icon = Image.shl3.ui.intro["roleplay-icon.png"],
+		Icon = Image["shl-3"].ui.intro["roleplay-icon.png"],
 		Title = "Roleplay Mode",
 		Perks = table.freeze({ "- PVP Disabled", "- No Disaster Events", "- Social Focused" }),
 	}),
 	table.freeze({
 		Mode = "combat" :: Mode,
-		Icon = Image.shl3.ui.intro["combat-icon.png"],
+		Icon = Image["shl-3"].ui.intro["combat-icon.png"],
 		Title = "Combat Mode",
 		Perks = table.freeze({ "- PVP Enabled", "- Disaster Events", "- Action Focused" }),
 	}),

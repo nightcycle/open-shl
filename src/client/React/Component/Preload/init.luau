@@ -17,8 +17,8 @@ local LoadingScreenTypes =
 export type ActionInfo = LoadingScreenTypes.ActionInfo
 export type Properties = LoadingScreenTypes.Properties
 -- Constants
-local LOGO_URL = Image.shl3.ui.intro["studio-logo.png"]
-local SPACE_URL = Image.shl3.ui.intro["studio-logo-space.png"]
+local LOGO_URL = Image["shl-3"].ui.intro["studio-logo.png"]
+local SPACE_URL = Image["shl-3"].ui.intro["studio-logo-space.png"]
 -- the stars behind the logo are a picture this many times its size, for a minute it drifts up + to the left
 local SPACE_SIZE = 2.5
 local SPACE_AWAY_POSITION = UDim2.fromScale(-1.5, -0.5)

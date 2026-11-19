@@ -11,7 +11,7 @@ export type Picture = Types.Picture
 export type CardInfo = Types.CardInfo
 export type TabInfo = Types.TabInfo
 -- Constants
-local SHOP_IMAGES = Image.shl3.ui.shop
+local SHOP_IMAGES = Image["shl-3"].ui.shop
 -- the picture in the middle of a card, which is the part of it that's pressed
 local PICTURE_AREA: Area = {
 	Position = UDim2.fromScale(0.5, 0.5),

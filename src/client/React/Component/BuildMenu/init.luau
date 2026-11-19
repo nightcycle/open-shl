@@ -186,7 +186,7 @@ return function(props: Properties)
 				-- the badge is drawn into the bottom right corner of its image, turned around it sits in the top left one
 				Operational = definition.IsFunctional and e("ImageLabel", {
 					BackgroundTransparency = 1,
-					Image = Image.ui["gear-badge.png"],
+					Image = Image["shl-2"].ui["gear-badge.png"],
 					Rotation = 180,
 					Size = UDim2.fromScale(1, 1),
 					ZIndex = 2,

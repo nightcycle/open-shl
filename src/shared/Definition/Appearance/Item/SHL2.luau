@@ -15,9 +15,9 @@ local FACE_CATEGORIES: { [FaceSlot]: string } = table.freeze({
 	Mouth = "mouth",
 })
 local FACE_IMAGES: { [FaceSlot]: { [string]: string } } = table.freeze({
-	Eyebrows = Image.face.eyebrows,
-	Eyes = Image.face.eyes,
-	Mouth = Image.face.mouth,
+	Eyebrows = Image["shl-2"].face.eyebrows,
+	Eyes = Image["shl-2"].face.eyes,
+	Mouth = Image["shl-2"].face.mouth,
 })
 local FACE_NAMES: { [string]: string } = table.freeze({
 	cosmetics_eyebrows_worried = "Sad Eyebrows",

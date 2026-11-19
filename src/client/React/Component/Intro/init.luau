@@ -91,7 +91,7 @@ return function(props: Properties): React.ReactNode
 				{
 					ref = logoRef,
 					BackgroundTransparency = 1,
-					ImageContent = Content.fromUri(Image.ui["logo.png"]),
+					ImageContent = Content.fromUri(Image["shl-2"].ui["logo.png"]),
 					ImageTransparency = 1,
 					Position = UDim2.fromScale(0.2, 0.275),
 					Size = UDim2.fromScale(0.6, 0.25),
