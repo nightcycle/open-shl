@@ -9,6 +9,7 @@ local Option = TypeUnionLib.Option
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local BaseConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Base")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 -- Types
@@ -74,6 +75,14 @@ export type SessionService = typeof(setmetatable(
 -- Constants
 local SNAPSHOT_ATTEMPTS = 5
 local SNAPSHOT_RETRY_DELAY = 2
+-- who a character that was just picked is worn as: the identity the server has an avatar of the game come in as. its
+-- word for it is on the avatar, but an avatar that already was that one doesn't say so again
+local START_IDENTITY_KEY: IdentityKey = GameDefinition.tune("Main", {
+	-- it comes in as the civilian, the hero is only ever turned into
+	shl1 = "Secret",
+}) :: any
+-- the checker doesn't follow a name through the tune, so it's held to one here
+assert(CharacterType.IdentityKey(START_IDENTITY_KEY))
 -- Variables
 -- References
 -- Private Functions
@@ -183,8 +192,8 @@ function SessionService:SelectCharacter(id: string): Result<true, string>
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	local res = NetworkService:Invoke(RemoteDefinition.SelectCharacter, id)
 	if res.IsOk and self.IsInitialized then
-		-- a selected character is always worn as its super identity
-		setActive(self, id, "Main")
+		-- a selected character is always worn as the identity one starts out in
+		setActive(self, id, START_IDENTITY_KEY)
 	end
 	return res
 end
