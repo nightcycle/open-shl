@@ -97,6 +97,12 @@ local STYLE: Style = {
 				Position = UDim2.fromScale(0, 0.135),
 				Size = UDim2.fromScale(1, 0.15),
 			},
+			-- who fights + who doesn't was a column of the player list, here it's a smaller line between the name +
+			-- the head
+			Mode = {
+				Position = UDim2.fromScale(0, 0.285),
+				Size = UDim2.fromScale(1, 0.09),
+			},
 		},
 		-- it showed no version anywhere
 		ServerId = {

@@ -286,6 +286,8 @@ export type NameTagLook = {
 	Name: Placement,
 	-- where what somebody tells about themselves is read in place of their name. left out, a tag only ever names
 	Bio: Placement?,
+	-- where what somebody plays by is read, in a game where that's their own pick. left out, a tag doesn't say
+	Mode: Placement?,
 	-- what's read on somebody who has no name yet. left out, it's what roblox knows them as
 	Placeholder: string?,
 	-- the sign over the head of somebody who's in a menu. left out, they're tagged like anybody else
@@ -304,6 +306,7 @@ Types.NameTagLook = Type.strictInterface({
 	MaxDistance = Type.optional(Type.numberPositive),
 	Name = Types.Placement,
 	Bio = Type.optional(Types.Placement),
+	Mode = Type.optional(Types.Placement),
 	Placeholder = Type.optional(Type.string),
 	Away = Type.optional(Type.strictInterface({
 		Text = Type.string,
