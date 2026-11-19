@@ -449,7 +449,8 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 		out = { Type = "Text", Text = text }
 	elseif field.Type == "Choose" then
 		local binding = field.Binding
-		local value: any = nil
+		-- an alignment + a transition go by a name, a body size by a number
+		local value: (string | number)? = nil
 		if binding.Type == "Alignment" then
 			value = ProfileUtil.getAlignment(state, binding.Axis)
 		elseif binding.Type == "Transition" then
