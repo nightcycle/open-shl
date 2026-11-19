@@ -26,7 +26,12 @@ export type DayNightService = typeof(setmetatable(
 -- References
 -- Private Functions
 local function setLamps(lamps: { BasePart }, isLit: boolean)
-	local look = if isLit then DayNightDefinition.LAMP_LOOKS.Lit else DayNightDefinition.LAMP_LOOKS.Unlit
+	-- a game that says nothing of them leaves its street lights the way the map has them
+	local looks = DayNightDefinition.LAMP_LOOKS
+	if not looks then
+		return
+	end
+	local look = if isLit then looks.Lit else looks.Unlit
 	for _, lamp in lamps do
 		lamp.Material = look.Material
 		lamp.Transparency = look.Transparency
@@ -103,8 +108,12 @@ local function switchWindows(windows: Model, isLit: boolean)
 	end
 	-- the palette sits among the rooms + takes a turn like one, it's what the pace of a building is counted by
 	local rooms = windows:GetChildren()
+	local roomDuration = DayNightDefinition.WINDOW_SWITCH_DURATION / #rooms
 	for _, room in rooms do
-		task.wait(DayNightDefinition.WINDOW_SWITCH_DURATION / #rooms)
+		-- a building that switches at once has nothing to wait out between two rooms
+		if roomDuration > 0 then
+			task.wait(roomDuration)
+		end
 		local transparency = if isLit then getLitTransparency(rng) else 1
 		for _, pane in getPanes(room) do
 			pane.Transparency = transparency

@@ -31,8 +31,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Roleplay = false,
 		-- it's one place
 		ModeSelect = false,
-		-- its clock keeps other hours + lights every window at once: off until the clock takes those from the game
-		DayNight = false,
+		DayNight = true,
 		-- its map marks none of them
 		Fixtures = false,
 		PlayerMode = true,
