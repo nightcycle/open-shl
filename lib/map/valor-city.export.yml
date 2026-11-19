@@ -16,7 +16,7 @@ exports:
     to: lib/map/valor-city
     split: [Buildings]
 # the stage under the map that the character editor + the character select are shot on isn't part of it, that one
-# comes out through lib/scene-shl3.export.yml
+# comes out through lib/scene/shl-3.export.yml
 
 adds:
   # where an avatar may be sent to (teleport, portals): the island from its streets up to above its roofs + the block

@@ -1,11 +1,11 @@
 # how the scenes of superhero life 3 come out of its legacy place file. run from the root of the repo:
-#   lune run scripts/util/export-map.lune.luau lib/scene-shl3.export.yml
+#   lune run scripts/util/export-map.lune.luau lib/scene/shl-3.export.yml
 # the place file is never opened in studio + never edited (it carries backdoor scripts), so whatever a scene needs
 # that the place doesn't have is said here + applied again by every export
 #
 # the legacy game had one stage for all of it, Workspace/CharacterZone: a closed room far under the map with two
 # spots to stand on + two cameras. the screens of this codebase each wait on a folder of ReplicatedStorage/lib/scene
-# (which lib/scene-shl3 becomes) that holds a part named Cam to look from + a part named RigAnchor to stand a rig on,
+# (which lib/scene/shl-3 becomes) that holds a part named Cam to look from + a part named RigAnchor to stand a rig on,
 # so the one stage is laid out as three of them:
 #   character-select           the room, seen from the camera of the legacy suit manager (Camera2), a rig on the
 #                              front spot
@@ -25,30 +25,30 @@ known_scripts: lib/map/valor-city.scripts.tsv
 # rojo names what a file holds after the file, which is how the parts get the names the code looks for
 exports:
   - from: Workspace/CharacterZone/Camera2
-    to: lib/scene-shl3/character-select/Cam.rbxm
+    to: lib/scene/shl-3/character-select/Cam.rbxm
   - from: Workspace/CharacterZone/Camera
     to:
-      - lib/scene-shl3/hero-character-editor/Cam.rbxm
-      - lib/scene-shl3/secret-character-editor/Cam.rbxm
+      - lib/scene/shl-3/hero-character-editor/Cam.rbxm
+      - lib/scene/shl-3/secret-character-editor/Cam.rbxm
   # the front spot
   - from: Workspace/CharacterZone/MainCenter
     to:
-      - lib/scene-shl3/character-select/RigAnchor.rbxm
-      - lib/scene-shl3/hero-character-editor/RigAnchor.rbxm
+      - lib/scene/shl-3/character-select/RigAnchor.rbxm
+      - lib/scene/shl-3/hero-character-editor/RigAnchor.rbxm
   # the back spot
   - from: Workspace/CharacterZone/BackgroundCenter
-    to: lib/scene-shl3/secret-character-editor/RigAnchor.rbxm
+    to: lib/scene/shl-3/secret-character-editor/RigAnchor.rbxm
   # the floor, the walls + the lights of the room
   - from: Workspace/CharacterZone/Visuals
     to:
-      - lib/scene-shl3/character-select/Set/Visuals.rbxm
-      - lib/scene-shl3/hero-character-editor/Set/Visuals.rbxm
+      - lib/scene/shl-3/character-select/Set/Visuals.rbxm
+      - lib/scene/shl-3/hero-character-editor/Set/Visuals.rbxm
   # the glowing pads under the two spots, the legacy editor tinted them blue (29, 237, 255) for a hero + red
   # (255, 48, 51) for a villain
   - from: Workspace/CharacterZone/Pads
     to:
-      - lib/scene-shl3/character-select/Set/Pads.rbxm
-      - lib/scene-shl3/hero-character-editor/Set/Pads.rbxm
+      - lib/scene/shl-3/character-select/Set/Pads.rbxm
+      - lib/scene/shl-3/hero-character-editor/Set/Pads.rbxm
 
 # `at` is a path into the place, `count` is how many it finds today. what a rule can say is listed at the Rule type
 # of the tool

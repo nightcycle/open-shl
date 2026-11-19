@@ -35,7 +35,7 @@ local MODEL_EXTENSIONS = { ".model.json", ".rbxm", ".rbxmx" }
 local CONTENTS: { [GameId]: GameContent } = table.freeze({
 	shl1 = table.freeze({
 		DataPath = "data/shl1",
-		ScenePath = "lib/scene-shl1",
+		ScenePath = "lib/scene/shl-1",
 		CharacterPath = "lib/character-shl1",
 		BorrowListPath = "lib/character-shl1/borrow.txt",
 		-- what the legacy place was set to
@@ -47,14 +47,14 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 	}),
 	shl2 = table.freeze({
 		DataPath = "data/shl2",
-		ScenePath = "lib/scene",
+		ScenePath = "lib/scene/shl-2",
 		CharacterPath = BORROW_PATH,
 		-- it's the game every shared setting was tuned for
 		Properties = {},
 	}),
 	shl3 = table.freeze({
 		DataPath = "data/shl3",
-		ScenePath = "lib/scene-shl3",
+		ScenePath = "lib/scene/shl-3",
 		CharacterPath = "lib/character-shl3",
 		BorrowListPath = "lib/character-shl3/borrow.txt",
 		-- what the legacy place was set to
