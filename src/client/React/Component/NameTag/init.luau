@@ -18,6 +18,8 @@ export type Properties = RobloxComponents.BillboardGuiProperties & {
 	Bio: string?,
 	-- the color of the side they're on. left out, the name is in the one of the look
 	TeamColor3: Color3?,
+	-- what they play by, read with their name for as long as it's handed in
+	Mode: string?,
 }
 -- Constants
 -- Variables
@@ -30,6 +32,7 @@ return function(props: Properties)
 	local textSize = look.TextSize
 	local away = look.Away
 	local bioPlacement = look.Bio
+	local modePlacement = look.Mode
 	-- a look that has no place for it only ever names
 	local bio: string? = if bioPlacement and props.Bio ~= "" then props.Bio else nil
 	local textColor3 = props.TeamColor3 or look.TextColor3
@@ -68,6 +71,21 @@ return function(props: Properties)
 				Position = bioPlacement.Position,
 				Size = bioPlacement.Size,
 				Text = bio,
+				TextColor3 = textColor3,
+				TextScaled = if textSize then nil else true,
+				TextSize = textSize,
+				TextStrokeColor3 = look.TextStrokeColor3,
+				TextStrokeTransparency = look.TextStrokeTransparency,
+				TextWrapped = if textSize then true else nil,
+			}),
+			-- a look that has no place for it doesn't say
+			Mode = props.Mode and modePlacement and e("TextLabel", {
+				AnchorPoint = modePlacement.AnchorPoint,
+				BackgroundTransparency = 1,
+				FontFace = look.FontFace,
+				Position = modePlacement.Position,
+				Size = modePlacement.Size,
+				Text = props.Mode,
 				TextColor3 = textColor3,
 				TextScaled = if textSize then nil else true,
 				TextSize = textSize,

@@ -8,6 +8,7 @@ local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 -- Components
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/NameTag")
@@ -17,7 +18,9 @@ local usePlayerCharacter = require("@game/StarterPlayer/StarterPlayerScripts/Cli
 local useSignalState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useSignalState")
 -- Contexts
 -- Types
+local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
+type IdentityKey = CharacterType.IdentityKey
 type PublicProfile = ProfileType.PublicProfile
 -- when the name over somebody gives way to what they tell about themselves
 type BioTiming = {
@@ -27,9 +30,16 @@ type BioTiming = {
 	ResetRange: number, -- how far they have to go before coming close counts again
 	Interval: number, -- seconds between two looks at how far they are
 }
+-- what's read with a name by whether its player sat fights out
+type ModeTexts = {
+	Peaceful: string,
+	Fighting: string,
+}
 export type Properties = {}
 -- Constants
 local HEAD_NAME = "Head"
+-- the identity that's known by the side it's on. the other one wearing its color would give away who it is
+local SIDED_IDENTITY_KEY: IdentityKey = "Main"
 -- a game whose tags only ever name has no row
 local BIO_TIMING: BioTiming? = GameDefinition.tune(nil :: BioTiming?, {
 	shl3 = {
@@ -41,6 +51,30 @@ local BIO_TIMING: BioTiming? = GameDefinition.tune(nil :: BioTiming?, {
 	},
 })
 local NO_BIOS: { [number]: string } = table.freeze({})
+-- what the name of a hero is written in, by the side they picked. a side without a row + a game without a table are
+-- in the color of the look
+local ALIGNMENT_COLORS: { [PseudoEnum.Alignment]: Color3 }? =
+	GameDefinition.tune(nil :: { [PseudoEnum.Alignment]: Color3 }?, {
+		-- it told the sides apart in a column of the player list + had no colors for them: these are the blue + the
+		-- red at the top of the grid its costumes are colored from
+		shl1 = {
+			LawfulGood = Color3.fromRGB(13, 105, 172),
+			NeutralGood = Color3.fromRGB(13, 105, 172),
+			ChaoticGood = Color3.fromRGB(13, 105, 172),
+			LawfulEvil = Color3.fromRGB(196, 40, 28),
+			NeutralEvil = Color3.fromRGB(196, 40, 28),
+			ChaoticEvil = Color3.fromRGB(196, 40, 28),
+		},
+	})
+local NO_ALIGNMENTS: { [number]: PseudoEnum.Alignment } = table.freeze({})
+-- only a game where who fights is each player's own pick says which they picked
+local MODE_TEXTS: ModeTexts? = GameDefinition.tune(nil :: ModeTexts?, {
+	-- the words its player list had for the two
+	shl1 = {
+		Peaceful = "RP",
+		Fighting = "PVP",
+	},
+})
 -- Variables
 -- References
 -- Private Functions
@@ -155,6 +189,7 @@ end
 local function playerTag(props: {
 	Player: Player,
 	Bio: string,
+	Alignment: PseudoEnum.Alignment?,
 }): React.ReactNode
 	local character = usePlayerCharacter(props.Player)
 	local head = useHead(character)
@@ -162,6 +197,8 @@ local function playerTag(props: {
 	local personaName = useAttributeValue(character, AttributeDefinition.PersonaName)
 	local isInMenu = useAttributeValue(character, AttributeDefinition.IsInMenu)
 	local isNameHidden = useAttributeValue(character, AttributeDefinition.IsNameHidden)
+	local identityKey = useAttributeValue(character, AttributeDefinition.IdentityKey)
+	local isPeaceful = useAttributeValue(character, AttributeDefinition.IsPeaceful)
 	-- a name over an avatar that's out of sight would say where it is
 	if not head or isNameHidden then
 		return nil
@@ -174,12 +211,19 @@ local function playerTag(props: {
 			UserName = props.Player.Name,
 			IsInMenu = isInMenu,
 			Bio = if isBioShown then props.Bio else nil,
+			TeamColor3 = if ALIGNMENT_COLORS
+					and props.Alignment
+					and identityKey == SIDED_IDENTITY_KEY
+				then ALIGNMENT_COLORS[props.Alignment]
+				else nil,
+			Mode = if MODE_TEXTS then (if isPeaceful then MODE_TEXTS.Peaceful else MODE_TEXTS.Fighting) else nil,
 		} :: NameTag.Properties
 	)
 end
 
 local function tags(props: {
 	Bios: { [number]: string },
+	Alignments: { [number]: PseudoEnum.Alignment },
 }): React.ReactNode
 	local players = usePlayers()
 	local localPlayer = Players.LocalPlayer
@@ -196,14 +240,15 @@ local function tags(props: {
 		children[`NameTag-{player.UserId}`] = e(playerTag, {
 			Player = player,
 			Bio = props.Bios[player.UserId] or "",
+			Alignment = props.Alignments[player.UserId],
 		})
 	end
 	-- a billboard doesn't show from inside of the app's ScreenGui, so the tags sit in the PlayerGui
 	return ReactRoblox.createPortal(e(React.Fragment, {}, children), playerGui)
 end
 
--- what everybody tells about themselves comes with the profiles the session keeps
-local function tagsWithBios(): React.ReactNode
+-- what everybody tells about themselves + the side they're on come with the profiles the session keeps
+local function tagsWithProfiles(): React.ReactNode
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local profiles = useSignalState(SessionService.ProfilesChanged, function(): { PublicProfile }
 		return SessionService:GetProfiles()
@@ -216,17 +261,28 @@ local function tagsWithBios(): React.ReactNode
 		table.freeze(out)
 		return out
 	end, { profiles })
+	local alignments = React.useMemo(function(): { [number]: PseudoEnum.Alignment }
+		local out: { [number]: PseudoEnum.Alignment } = {}
+		for _, profile in profiles do
+			out[profile.UserId] = profile.Alignment
+		end
+		table.freeze(out)
+		return out
+	end, { profiles })
 
 	return e(tags, {
 		Bios = bios,
+		Alignments = alignments,
 	})
 end
 -- Class
 return function(): React.ReactNode
-	if not BIO_TIMING then
+	-- a game that reads neither off the profiles doesn't wait on the session for its tags
+	if not BIO_TIMING and not ALIGNMENT_COLORS then
 		return e(tags, {
 			Bios = NO_BIOS,
+			Alignments = NO_ALIGNMENTS,
 		})
 	end
-	return e(tagsWithBios, {})
+	return e(tagsWithProfiles, {})
 end

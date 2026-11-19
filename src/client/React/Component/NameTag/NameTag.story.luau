@@ -23,6 +23,8 @@ local TEAM_COLORS: { [string]: Color3 } = {
 	Villain = Color3.fromRGB(255, 0, 0),
 }
 local TEAMS = { "None", "Hero", "Villain" }
+-- what's read with the name where who fights is each player's own pick
+local MODES = { "None", "RP", "PVP" }
 -- Variables
 -- References
 -- Private Functions
@@ -39,6 +41,8 @@ return UILabs.CreateReactStory({
 		Bio = UILabs.String("Fell into a vat of something at the refinery. Sorts the mail of Valor City by day."),
 		IsBioShown = UILabs.Boolean(false),
 		Team = UILabs.Choose(TEAMS),
+		-- only read in a look that has a place for it
+		Mode = UILabs.Choose(MODES),
 		Style = StyleStory.newControl(),
 	},
 }, function(props)
@@ -87,6 +91,7 @@ return UILabs.CreateReactStory({
 						IsInMenu = props.controls.IsInMenu,
 						Bio = if props.controls.IsBioShown then props.controls.Bio else nil,
 						TeamColor3 = TEAM_COLORS[props.controls.Team],
+						Mode = if props.controls.Mode ~= "None" then props.controls.Mode else nil,
 					} :: ParentComponent.Properties
 				),
 			}),
