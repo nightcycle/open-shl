@@ -8,6 +8,7 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
@@ -16,6 +17,7 @@ local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type Character = CharacterType.Character
 type IdentityKey = CharacterType.IdentityKey
+type MenuRefusal = CombatType.MenuRefusal
 type BaseInventory = BaseType.BaseInventory
 type PlacedFurniture = BaseType.PlacedFurniture
 type ResidenceId = BaseType.ResidenceId
@@ -198,6 +200,8 @@ Module.FilterText =
 	newClientFunction("FilterText", Type.string, Type.string, FILTER_LIMIT) :: ClientFunction<string, string>
 Module.CharacterChanged = newServerEvent("CharacterChanged", isCharacter) :: ServerEvent<Character>
 Module.SetInMenu = newClientEvent("SetInMenu", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
+-- the server didn't take a client's word for being in a menu, this is why. being out of one is never turned down
+Module.MenuRefused = newServerEvent("MenuRefused", CombatType.MenuRefusal) :: ServerEvent<MenuRefusal>
 
 -- roleplay
 Module.SetExpression =

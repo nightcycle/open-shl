@@ -11,7 +11,9 @@ local Result = TypeUnionLib.Result
 local Option = TypeUnionLib.Option
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local DataService = require("@game/ServerScriptService/Server/Service/Data")
+local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local LegacyImportService = require("@game/ServerScriptService/Server/Service/LegacyImport")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
@@ -446,6 +448,13 @@ return ServiceLocker(function(): SessionService
 		NetworkService:Connect(RemoteDefinition.SetInMenu, function(player: Player, isInMenu: boolean)
 			local session = self._Sessions[player]
 			if not session or session.IsInMenu == isInMenu then
+				return
+			end
+			-- a client's word doesn't get an avatar out of a fight: whoever just lost health stays where they can
+			-- lose more of it, + hears why
+			local refusal = FightingUtil.getMenuRefusal(player.Character, isInMenu, CombatDefinition.getTime())
+			if refusal then
+				NetworkService:Fire(RemoteDefinition.MenuRefused, player, refusal)
 				return
 			end
 			local out = table.clone(session)
