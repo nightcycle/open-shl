@@ -20,7 +20,7 @@ type Starters = {
 -- they're made from doesn't have to be in the place
 local STARTERS: Starters = GameDefinition.pick({
 	shl1 = function(): Starters
-		error(`shl1 has no starter characters yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): Starters
 		return require("@self/SHL2")

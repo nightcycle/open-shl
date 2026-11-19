@@ -63,6 +63,8 @@ local HAIR_CATEGORY = "hair"
 local MAX_NAME_LENGTH = CharacterEditorDefinition.MAX_NAME_LENGTH
 local MAX_BACKSTORY_LENGTH = CharacterEditorDefinition.MAX_BACKSTORY_LENGTH
 local FILTER_TIMEOUT = 5
+-- what an identity goes by when its name was left empty, nil in a game where an empty name stays empty
+local NAME_DEFAULTS = CharacterEditorDefinition.NAME_DEFAULTS
 -- the sizes a body can have are the game's own, nil in a game where every body is the size it comes in
 local SCALE = CharacterEditorDefinition.SCALE
 local SCALE_EPSILON = CharacterEditorDefinition.SCALE_EPSILON
@@ -121,7 +123,22 @@ local function filterProfileText(
 	return filterRes
 end
 
-local function filterProfile(player: Player, profile: Profile, priorProfile: Profile): Result<Profile, string>
+-- a name that's empty is the one the game makes up for its identity from the name of the account, where it makes one
+-- up. that name is public the way it is, it doesn't go through the filter
+local function getName(player: Player, identityKey: IdentityKey, name: string): string
+	local default = if NAME_DEFAULTS then NAME_DEFAULTS[identityKey] else nil
+	if name ~= "" or not default then
+		return name
+	end
+	return clip(string.format(default, player.Name), MAX_NAME_LENGTH) or name
+end
+
+local function filterProfile(
+	player: Player,
+	identityKey: IdentityKey,
+	profile: Profile,
+	priorProfile: Profile
+): Result<Profile, string>
 	local nameRes = filterProfileText(player, profile.Name, MAX_NAME_LENGTH, priorProfile.Name)
 	if nameRes.IsErr then
 		return nameRes
@@ -132,7 +149,7 @@ local function filterProfile(player: Player, profile: Profile, priorProfile: Pro
 	end
 	return Result.ok({
 		-- a name the filter blanked out reads as unset, the name tag shows the user name for it
-		Name = if string.match(nameRes.Value, "^#+$") then "" else nameRes.Value,
+		Name = getName(player, identityKey, if string.match(nameRes.Value, "^#+$") then "" else nameRes.Value),
 		Backstory = backstoryRes.Value,
 		Alignment = profile.Alignment,
 	})
@@ -253,11 +270,11 @@ local function saveCharacter(player: Player, edited: Character): Result<Characte
 		return Result.err(`no slot holds the character`)
 	end
 	-- the text goes first: the filter yields, everything after it reads the session the way it is by then
-	local mainProfileRes = filterProfile(player, main.Profile, prior.Identities.Main.Profile)
+	local mainProfileRes = filterProfile(player, "Main", main.Profile, prior.Identities.Main.Profile)
 	if mainProfileRes.IsErr then
 		return mainProfileRes
 	end
-	local secretProfileRes = filterProfile(player, secret.Profile, priorSecret.Profile)
+	local secretProfileRes = filterProfile(player, "Secret", secret.Profile, priorSecret.Profile)
 	if secretProfileRes.IsErr then
 		return secretProfileRes
 	end

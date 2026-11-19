@@ -14,7 +14,7 @@ type TestMap = SimpleTest.TestMap
 -- what a new player starts out with is the game's own, so is what it's held to
 return GameDefinition.pick({
 	shl1 = function(): TestMap
-		error(`shl1 has no starter character spec yet`)
+		return require("@self/SHL1")
 	end,
 	-- its starters are suits the game before it saved, the spec of their converter holds every one of them
 	shl2 = function(): TestMap
