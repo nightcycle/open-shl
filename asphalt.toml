@@ -213,57 +213,58 @@ output_path = "Generated"
 "shl3/ability/bow.ogg" = { id = 16211030 }
 "shl3/ability/gun-shot.ogg" = { id = 210112900 }
 
-# the same goes for asset/animation/shl3, its lines are at the end of the table below
+# the same goes for asset/animation/shl-3, its lines are at the end of the table below. what more than one game plays
+# is in core + what only the second plays in shl-2, the path takes both
 [inputs.Animation]
-path = "asset/animation/{ability,emote,transition}/**"
+path = "asset/animation/{core,shl-2}/**"
 output_path = "Generated"
 
 # an animation only plays for whoever owns it, so a file here counts once `asphalt sync cloud` has uploaded it for the
 # creator above. until then every one of them stands for the upload it was exported from: take an entry out of this
 # table (or the whole table) + the file is uploaded in its place the next time the assets are synced to the cloud
 [inputs.Animation.web]
-"ability/bow-holding.rbxm" = { id = 910048046 }
-"ability/bow-shooting.rbxm" = { id = 910052477 }
-"ability/claw-sheathing.rbxm" = { id = 580413960 }
-"ability/flight-idle.rbxm" = { id = 596610664 }
-"ability/flight-movement.rbxm" = { id = 596620930 }
-"ability/force-explosion.rbxm" = { id = 583352411 }
-"ability/force-push.rbxm" = { id = 580087215 }
-"ability/gun-holding.rbxm" = { id = 586909830 }
-"ability/gun-shooting.rbxm" = { id = 586915698 }
-"ability/head-shot.rbxm" = { id = 584939993 }
-"ability/ice-spin.rbxm" = { id = 582036597 }
-"ability/knife-jab.rbxm" = { id = 580438782 }
-"ability/knife-slash.rbxm" = { id = 580441242 }
-"ability/left-slash.rbxm" = { id = 580408411 }
-"ability/power-punch.rbxm" = { id = 580665102 }
-"ability/power-shot.rbxm" = { id = 584892686 }
-"ability/right-foot-kick.rbxm" = { id = 580717982 }
-"ability/right-slash.rbxm" = { id = 580402239 }
-"ability/sheathing.rbxm" = { id = 580434436 }
-"ability/strike.rbxm" = { id = 580683034 }
-"ability/wall-climbing.rbxm" = { id = 599890877 }
-"emote/handcuffs.rbxm" = { id = 863517866 }
-"emote/hands-behind-back.rbxm" = { id = 863217511 }
-"emote/heroic-pose.rbxm" = { id = 863319510 }
-"emote/kneel.rbxm" = { id = 863364794 }
-"emote/laugh.rbxm" = { id = 863451363 }
-"emote/point.rbxm" = { id = 863470730 }
-"transition/ascension.rbxm" = { id = 601437776 }
-"transition/fall-backward.rbxm" = { id = 601499493 }
-"transition/fall-forward.rbxm" = { id = 601481878 }
-"transition/fire.rbxm" = { id = 601430281 }
-"transition/flinch-1.rbxm" = { id = 938913337 }
-"transition/flinch-2.rbxm" = { id = 938919081 }
-"transition/smoke.rbxm" = { id = 601428872 }
-"transition/spin.rbxm" = { id = 601411837 }
-"shl3/ability/flight-idle.rbxm" = { id = 2074840040 }
-"shl3/ability/flight-movement.rbxm" = { id = 2074837109 }
-"shl3/ability/gun-shooting.rbxm" = { id = 2119726929 }
-"shl3/ability/left-slash.rbxm" = { id = 2119734637 }
-"shl3/ability/power-punch.rbxm" = { id = 2123643855 }
-"shl3/ability/right-foot-kick.rbxm" = { id = 2219382215 }
-"shl3/ability/right-slash.rbxm" = { id = 2119738227 }
-"shl3/ability/sheathing.rbxm" = { id = 2119712753 }
-"shl3/ability/strike.rbxm" = { id = 2219387164 }
-"shl3/transition/spin.rbxm" = { id = 2219394134 }
+"core/ability/gun-holding.rbxm" = { id = 586909830 }
+"core/transition/fall-forward.rbxm" = { id = 601481878 }
+"core/transition/flinch-1.rbxm" = { id = 938913337 }
+"core/transition/flinch-2.rbxm" = { id = 938919081 }
+"shl-2/ability/bow-holding.rbxm" = { id = 910048046 }
+"shl-2/ability/bow-shooting.rbxm" = { id = 910052477 }
+"shl-2/ability/claw-sheathing.rbxm" = { id = 580413960 }
+"shl-2/ability/flight-idle.rbxm" = { id = 596610664 }
+"shl-2/ability/flight-movement.rbxm" = { id = 596620930 }
+"shl-2/ability/force-explosion.rbxm" = { id = 583352411 }
+"shl-2/ability/force-push.rbxm" = { id = 580087215 }
+"shl-2/ability/gun-shooting.rbxm" = { id = 586915698 }
+"shl-2/ability/head-shot.rbxm" = { id = 584939993 }
+"shl-2/ability/ice-spin.rbxm" = { id = 582036597 }
+"shl-2/ability/knife-jab.rbxm" = { id = 580438782 }
+"shl-2/ability/knife-slash.rbxm" = { id = 580441242 }
+"shl-2/ability/left-slash.rbxm" = { id = 580408411 }
+"shl-2/ability/power-punch.rbxm" = { id = 580665102 }
+"shl-2/ability/power-shot.rbxm" = { id = 584892686 }
+"shl-2/ability/right-foot-kick.rbxm" = { id = 580717982 }
+"shl-2/ability/right-slash.rbxm" = { id = 580402239 }
+"shl-2/ability/sheathing.rbxm" = { id = 580434436 }
+"shl-2/ability/strike.rbxm" = { id = 580683034 }
+"shl-2/ability/wall-climbing.rbxm" = { id = 599890877 }
+"shl-2/emote/handcuffs.rbxm" = { id = 863517866 }
+"shl-2/emote/hands-behind-back.rbxm" = { id = 863217511 }
+"shl-2/emote/heroic-pose.rbxm" = { id = 863319510 }
+"shl-2/emote/kneel.rbxm" = { id = 863364794 }
+"shl-2/emote/laugh.rbxm" = { id = 863451363 }
+"shl-2/emote/point.rbxm" = { id = 863470730 }
+"shl-2/transition/ascension.rbxm" = { id = 601437776 }
+"shl-2/transition/fall-backward.rbxm" = { id = 601499493 }
+"shl-2/transition/fire.rbxm" = { id = 601430281 }
+"shl-2/transition/smoke.rbxm" = { id = 601428872 }
+"shl-2/transition/spin.rbxm" = { id = 601411837 }
+"shl-3/ability/flight-idle.rbxm" = { id = 2074840040 }
+"shl-3/ability/flight-movement.rbxm" = { id = 2074837109 }
+"shl-3/ability/gun-shooting.rbxm" = { id = 2119726929 }
+"shl-3/ability/left-slash.rbxm" = { id = 2119734637 }
+"shl-3/ability/power-punch.rbxm" = { id = 2123643855 }
+"shl-3/ability/right-foot-kick.rbxm" = { id = 2219382215 }
+"shl-3/ability/right-slash.rbxm" = { id = 2119738227 }
+"shl-3/ability/sheathing.rbxm" = { id = 2119712753 }
+"shl-3/ability/strike.rbxm" = { id = 2219387164 }
+"shl-3/transition/spin.rbxm" = { id = 2219394134 }

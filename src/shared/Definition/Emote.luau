@@ -18,35 +18,35 @@ local DEFINITIONS: { EmoteDefinition } = {
 	{
 		Id = "HandsBehindBack",
 		Name = "Hands Behind Back",
-		AnimationId = Animation.emote["hands-behind-back.rbxm"],
+		AnimationId = Animation["shl-2"].emote["hands-behind-back.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
 	{
 		Id = "HeroicPose",
 		Name = "Heroic Pose",
-		AnimationId = Animation.emote["heroic-pose.rbxm"],
+		AnimationId = Animation["shl-2"].emote["heroic-pose.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
 	{
 		Id = "Kneel",
 		Name = "Kneel",
-		AnimationId = Animation.emote["kneel.rbxm"],
+		AnimationId = Animation["shl-2"].emote["kneel.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
 	{
 		Id = "Laugh",
 		Name = "Laugh",
-		AnimationId = Animation.emote["laugh.rbxm"],
+		AnimationId = Animation["shl-2"].emote["laugh.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
 	{
 		Id = "Point",
 		Name = "Point",
-		AnimationId = Animation.emote["point.rbxm"],
+		AnimationId = Animation["shl-2"].emote["point.rbxm"],
 		IsLooped = true,
 		IsRooting = true,
 	},
@@ -55,7 +55,7 @@ TableUtil.deepFreeze(DEFINITIONS)
 -- not an emote, a cuffed character can still walk around
 local HANDCUFFS: PoseDefinition = table.freeze({
 	Name = "Handcuffs",
-	AnimationId = Animation.emote["handcuffs.rbxm"],
+	AnimationId = Animation["shl-2"].emote["handcuffs.rbxm"],
 	IsLooped = true,
 	IsRooting = false,
 })

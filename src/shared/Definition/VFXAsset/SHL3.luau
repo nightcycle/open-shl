@@ -28,17 +28,17 @@ local SOUNDS: { [SoundKey]: SoundDefinition } = {
 }
 -- its own takes on the moves of the same name, each as long as its last keyframe is in
 local ANIMATIONS: { [AnimationKey]: AnimationDefinition } = {
-	Sheathing = { Url = Animation.shl3.ability["sheathing.rbxm"], Length = 0.5 },
-	RightSlash = { Url = Animation.shl3.ability["right-slash.rbxm"], Length = 0.8 },
-	LeftSlash = { Url = Animation.shl3.ability["left-slash.rbxm"], Length = 0.8 },
-	PowerPunch = { Url = Animation.shl3.ability["power-punch.rbxm"], Length = 0.8 },
-	Strike = { Url = Animation.shl3.ability["strike.rbxm"], Length = 0.8 },
-	RightFootKick = { Url = Animation.shl3.ability["right-foot-kick.rbxm"], Length = 0.8 },
-	GunShooting = { Url = Animation.shl3.ability["gun-shooting.rbxm"], Length = 0.25 },
+	Sheathing = { Url = Animation["shl-3"].ability["sheathing.rbxm"], Length = 0.5 },
+	RightSlash = { Url = Animation["shl-3"].ability["right-slash.rbxm"], Length = 0.8 },
+	LeftSlash = { Url = Animation["shl-3"].ability["left-slash.rbxm"], Length = 0.8 },
+	PowerPunch = { Url = Animation["shl-3"].ability["power-punch.rbxm"], Length = 0.8 },
+	Strike = { Url = Animation["shl-3"].ability["strike.rbxm"], Length = 0.8 },
+	RightFootKick = { Url = Animation["shl-3"].ability["right-foot-kick.rbxm"], Length = 0.8 },
+	GunShooting = { Url = Animation["shl-3"].ability["gun-shooting.rbxm"], Length = 0.25 },
 	-- its own upload of it is keyframe for keyframe the one that's shipped already
-	GunHolding = { Url = Animation.ability["gun-holding.rbxm"], Length = 4 },
-	FlightIdle = { Url = Animation.shl3.ability["flight-idle.rbxm"], Length = 4.5 },
-	FlightMovement = { Url = Animation.shl3.ability["flight-movement.rbxm"], Length = 4.5 },
+	GunHolding = { Url = Animation.core.ability["gun-holding.rbxm"], Length = 4 },
+	FlightIdle = { Url = Animation["shl-3"].ability["flight-idle.rbxm"], Length = 4.5 },
+	FlightMovement = { Url = Animation["shl-3"].ability["flight-movement.rbxm"], Length = 4.5 },
 }
 local MESHES: { [MeshKey]: MeshDefinition } = {
 	Claw = { MeshUrl = "rbxassetid://10681506", TextureUrl = "" },

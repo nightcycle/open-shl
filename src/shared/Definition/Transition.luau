@@ -12,17 +12,17 @@ export type EffectDefinition = TransitionType.EffectDefinition
 export type TransformationDefinition = TransitionType.TransformationDefinition
 export type DeathDefinition = TransitionType.DeathDefinition
 -- Constants
-local ASCENSION_ANIMATION_ID = Animation.transition["ascension.rbxm"]
-local SPIN_ANIMATION_ID = Animation.transition["spin.rbxm"]
-local FIRE_ANIMATION_ID = Animation.transition["fire.rbxm"]
-local SMOKE_ANIMATION_ID = Animation.transition["smoke.rbxm"]
-local FALL_BACKWARD_ANIMATION_ID = Animation.transition["fall-backward.rbxm"]
-local FALL_FORWARD_ANIMATION_ID = Animation.transition["fall-forward.rbxm"]
+local ASCENSION_ANIMATION_ID = Animation["shl-2"].transition["ascension.rbxm"]
+local SPIN_ANIMATION_ID = Animation["shl-2"].transition["spin.rbxm"]
+local FIRE_ANIMATION_ID = Animation["shl-2"].transition["fire.rbxm"]
+local SMOKE_ANIMATION_ID = Animation["shl-2"].transition["smoke.rbxm"]
+local FALL_BACKWARD_ANIMATION_ID = Animation["shl-2"].transition["fall-backward.rbxm"]
+local FALL_FORWARD_ANIMATION_ID = Animation.core.transition["fall-forward.rbxm"]
 -- one of the two plays when a hit leaves the character standing
 local FLINCH = table.freeze({
 	ANIMATION_IDS = table.freeze({
-		Animation.transition["flinch-1.rbxm"],
-		Animation.transition["flinch-2.rbxm"],
+		Animation.core.transition["flinch-1.rbxm"],
+		Animation.core.transition["flinch-2.rbxm"],
 	}),
 	DURATION = 0.4,
 })
@@ -54,7 +54,7 @@ local TRANSFORMATIONS: { [PseudoEnum.TransformationStyle]: TransformationDefinit
 		shl3 = {
 			Style = PseudoEnum.TransformationStyle.Spin,
 			Name = "Spin",
-			AnimationId = Animation.shl3.transition["spin.rbxm"],
+			AnimationId = Animation["shl-3"].transition["spin.rbxm"],
 			AnimationLength = 1,
 			SwapDelay = 0.5,
 			LockDuration = 0.5 + SWAP_COOLDOWN,
