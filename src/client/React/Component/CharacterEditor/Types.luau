@@ -47,6 +47,7 @@ export type Properties = RobloxComponents.FrameProperties & {
 	ErrorMessage: string?,
 	IsSaving: boolean?,
 	IsRandomizable: boolean?, -- a layout with a button for it only shows it when there's something to roll the draft
+	IsPeaceful: boolean?, -- set while the player sits fights out, for a layout that asks whether they do
 	FilteredText: FilteredText?,
 	OnAction: (ActionInfo) -> (),
 }

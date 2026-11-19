@@ -177,8 +177,8 @@ local function walker(props: Properties)
 	-- how far the mannequin is turned, a step back leaves it the way it stands
 	local turn, setTurn = React.useState(0)
 	-- whether the player sits fights out once the walk is through. it's nothing of the draft: the walk starts out
-	-- fighting + a step back doesn't take the pick back
-	local isPeaceful, setIsPeaceful = React.useState(false)
+	-- the way the player is + a step back doesn't take the pick back
+	local isPeaceful, setIsPeaceful = React.useState(props.IsPeaceful == true)
 	local stepIndex = walk.StepIndex
 	local step = STEPS[stepIndex]
 	local isRestart = stepIndex <= CONSTANTS.RESTART_STEP_COUNT

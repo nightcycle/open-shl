@@ -64,7 +64,7 @@ return function(): React.ReactNode
 	local isBusyRef = React.useRef(false)
 	-- whether the layout last asked for its player to sit fights out, nil for one that never asks
 	local isPeacefulRef = React.useRef(nil :: boolean?)
-	local _, setPeaceful = usePeaceful()
+	local isPeaceful, setPeaceful = usePeaceful()
 
 	-- back to where the edit was asked for, the draft is dropped
 	local function leave()
@@ -97,6 +97,8 @@ return function(): React.ReactNode
 				Size = UDim2.fromScale(1, 1),
 				ErrorMessage = errorMessage,
 				IsSaving = isSaving,
+				-- left out for one who fights, which is everybody in a game where that's no pick
+				IsPeaceful = if isPeaceful then true else nil,
 				FilteredText = filteredText,
 				OnAction = function(action: EditorTypes.ActionInfo)
 					if action.Type == "Save" then
@@ -107,7 +109,7 @@ return function(): React.ReactNode
 						setIsSaving(true)
 						setErrorMessage(nil)
 						local draft = action.Character
-						local isPeaceful = isPeacefulRef.current
+						local isPeacefulAsked = isPeacefulRef.current
 						task.spawn(function()
 							local saveRes = SessionService:SaveCharacter(draft)
 							local errorLine: string? = if saveRes.IsErr then saveRes.Value else nil
@@ -126,8 +128,8 @@ return function(): React.ReactNode
 								return
 							end
 							-- the mode that was picked with the character goes into the game with it
-							if isPeaceful ~= nil then
-								setPeaceful(isPeaceful)
+							if isPeacefulAsked ~= nil then
+								setPeaceful(isPeacefulAsked)
 							end
 							ShellService:CloseScreen()
 						end)
