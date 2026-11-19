@@ -43,6 +43,7 @@ export type Config = {
 	Size: Vector3,
 	Color: Color3, -- the one it has unless the character picked one
 	FireSize: number?, -- of the flame it trails, none without
+	FireHeat: number?, -- how fast its flame rises, as fast as one that trails a shot without
 	SecondaryColor: Color3?, -- of the sparks of its flame, the color of the rest of it without
 	HasSparkles: boolean?, -- it trails sparkles
 	Particles: { VFXAssetDefinition.ParticleKey }?, -- what it gives off on its way
@@ -134,6 +135,7 @@ Module.getBolt = function(config: Config, launch: Launch, color: Color3?): Clien
 		Size = config.Size,
 		Color = color or config.Color,
 		FireSize = config.FireSize,
+		FireHeat = config.FireHeat,
 		SecondaryColor = config.SecondaryColor,
 		HasSparkles = config.HasSparkles,
 		Particles = config.Particles,
