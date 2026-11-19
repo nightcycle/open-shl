@@ -60,15 +60,18 @@ local STYLE: Style = {
 		Close = CUT_TWEEN_INFO,
 	},
 	Widgets = {
-		-- "Currency: 123" in orange on a blue box under the ticker
+		-- "Currency: 123" in bold orange on a blue box under the ticker, the game behind it shows through
 		BalanceCounter = {
 			BackgroundColor3 = BALANCE_COLOR,
+			BackgroundTransparency = 0.4,
 			BorderColor3 = DEFAULT_COLOR,
 			BorderSizePixel = 0,
 			TextColors = {
 				Credits = ACCENT_COLOR,
 				Gems = ACCENT_COLOR,
 			},
+			FontFace = NOTE_FONT,
+			Prefix = "Currency: ",
 		},
 		-- the one box it ever asked something in had no button
 		Dialog = {},

@@ -243,6 +243,7 @@ Types.ServerIdLook = Type.strictInterface({
 
 export type BalanceCounterLook = {
 	BackgroundColor3: Color3,
+	BackgroundTransparency: number?, -- left out, nothing is seen through its box
 	BorderColor3: Color3,
 	BorderSizePixel: number,
 	-- what a balance is written in, every currency has one
@@ -251,11 +252,15 @@ export type BalanceCounterLook = {
 		Gems: Color3,
 		[PseudoEnum.Currency]: Color3,
 	},
+	FontFace: Font?, -- left out, it's written like a heading
+	-- what stands before the amount. left out, the amount is followed by what its currency is called
+	Prefix: string?,
 	TextStrokeTransparency: number?, -- left out, the text has no outline
 	TextXAlignment: Enum.TextXAlignment?, -- left out, it's centered the way the engine does it
 }
 Types.BalanceCounterLook = Type.strictInterface({
 	BackgroundColor3 = Type.Color3,
+	BackgroundTransparency = Type.optional(Type.numberConstrained(0, 1)),
 	BorderColor3 = Type.Color3,
 	BorderSizePixel = Type.numberMin(0),
 	TextColors = Type.intersection(
@@ -265,6 +270,8 @@ Types.BalanceCounterLook = Type.strictInterface({
 		}),
 		Type.map(EconomyType.Currency, Type.Color3)
 	),
+	FontFace = Type.optional(Type.Font),
+	Prefix = Type.optional(Type.string),
 	TextStrokeTransparency = Type.optional(Type.numberConstrained(0, 1)),
 	TextXAlignment = Type.optional(Type.enum(Enum.TextXAlignment)),
 })

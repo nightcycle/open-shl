@@ -25,13 +25,18 @@ local e = React.createElement
 return function(props: Properties)
 	local style = React.useContext(StyleContext)
 	local look = style.Widgets.BalanceCounter
+	local prefix = look.Prefix
 
 	return e(RobloxComponents.TextLabel({
 		BackgroundColor3 = look.BackgroundColor3,
+		BackgroundTransparency = look.BackgroundTransparency,
 		BorderColor3 = look.BorderColor3,
 		BorderSizePixel = look.BorderSizePixel,
-		FontFace = style.Fonts.Heading,
-		Text = `{props.Balance} {ProductDefinition.getCurrencyName(props.Currency)}`,
+		FontFace = look.FontFace or style.Fonts.Heading,
+		-- a look that says what the number is before it has no use for the name of the currency after it
+		Text = if prefix
+			then `{prefix}{props.Balance}`
+			else `{props.Balance} {ProductDefinition.getCurrencyName(props.Currency)}`,
 		TextColor3 = look.TextColors[props.Currency],
 		TextScaled = true,
 		TextStrokeTransparency = look.TextStrokeTransparency,
