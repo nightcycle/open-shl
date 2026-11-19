@@ -1,0 +1,61 @@
+# how the scenes of the first superhero life come out of its legacy place file. run from the root of the repo:
+#   lune run scripts/util/export-map.lune.luau lib/scene/shl-1.export.yml
+# the place file is never opened in studio + never edited (it carries backdoor scripts), so whatever a scene needs
+# that the place doesn't have is said here + applied again by every export
+#
+# the legacy game made a character in a booth: a wall of 24 of them stands 6,500 studs out from the city
+# (Workspace/ViewingRooms), each a backdrop with a point in front of it to stand a mannequin on + a part to look from.
+# whoever joined was handed a free one. its one mannequin was the secret identity first + the hero after, the camera
+# never moved. the screens of this codebase each wait on a folder of ReplicatedStorage/lib/scene (which
+# lib/scene/shl-1 becomes) that holds a part named Cam to look from + a part named RigAnchor to stand a rig on, so
+# the first booth is laid out three times, whole each time:
+#   character-select
+#   hero-character-editor
+#   secret-character-editor
+# all three stand on the same spot, the way the one booth did: a screen that shows two of them together has two rigs
+# on one point + two backdrops in one place, it has to take turns like the legacy mannequin did. there's no
+# artifact-editor, this game has no artifacts
+#
+# left in the place: the other 23 booths, the name of whoever a booth was handed to (Occupant) + Workspace/Shield,
+# the box around the wall. a scene is shown in a viewport, the backdrop fills it without any of them
+place: Superhero Life.rbxl
+
+# nothing that's exported here holds a script, the list is the one of the map
+known_scripts: lib/map/shl1-city.scripts.tsv
+
+# rojo names what a file holds after the file, which is how the parts get the names the code looks for
+exports:
+  - from: Workspace/ViewingRooms/ViewingRoom#1/Cam
+    to:
+      - lib/scene/shl-1/character-select/Cam.rbxm
+      - lib/scene/shl-1/hero-character-editor/Cam.rbxm
+      - lib/scene/shl-1/secret-character-editor/Cam.rbxm
+  # where the mannequin stood
+  - from: Workspace/ViewingRooms/ViewingRoom#1/Coordinates
+    to:
+      - lib/scene/shl-1/character-select/RigAnchor.rbxm
+      - lib/scene/shl-1/hero-character-editor/RigAnchor.rbxm
+      - lib/scene/shl-1/secret-character-editor/RigAnchor.rbxm
+  # the backdrop, 48 by 29 studs of teal. its picture is "rbxgameasset://Images/circle-tech-backgorund", a name only
+  # the universe of the legacy game can look up: it stays blank anywhere else
+  - from: Workspace/ViewingRooms/ViewingRoom#1/Background
+    to:
+      - lib/scene/shl-1/character-select/Set/Background.rbxm
+      - lib/scene/shl-1/hero-character-editor/Set/Background.rbxm
+      - lib/scene/shl-1/secret-character-editor/Set/Background.rbxm
+
+# `at` is a path into the place, `count` is how many it finds today. what a rule can say is listed at the Rule type
+# of the tool
+rules:
+  # the point is where the root of the mannequin went, 3 studs above its feet, and it looks the way the camera does.
+  # a rig of this codebase is stood on its anchor + looks the way that does, so the point comes down to the feet +
+  # turns around to the camera. the legacy game aimed its mannequin at the camera part itself, which is 0.6 studs
+  # higher: it leaned back by 4 degrees, a rig here stands straight
+  - at: Workspace/ViewingRooms/ViewingRoom#1/Coordinates
+    count: 1
+    move: [0, -3, 0]
+    turn: [0, 180, 0]
+  # the legacy game never set the field of view of its camera, this is what the engine starts one at
+  - at: Workspace/ViewingRooms/ViewingRoom#1/Cam
+    count: 1
+    attributes: { FieldOfView: 70 }
