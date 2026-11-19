@@ -35,7 +35,7 @@ local HOLD_DURATION = GameDefinition.tune(1, {
 -- how the wait is drawn is the game's own, the layout of another game is never required
 local Layout: Layout = GameDefinition.pick({
 	shl1 = function(): Layout
-		error(`shl1 has no loading screen yet`)
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/LoadCover")
 	end,
 	shl2 = function(): Layout
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/LoadingScreen")
@@ -48,7 +48,7 @@ assert(LoadingScreenTypes.Component(Layout))
 -- what's loaded ahead is the art of the game that's built, the groups of another game are never required
 local IMAGE_GROUPS: { ImageGroup } = GameDefinition.pick({
 	shl1 = function(): { ImageGroup }
-		error(`shl1 has no images yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): { ImageGroup }
 		return require("@self/SHL2")
