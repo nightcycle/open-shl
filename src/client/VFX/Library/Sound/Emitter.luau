@@ -15,12 +15,8 @@ local MAX_DISTANCE = 150
 -- Class
 local Module = {}
 
--- a sound coming from the avatar that's already playing. nil for an avatar that isn't there to make it
-Module.play = function(character: Model?, key: SoundKey, isLooped: boolean): Sound?
-	local source = character and character.PrimaryPart
-	if not source then
-		return nil
-	end
+-- a sound coming from a part that's already playing, it goes when the part does
+Module.playFrom = function(source: BasePart, key: SoundKey, isLooped: boolean): Sound
 	local definition = VFXAssetDefinition.getSound(key)
 	local sound = Instance.new("Sound")
 	sound.Name = key
@@ -37,6 +33,15 @@ Module.play = function(character: Model?, key: SoundKey, isLooped: boolean): Sou
 		SoundService:PlayLocalSound(sound)
 	end
 	return sound
+end
+
+-- a sound coming from the avatar that's already playing. nil for an avatar that isn't there to make it
+Module.play = function(character: Model?, key: SoundKey, isLooped: boolean): Sound?
+	local source = character and character.PrimaryPart
+	if not source then
+		return nil
+	end
+	return Module.playFrom(source, key, isLooped)
 end
 
 return Module

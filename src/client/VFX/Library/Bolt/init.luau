@@ -5,6 +5,7 @@ local Workspace = game:GetService("Workspace")
 -- Modules
 local ClientVFX = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local Emitter = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Library/Sound/Emitter")
 local Projectile = require("@game/ReplicatedStorage/Shared/VFX/Library/Projectile")
 local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 -- Types
@@ -128,6 +129,10 @@ return ClientVFX.event(ClientVFXDefinition.Bolt, function(props: Properties, sco
 		end,
 		OnHit = function(result: RaycastResult)
 			land()
+			-- what's left of it is where it landed, so that's where it's heard from
+			if props.LandSound then
+				Emitter.playFrom(part, props.LandSound, false)
+			end
 			if props.OnHit then
 				props.OnHit(result)
 			end

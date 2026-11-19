@@ -2,16 +2,14 @@
 -- Services
 -- Packages
 -- Modules
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local GunFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Gun")
 -- Types
 -- Constants
 -- of the hand from the bow
 local GRIP = CFrame.new(-0.325, 0.35, 0) * CFrame.Angles(-math.pi + math.pi / 20, 0, math.rad(-110)):Inverse()
--- Variables
--- References
--- Private Functions
--- Class
-return GunFactory.new("ranged_bow", {
+local CONFIG: GunFactory.Config = {
 	Shot = {
 		-- the string is drawn first
 		ReleaseDelay = 0.25,
@@ -39,4 +37,30 @@ return GunFactory.new("ranged_bow", {
 		},
 	},
 	HasColoredProps = true,
-})
+}
+-- Variables
+-- References
+-- Private Functions
+-- Class
+-- the bow is held + drawn the same way in every game, what it lets fly + how soon isn't
+return GunFactory.new(
+	"ranged_bow",
+	GameDefinition.tune(CONFIG, {
+		shl1 = FreezeUtil.delta(CONFIG, function(config: GunFactory.Config): GunFactory.Config
+			local shot = config.Shot
+			-- the arrow is gone with the click, the next one is a while off
+			shot.ReleaseDelay = 0.05
+			shot.Duration = 1.1
+			shot.Speed = 180
+			shot.Lifetime = 5
+			-- it's left where it landed + heard landing
+			shot.IsSticking = true
+			shot.LandSound = "Impact"
+			-- an arrow of its own, modelled looking back the way it came
+			shot.Color = Color3.fromRGB(27, 42, 53)
+			shot.MeshScale = Vector3.new(0.3, 0.6, 1.5)
+			shot.Turn = CFrame.Angles(0, math.pi, 0)
+			return config
+		end),
+	})
+)

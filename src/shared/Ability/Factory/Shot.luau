@@ -54,6 +54,7 @@ export type Config = {
 	IsSticking: boolean?, -- it's left where it ran into something for as long as it had left to fly
 	IsHidden: boolean?, -- nobody gets to see it fly: it still runs into whoever is in its way
 	LaunchSound: VFXAssetDefinition.SoundKey?, -- heard as it leaves
+	LandSound: VFXAssetDefinition.SoundKey?, -- heard from wherever it runs into something
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -142,6 +143,7 @@ Module.getBolt = function(config: Config, launch: Launch, color: Color3?): Clien
 		Turn = config.Turn,
 		Gravity = config.Gravity,
 		IsSticking = config.IsSticking,
+		LandSound = config.LandSound,
 	}
 end
 

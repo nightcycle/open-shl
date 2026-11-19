@@ -175,6 +175,7 @@ export type Bolt = {
 	Turn: CFrame?,
 	Gravity: number?, -- studs a second it picks up downwards every second, it flies straight without
 	IsSticking: boolean?, -- it's left where it ran into something for as long as it had left to fly
+	LandSound: SoundKey?, -- heard from where it ran into something, one that runs into nothing is never heard
 	OnHit: ((result: RaycastResult) -> ())?, -- only ever set by the machine that shot it
 }
 Types.Bolt = Type.strictInterface({
@@ -195,6 +196,7 @@ Types.Bolt = Type.strictInterface({
 	Turn = Type.optional(Type.CFrame),
 	Gravity = Type.optional(Type.numberMin(0)),
 	IsSticking = Type.optional(Type.boolean),
+	LandSound = Type.optional(VFXAssetDefinition.SoundKey),
 	OnHit = Type.optional(Type.callback),
 })
 
