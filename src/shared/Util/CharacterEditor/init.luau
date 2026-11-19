@@ -19,6 +19,7 @@ local StateUtil = require("@self/State")
 local TextureGroupConstructor =
 	require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item/TextureGroup")
 local TransitionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Transition")
+local WornUtil = require("@self/Worn")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
@@ -46,6 +47,7 @@ type TextureGroup = AppearanceType.TextureGroup
 type TextureGroupKey = AppearanceType.TextureGroupKey
 type HiddenTag = AppearanceType.HiddenTag
 type TransitionType = AppearanceType.TransitionType
+type WornTextureBinding = CharacterEditorType.WornTextureBinding
 type Preview = {
 	Appearance: Appearance, -- what the scene dresses the rig in
 	PendingItem: Item?,
@@ -149,6 +151,21 @@ local function setItemTexture(
 		return Result.err(`"{ItemUtil.getName(itemDef.Id)}" has nothing to change there`)
 	end
 	return ItemUtil.setTextureGroup(state, itemDef, key, fn)
+end
+
+-- one pick for everything the identity in focus wears of an item group. with nothing worn that takes it the pick
+-- changes nothing, the way it was in the game that had picks like it
+local function setWornTexture(
+	state: EditorState,
+	binding: WornTextureBinding,
+	fn: (group: TextureGroup) -> TextureGroup
+): Result<EditorState, string>
+	local appearance = StateUtil.getIdentity(state).Appearance
+	local wornAppearance = WornUtil.set(appearance, binding, fn)
+	if wornAppearance == appearance then
+		return Result.ok(state)
+	end
+	return Result.ok(StateUtil.setFocusedAppearance(state, wornAppearance))
 end
 
 -- a new color or material keeps the pattern that's drawn over it
@@ -486,8 +503,8 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 		if binding.Type == "SkinColor" then
 			out = { Type = "Color", Color = StateUtil.getIdentity(state).Appearance.SkinColor }
 		elseif binding.Type == "WornTexture" then
-			-- stub: what's worn of an item group isn't read yet, the field shows as if there were nothing to color
-			out = { Type = "Color", Color = nil }
+			local group = WornUtil.get(StateUtil.getIdentity(state).Appearance, binding)
+			out = { Type = "Color", Color = if group then group.Color else nil }
 		else
 			local group = getItemTexture(state, binding)
 			out = { Type = "Color", Color = if group then group.Color else nil }
@@ -497,8 +514,9 @@ function Util.read(state: EditorState, field: FieldDefinition): FieldValue
 		out = { Type = "Material", Material = if group then group.Material else nil }
 	elseif field.Type == "Pattern" then
 		local binding = field.Binding
-		-- stub: what's worn of an item group isn't read yet, the field shows as if there were nothing to texture
-		local group: TextureGroup? = if binding.Type == "WornTexture" then nil else getItemTexture(state, binding)
+		local group: TextureGroup? = if binding.Type == "WornTexture"
+			then WornUtil.get(StateUtil.getIdentity(state).Appearance, binding)
+			else getItemTexture(state, binding)
 		out = {
 			Type = "Pattern",
 			Material = if group then group.Material else nil,
@@ -561,12 +579,7 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		if not isChoice then
 			return Result.err(`that pattern isn't offered here`)
 		end
-		local binding = field.Binding
-		if binding.Type == "WornTexture" then
-			-- stub: nothing writes to everything worn of an item group yet, the pick is turned down
-			return Result.err(`what's worn can't be textured all at once yet`)
-		end
-		return share(setItemTexture(state, binding, function(group: TextureGroup): TextureGroup
+		local function setPattern(group: TextureGroup): TextureGroup
 			local out = TextureGroupConstructor.new(group.Color, material, group.Transparency)
 			if pattern == nil then
 				return out
@@ -575,7 +588,12 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 				t.Pattern = pattern
 				return t
 			end)
-		end))
+		end
+		local binding = field.Binding
+		if binding.Type == "WornTexture" then
+			return share(setWornTexture(state, binding, setPattern))
+		end
+		return share(setItemTexture(state, binding, setPattern))
 	elseif field.Type == "ChoiceList" and (edit.Type == "Power" or edit.Type == "PowerColor") then
 		local binding = field.Binding
 		if binding.Type == "PowerSlot" then
@@ -588,19 +606,20 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		return PowerUtil.setColor(state, binding.Group, edit.Id, edit.Color)
 	elseif field.Type == "Color" and edit.Type == "Color" then
 		local color = edit.Color
-		if getIfFiltered(field.Filtered, color) then
+		-- a game with a palette offers no color that's off it
+		if getIfFiltered(field.Filtered, color) or CharacterEditorDefinition.getPaletteColor(color) == nil then
 			return Result.err(`that color isn't offered here`)
+		end
+		local function setColor(group: TextureGroup): TextureGroup
+			return setTexture(group, color, group.Material)
 		end
 		local binding = field.Binding
 		if binding.Type == "SkinColor" then
 			return share(setSkinColor(state, color))
 		elseif binding.Type == "WornTexture" then
-			-- stub: nothing writes to everything worn of an item group yet, the pick is turned down
-			return Result.err(`what's worn can't be recolored all at once yet`)
+			return share(setWornTexture(state, binding, setColor))
 		end
-		return share(setItemTexture(state, binding, function(group: TextureGroup): TextureGroup
-			return setTexture(group, color, group.Material)
-		end))
+		return share(setItemTexture(state, binding, setColor))
 	elseif field.Type == "Material" and edit.Type == "Material" then
 		local material = edit.Material
 		if getIfFiltered(field.Filtered, material) then

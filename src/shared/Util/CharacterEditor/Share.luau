@@ -23,12 +23,16 @@ local IsItemShared: { [string]: true } = {}
 local IsBackstoryShared = false
 -- the game has a switch that ties the skin of the identities together
 local IsColorLinked = false
+-- the game has the skin picked on a page every identity shares: there's one skin to a character
+local IsSkinShared = false
 -- References
 -- Private Functions
 local function indexFields(fields: { FieldDefinition }, isShared: boolean)
 	for _, field in fields do
 		if field.Type == "Text" then
 			IsBackstoryShared = IsBackstoryShared or (isShared and field.Binding.Key == "Backstory")
+		elseif field.Type == "Color" then
+			IsSkinShared = IsSkinShared or (isShared and field.Binding.Type == "SkinColor")
 		elseif field.Type == "Toggle" then
 			IsColorLinked = IsColorLinked or field.Focus == "IsColorMatched"
 			indexFields(field.Sections or {}, isShared)
@@ -110,7 +114,7 @@ end
 local function share(source: Identity, identity: Identity): Identity
 	local appearance = identity.Appearance
 	local items = getItems(source.Appearance.Items, appearance.Items)
-	local skinColor = if IsColorLinked then source.Appearance.SkinColor else appearance.SkinColor
+	local skinColor = if IsColorLinked or IsSkinShared then source.Appearance.SkinColor else appearance.SkinColor
 	if items ~= appearance.Items or skinColor ~= appearance.SkinColor then
 		local editedAppearance: Appearance = table.clone(appearance)
 		editedAppearance.Items = items
@@ -142,7 +146,7 @@ local Util = {}
 indexPage(CharacterEditorDefinition.DEFINITION)
 
 -- nothing here does anything in a game where this is false
-Util.IS_ANY = next(IsItemShared) ~= nil or IsBackstoryShared or IsColorLinked
+Util.IS_ANY = next(IsItemShared) ~= nil or IsBackstoryShared or IsColorLinked or IsSkinShared
 
 -- until the switch can take them apart, the skin + the hair of the identities are tied together
 Util.IS_COLOR_LINKED = IsColorLinked

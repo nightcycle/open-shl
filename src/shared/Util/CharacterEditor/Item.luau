@@ -7,11 +7,11 @@ local Result = TypeUnionLib.Result
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
-local ItemConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item")
 local PageUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Page")
 local StateUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/State")
 local TextureGroupConstructor =
 	require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item/TextureGroup")
+local WornUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Worn")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
@@ -43,6 +43,11 @@ local function getIfSameTextureGroup(a: TextureGroup, b: TextureGroup): boolean
 		and a.Pattern == b.Pattern
 end
 
+-- an item nobody wore yet: the way it was made, or the way the game has what's worn already start it out
+local function newItem(state: EditorState, definitionId: string): Item
+	return WornUtil.newItem(StateUtil.getIdentity(state).Appearance, definitionId)
+end
+
 -- the worn item when it's worn, the one that's tried on otherwise
 local function edit(state: EditorState, definitionId: string, fn: (item: Item) -> ()): EditorState
 	local appearance = StateUtil.getIdentity(state).Appearance
@@ -64,7 +69,7 @@ local function edit(state: EditorState, definitionId: string, fn: (item: Item) -
 	local pendingItem = state.PendingItem
 	local triedItem: Item = if pendingItem and pendingItem.DefinitionId == definitionId
 		then pendingItem
-		else ItemConstructor.new(definitionId)
+		else newItem(state, definitionId)
 	local editedItem = FreezeUtil.delta(triedItem, function(t: Item): Item
 		fn(t)
 		return t
@@ -254,7 +259,7 @@ end
 function Util.newPending(state: EditorState, definitionId: string): Item
 	local previousItem = state.PendingItem
 	if not previousItem then
-		return ItemConstructor.new(definitionId)
+		return newItem(state, definitionId)
 	end
 	if previousItem.DefinitionId == definitionId then
 		return previousItem
@@ -269,9 +274,9 @@ function Util.newPending(state: EditorState, definitionId: string): Item
 		or indexRes.Value.Group ~= previousIndexRes.Value.Group
 		or indexRes.Value.Category ~= previousIndexRes.Value.Category
 	then
-		return ItemConstructor.new(definitionId)
+		return newItem(state, definitionId)
 	end
-	return FreezeUtil.delta(ItemConstructor.new(definitionId), function(t: Item): Item
+	return FreezeUtil.delta(newItem(state, definitionId), function(t: Item): Item
 		for _, key: TextureGroupKey in itemDefRes.Value.TextureGroups do
 			local previousGroup = previousItem.TextureGroups[key]
 			if not previousGroup then
@@ -309,7 +314,7 @@ function Util.add(state: EditorState, definitionId: string): Result<EditorState,
 	end
 	local pendingItem = state.PendingItem
 	local isPending = pendingItem ~= nil and pendingItem.DefinitionId == definitionId
-	local item = if pendingItem and isPending then pendingItem else ItemConstructor.new(definitionId)
+	local item = if pendingItem and isPending then pendingItem else newItem(state, definitionId)
 	local wornState = StateUtil.setFocusedAppearance(
 		state,
 		FreezeUtil.delta(appearance, function(t: Appearance): Appearance
