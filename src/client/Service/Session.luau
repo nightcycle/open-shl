@@ -14,6 +14,7 @@ local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remo
 -- Types
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
@@ -27,6 +28,7 @@ export type BaseInventory = BaseType.BaseInventory
 export type QuestState = QuestType.QuestState
 export type PublicProfile = ProfileType.PublicProfile
 export type DailyReward = SessionType.DailyReward
+export type MenuRefusal = CombatType.MenuRefusal
 type SessionServiceImpl = {
 	__index: SessionServiceImpl,
 	GetIsLoaded: (self: SessionService) -> boolean,
@@ -55,6 +57,7 @@ export type SessionService = typeof(setmetatable(
 		QuestChanged: Signal<QuestState?>,
 		ProfilesChanged: Signal<{ PublicProfile }>,
 		DailyRewardGranted: Signal<DailyReward>,
+		MenuRefused: Signal<MenuRefusal>, -- the server didn't count the avatar as in a menu when it was told so
 		_IsLoaded: boolean,
 		_Characters: { Character },
 		_ActiveCharacterId: string,
@@ -225,6 +228,7 @@ return ServiceLocker(function(): SessionService
 		QuestChanged = Signal.new(),
 		ProfilesChanged = Signal.new(),
 		DailyRewardGranted = Signal.new(),
+		MenuRefused = Signal.new(),
 		_IsLoaded = false,
 		_Characters = table.freeze({}),
 		_ActiveCharacterId = AttributeDefinition.get(player, AttributeDefinition.ActiveCharacterId),
@@ -267,6 +271,12 @@ return ServiceLocker(function(): SessionService
 			-- kept, the popup that announces it may not be up yet
 			self._DailyReward = dailyReward
 			self.DailyRewardGranted:Fire(dailyReward)
+		end)
+	)
+	table.insert(
+		self._Connections,
+		NetworkService:Connect(RemoteDefinition.MenuRefused, function(refusal: MenuRefusal)
+			self.MenuRefused:Fire(refusal)
 		end)
 	)
 
@@ -361,5 +371,6 @@ end, function(self: SessionService)
 	self.QuestChanged:Destroy()
 	self.ProfilesChanged:Destroy()
 	self.DailyRewardGranted:Destroy()
+	self.MenuRefused:Destroy()
 	table.clear(self :: any)
 end)

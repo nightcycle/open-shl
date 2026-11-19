@@ -12,6 +12,7 @@ local Result = TypeUnionLib.Result
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
+local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
@@ -20,6 +21,7 @@ local ShellType = require("@self/Types")
 local TutorialType = require("@game/ReplicatedStorage/Shared/Type/Tutorial")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Signal<T...> = Signal.Signal<T...>
+type MenuRefusal = SessionService.MenuRefusal
 export type BootPhase = ShellType.BootPhase
 export type Screen = ShellType.Screen
 export type ScreenType = ShellType.ScreenType
@@ -332,8 +334,14 @@ function ShellService:PressMenuButton(menuId: PseudoEnum.MenuId)
 	elseif menuId == PseudoEnum.MenuId.Swap then
 		self.SwapRequested:Fire()
 	elseif menuId == PseudoEnum.MenuId.Characters then
+		local avatar = Players.LocalPlayer.Character
 		-- a dead avatar has to get up before it can be swapped for another
-		if AttributeDefinition.get(Players.LocalPlayer.Character, AttributeDefinition.IsDead) then
+		if AttributeDefinition.get(avatar, AttributeDefinition.IsDead) then
+			return
+		end
+		-- one that's in a fight has to see it through first, the server wouldn't count it as in the menu anyway
+		local fightingUntil = AttributeDefinition.get(avatar, AttributeDefinition.FightingUntil)
+		if CombatDefinition.getIfFighting(fightingUntil, CombatDefinition.getTime()) then
 			return
 		end
 		self:OpenScreen({
@@ -404,6 +412,26 @@ return ServiceLocker(function(): ShellService
 			end
 		end)
 	)
+	-- the server didn't count the avatar as in a menu: it's in a fight this client hadn't heard of when it said so
+	local refusedConnection = SessionService.MenuRefused:Connect(function(refusal: MenuRefusal)
+		if self._State.IsGameplayHudVisible then
+			return
+		end
+		-- whoever pressed their way in is back where they pressed, as if the button had been faded in time
+		if self._HasHudShown then
+			self:CloseScreen()
+			return
+		end
+		-- nobody pressed their way into the menus of the boot, so they stay up + ask again once the fight is over
+		task.delay(math.max(refusal.Until - CombatDefinition.getTime(), 0), function()
+			if self.IsInitialized and SessionService.IsInitialized and not self._State.IsGameplayHudVisible then
+				SessionService:SetInMenu(true)
+			end
+		end)
+	end)
+	table.insert(self._CleanUpCallbacks, function()
+		refusedConnection:Disconnect()
+	end)
 
 	table.insert(self._CleanUpCallbacks, function()
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
