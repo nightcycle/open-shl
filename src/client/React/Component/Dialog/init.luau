@@ -38,6 +38,10 @@ local WIDE_BUTTON_SIZE = UDim2.fromScale(0.45, 0.08)
 -- how far off the middle each of two buttons starts
 local BUTTON_GAP = 0.015
 local MAX_BUTTONS = 2
+-- a card has a row for its buttons, they're as tall as it is + this much of it wide. one of them stands in the middle
+local CARD_BUTTON_SIZE = UDim2.fromScale(0.3, 1)
+local CARD_WIDE_BUTTON_SIZE = UDim2.fromScale(0.4, 1)
+local CARD_BUTTON_GAP = 0.025
 -- a look without a picture has its box behind all of the above + the text between them
 local FRAME_AREA: Area = table.freeze({
 	Position = UDim2.fromScale(0.05, 0.19),
@@ -52,18 +56,26 @@ local FRAME_BODY: Area = table.freeze({
 -- Private Functions
 local e = React.createElement
 -- Class
--- a question or a word to the player with a button or two under it, on the panel of the look
+-- a question or a word to the player with a button or two under it, on the panel of the look or on the card a look
+-- has for it
 return function(props: Properties): React.ReactNode
 	local style = React.useContext(StyleContext)
 	local palette = style.Palette
 	local panel = style.Panel
 	local border = style.Border
 	local buttonImage = style.Widgets.Dialog.ButtonImage
+	local card = style.Widgets.Dialog.Card
 	assert(
 		#props.Buttons >= 1 and #props.Buttons <= MAX_BUTTONS,
 		`a dialog has 1 to {MAX_BUTTONS} buttons, not {#props.Buttons}`
 	)
 	local isWide = #props.Buttons == 1
+	-- on a card the buttons are laid out in the row it has for them, not on the square of a picture
+	local buttonHeight = if card then 0.5 else BUTTON_HEIGHT
+	local buttonGap = if card then CARD_BUTTON_GAP else BUTTON_GAP
+	local buttonSize = if card
+		then (if isWide then CARD_WIDE_BUTTON_SIZE else CARD_BUTTON_SIZE)
+		else (if isWide then WIDE_BUTTON_SIZE else BUTTON_SIZE)
 
 	local buttons: { [string]: React.ReactNode } = {}
 	for index, buttonInfo in props.Buttons do
@@ -75,9 +87,9 @@ return function(props: Properties): React.ReactNode
 				-- the button itself isn't seen, it's the bar behind what it says
 				BackgroundTransparency = 1,
 				Position = if isWide
-					then UDim2.fromScale(0.5, BUTTON_HEIGHT)
-					else UDim2.fromScale(0.5 + (isLeft and -BUTTON_GAP or BUTTON_GAP), BUTTON_HEIGHT),
-				Size = if isWide then WIDE_BUTTON_SIZE else BUTTON_SIZE,
+					then UDim2.fromScale(0.5, buttonHeight)
+					else UDim2.fromScale(0.5 + (isLeft and -buttonGap or buttonGap), buttonHeight),
+				Size = buttonSize,
 				ZIndex = 2,
 				[React.Event.Activated] = function()
 					props.OnAction({
@@ -97,6 +109,11 @@ return function(props: Properties): React.ReactNode
 						Size = UDim2.fromScale(1, 1),
 						SizeConstraint = Enum.SizeConstraint.RelativeXX,
 					})
+					elseif card then e("Frame", {
+						BackgroundColor3 = palette.Field,
+						BorderSizePixel = 0,
+						Size = UDim2.fromScale(1, 1),
+					})
 					else e("Frame", {
 						BackgroundColor3 = palette.FieldAlt,
 						BorderColor3 = border.Color3,
@@ -105,16 +122,63 @@ return function(props: Properties): React.ReactNode
 					}),
 				Label = e("TextLabel", {
 					BackgroundTransparency = 1,
-					FontFace = style.Fonts.Body,
+					FontFace = if card then card.FontFace else style.Fonts.Body,
 					Size = UDim2.fromScale(1, 1),
 					Text = buttonInfo.Text,
 					TextColor3 = palette.Text,
-					TextSize = style.TextSizes.Button,
+					-- whatever a card says fills the box it's in
+					TextScaled = if card then true else nil,
+					TextSize = if card then nil else style.TextSizes.Button,
 					TextWrapped = true,
 					ZIndex = 2,
 				}),
 			}
 		)
+	end
+
+	if card then
+		return e(RobloxComponents.Frame(
+			{
+				BackgroundTransparency = 1,
+			},
+			props,
+			{
+				Panel = e("Frame", {
+					BackgroundColor3 = card.BackgroundColor3,
+					BorderColor3 = card.BorderColor3,
+					BorderSizePixel = card.BorderSizePixel,
+					Size = UDim2.fromScale(1, 1),
+				}),
+				Title = e("TextLabel", {
+					BackgroundTransparency = 1,
+					FontFace = card.FontFace,
+					Position = card.Title.Position,
+					Size = card.Title.Size,
+					Text = props.Title,
+					TextColor3 = card.TitleColor3,
+					TextScaled = true,
+					TextWrapped = true,
+					ZIndex = 2,
+				}),
+				Body = e("TextLabel", {
+					BackgroundTransparency = 1,
+					FontFace = card.FontFace,
+					Position = card.Body.Position,
+					Size = card.Body.Size,
+					Text = props.Text,
+					TextColor3 = card.TextColor3,
+					TextScaled = true,
+					TextWrapped = true,
+					ZIndex = 2,
+				}),
+				Buttons = e("Frame", {
+					BackgroundTransparency = 1,
+					Position = card.Buttons.Position,
+					Size = card.Buttons.Size,
+					ZIndex = 2,
+				}, buttons),
+			}
+		))
 	end
 
 	local body: Area = if panel.Type == "Image" then panel.Body else FRAME_BODY

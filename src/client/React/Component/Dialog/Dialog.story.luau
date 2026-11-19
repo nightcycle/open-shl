@@ -34,6 +34,8 @@ return UILabs.CreateReactStory({
 		Title = UILabs.String("TEAM CHANGER"),
 		Text = UILabs.String("Would you like to change team?"),
 		IsConfirm = UILabs.Boolean(true),
+		-- the box of the first game took the middle half of the screen, a card of it is looked at there
+		IsHalfScreen = UILabs.Boolean(false),
 		Style = StyleStory.newControl("shl3"),
 	},
 }, function(props)
@@ -62,8 +64,10 @@ return UILabs.CreateReactStory({
 				{
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					Position = UDim2.fromScale(0.5, 0.5),
-					Size = UDim2.fromScale(0.35, 0.35),
-					SizeConstraint = Enum.SizeConstraint.RelativeXX,
+					Size = if props.controls.IsHalfScreen
+						then UDim2.fromScale(0.5, 0.5)
+						else UDim2.fromScale(0.35, 0.35),
+					SizeConstraint = if props.controls.IsHalfScreen then nil else Enum.SizeConstraint.RelativeXX,
 					Title = props.controls.Title,
 					Text = props.controls.Text,
 					Buttons = if props.controls.IsConfirm then CONFIRM_BUTTONS else NOTICE_BUTTONS,
