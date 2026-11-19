@@ -47,9 +47,9 @@ local GAME_PATTERN = '%f[%w_]GAME%s*=%s*"([^"]*)"'
 local MAP_DEFINITION_PATHS = { "ReplicatedStorage/Shared/Definition/Map", "ServerScriptService/Server/Definition/Map" }
 local TAG_PATTERN = 'newTag%(%s*"([^"]+)"%s*,%s*"([^"]+)"%s*%)'
 -- the tags the map of a game can't go without. one that lost them all still builds + boots, whatever they ran is just
--- not there. a game that isn't built yet has none
+-- not there
 local NEEDED_TAGS: { [game.GameId]: { string } } = {
-	shl1 = {},
+	shl1 = { "Spawn", "PlayArea", "NightWindows" },
 	shl2 = { "StreetLamp", "NightWindows", "Uniform", "Hazard", "Beacon", "Gate", "Reactor", "Colorizer", "Rebuilt" },
 	shl3 = { "Beacon", "Spawn", "PlayArea", "Water", "IntroCamera" },
 }
