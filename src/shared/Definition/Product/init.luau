@@ -20,7 +20,7 @@ type ProductCatalogue = EconomyType.ProductCatalogue
 -- never required
 local CATALOGUE: ProductCatalogue = GameDefinition.pick({
 	shl1 = function(): ProductCatalogue
-		error(`shl1 has no products yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): ProductCatalogue
 		return require("@self/SHL2")
@@ -32,6 +32,7 @@ local CATALOGUE: ProductCatalogue = GameDefinition.pick({
 assert(EconomyType.ProductCatalogue(CATALOGUE))
 TableUtil.deepFreeze(CATALOGUE)
 local DEFINITIONS = CATALOGUE.Definitions
+local UPCOMING: { ProductDefinition } = CATALOGUE.Upcoming or table.freeze({})
 local CURRENCY_NAMES = CATALOGUE.CurrencyNames
 local DEFAULT_CHARACTER_SLOT_COUNT = CATALOGUE.DefaultCharacterSlotCount
 local EXTRA_CHARACTER_SLOT_COUNT = CATALOGUE.ExtraCharacterSlotCount
@@ -53,6 +54,19 @@ local Module = {}
 -- every currency is drawn by its name somewhere, the checker doesn't see one that's left out
 for _, currency: PseudoEnum.Currency in PseudoEnum.getEnumItems("Currency") do
 	assert(CURRENCY_NAMES[currency] ~= nil, `the "{currency}" currency has no name`)
+end
+
+do
+	-- an upcoming product is held to what every row is, so all it takes once it's sold is moving the row. until then
+	-- no id of theirs is answered for: it isn't listed, prompted or asked about
+	local ids: { [string]: true } = {}
+	for _, definition in DEFINITIONS do
+		ids[definition.Id] = true
+	end
+	for _, definition in UPCOMING do
+		assert(not ids[definition.Id], `duplicate product id "{definition.Id}"`)
+		ids[definition.Id] = true
+	end
 end
 
 Module.STARTING_BALANCES = STARTING_BALANCES

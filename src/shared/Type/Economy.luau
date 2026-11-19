@@ -33,8 +33,29 @@ export type ShopTab = "Credits" | "Gems" | "Gamepasses"
 Types.ShopTab = Type.literal("Credits", "Gems", "Gamepasses")
 
 -- of every game. which of them a game hands out is up to the passes it sells
-export type EntitlementKey = "FifthPower" | "ExtraCharacterSlots" | "MultiHair" | "ExtraPowers" | "AdvancedRoleplay"
-Types.EntitlementKey = Type.literal("FifthPower", "ExtraCharacterSlots", "MultiHair", "ExtraPowers", "AdvancedRoleplay")
+export type EntitlementKey =
+	"FifthPower"
+	| "ExtraCharacterSlots"
+	| "MultiHair"
+	| "ExtraPowers"
+	| "AdvancedRoleplay"
+	| "PremiumMasks"
+	| "PremiumHair"
+	| "PremiumFaces"
+	| "PremiumPowers"
+	| "PremiumSuits"
+Types.EntitlementKey = Type.literal(
+	"FifthPower",
+	"ExtraCharacterSlots",
+	"MultiHair",
+	"ExtraPowers",
+	"AdvancedRoleplay",
+	"PremiumMasks",
+	"PremiumHair",
+	"PremiumFaces",
+	"PremiumPowers",
+	"PremiumSuits"
+)
 
 export type ProductGrant =
 	{
@@ -58,14 +79,17 @@ Types.ProductGrant = Type.union(
 	})
 )
 
--- a product that grants an entitlement is a gamepass, every other one is a developer product
+-- a product that grants an entitlement is a gamepass, every other one is a developer product. a pass from before
+-- there were game passes is an asset a player owns, which the platform is asked about another way
 export type ProductDefinition = {
 	Id: string,
 	Tab: ShopTab,
 	Name: string,
 	Grant: ProductGrant,
 	LegacyId: number,
+	OtherLegacyIds: { number }?, -- what it was sold under before, owning one of those is owning it
 	LegacyPriceText: string,
+	IsAsset: boolean?,
 }
 Types.ProductDefinition = Type.strictInterface({
 	Id = Type.string,
@@ -73,7 +97,9 @@ Types.ProductDefinition = Type.strictInterface({
 	Name = Type.string,
 	Grant = Types.ProductGrant,
 	LegacyId = Type.integer,
+	OtherLegacyIds = Type.optional(Type.array(Type.integer)),
 	LegacyPriceText = Type.string,
+	IsAsset = Type.optional(Type.boolean),
 })
 
 -- what a player is handed for coming back, the interval is the seconds between two of them
@@ -93,6 +119,7 @@ Types.DailyReward = Type.strictInterface({
 -- has no daily reward
 export type ProductCatalogue = {
 	Definitions: { ProductDefinition },
+	Upcoming: { ProductDefinition }?, -- the ones that aren't sold yet, nobody is asked whether they own one
 	CurrencyNames: { [Currency]: string },
 	DefaultCharacterSlotCount: number,
 	ExtraCharacterSlotCount: number,
@@ -101,6 +128,7 @@ export type ProductCatalogue = {
 }
 Types.ProductCatalogue = Type.strictInterface({
 	Definitions = Type.array(Types.ProductDefinition),
+	Upcoming = Type.optional(Type.array(Types.ProductDefinition)),
 	CurrencyNames = Type.map(Types.Currency, Type.string),
 	DefaultCharacterSlotCount = Type.intersection(Type.integer, Type.numberPositive),
 	ExtraCharacterSlotCount = Type.intersection(Type.integer, Type.numberMin(0)),
