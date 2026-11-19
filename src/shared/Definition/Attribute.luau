@@ -29,6 +29,7 @@ export type Attribute<V> = {
 -- Constants
 local MAX_HEALTH = 100
 local MAX_ENERGY = 200
+local ASSET_ID: Validator = Type.intersection(Type.integer, Type.numberMin(0))
 -- only what the game's own passes hand out, the keys of another game are never set on a player
 local ENTITLEMENT_KEYS: { EntitlementKey } = ProductDefinition.listEntitlements()
 local OWNER_CLASS_NAMES: { [Owner]: string } = table.freeze({
@@ -103,6 +104,10 @@ Module.IsTutorialEnabled = new("Player", "IsTutorialEnabled", Type.boolean, true
 Module.IsApartmentLocked = new("Player", "IsApartmentLocked", Type.boolean, true) :: Attribute<boolean>
 -- whoever was sent to this server by the game picked their mode on the way, they aren't asked again
 Module.IsModeChosen = new("Player", "IsModeChosen", Type.boolean, false) :: Attribute<boolean>
+-- the shirt + the pants the account of the player has on, by their asset ids: 0 for one it wears none of. nil until
+-- the server asked, which it only does in a game whose characters wear them
+Module.ShirtAssetId = new("Player", "ShirtAssetId", Type.optional(ASSET_ID), nil) :: Attribute<number?>
+Module.PantsAssetId = new("Player", "PantsAssetId", Type.optional(ASSET_ID), nil) :: Attribute<number?>
 -- nil for as long as the player has no residence
 Module.ResidenceId = new("Player", "ResidenceId", Type.optional(BaseType.ResidenceId), nil) :: Attribute<ResidenceId?>
 
