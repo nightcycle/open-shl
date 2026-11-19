@@ -7,6 +7,8 @@ local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
 local CharacterSelect =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterSelect")
+local CombatFeedback =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CombatFeedback")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
 local MenuDrawer = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/MenuDrawer")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
@@ -38,6 +40,8 @@ local REGISTRY: Registry = {
 		Shop = Shop,
 	},
 	OVERLAYS = {
+		-- it has no bar for its health: the flash of a hit is how a player sees one land
+		CombatFeedback = CombatFeedback,
 		NameTag = NameTag,
 		ServerId = ServerId,
 		Ticker = Ticker,
