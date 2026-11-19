@@ -98,6 +98,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- who fights + who sits it out, where that's each player's own pick: an avatar says which from the moment it's in
+	{
+		Name = "PlayerMode",
+		IsFeatured = FEATURES.PlayerMode,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/PlayerMode")
+			assert(not service.IsInitialized, `the player mode service is already initialized`)
+			return service
+		end,
+	},
 	{
 		Name = "Roleplay",
 		IsFeatured = FEATURES.Roleplay,
