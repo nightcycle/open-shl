@@ -40,6 +40,10 @@ type PlayerStore = {
 	-- takes a save of today back to one that was through the import when a save only said whether it had been, nil
 	-- for a game whose saves kept the version of it from the start
 	ToImported: ((document: { [string]: any }) -> ())?,
+	-- where a save holds what only this game keeps, nil for a game that keeps nothing of its own in a section
+	SectionKey: string?,
+	-- where the saves of the other games hold theirs
+	OtherSectionKeys: { string },
 }
 -- Constants
 local MATERIALS = table.freeze({ Enum.Material.Plastic, Enum.Material.Neon, Enum.Material.Wood })
@@ -78,6 +82,7 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 				toSecond(document)
 				document.IsLegacyImported = true
 			end,
+			OtherSectionKeys = { "SHL3" },
 		}
 	end,
 	-- it's still at its first version, a save of today is one
@@ -87,6 +92,8 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 			KeyFormat = "Player_%d",
 			Version = SaveType.SHL3_VERSION,
 			Earlier = {},
+			SectionKey = "SHL3",
+			OtherSectionKeys = {},
 		}
 	end,
 })
@@ -451,6 +458,36 @@ return {
 			string.find(problem, "123", 1, true) and string.find(problem, "456", 1, true),
 			`the two universes aren't named: {problem}`
 		)
+	end),
+
+	-- what only one game keeps of a player sits in a section of its save. a save holds the section of its own game,
+	-- whole, + the section of no other: what one game adds never widens the save of the next
+	Section = SpecUtil.newScenario(function()
+		local store = StoreDefinition.Player
+		local dataRes = StoreDefinition.encode(store, store.Default())
+		assert(dataRes.IsOk, `a new save wasn't encoded: {tostring(dataRes.Value)}`)
+		local data = dataRes.Value :: { [string]: any }
+		local sectionKey = PLAYER_STORE.SectionKey
+		if sectionKey then
+			assert(type(data[sectionKey]) == "table", `a new save has no "{sectionKey}" section`)
+			local without = TableUtil.deepCopy(data)
+			without[sectionKey] = nil
+			assert(StoreDefinition.decode(store, without).IsErr, `a save without its section was decoded`)
+			local widened = TableUtil.deepCopy(data)
+			widened[sectionKey].Rank = 1
+			assert(StoreDefinition.decode(store, widened).IsErr, `a section with a field it doesn't have was decoded`)
+			for key in data[sectionKey] do
+				local short = TableUtil.deepCopy(data)
+				short[sectionKey][key] = nil
+				assert(StoreDefinition.decode(store, short).IsErr, `a section without its "{key}" was decoded`)
+			end
+		end
+		for _, otherKey in PLAYER_STORE.OtherSectionKeys do
+			assert(data[otherKey] == nil, `a new save holds the "{otherKey}" section of another game`)
+			local theirs = TableUtil.deepCopy(data)
+			theirs[otherKey] = {}
+			assert(StoreDefinition.decode(store, theirs).IsErr, `a save with the "{otherKey}" section was decoded`)
+		end
 	end),
 
 	Player = SpecUtil.newScenario(function()

@@ -36,6 +36,11 @@ local function newPlayerSave(): PlayerSave
 		LastDailyRewardAt = 0,
 		PurchaseIds = {},
 		LegacyImportVersion = 0,
+		SHL3 = {
+			OwnedItemIds = {},
+			ApartmentTier = 0,
+			RedeemedCodeIds = {},
+		},
 	}
 	TableUtil.deepFreeze(out)
 	return out

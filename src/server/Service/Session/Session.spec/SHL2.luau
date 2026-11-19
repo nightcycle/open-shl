@@ -4,6 +4,7 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
+local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local DataService = require("@game/ServerScriptService/Server/Service/Data")
@@ -13,15 +14,18 @@ local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definit
 local LegacyImportService = require("@game/ServerScriptService/Server/Service/LegacyImport")
 local LegacyStoreDefinition = require("@game/ServerScriptService/Server/Definition/LegacyStore")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
+local SessionSection = require("@game/ServerScriptService/Server/Service/Session/SHL2")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local SpecUtil = require("@game/ServerScriptService/Server/Util/Spec")
 local StoreDefinition = require("@game/ServerScriptService/Server/Definition/Store")
 local ThemeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Theme")
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local LegacyImportType = require("@game/ServerScriptService/Server/Type/LegacyImport")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type Character = CharacterType.Character
 type PlayerSave = SaveType.PlayerSave
+type SavePatch = LegacyImportType.SavePatch
 type Session = SessionService.Session
 type FakeDataStoreService = FakeDataStoreUtil.FakeDataStoreService
 type ReadOnlyStore<V> = StoreDefinition.ReadOnlyStore<V>
@@ -282,11 +286,69 @@ local function walk(destroyCallbacks: { () -> () })
 	assert(session.Save.Balances.Credits == CREDITS * 100, `the pass a save was due didn't bring over the old stores`)
 end
 -- Class
-return SpecUtil.newScenario(function()
-	local destroyCallbacks: { () -> () } = {}
-	local success, msg = pcall(walk :: any, destroyCallbacks)
-	stop(destroyCallbacks)
-	if not success then
-		error(msg, 0)
-	end
-end)
+return {
+	Walk = SpecUtil.newScenario(function()
+		local destroyCallbacks: { () -> () } = {}
+		local success, msg = pcall(walk :: any, destroyCallbacks)
+		stop(destroyCallbacks)
+		if not success then
+			error(msg, 0)
+		end
+	end),
+
+	-- what the game before this one left a player gets into their save through the section of the game. it takes no
+	-- player + no service: a save + a patch go in, the save comes out
+	Section = SpecUtil.newScenario(function()
+		local furniture = FurnitureDefinition.list()[1]
+		assert(furniture, `the game has no furniture`)
+		local fresh = STORE.Default()
+		local other = STORE.Default()
+		local inventory = TableUtil.deepCopy(other.Inventory)
+		table.insert(inventory.FurnitureIds, furniture.Id)
+		local patch: SavePatch = {
+			Characters = other.Characters,
+			ActiveCharacterId = other.Characters[2].Id,
+			Balances = { Credits = CREDITS, Gems = 3 },
+			Inventory = inventory,
+			BaseLayout = other.BaseLayout,
+			IsTutorialEnabled = not fresh.IsTutorialEnabled,
+			LastDailyRewardAt = DAILY_REWARD_AT,
+		}
+		local isPatch, patchMsg = SessionSection.Patch(patch)
+		assert(isPatch, `a patch of the game was turned down: {tostring(patchMsg)}`)
+		local save = TableUtil.deepCopy(fresh)
+		SessionSection.Import(save, patch)
+		assert(
+			SpecUtil.getIfEqual(getIds(save.Characters), getIds(other.Characters)),
+			`the characters didn't come over`
+		)
+		assert(save.ActiveCharacterId == other.Characters[2].Id, `the active character didn't come over`)
+		assert(SpecUtil.getIfEqual(save.Balances, { Credits = CREDITS, Gems = 3 }), `the balances didn't come over`)
+		assert(table.find(save.Inventory.FurnitureIds, furniture.Id), `the furniture didn't come over`)
+		assert(save.IsTutorialEnabled ~= fresh.IsTutorialEnabled, `the tutorial setting didn't come over`)
+		assert(save.LastDailyRewardAt == DAILY_REWARD_AT, `the daily reward didn't come over`)
+		assert(save.IsApartmentLocked == fresh.IsApartmentLocked, `what no patch holds was changed`)
+		assert(
+			save.LegacyImportVersion == fresh.LegacyImportVersion,
+			`the section marked the save, that's the session's`
+		)
+		local isSave, saveMsg = STORE.Validator(save)
+		assert(isSave, `what came out isn't a save: {tostring(saveMsg)}`)
+
+		-- a patch that holds nothing leaves the save as it starts out
+		local untouched = TableUtil.deepCopy(fresh)
+		SessionSection.Import(untouched, {})
+		assert(SpecUtil.getIfEqual(untouched, fresh), `a patch of nothing changed the save`)
+
+		-- only what the game keeps is taken from its importer
+		local refused: { [string]: unknown } = {
+			["a patch with the section of another game"] = { SHL3 = {} },
+			["a patch with a field no game has"] = { Rank = 1 },
+			["a patch with a daily reward before time began"] = { LastDailyRewardAt = -1 },
+			["a text"] = "patch",
+		}
+		for name, value in refused do
+			assert(not SessionSection.Patch(value), `{name} was taken`)
+		end
+	end),
+}

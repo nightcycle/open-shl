@@ -2,6 +2,7 @@
 -- Services
 local Players = game:GetService("Players")
 -- Packages
+local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local DataService = require("@game/ServerScriptService/Server/Service/Data")
@@ -9,12 +10,15 @@ local FakeDataStoreUtil = require("@game/ServerScriptService/Server/Util/FakeDat
 local LegacyImportService = require("@game/ServerScriptService/Server/Service/LegacyImport")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
+local SessionSection = require("@game/ServerScriptService/Server/Service/Session/SHL3")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local SpecUtil = require("@game/ServerScriptService/Server/Util/Spec")
 local StoreDefinition = require("@game/ServerScriptService/Server/Definition/Store")
 -- Types
+local LegacyImportType = require("@game/ServerScriptService/Server/Type/LegacyImport")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type PlayerSave = SaveType.PlayerSave
+type SavePatch = LegacyImportType.SavePatch
 type Session = SessionService.Session
 type FakeDataStoreService = FakeDataStoreUtil.FakeDataStoreService
 -- Constants
@@ -135,6 +139,11 @@ local function walk(destroyCallbacks: { () -> () })
 	)
 	assert(save.ActiveCharacterId == save.Characters[1].Id, `the first character isn't the active one`)
 	assert(SpecUtil.getIfEqual(save.Balances, ProductDefinition.STARTING_BALANCES), `the starting balances are off`)
+	-- what only this game keeps starts out in a section of its own
+	assert(
+		SpecUtil.getIfEqual(save.SHL3, { OwnedItemIds = {}, ApartmentTier = 0, RedeemedCodeIds = {} }),
+		`a new save doesn't start out with the section of the game`
+	)
 	assert(session.ActiveIdentityKey == "Main" and not session.IsInMenu, `the session didn't start out fresh`)
 	assert(
 		AttributeDefinition.get(player, AttributeDefinition.ActiveCharacterId) == save.ActiveCharacterId,
@@ -148,10 +157,26 @@ local function walk(destroyCallbacks: { () -> () })
 	local nextCharacterId = save.Characters[2].Id
 	update(player, function(t: PlayerSave): PlayerSave?
 		t.ActiveCharacterId = nextCharacterId
+		-- the section is written through the same update as the rest of the save
+		local section = t.SHL3
+		assert(section, `a save of the game has no section`)
+		section.ApartmentTier = 1
+		table.insert(section.RedeemedCodeIds, "a-code")
 		return t
 	end)
 	save = awaitSession(player).Save
 	assert(save.ActiveCharacterId == nextCharacterId, `the session didn't follow its update`)
+	assert(
+		SpecUtil.getIfEqual(save.SHL3, { OwnedItemIds = {}, ApartmentTier = 1, RedeemedCodeIds = { "a-code" } }),
+		`the section didn't follow its update`
+	)
+	-- what isn't a section of this game's doesn't get into its save
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local widenedRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
+		(t :: any).SHL1 = {}
+		return t
+	end)
+	assert(widenedRes.IsErr, `the section of another game was saved`)
 	assert(
 		AttributeDefinition.get(player, AttributeDefinition.ActiveCharacterId) == nextCharacterId,
 		`the player wasn't told about the update`
@@ -162,6 +187,7 @@ local function walk(destroyCallbacks: { () -> () })
 	local closed = fake:Peek(STORE.Name, key) :: any
 	assert(closed.Lock == nil, `the save is still locked after the server closed`)
 	assert(closed.Data.ActiveCharacterId == nextCharacterId, `the change wasn't written as the server closed`)
+	assert(closed.Data.SHL3.ApartmentTier == 1, `the section wasn't written as the server closed`)
 	assert(closed.Data.LegacyImportVersion == 0, `the save was written as imported`)
 
 	-- the second visit: the save comes back the way it was left
@@ -172,11 +198,64 @@ local function walk(destroyCallbacks: { () -> () })
 	assertOwnStoreOnly(fake)
 end
 -- Class
-return SpecUtil.newScenario(function()
-	local destroyCallbacks: { () -> () } = {}
-	local success, msg = pcall(walk :: any, destroyCallbacks)
-	stop(destroyCallbacks)
-	if not success then
-		error(msg, 0)
-	end
-end)
+return {
+	Walk = SpecUtil.newScenario(function()
+		local destroyCallbacks: { () -> () } = {}
+		local success, msg = pcall(walk :: any, destroyCallbacks)
+		stop(destroyCallbacks)
+		if not success then
+			error(msg, 0)
+		end
+	end),
+
+	-- the game has no importer yet, its section is what one hands a patch to the day it's there. it takes no player +
+	-- no service: a save + a patch go in, the save comes out
+	Section = SpecUtil.newScenario(function()
+		local fresh = STORE.Default()
+		local other = STORE.Default()
+		local patch: SavePatch = {
+			Characters = other.Characters,
+			ActiveCharacterId = other.Characters[2].Id,
+			Balances = { Credits = 7, Gems = 0 },
+			SHL3 = {
+				OwnedItemIds = { "an-item" },
+				ApartmentTier = 2,
+			},
+		}
+		local isPatch, patchMsg = SessionSection.Patch(patch)
+		assert(isPatch, `a patch of the game was turned down: {tostring(patchMsg)}`)
+		local save = TableUtil.deepCopy(fresh)
+		SessionSection.Import(save, patch)
+		assert(save.Characters[1].Id == other.Characters[1].Id, `the characters didn't come over`)
+		assert(save.ActiveCharacterId == other.Characters[2].Id, `the active character didn't come over`)
+		assert(SpecUtil.getIfEqual(save.Balances, { Credits = 7, Gems = 0 }), `the balances didn't come over`)
+		-- a field of the section that the patch doesn't hold stays as it was
+		assert(
+			SpecUtil.getIfEqual(save.SHL3, { OwnedItemIds = { "an-item" }, ApartmentTier = 2, RedeemedCodeIds = {} }),
+			`the section didn't come over`
+		)
+		assert(
+			save.LegacyImportVersion == fresh.LegacyImportVersion,
+			`the section marked the save, that's the session's`
+		)
+		local isSave, saveMsg = STORE.Validator(save)
+		assert(isSave, `what came out isn't a save: {tostring(saveMsg)}`)
+
+		-- a patch that holds nothing leaves the save as it starts out
+		local untouched = TableUtil.deepCopy(fresh)
+		SessionSection.Import(untouched, {})
+		assert(SpecUtil.getIfEqual(untouched, fresh), `a patch of nothing changed the save`)
+
+		-- only what the game keeps is taken from its importer
+		local refused: { [string]: unknown } = {
+			["a patch with what only another game keeps"] = { Inventory = fresh.Inventory },
+			["a patch with the section of another game"] = { SHL1 = {} },
+			["a patch with a field its section doesn't have"] = { SHL3 = { Rank = 1 } },
+			["a patch with a flat below the ground"] = { SHL3 = { ApartmentTier = -1 } },
+			["a text"] = "patch",
+		}
+		for name, value in refused do
+			assert(not SessionSection.Patch(value), `{name} was taken`)
+		end
+	end),
+}

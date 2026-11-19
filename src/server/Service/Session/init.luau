@@ -15,6 +15,7 @@ local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Comb
 local DataService = require("@game/ServerScriptService/Server/Service/Data")
 local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local LegacyImportService = require("@game/ServerScriptService/Server/Service/LegacyImport")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
@@ -26,6 +27,7 @@ local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
+local SessionSectionType = require("@game/ServerScriptService/Server/Type/SessionSection")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Option<V> = TypeUnionLib.Option<V>
@@ -35,6 +37,7 @@ type EntitlementKey = EconomyType.EntitlementKey
 type QuestState = QuestType.QuestState
 type PlayerSave = SaveType.PlayerSave
 type SavePatch = LegacyImportService.SavePatch
+type SessionSection = SessionSectionType.SessionSection
 type Snapshot = SessionType.Snapshot
 -- everything the server holds for a player. the save is what's kept between visits, the rest starts over with each
 export type Session = {
@@ -85,6 +88,20 @@ local SESSION_TIMEOUT = 10
 local KICK_MESSAGE = `Your save couldn't be loaded, so nothing of it was changed. Please rejoin in a moment.`
 local isQuest = Type.optional(QuestType.QuestState)
 local isEntitlements = Type.array(EconomyType.EntitlementKey)
+-- what only one game keeps of a player is only its to bring over: which fields of a patch are its own + how they get
+-- into a save. the section of another game is never required
+local SECTION: SessionSection = GameDefinition.pick({
+	shl1 = function(): SessionSection
+		error(`shl1 has no save yet`)
+	end,
+	shl2 = function(): SessionSection
+		return require("@self/SHL2")
+	end,
+	shl3 = function(): SessionSection
+		return require("@self/SHL3")
+	end,
+})
+assert(SessionSectionType.SessionSection(SECTION))
 -- Variables
 -- References
 -- Private Functions
@@ -178,19 +195,11 @@ local function set(self: SessionService, player: Player, session: Session)
 	end
 end
 
--- whatever the patch holds takes the place of what a new save starts out with. it's only ever done once for a version
--- of the importer, the old stores aren't written to so they'd hand out the same thing again
+-- what the patch holds is written into the save by the section of the game, the way that game has it. it's only ever
+-- done once for a version of the importer, the old stores aren't written to so they'd hand out the same thing again
 local function import(save: PlayerSave, patch: SavePatch, importVersion: number): PlayerSave
 	return FreezeUtil.delta(save, function(t: PlayerSave): PlayerSave
-		t.Characters = patch.Characters or t.Characters
-		t.ActiveCharacterId = patch.ActiveCharacterId or t.ActiveCharacterId
-		t.Balances = patch.Balances or t.Balances
-		t.Inventory = patch.Inventory or t.Inventory
-		t.BaseLayout = patch.BaseLayout or t.BaseLayout
-		t.LastDailyRewardAt = patch.LastDailyRewardAt or t.LastDailyRewardAt
-		if patch.IsTutorialEnabled ~= nil then
-			t.IsTutorialEnabled = patch.IsTutorialEnabled
-		end
+		SECTION.Import(t, patch)
 		-- the slot the player wore last may not have made it over
 		if not getCharacter(t, t.ActiveCharacterId) and t.Characters[1] then
 			t.ActiveCharacterId = t.Characters[1].Id
@@ -227,12 +236,18 @@ local function load(userId: number, getIfCanceled: () -> boolean): Result<Player
 	end
 	local problem: string
 	if patchRes.IsOk then
-		local save = import(saveRes.Value, patchRes.Value, importVersion)
-		local importRes = DataService:Save(StoreDefinition.Player, userId, save)
-		if importRes.IsOk then
-			return Result.ok(save)
+		-- an importer only hands over what its own game keeps, a patch that holds anything else isn't written
+		local isPatch, patchMsg = SECTION.Patch(patchRes.Value)
+		if isPatch then
+			local save = import(saveRes.Value, patchRes.Value, importVersion)
+			local importRes = DataService:Save(StoreDefinition.Player, userId, save)
+			if importRes.IsOk then
+				return Result.ok(save)
+			end
+			problem = importRes.Value
+		else
+			problem = `the patch isn't one of {GameDefinition.ID}: {patchMsg}`
 		end
-		problem = importRes.Value
 	else
 		problem = patchRes.Value
 	end

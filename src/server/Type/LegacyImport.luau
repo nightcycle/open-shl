@@ -15,8 +15,21 @@ type Result<V, E> = TypeUnionLib.Result<V, E>
 
 local Types = {}
 
+-- what superhero life 3 brings over for the section of its save, a field for a field
+export type SHL3Patch = {
+	OwnedItemIds: { string }?,
+	ApartmentTier: number?,
+	RedeemedCodeIds: { string }?,
+}
+Types.SHL3Patch = Type.strictInterface({
+	OwnedItemIds = Type.optional(Type.array(Type.string)),
+	ApartmentTier = Type.optional(Type.intersection(Type.integer, Type.numberMin(0))),
+	RedeemedCodeIds = Type.optional(Type.array(Type.string)),
+})
+
 -- what a player had in the game this one replaces, in the shape of their save here. a field is only there when the
--- old stores held something for it, it takes the place of what the save starts out with
+-- old stores held something for it. it's laid out the way the save is: what every game brings over, what superhero
+-- life 2 does beside it + a section for each game that keeps one. a game only ever hands over its own
 export type SavePatch = {
 	Characters: { CharacterType.Character }?,
 	ActiveCharacterId: string?,
@@ -25,16 +38,33 @@ export type SavePatch = {
 	BaseLayout: BaseType.BaseLayout?,
 	IsTutorialEnabled: boolean?,
 	LastDailyRewardAt: number?,
+	SHL3: SHL3Patch?,
 }
-Types.SavePatch = Type.strictInterface({
-	Characters = Type.optional(Type.array(CharacterType.Character)),
-	ActiveCharacterId = Type.optional(Type.string),
-	Balances = Type.optional(EconomyType.Balances),
-	Inventory = Type.optional(BaseType.BaseInventory),
-	BaseLayout = Type.optional(BaseType.BaseLayout),
-	IsTutorialEnabled = Type.optional(Type.boolean),
-	LastDailyRewardAt = Type.optional(Type.intersection(Type.integer, Type.numberMin(0))),
-})
+do -- Types.SHL2SavePatch, Types.SHL3SavePatch
+	-- the patch of one game: what all of them bring over + what only it does
+	local function newValidator(
+		own: { [string]: (value: unknown) -> (boolean, string?) }
+	): (value: unknown) -> (boolean, string?)
+		local shape: { [string]: (value: unknown) -> (boolean, string?) } = {
+			Characters = Type.optional(Type.array(CharacterType.Character)),
+			ActiveCharacterId = Type.optional(Type.string),
+			Balances = Type.optional(EconomyType.Balances),
+		}
+		for key, isField in own do
+			shape[key] = isField
+		end
+		return Type.strictInterface(shape)
+	end
+	Types.SHL2SavePatch = newValidator({
+		Inventory = Type.optional(BaseType.BaseInventory),
+		BaseLayout = Type.optional(BaseType.BaseLayout),
+		IsTutorialEnabled = Type.optional(Type.boolean),
+		LastDailyRewardAt = Type.optional(Type.intersection(Type.integer, Type.numberMin(0))),
+	})
+	Types.SHL3SavePatch = newValidator({
+		SHL3 = Type.optional(Types.SHL3Patch),
+	})
+end
 
 -- the way into the stores of the game a game takes over from. which stores there are, what they hold + how that's read
 -- is that game's own, so each has one of these to itself
