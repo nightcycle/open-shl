@@ -9,6 +9,7 @@ local roblox = require("@lune/roblox")
 local serde = require("@lune/serde")
 -- Packages
 -- Modules
+local game = require("../modules/game")
 local rojo = require("../modules/rojo")
 local rojoValue = require("../modules/rojo-value")
 -- Types
@@ -132,6 +133,8 @@ type Output = { path: string, contents: string }
 type Context = {
 	rules: GameRules,
 	game: string,
+	-- where the items of the game are written to
+	libraryPath: string,
 	rig: roblox.Instance,
 	starters: { [string]: string },
 	-- the file each legacy image has under asset/image, by its id
@@ -152,7 +155,8 @@ local USAGE =
 	"Usage: lune run scripts/util/convert-catalogue.lune.luau <game> <place.rbxl> [--out <dir>] [--force | -f]"
 local PATH_DELIMITER = "/"
 local ID_DELIMITER = "_"
-local BORROW_PATH = "lib/character"
+-- the library of SHL2, an entry it has already is borrowed from there
+local BORROW_PATH = game.BORROW_PATH
 -- the table import-images lands the legacy images by, so a row written here can't name another file than it does
 local IMAGE_TABLE_PATH = "asset/legacy-ids.tsv"
 local IMAGE_TABLE_DELIMITER = "\t"
@@ -706,7 +710,7 @@ local function writeItem(context: Context, group: string, category: string, key:
 	local libraryCategory = `{group}/{category}`
 	context.itemCounts[libraryCategory] = (context.itemCounts[libraryCategory] or 0) + 1
 	table.insert(context.outputs, {
-		path = `lib/character-{context.game}/{libraryCategory}/{key}.model.json`,
+		path = `{context.libraryPath}/{libraryCategory}/{key}.model.json`,
 		contents = rojoValue.encode(item :: any),
 	})
 	return id
@@ -1261,7 +1265,9 @@ do
 	local gameId, placePath, outPath, isForced = parseArgs(process.args)
 	local rules = assert(RULES[gameId], `No rules for the catalogue of "{gameId}"`)
 	assert(fs.isFile(placePath), `No place file found at "{placePath}"`)
-	local libraryPath = `lib/character-{gameId}`
+	-- a game is written into the folders it's built from
+	local content = game.CONTENTS[game.getId(gameId)]
+	local libraryPath = content.CharacterPath
 	local dataPath = `data/{gameId}/catalogue`
 	for _, path in { libraryPath, dataPath } do
 		local fullPath = `{outPath}/{path}`
@@ -1276,6 +1282,7 @@ do
 	local context: Context = {
 		rules = rules,
 		game = gameId,
+		libraryPath = libraryPath,
 		rig = findInstance(place, rules.RigPath),
 		starters = readStarters(read(findInstance(place, rules.StarterPath), "Source"), rules.StarterTableName),
 		imagePaths = readImagePaths(IMAGE_TABLE_PATH),
@@ -1332,7 +1339,8 @@ do
 	table.sort(context.borrows)
 	table.insert(context.outputs, {
 		path = `{libraryPath}/borrow.txt`,
-		contents = `# what {gameId} wears out of {BORROW_PATH}, written by scripts/util/convert-catalogue.lune.luau\n`
+		contents = `# what {gameId} wears out of the library of SHL2 ({BORROW_PATH}), one <group>/<category>/<key> per line\n`
+			.. "# written by scripts/util/convert-catalogue.lune.luau\n"
 			.. table.concat(context.borrows, "\n")
 			.. "\n",
 	})

@@ -27,7 +27,7 @@ export type GameContent = {
 local DEFAULT_ID: GameId = "shl2"
 local IDS: { GameId } = { "shl1", "shl2", "shl3" }
 -- SHL2's items are the ones the other games borrow from
-local BORROW_PATH = "lib/character"
+local BORROW_PATH = "lib/character/shl-2"
 local BORROW_DELIMITER = "/"
 local BORROW_COMMENT = "#"
 -- an item is a folder of its parts or a single model file, either way it's named by its key
@@ -36,8 +36,8 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 	shl1 = table.freeze({
 		DataPath = "data/shl1",
 		ScenePath = "lib/scene/shl-1",
-		CharacterPath = "lib/character-shl1",
-		BorrowListPath = "lib/character-shl1/borrow.txt",
+		CharacterPath = "lib/character/shl-1",
+		BorrowListPath = "lib/character/shl-1/borrow.txt",
 		-- what the legacy place was set to
 		Properties = {
 			MaterialService = { Use2022Materials = false },
@@ -55,8 +55,8 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 	shl3 = table.freeze({
 		DataPath = "data/shl3",
 		ScenePath = "lib/scene/shl-3",
-		CharacterPath = "lib/character-shl3",
-		BorrowListPath = "lib/character-shl3/borrow.txt",
+		CharacterPath = "lib/character/shl-3",
+		BorrowListPath = "lib/character/shl-3/borrow.txt",
 		-- what the legacy place was set to
 		Properties = {
 			MaterialService = { Use2022Materials = false },
@@ -107,6 +107,10 @@ local Module = {}
 
 Module.DEFAULT_ID = DEFAULT_ID
 Module.IDS = IDS
+-- the library of SHL2, which every line of a borrow list names an item of
+Module.BORROW_PATH = BORROW_PATH
+-- as it's written down, whether any of it is there yet: a tool that writes the content of a game asks where it goes
+Module.CONTENTS = CONTENTS
 
 -- the game a build variable asks for. a .env file leaves a variable unset by giving it no value, so an empty string
 -- counts as unset
@@ -169,7 +173,10 @@ Module.newCharacterNode = function(content: GameContent): rojo.ProjectNode
 			assert(#keys == 3, `"{line}" of "{borrowListPath}" isn't a <group>/<category>/<key>`)
 			local group, category, key = keys[1], keys[2], keys[3]
 			local itemPath = getItemPath(`{BORROW_PATH}/{group}/{category}`, key)
-			assert(itemPath, `"{line}" of "{borrowListPath}" isn't in "{BORROW_PATH}"`)
+			assert(
+				itemPath,
+				`"{line}" of "{borrowListPath}" isn't in "{BORROW_PATH}", the library of SHL2 it borrows from`
+			)
 			-- rojo builds a child of the project + a child on disk of the same name as two instances
 			assert(
 				getItemPath(`{ownPath}/{group}/{category}`, key) == nil,

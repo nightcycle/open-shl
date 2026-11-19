@@ -1,4 +1,5 @@
-# what shl3 wears out of lib/character, written by scripts/util/convert-catalogue.lune.luau
+# what shl3 wears out of the library of SHL2 (lib/character/shl-2), one <group>/<category>/<key> per line
+# written by scripts/util/convert-catalogue.lune.luau
 clothing/glasses/hipster-glasses
 clothing/glasses/nerd-glasses
 clothing/glasses/shades
