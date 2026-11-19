@@ -3,6 +3,8 @@
 -- Packages
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
+local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 -- Hooks
 local useCharacterAttribute =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useCharacterAttribute")
@@ -11,9 +13,11 @@ local useCharacterAttribute =
 -- Variables
 -- References
 -- Private Functions
--- stub: the remote the server takes the pick by isn't there yet, so it's told nothing + the avatar stays what it was
+-- the server is only told what was picked: what it made of it is on the avatar. a pick that changes sides takes down
+-- an avatar that's been in the world, the one that comes back is the first to wear it
 local function setPeaceful(isPeaceful: boolean)
-	warn(`the server can't be told to {if isPeaceful then "sit fights out" else "fight"} yet, it has no remote for it`)
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	NetworkService:Fire(RemoteDefinition.SetPeaceful, isPeaceful)
 end
 -- Class
 -- if the player sits fights out, by what the server wrote onto their avatar, + the way to ask for the other. what's
