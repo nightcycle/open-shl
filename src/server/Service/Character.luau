@@ -16,6 +16,7 @@ local CharacterSlotUtil = require("@game/ServerScriptService/Server/Util/Charact
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
+local PaletteUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Palette")
 local PatternAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Pattern")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
@@ -206,9 +207,11 @@ local function getScale(scale: Scale?): Scale?
 end
 
 -- what a look holds beyond its items is checked against the game as well: a size nobody can pick or a pattern there's
--- no image for would be stored for good + never be seen
+-- no image for would be stored for good + never be seen, a color that's off the palette of the game is one no picker
+-- of it could have put there
 local function fixAppearance(appearance: Appearance): Appearance
-	return FreezeUtil.delta(AppearanceConstructor.fix(appearance), function(t: Appearance): Appearance
+	local fixedAppearance = PaletteUtil.apply(AppearanceConstructor.fix(appearance))
+	return FreezeUtil.delta(fixedAppearance, function(t: Appearance): Appearance
 		t.Scale = getScale(t.Scale)
 		for _, item in t.Items do
 			for _, textureGroup in item.TextureGroups do
