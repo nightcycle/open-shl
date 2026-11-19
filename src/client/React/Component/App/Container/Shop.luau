@@ -32,7 +32,7 @@ export type Properties = {}
 -- how the shop is laid out is the game's own, the layout of another game is never required
 local Layout: Layout = GameDefinition.pick({
 	shl1 = function(): Layout
-		error(`shl1 has no shop yet`)
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CashShop")
 	end,
 	shl2 = function(): Layout
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ShopMenu")
@@ -49,6 +49,13 @@ local PLACEMENT: Placement = {
 }
 -- where the panel is + how large is the game's own as well
 local GAME_PLACEMENT: Placement = GameDefinition.tune(PLACEMENT, {
+	-- where its panel was: across the middle of the screen from a fifth of the way down, 0.4 of it by 0.6
+	shl1 = {
+		AnchorPoint = Vector2.new(0, 0),
+		Position = UDim2.fromScale(0.3, 0.2),
+		Size = UDim2.fromScale(0.4, 0.6),
+		SizeConstraint = Enum.SizeConstraint.RelativeXY,
+	},
 	-- where its panel was: the middle of the screen, 0.45 of its width by 0.3 of it
 	shl3 = {
 		AnchorPoint = Vector2.new(0.5, 0.5),
