@@ -13,5 +13,6 @@
 return table.freeze({
 	Tag = nil,
 	ShieldDuration = nil,
+	EntryShieldDuration = nil,
 	IdentityKey = nil,
 })

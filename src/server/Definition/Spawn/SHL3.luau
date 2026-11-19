@@ -15,5 +15,6 @@ local MapDefinition = require("@game/ServerScriptService/Server/Definition/Map")
 return table.freeze({
 	Tag = MapDefinition.Spawn,
 	ShieldDuration = 0,
+	EntryShieldDuration = nil,
 	IdentityKey = "Main" :: "Main",
 })

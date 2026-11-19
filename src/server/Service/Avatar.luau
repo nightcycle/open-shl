@@ -45,6 +45,7 @@ type AvatarServiceImpl = {
 	PlayEffect: (self: AvatarService, character: Model, effect: EffectDefinition) -> (),
 	GetAppearance: (self: AvatarService, player: Player) -> Option<Appearance>,
 	GetIfMasked: (self: AvatarService, player: Player) -> boolean,
+	GetIfHeld: (self: AvatarService, player: Player) -> boolean,
 	SetMasked: (self: AvatarService, player: Player, isMasked: boolean) -> (),
 }
 export type AvatarService = typeof(setmetatable(
@@ -52,7 +53,11 @@ export type AvatarService = typeof(setmetatable(
 		IsInitialized: true,
 		-- the avatar of a player wears a new set of items, whatever else sits on it has to be put back on
 		Dressed: Signal.Signal<Player, Model>,
+		-- an avatar came in. its attributes are the ones every avatar starts out with, nobody saw it yet
+		Spawned: Signal.Signal<Player, Model>,
 		_IsUnmasked: { [Player]: true? },
+		-- the avatar of whoever came in behind a menu + wasn't let out of it since
+		_HeldAvatars: { [Player]: Model? },
 		_PlayerConnections: { [Player]: { RBXScriptConnection } },
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
@@ -66,6 +71,8 @@ local EFFECT_NAME = "TransformationEffect"
 local POWER_COLOR_SOURCE = CharacterEditorDefinition.POWER_COLOR_SOURCE
 -- nil in a game where an avatar comes back as whoever it was
 local SPAWN_IDENTITY_KEY: IdentityKey? = SpawnDefinition.IDENTITY_KEY
+-- nil in a game where an avatar that's let out of the menu it came in behind is let out bare
+local ENTRY_SHIELD_DURATION: number? = SpawnDefinition.ENTRY_SHIELD_DURATION
 -- Variables
 -- References
 -- Private Functions
@@ -195,6 +202,20 @@ local function setInMenu(player: Player, character: Model, isInMenu: boolean)
 	end
 end
 
+-- an avatar that came in behind a menu is in the world from the first time it's let out of it. the force field its
+-- spot handed it is long gone by then, a game can hand it another
+local function release(self: AvatarService, player: Player, character: Model)
+	if self._HeldAvatars[player] ~= character then
+		return
+	end
+	self._HeldAvatars[player] = nil
+	if ENTRY_SHIELD_DURATION then
+		local forceField = Instance.new("ForceField")
+		forceField.Parent = character
+		Debris:AddItem(forceField, ENTRY_SHIELD_DURATION)
+	end
+end
+
 local function onCharacter(self: AvatarService, player: Player, character: Model)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	-- health + energy start out full, nothing takes them down for as long as the powers do nothing
@@ -207,7 +228,10 @@ local function onCharacter(self: AvatarService, player: Player, character: Model
 		humanoid.NameDisplayDistance = 0
 		humanoid.HealthDisplayDistance = 0
 	end
-	setInMenu(player, character, SessionService:GetIfInMenu(player))
+	local isInMenu = SessionService:GetIfInMenu(player)
+	self._HeldAvatars[player] = if isInMenu then character else nil
+	setInMenu(player, character, isInMenu)
+	self.Spawned:Fire(player, character)
 	-- a game can have an avatar come back as one identity whoever it went down as. a session that's told to change
 	-- who is out has the avatar dressed for it, which is the dress this one was about to get
 	local sessionOpt = SessionService:Get(player)
@@ -276,6 +300,7 @@ local function remove(self: AvatarService, player: Player)
 	end
 	self._PlayerConnections[player] = nil
 	self._IsUnmasked[player] = nil
+	self._HeldAvatars[player] = nil
 end
 -- Class
 local AvatarService = {} :: AvatarServiceImpl
@@ -367,6 +392,11 @@ function AvatarService:GetIfMasked(player: Player): boolean
 	return self._IsUnmasked[player] == nil
 end
 
+-- if the avatar that's out came in behind a menu + hasn't been let out of it since: nobody met it in the world yet
+function AvatarService:GetIfHeld(player: Player): boolean
+	return player.Character ~= nil and self._HeldAvatars[player] == player.Character
+end
+
 -- only the super identity has a mask to take off, the mask is back on whenever the player becomes somebody else
 function AvatarService:SetMasked(player: Player, isMasked: boolean)
 	local lookOpt = getLook(self, player)
@@ -386,7 +416,9 @@ return ServiceLocker(function(): AvatarService
 	local self = setmetatable({
 		IsInitialized = true :: true,
 		Dressed = Signal.new() :: Signal.Signal<Player, Model>,
+		Spawned = Signal.new() :: Signal.Signal<Player, Model>,
 		_IsUnmasked = {} :: { [Player]: true? },
+		_HeldAvatars = {} :: { [Player]: Model? },
 		_PlayerConnections = {},
 		_CleanUpCallbacks = {},
 		_Connections = {},
@@ -397,8 +429,12 @@ return ServiceLocker(function(): AvatarService
 		self:Dress(player)
 	end)
 	local inMenuConnection = SessionService.InMenuChanged:Connect(function(player: Player, isInMenu: boolean)
-		if player.Character then
-			setInMenu(player, player.Character, isInMenu)
+		local character = player.Character
+		if character then
+			setInMenu(player, character, isInMenu)
+			if not isInMenu then
+				release(self, player, character)
+			end
 		end
 	end)
 	local addedConnection = SessionService.Added:Connect(function(player: Player)
@@ -428,6 +464,7 @@ return ServiceLocker(function(): AvatarService
 			end
 		end
 		self.Dressed:Destroy()
+		self.Spawned:Destroy()
 	end)
 
 	return self

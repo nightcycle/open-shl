@@ -18,6 +18,9 @@ export type Rule = {
 	-- seconds an avatar keeps the force field its spot hands it, written onto every spot. nothing here is stopped
 	-- by one. without it the spots keep what the map says
 	ShieldDuration: number?,
+	-- seconds of force field for an avatar that came in behind a menu, from the moment it's first let out of it: the
+	-- one its spot handed it ran out where nobody could have hit it. without it such an avatar is let out bare
+	EntryShieldDuration: number?,
 	-- the identity an avatar comes back in, without one it's whoever it was when it went down
 	IdentityKey: IdentityKey?,
 }
@@ -29,6 +32,7 @@ local isRule = Type.intersection(
 			ClassName = Type.literal("SpawnLocation"),
 		})),
 		ShieldDuration = Type.optional(Type.numberMin(0)),
+		EntryShieldDuration = Type.optional(Type.numberPositive),
 		IdentityKey = Type.optional(CharacterType.IdentityKey),
 	}),
 	-- a duration is written onto the spots, which are only known by their tag
@@ -42,7 +46,7 @@ local isRule = Type.intersection(
 -- where + as whom an avatar comes in is the game's own, the rule of another game is never required
 local RULE: Rule = GameDefinition.pick({
 	shl1 = function(): Rule
-		error(`shl1 has no spawn rule yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): Rule
 		return require("@self/SHL2")
@@ -60,7 +64,11 @@ assert(isRule(RULE))
 local Module = {
 	TAG = RULE.Tag,
 	SHIELD_DURATION = RULE.ShieldDuration,
+	ENTRY_SHIELD_DURATION = RULE.EntryShieldDuration,
 	IDENTITY_KEY = RULE.IdentityKey,
+	-- who a character is worn as from the start: the identity its avatar comes back in, + its hero in a game where it
+	-- comes back as whoever it was
+	START_IDENTITY_KEY = (RULE.IdentityKey or "Main") :: IdentityKey,
 }
 
 return Module

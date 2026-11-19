@@ -21,6 +21,7 @@ local NetworkService = require("@game/ServerScriptService/Server/Service/Network
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
+local SpawnDefinition = require("@game/ServerScriptService/Server/Definition/Spawn")
 local StoreDefinition = require("@game/ServerScriptService/Server/Definition/Store")
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
@@ -88,6 +89,8 @@ local SESSION_TIMEOUT = 10
 local KICK_MESSAGE = `Your save couldn't be loaded, so nothing of it was changed. Please rejoin in a moment.`
 local isQuest = Type.optional(QuestType.QuestState)
 local isEntitlements = Type.array(EconomyType.EntitlementKey)
+-- who a character is worn as until its player turns into somebody else
+local START_IDENTITY_KEY: IdentityKey = SpawnDefinition.START_IDENTITY_KEY
 -- what only one game keeps of a player is only its to bring over: which fields of a patch are its own + how they get
 -- into a save. the section of another game is never required
 local SECTION: SessionSection = GameDefinition.pick({
@@ -285,7 +288,7 @@ local function add(self: SessionService, player: Player)
 	end
 	local session: Session = {
 		Save = saveRes.Value,
-		ActiveIdentityKey = "Main",
+		ActiveIdentityKey = START_IDENTITY_KEY,
 		-- a client comes up in its menus + says so, but its avatar is in the world before that word is, + the word
 		-- can get here before the session does. where a menu shelters, whoever joins starts out in one: a hit that
 		-- lands first would be a fight that keeps them out of the menu they were put in
@@ -371,9 +374,10 @@ function SessionService:Update(player: Player, fn: (save: PlayerSave) -> PlayerS
 	end
 	local out = table.clone(session)
 	out.Save = save
-	-- an identity is one of the character that's worn, another character starts out as its super identity
+	-- an identity is one of the character that's worn, another character starts out as the one the game has a
+	-- character come in as
 	if save.ActiveCharacterId ~= session.Save.ActiveCharacterId then
-		out.ActiveIdentityKey = "Main"
+		out.ActiveIdentityKey = START_IDENTITY_KEY
 	end
 	set(self, player, out)
 	return Result.ok(save)

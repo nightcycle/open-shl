@@ -23,6 +23,7 @@ local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Pro
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
+local SpawnDefinition = require("@game/ServerScriptService/Server/Definition/Spawn")
 local TextFilterUtil = require("@game/ServerScriptService/Server/Util/TextFilter")
 local TransitionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Transition")
 -- Types
@@ -341,8 +342,9 @@ local function selectCharacter(player: Player, characterId: string): Result<true
 	if saveRes.IsErr then
 		return saveRes
 	end
-	-- a selected character is always worn as its super identity, the one that's worn already included
-	return SessionService:SetActiveIdentity(player, "Main")
+	-- a selected character is always worn as the identity the game has one come in as (its super identity, unless
+	-- the game says another), the one that's worn already included
+	return SessionService:SetActiveIdentity(player, SpawnDefinition.START_IDENTITY_KEY)
 end
 
 -- the client plays the animation of the transformation + asks once, the server picks the moment the costume
