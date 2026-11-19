@@ -7,6 +7,7 @@ local RunService = game:GetService("RunService")
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
@@ -21,6 +22,7 @@ local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/R
 -- Types
 local CharacterSelectTypes =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterSelect/Types")
+type Character = SessionService.Character
 type Layout = CharacterSelectTypes.Component
 type ProductDefinition = ProductDefinition.ProductDefinition
 export type Properties = {}
@@ -31,7 +33,7 @@ local IS_STUDIO = RunService:IsStudio()
 -- how the screen is laid out is the game's own, the layout of another game is never required
 local Layout: Layout = GameDefinition.pick({
 	shl1 = function(): Layout
-		error(`shl1 has no character select yet`)
+		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/SaveSlots")
 	end,
 	shl2 = function(): Layout
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterSelect")
@@ -135,6 +137,37 @@ return function(): React.ReactNode
 					else
 						setErrorMessage(`"{definition.Name}" can't be bought right now`)
 					end
+				elseif action.Type == "Copy" then
+					if isBusyRef.current then
+						return
+					end
+					local activeOpt = SessionService:GetActiveCharacter()
+					if activeOpt.IsNone then
+						setErrorMessage(`nobody is played`)
+						return
+					end
+					local characterId = action.CharacterId
+					-- whoever is played is kept in their own slot already
+					if activeOpt.Value.Id == characterId then
+						return
+					end
+					isBusyRef.current = true
+					setErrorMessage(nil)
+					-- the same character under the name of another slot: the server stores it there like any edit
+					local copy = FreezeUtil.delta(activeOpt.Value, function(t: Character): Character
+						t.Id = characterId
+						return t
+					end)
+					task.spawn(function()
+						local saveRes = SessionService:SaveCharacter(copy)
+						isBusyRef.current = false
+						if not isMountedRef.current then
+							return
+						end
+						if saveRes.IsErr then
+							setErrorMessage(saveRes.Value)
+						end
+					end)
 				elseif action.Type == "Exit" then
 					ShellService:CloseScreen()
 				end

@@ -21,6 +21,11 @@ export type ActionInfo =
 	| {
 		Type: "BuySlots",
 	}
+	-- whoever is played is kept in this slot as well, in place of who was there. only a layout that offers it says so
+	| {
+		Type: "Copy",
+		CharacterId: string,
+	}
 	| {
 		Type: "Exit",
 	}
