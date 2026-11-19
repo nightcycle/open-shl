@@ -20,10 +20,10 @@ type VFXAssetCatalogue = VFXAssetType.VFXAssetCatalogue
 -- Constants
 -- every one of them is heard the way it was uploaded: nothing is turned down or slowed
 local SOUNDS: { [SoundKey]: SoundDefinition } = {
-	Bow = { Url = Audio.shl3.ability["bow.ogg"], Volume = 1, PlaybackSpeed = 1 },
-	GunShot = { Url = Audio.shl3.ability["gun-shot.ogg"], Volume = 1, PlaybackSpeed = 1 },
+	Bow = { Url = Audio["shl-3"].ability["bow.ogg"], Volume = 1, PlaybackSpeed = 1 },
+	GunShot = { Url = Audio["shl-3"].ability["gun-shot.ogg"], Volume = 1, PlaybackSpeed = 1 },
 	-- the one file both games shoot their lasers with
-	PewPew = { Url = Audio.ability["pew-pew.ogg"], Volume = 1, PlaybackSpeed = 1 },
+	PewPew = { Url = Audio.core.ability["pew-pew.ogg"], Volume = 1, PlaybackSpeed = 1 },
 	Slash = { Url = "rbxasset://sounds/swordslash.wav", Volume = 0.7, PlaybackSpeed = 1 },
 }
 -- its own takes on the moves of the same name, each as long as its last keyframe is in

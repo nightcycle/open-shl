@@ -203,15 +203,16 @@ output_path = "Generated"
 "shl3/ui/team-change/open.png" = { id = 2564676227 }
 "shl3/ui/team-change/panel.png" = { id = 2564814060 }
 
-# as with the images: a folder of a legacy game (asset/audio/shl3) is left out of the path + every file of it has a
-# line in the table below naming the upload its legacy game made of it. a new folder of sounds has to be added here
+# as with the images: a folder of a legacy game (asset/audio/shl-3) is left out of the path + every file of it has a
+# line in the table below naming the upload its legacy game made of it. what more than one game plays is in core +
+# what only the second plays in shl-2, the path takes both
 [inputs.Audio]
-path = "asset/audio/{ability,music,ui}/**"
+path = "asset/audio/{core,shl-2}/**"
 output_path = "Generated"
 
 [inputs.Audio.web]
-"shl3/ability/bow.ogg" = { id = 16211030 }
-"shl3/ability/gun-shot.ogg" = { id = 210112900 }
+"shl-3/ability/bow.ogg" = { id = 16211030 }
+"shl-3/ability/gun-shot.ogg" = { id = 210112900 }
 
 # the same goes for asset/animation/shl-3, its lines are at the end of the table below. what more than one game plays
 # is in core + what only the second plays in shl-2, the path takes both

@@ -32,5 +32,5 @@ local CURRENCIES: { [PseudoEnum.Currency]: CurrencyInfo } = table.freeze({
 -- Class
 return {
 	CURRENCIES = CURRENCIES,
-	SOUND_ID = Audio.ui["currency.ogg"],
+	SOUND_ID = Audio["shl-2"].ui["currency.ogg"],
 }

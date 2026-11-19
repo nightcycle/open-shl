@@ -17,34 +17,64 @@ local VOLUME = 0.25
 local DEFAULT_ID: SongId = "Danger"
 -- assets are owned by the old place
 local DEFINITIONS: { SongDefinition } = {
-	{ Id = "Conflict", Title = "Conflict", Artist = ARTIST, SoundId = Audio.music["conflict.ogg"], Volume = VOLUME },
-	{ Id = "Creator", Title = "Creator", Artist = ARTIST, SoundId = Audio.music["creator.ogg"], Volume = VOLUME },
-	{ Id = "Damage", Title = "Damage", Artist = ARTIST, SoundId = Audio.music["damage.ogg"], Volume = VOLUME },
-	{ Id = "Danger", Title = "Danger", Artist = ARTIST, SoundId = Audio.music["danger.ogg"], Volume = VOLUME },
+	{
+		Id = "Conflict",
+		Title = "Conflict",
+		Artist = ARTIST,
+		SoundId = Audio["shl-2"].music["conflict.ogg"],
+		Volume = VOLUME,
+	},
+	{
+		Id = "Creator",
+		Title = "Creator",
+		Artist = ARTIST,
+		SoundId = Audio["shl-2"].music["creator.ogg"],
+		Volume = VOLUME,
+	},
+	{ Id = "Damage", Title = "Damage", Artist = ARTIST, SoundId = Audio["shl-2"].music["damage.ogg"], Volume = VOLUME },
+	{ Id = "Danger", Title = "Danger", Artist = ARTIST, SoundId = Audio["shl-2"].music["danger.ogg"], Volume = VOLUME },
 	{
 		Id = "Deliberation",
 		Title = "Deliberation",
 		Artist = ARTIST,
-		SoundId = Audio.music["deliberation.ogg"],
+		SoundId = Audio["shl-2"].music["deliberation.ogg"],
 		Volume = VOLUME,
 	},
 	{
 		Id = "Passionate",
 		Title = "Passionate",
 		Artist = ARTIST,
-		SoundId = Audio.music["passionate.ogg"],
+		SoundId = Audio["shl-2"].music["passionate.ogg"],
 		Volume = VOLUME,
 	},
-	{ Id = "Sentinel", Title = "Sentinel", Artist = ARTIST, SoundId = Audio.music["sentinel.ogg"], Volume = VOLUME },
-	{ Id = "Struggle", Title = "Struggle", Artist = ARTIST, SoundId = Audio.music["struggle.ogg"], Volume = VOLUME },
+	{
+		Id = "Sentinel",
+		Title = "Sentinel",
+		Artist = ARTIST,
+		SoundId = Audio["shl-2"].music["sentinel.ogg"],
+		Volume = VOLUME,
+	},
+	{
+		Id = "Struggle",
+		Title = "Struggle",
+		Artist = ARTIST,
+		SoundId = Audio["shl-2"].music["struggle.ogg"],
+		Volume = VOLUME,
+	},
 	{
 		Id = "Trailblazer",
 		Title = "Trailblazer",
 		Artist = ARTIST,
-		SoundId = Audio.music["trailblazer.ogg"],
+		SoundId = Audio["shl-2"].music["trailblazer.ogg"],
 		Volume = VOLUME,
 	},
-	{ Id = "WindyDay", Title = "Windy Day", Artist = ARTIST, SoundId = Audio.music["windy-day.ogg"], Volume = VOLUME },
+	{
+		Id = "WindyDay",
+		Title = "Windy Day",
+		Artist = ARTIST,
+		SoundId = Audio["shl-2"].music["windy-day.ogg"],
+		Volume = VOLUME,
+	},
 }
 TableUtil.deepFreeze(DEFINITIONS)
 -- Variables
