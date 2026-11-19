@@ -92,7 +92,7 @@ local isEntitlements = Type.array(EconomyType.EntitlementKey)
 -- into a save. the section of another game is never required
 local SECTION: SessionSection = GameDefinition.pick({
 	shl1 = function(): SessionSection
-		error(`shl1 has no save yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): SessionSection
 		return require("@self/SHL2")

@@ -24,8 +24,22 @@ local Types = {}
 -- there. each game counts its own: a save is only ever read by the game that wrote it, so what one adds is no step
 -- for another
 Types.SHL2_VERSION = 4
--- no save of it is kept yet. until the game is given its universe its shape is changed in place, without a migration
+-- no save of these two is kept yet. until a game is given its universe its shape is changed in place, without a
+-- migration
 Types.SHL3_VERSION = 1
+Types.SHL1_VERSION = 1
+
+-- what only superhero life keeps of a player
+export type SHL1Section = {
+	RentedItemIds: { string }, -- what the player wears without owning it, each is paid for again where it's saved
+	IsGroupPerkGranted: boolean, -- seen in the group once: its emblems are theirs for good
+	IsPeaceful: boolean, -- sat fights out. it's the player's own pick + whoever they play comes in by it
+}
+Types.SHL1Section = Type.strictInterface({
+	RentedItemIds = Type.array(Type.string),
+	IsGroupPerkGranted = Type.boolean,
+	IsPeaceful = Type.boolean,
+})
 
 -- what only superhero life 3 keeps of a player
 export type SHL3Section = {
@@ -62,9 +76,10 @@ export type PlayerSave = {
 	IsTutorialEnabled: boolean,
 	LastDailyRewardAt: number, -- unix seconds, 0 until the first one
 	-- the sections. each is there in a save of its game + nowhere else
+	SHL1: SHL1Section?,
 	SHL3: SHL3Section?,
 }
-do -- Types.SHL2PlayerSave, Types.SHL3PlayerSave
+do -- Types.SHL1PlayerSave, Types.SHL2PlayerSave, Types.SHL3PlayerSave
 	-- a slot is found by its id, so a save where that can't work is as broken as one with a field missing
 	local function isLinked(value: PlayerSave): (boolean, string?)
 		local isActiveFound = false
@@ -111,6 +126,7 @@ do -- Types.SHL2PlayerSave, Types.SHL3PlayerSave
 		end
 		return Type.intersection(Type.strictInterface(shape), isLinked)
 	end
+	Types.SHL1PlayerSave = newValidator("shl1", Types.SHL1_VERSION, { SHL1 = Types.SHL1Section })
 	Types.SHL2PlayerSave = newValidator("shl2", Types.SHL2_VERSION, {})
 	Types.SHL3PlayerSave = newValidator("shl3", Types.SHL3_VERSION, { SHL3 = Types.SHL3Section })
 end

@@ -63,7 +63,7 @@ local isVersioned = Type.interface({
 -- in the wrong one. a save names its game for that day. the save of another game is never required
 local PLAYER: Spec<PlayerSave> = GameDefinition.pick({
 	shl1 = function(): Spec<PlayerSave>
-		error(`shl1 has no save yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): Spec<PlayerSave>
 		return require("@self/SHL2")

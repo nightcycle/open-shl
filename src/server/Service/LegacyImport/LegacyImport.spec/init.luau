@@ -14,7 +14,7 @@ type TestMap = SimpleTest.TestMap
 -- what a game takes over is its own, so is what its import is held to: the stores of another game are never planted
 return GameDefinition.pick({
 	shl1 = function(): TestMap
-		error(`shl1 has no legacy import spec yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): TestMap
 		return require("@self/SHL2")

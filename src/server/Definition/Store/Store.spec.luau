@@ -51,8 +51,16 @@ local POSITION_LIMIT = Vector3.new(1000, 1000, 1000)
 local ROUND_TRIP_ITERATIONS = 64
 -- the name + the key of the store every save of a game sits in, a server that asks under another one finds nothing
 local PLAYER_STORE: PlayerStore = GameDefinition.pick({
+	-- it's still at its first version, a save of today is one
 	shl1 = function(): PlayerStore
-		error(`shl1 has no save yet`)
+		return {
+			Name = "PlayerSave",
+			KeyFormat = "Player_%d",
+			Version = SaveType.SHL1_VERSION,
+			Earlier = {},
+			SectionKey = "SHL1",
+			OtherSectionKeys = { "SHL3" },
+		}
 	end,
 	shl2 = function(): PlayerStore
 		-- said whether it had been through the import, not which pass of it
@@ -82,7 +90,7 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 				toSecond(document)
 				document.IsLegacyImported = true
 			end,
-			OtherSectionKeys = { "SHL3" },
+			OtherSectionKeys = { "SHL1", "SHL3" },
 		}
 	end,
 	-- it's still at its first version, a save of today is one
@@ -93,7 +101,7 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 			Version = SaveType.SHL3_VERSION,
 			Earlier = {},
 			SectionKey = "SHL3",
-			OtherSectionKeys = {},
+			OtherSectionKeys = { "SHL1" },
 		}
 	end,
 })

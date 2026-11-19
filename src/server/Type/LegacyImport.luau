@@ -15,6 +15,18 @@ type Result<V, E> = TypeUnionLib.Result<V, E>
 
 local Types = {}
 
+-- what superhero life brings over for the section of its save, a field for a field
+export type SHL1Patch = {
+	RentedItemIds: { string }?,
+	IsGroupPerkGranted: boolean?,
+	IsPeaceful: boolean?,
+}
+Types.SHL1Patch = Type.strictInterface({
+	RentedItemIds = Type.optional(Type.array(Type.string)),
+	IsGroupPerkGranted = Type.optional(Type.boolean),
+	IsPeaceful = Type.optional(Type.boolean),
+})
+
 -- what superhero life 3 brings over for the section of its save, a field for a field
 export type SHL3Patch = {
 	OwnedItemIds: { string }?,
@@ -38,9 +50,10 @@ export type SavePatch = {
 	BaseLayout: BaseType.BaseLayout?,
 	IsTutorialEnabled: boolean?,
 	LastDailyRewardAt: number?,
+	SHL1: SHL1Patch?,
 	SHL3: SHL3Patch?,
 }
-do -- Types.SHL2SavePatch, Types.SHL3SavePatch
+do -- Types.SHL1SavePatch, Types.SHL2SavePatch, Types.SHL3SavePatch
 	-- the patch of one game: what all of them bring over + what only it does
 	local function newValidator(
 		own: { [string]: (value: unknown) -> (boolean, string?) }
@@ -55,6 +68,9 @@ do -- Types.SHL2SavePatch, Types.SHL3SavePatch
 		end
 		return Type.strictInterface(shape)
 	end
+	Types.SHL1SavePatch = newValidator({
+		SHL1 = Type.optional(Types.SHL1Patch),
+	})
 	Types.SHL2SavePatch = newValidator({
 		Inventory = Type.optional(BaseType.BaseInventory),
 		BaseLayout = Type.optional(BaseType.BaseLayout),

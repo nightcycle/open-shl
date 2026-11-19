@@ -16,7 +16,7 @@ type TestMap = SimpleTest.TestMap
 -- doesn't have to be in the place
 return GameDefinition.pick({
 	shl1 = function(): TestMap
-		error(`shl1 has no session spec yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): TestMap
 		return require("@self/SHL2")
