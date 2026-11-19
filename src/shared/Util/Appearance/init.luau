@@ -82,6 +82,8 @@ local function clear(rig: Model, skinColor: Color3?, appearance: Appearance?, ge
 	for _, v in rig:QueryDescendants(`.{ItemUtil.ITEM_TAG}`) do
 		v:Destroy()
 	end
+	-- what a piece stood for of the body shows again with the piece gone
+	BodyUtil.show(rig)
 	return true
 end
 

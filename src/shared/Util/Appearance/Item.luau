@@ -169,6 +169,24 @@ local function fit(root: BasePart, attachment: Attachment, parts: { BasePart }, 
 	attachment.CFrame = newRootCF:Inverse()
 end
 
+-- an item that stands for the parts of the body it's worn on leaves none of them to be seen. each of its pieces is
+-- worn by its root, a piece that's a single part by itself
+local function hideBody(rig: Model, item: Instance)
+	local parts = item:QueryDescendants("BasePart") :: { BasePart }
+	if item:IsA("BasePart") then
+		table.insert(parts, item)
+	end
+	for _, part in parts do
+		if part ~= item and part.Name ~= ROOT_NAME then
+			continue
+		end
+		local limb = getLimb(rig, part)
+		if limb then
+			BodyUtil.hide(limb)
+		end
+	end
+end
+
 local function prepItemInst(id: string, item: Instance, isNotRoot: boolean?)
 	if item:IsA("BasePart") then
 		item.CanCollide = false
@@ -464,6 +482,9 @@ function Util.apply(rig: Model, appearance: Appearance, item: Item): Result<true
 		newItem:Destroy()
 	else
 		newItem.Parent = rig
+		if itemDefRes.Value.Type == "Model" and itemDefRes.Value.IsBodyHidden then
+			hideBody(rig, newItem)
+		end
 	end
 	return applyRes
 end

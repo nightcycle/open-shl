@@ -45,6 +45,8 @@ local BARE: Bare? = GameDefinition.tune(nil :: Bare?, {
 -- the sizes a body can have are the game's own, in a game without any every body is the size it comes in
 local SCALE = CharacterEditorDefinition.SCALE
 local SCALE_EPSILON = CharacterEditorDefinition.SCALE_EPSILON
+-- what a part of the body carries while a worn piece stands for it: how see-through it was until the piece went on
+local SHOWN_TRANSPARENCY_ATTRIBUTE = "ShownTransparency"
 -- Variables
 -- References
 -- Private Functions
@@ -125,6 +127,27 @@ function Util.describeBare(builder: Builder, appearance: Appearance): Builder
 		end
 	end
 	return builder
+end
+
+-- a piece that stands for the part of the body it's worn on is all there is to see of it. the part stays where it is,
+-- the piece + the rest of the body hang off it
+function Util.hide(limb: BasePart)
+	-- under two pieces it goes back to how it was before the first
+	if limb:GetAttribute(SHOWN_TRANSPARENCY_ATTRIBUTE) == nil then
+		limb:SetAttribute(SHOWN_TRANSPARENCY_ATTRIBUTE, limb.Transparency)
+	end
+	limb.Transparency = 1
+end
+
+-- every part of the body is drawn the way it was again: whatever stood for one has come off
+function Util.show(rig: Model)
+	for _, limb in rig:GetChildren() do
+		local transparency = limb:GetAttribute(SHOWN_TRANSPARENCY_ATTRIBUTE)
+		if limb:IsA("BasePart") and type(transparency) == "number" then
+			limb.Transparency = transparency
+			limb:SetAttribute(SHOWN_TRANSPARENCY_ATTRIBUTE, nil)
+		end
+	end
 end
 
 -- how much of a piece worn on that part of the body is left on the body of the look, along each axis of the part.
