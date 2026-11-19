@@ -7,6 +7,8 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Components
 local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
+local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
+local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
 -- Hooks
 -- Contexts
 -- Types
@@ -26,7 +28,10 @@ local REGISTRY: Registry = {
 		CharacterEditor = CharacterEditor,
 	},
 	PANELS = {},
-	OVERLAYS = {},
+	OVERLAYS = {
+		NameTag = NameTag,
+		ServerId = ServerId,
+	},
 	TOP_OVERLAYS = {},
 }
 -- Variables
