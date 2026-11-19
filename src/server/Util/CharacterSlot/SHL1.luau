@@ -6,6 +6,7 @@ local CharacterConstructor = require("@game/ReplicatedStorage/Shared/Constructor
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 type Character = CharacterType.Character
@@ -16,6 +17,8 @@ local SKIN_COLOR: Color3 = assert(
 	CharacterEditorDefinition.getPaletteColor(BrickColor.new(194).Color),
 	`the skin of a new character isn't a color of the game`
 )
+-- the page of the old creator that asked for a side read HERO until it was touched, whoever walked past it was one
+local ALIGNMENT: PseudoEnum.Alignment = PseudoEnum.Alignment.NeutralGood
 -- Variables
 -- References
 -- Private Functions
@@ -26,6 +29,7 @@ local function new(): Character
 		for _, identity in t.Identities do
 			if identity then
 				identity.Appearance.SkinColor = SKIN_COLOR
+				identity.Profile.Alignment = ALIGNMENT
 			end
 		end
 		return t

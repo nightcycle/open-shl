@@ -32,6 +32,11 @@ local function assertEmpty(character: Character)
 	for key, identity in identities do
 		assert(identity.Profile.Name == "", `the {key} identity of an empty slot is named "{identity.Profile.Name}"`)
 		assert(identity.Profile.Backstory == "", `the {key} identity of an empty slot has a backstory`)
+		-- the side the old creator showed before anybody picked one
+		assert(
+			identity.Profile.Alignment == "NeutralGood",
+			`the {key} identity starts out {identity.Profile.Alignment}`
+		)
 		assert(#identity.Appearance.Items == 0, `the {key} identity of an empty slot wears something`)
 		assert(
 			CharacterEditorDefinition.getPaletteColor(identity.Appearance.SkinColor) ~= nil,
