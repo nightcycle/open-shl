@@ -76,6 +76,7 @@ local STYLE: Style = {
 			ButtonImage = Image["shl-3"].ui.common["button-template-3.png"],
 		},
 		ExitButton = {
+			Type = "Image",
 			Image = Image["shl-3"].ui.common["exit.png"],
 			Size = UDim2.fromOffset(40, 40),
 		},

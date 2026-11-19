@@ -104,7 +104,8 @@ Types.Placement = Type.strictInterface({
 	Size = Type.UDim2,
 })
 
--- what a panel is drawn as when it has no art of its own: a box, or one picture laid over the frame that carries it
+-- what a panel is drawn as when it has no art of its own: a box, one picture laid over the frame that carries it, or
+-- one of the panels the engine draws by itself
 export type PanelLook =
 	{
 		Type: "Frame",
@@ -122,6 +123,11 @@ export type PanelLook =
 		-- the picture is drawn larger than the panel that's seen on it, this is where it leaves room for what's held
 		Body: Area,
 	}
+	| {
+		Type: "Engine",
+		-- the engine draws its own art for one + takes no color for it
+		Style: Enum.FrameStyle,
+	}
 Types.PanelLook = Type.union(
 	Type.strictInterface({
 		Type = Type.literal("Frame"),
@@ -137,6 +143,10 @@ Types.PanelLook = Type.union(
 		ScaleType = Type.enum(Enum.ScaleType),
 		SliceCenter = Type.optional(Type.Rect),
 		Body = Types.Area,
+	}),
+	Type.strictInterface({
+		Type = Type.literal("Engine"),
+		Style = Type.enum(Enum.FrameStyle),
 	})
 )
 
@@ -166,19 +176,45 @@ Types.ButtonTint = Type.strictInterface({
 	ImageTransparency = Type.optional(Type.numberConstrained(0, 1)),
 })
 
-export type ExitButtonLook = {
-	Image: string,
-	Size: UDim2,
-	-- a game whose buttons only do what the engine does to them by itself has neither
-	Hover: ButtonTint?,
-	Press: ButtonTint?,
-}
-Types.ExitButtonLook = Type.strictInterface({
-	Image = Type.string,
-	Size = Type.UDim2,
-	Hover = Type.optional(Types.ButtonTint),
-	Press = Type.optional(Types.ButtonTint),
-})
+-- what shuts a panel: a picture, or a word on a box where there's no art to press
+export type ExitButtonLook =
+	{
+		Type: "Image",
+		Image: string,
+		Size: UDim2,
+		-- a game whose buttons only do what the engine does to them by itself has neither
+		Hover: ButtonTint?,
+		Press: ButtonTint?,
+	}
+	| {
+		Type: "Text",
+		Text: string,
+		Size: UDim2,
+		FontFace: Font,
+		TextColor3: Color3,
+		BackgroundColor3: Color3,
+		BorderColor3: Color3,
+		BorderSizePixel: number,
+	}
+Types.ExitButtonLook = Type.union(
+	Type.strictInterface({
+		Type = Type.literal("Image"),
+		Image = Type.string,
+		Size = Type.UDim2,
+		Hover = Type.optional(Types.ButtonTint),
+		Press = Type.optional(Types.ButtonTint),
+	}),
+	Type.strictInterface({
+		Type = Type.literal("Text"),
+		Text = Type.string,
+		Size = Type.UDim2,
+		FontFace = Type.Font,
+		TextColor3 = Type.Color3,
+		BackgroundColor3 = Type.Color3,
+		BorderColor3 = Type.Color3,
+		BorderSizePixel = Type.numberMin(0),
+	})
+)
 
 export type ServerIdLook = {
 	-- left out, the text stands on nothing

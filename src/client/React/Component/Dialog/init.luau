@@ -133,6 +133,11 @@ return function(props: Properties): React.ReactNode
 					SliceCenter = panel.SliceCenter,
 					Size = UDim2.fromScale(1, 1),
 				})
+				elseif panel.Type == "Engine" then e("Frame", {
+					Position = FRAME_AREA.Position,
+					Size = FRAME_AREA.Size,
+					Style = panel.Style,
+				})
 				else e("Frame", {
 					BackgroundColor3 = panel.BackgroundColor3,
 					BackgroundTransparency = panel.BackgroundTransparency,

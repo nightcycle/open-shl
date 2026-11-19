@@ -18,9 +18,29 @@ export type Properties = RobloxComponents.ImageButtonProperties & {}
 -- Private Functions
 local e = React.createElement
 -- Class
-return function(props: Properties)
+return function(props: Properties): React.ReactNode
 	local look = React.useContext(StyleContext).Widgets.ExitButton
-	local tint, listeners = useButtonTint(look.Hover, look.Press)
+	local tint, listeners = useButtonTint(
+		if look.Type == "Image" then look.Hover else nil,
+		if look.Type == "Image" then look.Press else nil
+	)
+
+	-- a game without a picture for it says it in a word, on a box of the size the picture would be pressed at
+	if look.Type == "Text" then
+		local label: RobloxComponents.TextButtonProperties = {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundColor3 = look.BackgroundColor3,
+			BorderColor3 = look.BorderColor3,
+			BorderSizePixel = look.BorderSizePixel,
+			FontFace = look.FontFace,
+			Size = look.Size,
+			Text = look.Text,
+			TextColor3 = look.TextColor3,
+			TextScaled = true,
+			TextWrapped = true,
+		}
+		return e(RobloxComponents.TextButton(label, props :: any))
+	end
 
 	local own: RobloxComponents.ImageButtonProperties = {
 		AnchorPoint = Vector2.new(0.5, 0.5),
