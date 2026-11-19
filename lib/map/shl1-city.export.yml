@@ -12,6 +12,9 @@
 #   Workspace/TriggeredREEEEE    the bait of ServerScriptService/WeatherScript, which shut the server down when an
 #                                exploiter touched it, the sky or the ambient light. neither is brought over
 #   Workspace/ColorFunction      a remote nothing called
+#   Workspace/ViewingRooms       the 24 booths a character was made in + the box around them (Workspace/Shield), 6,500
+#                                studs out from the city. nobody is stood in one any longer: a character is made in a
+#                                scene of the client, which is one of these booths (lib/scene/shl-1.export.yml)
 #   Workspace/Camera
 place: Superhero Life.rbxl
 
@@ -62,17 +65,41 @@ exports:
     to: lib/map/shl1-city/ocean.rbxm
   - from: Workspace/Door
     to: lib/map/shl1-city/door.rbxm
-  # the 4 sides of the garden, where a character is put down
+  # the 4 sides of the garden, where a character was put down. the spots an avatar comes in at are added to it
   - from: Workspace/Coordinates
     to: lib/map/shl1-city/spawns.rbxm
   # a glowing hull around each tower but the school's, ServerScriptService/Day_Night showed them from 18:15 to 6:15
   - from: Workspace/NightLights
     to: lib/map/shl1-city/windows.rbxm
-  # the 24 booths a character is made in + the box around them, 6,500 studs out from the city
-  - from: Workspace/ViewingRooms
-    to: lib/map/shl1-city/viewing-rooms/ViewingRooms.rbxm
-  - from: Workspace/Shield
-    to: lib/map/shl1-city/viewing-rooms/Shield.rbxm
+
+adds:
+  # the legacy game moved a character onto one of the 4 points itself, here the engine stands an avatar on a spawn
+  # location of its pick. so each point gets one: a plate sunk into the sidewalk under it, its top the top of the
+  # sidewalk (44), which is where the feet of a character on the point were. they all face the same way, as every
+  # arrival did. how long the force field of a spot lasts is written onto it by the spawn rule of the game
+  - to: Workspace/Coordinates
+    name: Spots
+    parts:
+      - name: East
+        class: SpawnLocation
+        min: [28, 43, -2]
+        max: [32, 44, 2]
+        tags: [Spawn]
+      - name: South
+        class: SpawnLocation
+        min: [-2, 43, 28]
+        max: [2, 44, 32]
+        tags: [Spawn]
+      - name: West
+        class: SpawnLocation
+        min: [-32, 43, -2]
+        max: [-28, 44, 2]
+        tags: [Spawn]
+      - name: North
+        class: SpawnLocation
+        min: [-2, 43, -32]
+        max: [2, 44, -28]
+        tags: [Spawn]
 
 # the box of the city an avatar may be sent to is lib/map/shl1-city/PlayArea.model.json. it's written by hand: this
 # place has no map to add it to, every piece is a file of its own
@@ -83,13 +110,13 @@ exports:
 # tool. the numbers are the ones the legacy scripts ran on
 rules:
   # --- where players show up
-  # a character is put down on one of the 4 at random, the first time + after every death
+  # an avatar comes in on one of the 4 spots at random, the first time + after every death. the points themselves are
+  # the middle of a legacy character, 3 studs above the sidewalk: they're only counted, a spot is laid under each
   - at: Workspace/Coordinates
     count: 1
     persistent: true
   - at: Workspace/Coordinates/Part
     count: 4
-    tags: [Spawn]
 
   # --- a tag the services of superhero life 2 already read (src/server/Definition/Map.luau)
   # the hulls came on all at once at 18:15 at a transparency of 0.3 + went out at 6:15. to the windows of SHL2 each
@@ -203,16 +230,6 @@ rules:
   - at: Workspace/*/**
     count: 136
     where: { class: Seat }
-
-  # --- the booths a character is made in
-  # nobody is ever near them, so they + the box that lights them are persistent
-  - at: Workspace/ViewingRooms/ViewingRoom
-    count: 24
-    tags: [ViewingRoom]
-    persistent: true
-  - at: Workspace/Shield
-    count: 1
-    persistent: true
 
   # --- the safe of the bank
   # roblox doesn't hand out the image of its bills any longer (2466803), the bill of the third game's money bag

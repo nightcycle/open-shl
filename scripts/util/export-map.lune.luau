@@ -36,13 +36,16 @@ type Rule = {
 	attributes: { [string]: AttributeValue }?,
 	tags: { string }?,
 	persistent: boolean?, -- sent to every client whatever it stands next to, a folder becomes a model to carry it
-	-- the address an image or a mesh is loaded from, by the name of the property it's kept in. this + the move are
-	-- about what the path found itself, wrapped or not
+	-- the address an image or a mesh is loaded from, by the name of the property it's kept in. this, the move + the
+	-- turn are about what the path found itself, wrapped or not
 	contents: { [string]: string }?,
 	move: { number }?, -- how far a part is shifted from where the place has it, in studs along the axes of the world
+	turn: { number }?, -- how far it's turned on the spot it has, in degrees around the axes of the world
 }
 type AddedPart = {
 	name: string,
+	-- a box is a Part unless it says what else, a SpawnLocation is the one part the engine stands an avatar on
+	class: string?,
 	min: { number },
 	max: { number },
 	tags: { string }?,
@@ -88,7 +91,7 @@ local DEEP_WILDCARD = "**"
 local CONFIG_KEYS = { "place", "known_scripts", "exports", "adds", "rules" }
 local EXPORT_KEYS = { "from", "to", "split" }
 local ADD_KEYS = { "to", "name", "persistent", "parts" }
-local ADDED_PART_KEYS = { "name", "min", "max", "tags", "attributes" }
+local ADDED_PART_KEYS = { "name", "class", "min", "max", "tags", "attributes" }
 local RULE_KEYS = {
 	"at",
 	"count",
@@ -103,8 +106,10 @@ local RULE_KEYS = {
 	"persistent",
 	"contents",
 	"move",
+	"turn",
 }
 local WHERE_KEYS = { "class", "is_a", "has_child" }
+local DEFAULT_ADDED_CLASS = "Part"
 -- the flags that are followed by a path of their own
 local VALUE_FLAGS = { "--report", "--out" }
 local Instance = roblox.Instance
@@ -219,6 +224,15 @@ local function getIfBox(part: AddedPart): boolean
 	return true
 end
 
+-- lune knows the classes of the engine, one it has never heard of can't be made
+local function getIfPartClass(className: unknown): boolean
+	if type(className) ~= "string" then
+		return false
+	end
+	local isMade, inst = pcall(Instance.new, className)
+	return isMade and inst:IsA("BasePart")
+end
+
 local function readConfig(path: string): Config
 	assert(fs.isFile(path), `no export config at "{path}"`)
 	local config = serde.decode("yaml", fs.readFile(path))
@@ -244,6 +258,7 @@ local function readConfig(path: string): Config
 		for _, part in add.parts do
 			assertKeys(part, ADDED_PART_KEYS, `a part of {at}`)
 			assert(type(part.name) == "string" and getIfBox(part), `{at} has a part without a name, a min and a max`)
+			assert(part.class == nil or getIfPartClass(part.class), `{at} has a part of a class that isn't a part`)
 			assert(part.tags == nil or getIfStringList(part.tags), `{at} has tags that aren't a list of names`)
 			assert(part.attributes == nil or getIfAttributes(part.attributes), `{at} has attributes of another kind`)
 		end
@@ -269,6 +284,7 @@ local function readConfig(path: string): Config
 		assert(rule.persistent == nil or type(rule.persistent) == "boolean", `{at}: persistent`)
 		assert(rule.contents == nil or getIfContents(rule.contents), `{at} has contents that aren't addresses`)
 		assert(rule.move == nil or getIfOffset(rule.move), `{at} has a move that isn't 3 numbers`)
+		assert(rule.turn == nil or getIfOffset(rule.turn), `{at} has a turn that isn't 3 numbers`)
 	end
 	return config
 end
@@ -375,6 +391,14 @@ local function apply(rule: Rule, inst: roblox.Instance, order: number, wrappers:
 		local properties = inst :: any
 		properties.CFrame += Vector3.new(move[1], move[2], move[3])
 	end
+	local turn = rule.turn
+	if turn then
+		assert(inst:IsA("BasePart"), `"{rule.at}": only a part is turned, "{inst.Name}" is a {inst.ClassName}`)
+		local properties = inst :: any
+		local position = properties.CFrame.Position
+		local rotation = CFrame.Angles(math.rad(turn[1]), math.rad(turn[2]), math.rad(turn[3]))
+		properties.CFrame = CFrame.new(position) * rotation * (properties.CFrame - position)
+	end
 	local target = inst
 	if rule.wrap then
 		local parent = assert(inst.Parent, `"{rule.at}": "{inst.Name}" has nothing to be wrapped under`)
@@ -428,7 +452,7 @@ local function add(place: roblox.DataModel, added: Add)
 	for _, box in added.parts do
 		local min = Vector3.new(box.min[1], box.min[2], box.min[3])
 		local max = Vector3.new(box.max[1], box.max[2], box.max[3])
-		local part = Instance.new("Part")
+		local part = Instance.new(box.class or DEFAULT_ADDED_CLASS)
 		part.Name = box.name
 		local properties = part :: any
 		properties.Anchored = true
