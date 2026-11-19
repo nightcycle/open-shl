@@ -52,8 +52,9 @@ local isEnumItemValue = Type.strictArray(Type.string, Type.string)
 local isVersioned = Type.interface({
 	Version = Type.intersection(Type.integer, Type.numberMin(1)),
 })
--- where a game keeps its players, under which key + in which shape is its own: a place that's opened in the universe
--- of another game finds nothing there to read as its own. the save of another game is never required
+-- where a game keeps its players, under which key + in which shape is its own to say, even where two say the same: a
+-- data store belongs to a universe + each game is one, so neither reads what the other wrote. the save of another
+-- game is never required
 local PLAYER: Spec<PlayerSave> = GameDefinition.pick({
 	shl1 = function(): Spec<PlayerSave>
 		error(`shl1 has no save yet`)

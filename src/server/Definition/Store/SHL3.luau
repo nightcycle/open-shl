@@ -43,10 +43,10 @@ local function newPlayerSave(): PlayerSave
 	return out
 end
 -- Class
--- a store of its own: a place of this game that's opened in the universe of another finds none of its saves there, +
+-- the store + the key every game of this code saves under. a data store belongs to a universe + each game is one, so
 -- no other game finds these. the saves it holds so far are from before the game had a shape of its own to keep them in
 return table.freeze({
-	Name = "PlayerSave_shl3",
+	Name = "PlayerSave",
 	GetKey = function(userId: number): string
 		return `Player_{userId}`
 	end,

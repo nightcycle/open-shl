@@ -56,7 +56,7 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 	-- no save of it was ever written at its first version, one would have been in the shape of today
 	shl3 = function(): PlayerStore
 		return {
-			Name = "PlayerSave_shl3",
+			Name = "PlayerSave",
 			KeyFormat = "Player_%d",
 			FirstVersionFields = {},
 		}
