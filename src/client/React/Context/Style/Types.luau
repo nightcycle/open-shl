@@ -318,9 +318,34 @@ Types.NameTagLook = Type.strictInterface({
 export type DialogLook = {
 	-- the bar a button of it is drawn on. left out, a button is a box with the border of the look
 	ButtonImage: string?,
+	-- a dialog that's a plain card filling the frame it's handed, with what it says scaled into the parts of it. left
+	-- out, it's drawn on the panel of the look
+	Card: {
+		BackgroundColor3: Color3,
+		BorderColor3: Color3,
+		BorderSizePixel: number,
+		FontFace: Font,
+		TitleColor3: Color3, -- the title is written straight onto the card, it stands on no tag
+		TextColor3: Color3,
+		-- where each part of it is, in scale of the card
+		Title: Area,
+		Body: Area,
+		Buttons: Area, -- the row its buttons share
+	}?,
 }
 Types.DialogLook = Type.strictInterface({
 	ButtonImage = Type.optional(Type.string),
+	Card = Type.optional(Type.strictInterface({
+		BackgroundColor3 = Type.Color3,
+		BorderColor3 = Type.Color3,
+		BorderSizePixel = Type.numberMin(0),
+		FontFace = Type.Font,
+		TitleColor3 = Type.Color3,
+		TextColor3 = Type.Color3,
+		Title = Types.Area,
+		Body = Types.Area,
+		Buttons = Types.Area,
+	})),
 })
 
 -- what a widget of the kit doesn't share with the rest of it, under the name of its component

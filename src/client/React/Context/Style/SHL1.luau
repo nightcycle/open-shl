@@ -10,6 +10,7 @@ local WHITE = Color3.new(1, 1, 1)
 local PANEL_COLOR = Color3.new(0, 0, 1)
 local ACCENT_COLOR = Color3.fromRGB(255, 170, 0)
 local BALANCE_COLOR = Color3.fromRGB(0, 85, 255)
+local NEGATIVE_COLOR = Color3.fromRGB(255, 0, 0)
 -- the edge + the text the engine gives a box: what every white button + row of it was left with
 local DEFAULT_COLOR = Color3.fromRGB(27, 42, 53)
 local HEADING_FONT = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
@@ -29,7 +30,7 @@ local STYLE: Style = {
 		TextStrong = ACCENT_COLOR, -- the balance + what was picked
 		TextOnAccent = WHITE,
 		Positive = Color3.fromRGB(0, 170, 0),
-		Negative = Color3.fromRGB(255, 0, 0),
+		Negative = NEGATIVE_COLOR,
 		Warning = Color3.fromRGB(255, 209, 42),
 	},
 	Fonts = {
@@ -73,8 +74,30 @@ local STYLE: Style = {
 			FontFace = NOTE_FONT,
 			Prefix = "Currency: ",
 		},
-		-- the one box it ever asked something in had no button
-		Dialog = {},
+		-- the one box it ever had something to say in: white with a thick edge, a red word over what went wrong in
+		-- black. that took the upper half of it. it had no button, one stands in the lower half where its pun was
+		Dialog = {
+			Card = {
+				BackgroundColor3 = WHITE,
+				BorderColor3 = DEFAULT_COLOR,
+				BorderSizePixel = 3,
+				FontFace = HEADING_FONT,
+				TitleColor3 = NEGATIVE_COLOR,
+				TextColor3 = Color3.new(),
+				Title = {
+					Position = UDim2.fromScale(0, 0),
+					Size = UDim2.fromScale(1, 0.2),
+				},
+				Body = {
+					Position = UDim2.fromScale(0, 0.2),
+					Size = UDim2.fromScale(1, 0.3),
+				},
+				Buttons = {
+					Position = UDim2.fromScale(0, 0.675),
+					Size = UDim2.fromScale(1, 0.15),
+				},
+			},
+		},
 		-- it never drew one: what shut its saves was this word on an orange box, three times as wide as it's tall
 		ExitButton = {
 			Type = "Text",
