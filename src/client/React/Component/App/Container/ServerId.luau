@@ -27,6 +27,13 @@ local PLACEMENT: Placement = {
 }
 -- which corner the label has is the game's own
 local GAME_PLACEMENT: Placement = GameDefinition.tune(PLACEMENT, {
+	-- it had no such label: the bottom left is the corner none of its screens put anything in, + like everything
+	-- of it the bar is sized by the screen
+	shl1 = {
+		AnchorPoint = Vector2.zero,
+		Position = UDim2.fromScale(0, 0.98),
+		Size = UDim2.fromScale(0.08, 0.02),
+	},
 	-- where its version label was: the bottom right, 5 px off both edges
 	shl3 = {
 		AnchorPoint = Vector2.new(1, 1),
