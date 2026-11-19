@@ -15,7 +15,7 @@ type Registry = AppTypes.Registry
 -- containers wait on doesn't have to be in the place
 local REGISTRY: Registry = GameDefinition.pick({
 	shl1 = function(): Registry
-		error(`shl1 has no registry yet`)
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): Registry
 		return require("@self/SHL2")
