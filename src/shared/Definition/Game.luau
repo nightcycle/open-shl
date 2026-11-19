@@ -13,9 +13,10 @@ export type Tuning<V> = GameType.Tuning<V>
 -- every place is this code built for one game, which one is baked in the way its mode is
 local ID: GameId = BUILD_CONFIG.GAME
 assert(GameType.GameId(ID))
--- a game that isn't built yet has the row that's planned for it
 local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freeze({
+	-- what it boots with so far, the rest goes on as each of them is built for it
 	shl1 = table.freeze({
+		-- its flats are scenery
 		Residences = false,
 		Quests = false,
 		Tutorial = false,
@@ -26,10 +27,15 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Jobs = false,
 		Props = false,
 		PrivateServerToggle = false,
+		-- its face is one picture, there's nothing for an expression to swap
 		Roleplay = false,
+		-- it's one place
 		ModeSelect = false,
+		-- its clock keeps other hours + lights every window at once: off until the clock takes those from the game
 		DayNight = false,
+		-- its map marks none of them
 		Fixtures = false,
+		PlayerMode = true,
 	}),
 	-- the game all of it was written for: what's on is what ran before there was a second one
 	shl2 = table.freeze({
@@ -47,6 +53,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		ModeSelect = true,
 		DayNight = true,
 		Fixtures = true,
+		PlayerMode = false,
 	}),
 	-- what it boots with so far, the rest goes on as each of them is built for it
 	shl3 = table.freeze({
@@ -66,6 +73,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		-- its day is another clock's to run
 		DayNight = false,
 		Fixtures = true,
+		PlayerMode = false,
 	}),
 })
 -- Variables
