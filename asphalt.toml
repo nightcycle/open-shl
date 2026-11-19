@@ -245,7 +245,8 @@ path = "asset/audio/{core,shl-2}/**"
 output_path = "Generated"
 
 # core/ability/arrow-thud.ogg is what the arrows of shl1 + the bow of shl3 are heard by: it came over from shl-3, so
-# it's inside the path now without an upload of the creator's. its line stands for it until it has one
+# it's inside the path now without an upload of the creator's. its line stands for it in every build that doesn't ask
+# the cloud, the locked sync a pipeline builds with fails on it until `asphalt sync cloud` has uploaded it
 [inputs.Audio.web]
 "core/ability/arrow-thud.ogg" = { id = 16211030 }
 "shl-1/ability/bow.ogg" = { id = 16211041 }
