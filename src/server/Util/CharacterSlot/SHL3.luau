@@ -21,6 +21,9 @@ type CatalogueEntry = {
 	ItemIds: { string },
 	IsStarter: boolean,
 }
+type Catalogue = {
+	Entries: { CatalogueEntry },
+}
 -- Constants
 local isCatalogue = Type.interface({
 	Entries = Type.array(Type.interface({
@@ -48,7 +51,7 @@ local function getSource(): Source
 	local catalogue = require(CatalogueModule) :: unknown
 	assert(isCatalogue(catalogue))
 	local entries: { Entry } = {}
-	for _, catalogueEntry: CatalogueEntry in (catalogue :: any).Entries do
+	for _, catalogueEntry in (catalogue :: Catalogue).Entries do
 		table.insert(entries, {
 			ItemIds = catalogueEntry.ItemIds,
 			IsOwned = catalogueEntry.IsStarter,
