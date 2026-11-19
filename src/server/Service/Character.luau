@@ -138,20 +138,16 @@ local function filterProfile(player: Player, profile: Profile, priorProfile: Pro
 end
 
 local function getPowers(character: Character, powerLimit: number): Result<{ Power }, string>
-	if #character.Powers > powerLimit then
-		return Result.err(`a character holds up to {powerLimit} powers`)
-	end
 	local out: { Power } = {}
+	local ids: { string } = {}
 	for _, power in character.Powers do
-		if PowerDefinition.get(power.Id).IsErr then
-			return Result.err(`no power "{power.Id}"`)
-		end
-		for _, other in out do
-			if other.Id == power.Id then
-				return Result.err(`power "{power.Id}" is held twice`)
-			end
-		end
 		table.insert(out, { Id = power.Id })
+		table.insert(ids, power.Id)
+	end
+	-- what a character may hold is one question of the powers of the game, the editor asks the same one
+	local loadoutError = PowerDefinition.getLoadoutError(ids, powerLimit)
+	if loadoutError then
+		return Result.err(loadoutError)
 	end
 	return Result.ok(out)
 end

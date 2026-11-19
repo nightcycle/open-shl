@@ -140,7 +140,8 @@ local function getLook(self: AvatarService, player: Player): Option<Look>
 		IdentityKey = identityKey,
 		PersonaName = identity.Profile.Name,
 		Appearance = identity.Appearance,
-		Grants = getGrants(character, identity),
+		-- an identity that doesn't carry the powers of its character is handed none of them
+		Grants = if PowerDefinition.getIfCarried(identityKey) then getGrants(character, identity) else table.freeze({}),
 	}
 	local secret = character.Identities.Secret
 	if identityKey == "Main" and self._IsUnmasked[player] and secret then
