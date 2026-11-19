@@ -4,6 +4,8 @@
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
+local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local ServerVFX = require("@game/ServerScriptService/Server/VFX")
 -- Types
 export type Properties = {
@@ -30,11 +32,17 @@ return ServerVFX.newEvent("Damage", isProperties, function(props: Properties): b
 	if AttributeDefinition.get(target, AttributeDefinition.IsInvulnerable) then
 		return false
 	end
-	local health = math.max(0, AttributeDefinition.get(target, AttributeDefinition.Health) - props.Amount)
+	local priorHealth = AttributeDefinition.get(target, AttributeDefinition.Health)
+	local health = math.max(0, priorHealth - props.Amount)
 	AttributeDefinition.set(target, AttributeDefinition.Health, health)
 	if health <= 0 then
 		AttributeDefinition.set(target, AttributeDefinition.IsDead, true)
+		FightingUtil.clear(target)
 		humanoid.Health = 0
+	elseif health < priorHealth and CombatDefinition.FIGHTING then
+		-- whatever takes health off a character comes through here, so this is where a game that keeps a fight out
+		-- of its menus counts one from
+		FightingUtil.hit(target, CombatDefinition.getTime())
 	end
 	return true
 end)
