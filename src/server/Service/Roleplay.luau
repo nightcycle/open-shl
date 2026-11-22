@@ -23,11 +23,13 @@ type Session = SessionService.Session
 -- none of it is saved. it belongs to the player rather than to the avatar, so it's still there after a respawn
 type Roleplay = {
 	ExpressionId: ExpressionId?,
-	IsHandcuffed: boolean,
+	IsHandcuffed: boolean, -- the player's own doing
+	IsRestrained: boolean, -- the server's doing, nothing the player asks for takes these off
 	Handcuffs: Instance?, -- the pair the avatar wears right now
 }
 type RoleplayServiceImpl = {
 	__index: RoleplayServiceImpl,
+	SetRestrained: (self: RoleplayService, player: Player, isRestrained: boolean) -> (),
 }
 export type RoleplayService = typeof(setmetatable(
 	{} :: {
@@ -66,14 +68,20 @@ local function applyExpression(player: Player, character: Model, roleplay: Rolep
 	end
 end
 
+-- one pair does for both: whoever put their own on + is restrained on top wears it until both are off
+local function getIfCuffed(roleplay: Roleplay): boolean
+	return roleplay.IsHandcuffed or roleplay.IsRestrained
+end
+
 -- the handcuffs are worn like an item, so a dress takes them off along with everything else
 local function applyHandcuffs(character: Model, roleplay: Roleplay)
-	AttributeDefinition.set(character, AttributeDefinition.IsHandcuffed, roleplay.IsHandcuffed)
+	local isCuffed = getIfCuffed(roleplay)
+	AttributeDefinition.set(character, AttributeDefinition.IsHandcuffed, isCuffed)
 	if roleplay.Handcuffs then
 		roleplay.Handcuffs:Destroy()
 		roleplay.Handcuffs = nil
 	end
-	if not roleplay.IsHandcuffed then
+	if not isCuffed then
 		return
 	end
 	local handcuffsRes = ItemUtil.applyTemplate(character, HandcuffsTemplate)
@@ -90,11 +98,26 @@ local function add(self: RoleplayService, player: Player)
 	end
 	self._Roleplays[player] = {
 		IsHandcuffed = false,
+		IsRestrained = false,
 	}
 end
 -- Class
 local RoleplayService = {} :: RoleplayServiceImpl
 RoleplayService.__index = RoleplayService
+
+-- cuffs the server puts on + takes off, for a game that holds somebody: they stay on through every avatar the player
+-- gets until they're taken off here. nothing for a player without a session
+function RoleplayService:SetRestrained(player: Player, isRestrained: boolean)
+	local roleplay = self._Roleplays[player]
+	if not roleplay or roleplay.IsRestrained == isRestrained then
+		return
+	end
+	local wasCuffed = getIfCuffed(roleplay)
+	roleplay.IsRestrained = isRestrained
+	if player.Character and getIfCuffed(roleplay) ~= wasCuffed then
+		applyHandcuffs(player.Character, roleplay)
+	end
+end
 
 return ServiceLocker(function(): RoleplayService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
@@ -134,12 +157,14 @@ return ServiceLocker(function(): RoleplayService
 	table.insert(
 		self._Connections,
 		NetworkService:Connect(RemoteDefinition.SetHandcuffed, function(player: Player, isHandcuffed: boolean)
+			-- only ever the player's own half: a pair the server put on stays on
 			local roleplay = self._Roleplays[player]
 			if not roleplay or roleplay.IsHandcuffed == isHandcuffed then
 				return
 			end
+			local wasCuffed = getIfCuffed(roleplay)
 			roleplay.IsHandcuffed = isHandcuffed
-			if player.Character then
+			if player.Character and getIfCuffed(roleplay) ~= wasCuffed then
 				applyHandcuffs(player.Character, roleplay)
 			end
 		end)
