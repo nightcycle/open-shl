@@ -56,6 +56,8 @@ local FLOW: Flow = {
 			},
 		},
 	},
+	-- it has no bars of its own: how much health is left was always read off the bar of the engine
+	CoreGuis = { Enum.CoreGuiType.Chat, Enum.CoreGuiType.Health },
 }
 -- Variables
 -- References

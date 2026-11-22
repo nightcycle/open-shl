@@ -51,6 +51,8 @@ local FLOW: Flow = {
 			},
 		},
 	},
+	-- it draws its own player list, health bar + emotes
+	CoreGuis = { Enum.CoreGuiType.Chat },
 }
 -- Variables
 -- References

@@ -93,6 +93,8 @@ local STOPS: { Stop } = Flow.Stops
 local FIRST_SCREEN: Screen? = Flow.FirstScreen
 -- where a button of the hud leads, one the game has no use for leads nowhere
 local MENU: { [PseudoEnum.MenuId]: MenuAction } = Flow.Menu
+-- what the engine is left to draw
+local CORE_GUIS: { Enum.CoreGuiType } = Flow.CoreGuis
 -- Variables
 -- References
 -- Private Functions
@@ -376,9 +378,12 @@ end
 return ServiceLocker(function(): ShellService
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 
-	-- the game draws its own player list, health bar + emotes, the hotbar comes back with the gameplay hud
+	-- a game draws its own player list + emotes, the engine only what the game asks it for. the hotbar comes back
+	-- with the gameplay hud
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
-	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
+	for _, coreGuiType in CORE_GUIS do
+		StarterGui:SetCoreGuiEnabled(coreGuiType, true)
+	end
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
 	local state: State = {

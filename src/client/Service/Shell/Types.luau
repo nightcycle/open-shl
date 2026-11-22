@@ -89,11 +89,15 @@ export type Flow = {
 	FirstScreen: Screen?,
 	-- a button without a row does nothing
 	Menu: { [PseudoEnum.MenuId]: MenuAction },
+	-- what's left to the engine to draw, the game draws the rest itself. the hotbar isn't one to list: it comes + goes
+	-- with the hud
+	CoreGuis: { Enum.CoreGuiType },
 }
 Types.Flow = Type.strictInterface({
 	Stops = Type.array(Types.Stop),
 	FirstScreen = Type.optional(Types.Screen),
 	Menu = Type.map(Type.literal(table.unpack(PseudoEnum.getEnumItems("MenuId"))), Types.MenuAction),
+	CoreGuis = Type.array(Type.enum(Enum.CoreGuiType)),
 })
 -- Constants
 -- Variables

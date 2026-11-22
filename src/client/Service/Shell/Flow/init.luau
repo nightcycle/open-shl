@@ -38,6 +38,8 @@ do
 		assert(not stops[stop], `the boot stops at "{stop}" twice`)
 		stops[stop] = true
 	end
+	-- the shell turns it on + off with the hud, a game that listed it would have it up over its menus
+	assert(not table.find(FLOW.CoreGuis, Enum.CoreGuiType.Backpack), `the hotbar isn't the flow's to turn on`)
 end
 
 return FLOW
