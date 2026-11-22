@@ -485,6 +485,9 @@ export type EditorDefinition = {
 	-- what an identity goes by when its name was left empty, the name of the player's account goes where the %s is.
 	-- an empty name stays empty without
 	NameDefaults: { [CharacterType.IdentityKey]: string }?,
+	-- what goes on in the place of something worn comes in the look that was picked for it, an item starts out the
+	-- way it was made without
+	IsLookKept: boolean?,
 	Root: PageDefinition,
 }
 Types.EditorDefinition = Type.strictInterface({
@@ -496,6 +499,7 @@ Types.EditorDefinition = Type.strictInterface({
 	Palette = Type.optional(Type.array(Type.Color3)),
 	ChannelDefaults = Type.optional(Type.map(AppearanceType.TextureGroupKey, Type.Color3)),
 	NameDefaults = Type.optional(Type.map(CharacterType.IdentityKey, Type.string)),
+	IsLookKept = Type.optional(Type.boolean),
 	Root = Types.PageDefinition,
 })
 
@@ -515,6 +519,9 @@ export type EditorState = {
 	Path: string, -- the page that's open, "" is the root
 	PendingItem: AppearanceType.Item?, -- the item of the open page while it's tried on, it isn't worn yet
 	FocusedGroup: AppearanceType.TextureGroupKey?, -- the texture group the palettes edit, the item's main one otherwise
+	-- what the switch that ties the skin + the hair color of the identities together was last pressed to. until it's
+	-- pressed they're tied for as long as the draft has them the same
+	IsColorMatched: boolean?,
 	Entitlements: Entitlements,
 }
 Types.EditorState = Type.strictInterface({
@@ -524,6 +531,7 @@ Types.EditorState = Type.strictInterface({
 	Path = Type.string,
 	PendingItem = Type.optional(AppearanceType.Item),
 	FocusedGroup = Type.optional(AppearanceType.TextureGroupKey),
+	IsColorMatched = Type.optional(Type.boolean),
 	Entitlements = Types.Entitlements,
 })
 
