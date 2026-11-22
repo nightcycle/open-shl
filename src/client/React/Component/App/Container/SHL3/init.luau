@@ -20,6 +20,7 @@ local PlayerBoard = require("@self/PlayerBoard")
 local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
 local StockHealth = require("@self/StockHealth")
+local TeamChange = require("@self/TeamChange")
 -- Hooks
 -- Contexts
 -- Types
@@ -44,6 +45,8 @@ local REGISTRY: Registry = {
 		-- the list of who's in the game is what the shell calls a database, its hud has the button for it
 		Database = PlayerBoard,
 		Shop = Shop,
+		-- only reached from a button its hud has where there are sides to change
+		TeamChange = TeamChange,
 	},
 	OVERLAYS = {
 		CurrencyPopup = CurrencyPopup,
