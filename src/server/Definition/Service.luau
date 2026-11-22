@@ -152,6 +152,15 @@ local ENTRIES: { Entry } = {
 		end,
 	},
 	{
+		Name = "Leaderstats",
+		IsFeatured = FEATURES.Leaderstats,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Leaderstats")
+			assert(not service.IsInitialized, `the leaderstats service is already initialized`)
+			return service
+		end,
+	},
+	{
 		Name = "DayNight",
 		IsFeatured = FEATURES.DayNight,
 		Load = function(): Service
