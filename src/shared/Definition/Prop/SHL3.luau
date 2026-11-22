@@ -9,17 +9,17 @@ local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
 type PropCatalogue = PropType.PropCatalogue
 type PropDefinition = PropType.PropDefinition
 -- Constants
--- what the roleplay pads of the city hand out. none of them is built yet
-local DEFINITIONS: { PropDefinition } = {}
--- a row moves up into the list above once both halves of its prop are in the game's set. only the card ever had a
--- picture, the hotbar spells the rest out
-local UPCOMING: { PropDefinition } = {
+-- what the roleplay pads of the city hand out. only the card ever had a picture, the hotbar spells the rest out
+local DEFINITIONS: { PropDefinition } = {
 	-- it does nothing by itself: the gates of the prison ask who holds one
 	{
 		Id = "keycard",
 		Name = "Keycard",
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["keycard.png"]),
 	},
+}
+-- a row moves up into the list above once both halves of its prop are in the game's set
+local UPCOMING: { PropDefinition } = {
 	-- a bite takes as long as it keeps the next one off
 	{ Id = "cheeseburger", Name = "Cheeseburger", Use = { Duration = 0.8 } },
 	{ Id = "acoustic-guitar", Name = "Acoustic Guitar" },

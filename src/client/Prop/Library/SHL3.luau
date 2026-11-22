@@ -2,6 +2,7 @@
 -- Services
 -- Packages
 -- Modules
+local Keycard = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Keycard")
 -- Types
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
 type ClientDefinition = PropType.ClientDefinition
@@ -10,7 +11,9 @@ type ClientDefinition = PropType.ClientDefinition
 -- References
 -- Private Functions
 -- Class
--- the client halves of the props of shl3, one for every row its catalogue lists as built. none is yet
-local DEFINITIONS: { ClientDefinition } = {}
+-- the client halves of the props of shl3, one for every row its catalogue lists as built
+local DEFINITIONS: { ClientDefinition } = {
+	Keycard,
+}
 
 return table.freeze(DEFINITIONS)

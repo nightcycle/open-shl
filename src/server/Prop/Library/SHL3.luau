@@ -2,6 +2,7 @@
 -- Services
 -- Packages
 -- Modules
+local Keycard = require("@game/ServerScriptService/Server/Prop/Library/Keycard")
 -- Types
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
 type ServerDefinition = PropType.ServerDefinition
@@ -10,7 +11,9 @@ type ServerDefinition = PropType.ServerDefinition
 -- References
 -- Private Functions
 -- Class
--- the server halves of the props of shl3, one for every row its catalogue lists as built. none is yet
-local DEFINITIONS: { ServerDefinition } = {}
+-- the server halves of the props of shl3, one for every row its catalogue lists as built
+local DEFINITIONS: { ServerDefinition } = {
+	Keycard,
+}
 
 return table.freeze(DEFINITIONS)
