@@ -21,12 +21,13 @@ export type Properties = {}
 local e = React.createElement
 
 -- everybody in the game, in the order the engine lists them: what roblox knows them as + the name of whoever their
--- avatar is out as. an avatar that isn't here has none to go by, neither has one that wasn't given a name. nobody has
--- a price on them: there are no sides to be on the wrong one of yet
+-- avatar is out as. the server says that on the player: an avatar is only here while it's in range, in the old place
+-- every one of them was. whoever wasn't dressed yet has no name to go by, neither has one that wasn't given any.
+-- nobody has a price on them: there are no sides to be on the wrong one of yet
 local function getRows(): { Row }
 	local out: { Row } = {}
 	for _, player in Players:GetPlayers() do
-		local personaName = AttributeDefinition.get(player.Character, AttributeDefinition.PersonaName)
+		local personaName = AttributeDefinition.get(player, AttributeDefinition.ActivePersonaName)
 		local row: Row = {
 			UserId = player.UserId,
 			UserName = player.Name,
