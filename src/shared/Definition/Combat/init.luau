@@ -40,7 +40,7 @@ Module.KNOCKBACK = RULE.Knockback
 -- what everybody gets back by themselves, nil in a game where health only comes back by a power
 Module.REGENERATION = RULE.Regeneration
 
--- if nobody is hurt while they sit in a menu
+-- if nobody is hurt while they sit in a menu, + nobody hurts anybody from one
 Module.IS_MENU_SAFE = RULE.IsMenuSafe
 
 -- if who fights is each player's own pick: whoever sat fights out hurts nobody + nobody hurts them
@@ -78,8 +78,14 @@ Module.getIfHostile = function(attacker: Model?, victim: Model): boolean
 	if not ModeDefinition.getIfPVPEnabled() or victim == attacker then
 		return false
 	end
-	if RULE.IsMenuSafe and AttributeDefinition.get(victim, AttributeDefinition.IsInMenu) then
-		return false
+	-- a menu shelters whoever sits in it, so whoever sits in one hurts nobody either: what they sent off before they
+	-- went in is asked about as it lands
+	if RULE.IsMenuSafe then
+		local isInMenu = AttributeDefinition.get(victim, AttributeDefinition.IsInMenu)
+			or (attacker ~= nil and AttributeDefinition.get(attacker, AttributeDefinition.IsInMenu))
+		if isInMenu then
+			return false
+		end
 	end
 	-- one who sat fights out is left alone + leaves everybody alone
 	if RULE.IsOptional then

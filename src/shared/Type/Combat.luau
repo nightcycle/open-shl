@@ -66,7 +66,7 @@ Types.MenuRefusal = Type.strictInterface({
 -- what a game makes of one character hitting another
 export type CombatRule = {
 	PlayerScale: number, -- what a hit on somebody's character is multiplied by
-	IsMenuSafe: boolean, -- nobody is hurt while they sit in a menu
+	IsMenuSafe: boolean, -- nobody is hurt while they sit in a menu, + nobody hurts anybody from one
 	IsOptional: boolean?, -- only two who both chose to fight hurt each other, everybody fights without
 	IsShieldSafe: boolean?, -- nobody is hurt under the force field their spot handed them, it stops nothing without
 	Fighting: Fighting?, -- nobody is kept out of a menu without

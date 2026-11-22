@@ -6,6 +6,7 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
+local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local SpecUtil = require("@game/ServerScriptService/Server/Util/Spec")
 -- Types
 local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
@@ -23,6 +24,9 @@ local FIGHTING: Fighting? = GameDefinition.tune(nil :: Fighting?, {
 		MaxDuration = 30,
 	},
 })
+-- if a menu of the game shelters whoever sits in it, written down apart from its rule as well. in a game that isn't
+-- listed everybody hits + is hit wherever they sit
+local IS_MENU_SAFE = GameDefinition.tune(false, { shl1 = true, shl3 = true })
 -- on the clock of a server that's been up for a while
 local START_TIME = 1000
 -- Variables
@@ -133,6 +137,36 @@ local function walkNoAttacker()
 	end
 end
 
+-- a hit is asked about as it lands: whoever sits in a menu by then hurts nobody, wherever they stood as they sent it
+-- off. a hit that's turned down takes no health, which is all a fight is ever counted from. a game whose menus
+-- shelter nobody has it land from inside one + on whoever sits in one
+local function walkSender()
+	-- a place where nobody fights has nobody hurt anybody, in a menu or out of one
+	local isLanding = ModeDefinition.getIfPVPEnabled()
+	local isLandingInMenu = isLanding and not IS_MENU_SAFE
+	local sender, target = newAvatar(), newAvatar()
+	local function getIfLanding(attacker: Model?, victim: Model): boolean
+		local isHostile = CombatDefinition.getIfHostile(attacker, victim)
+		assert((CombatDefinition.getDamage(attacker, victim, 20) ~= nil) == isHostile, `a hit takes what it may not`)
+		return isHostile
+	end
+	assert(getIfLanding(sender, target) == isLanding, `a hit between two who are out of a menu comes to another one`)
+
+	-- out, a shot sent off, in before it lands
+	AttributeDefinition.set(sender, AttributeDefinition.IsInMenu, true)
+	assert(getIfLanding(sender, target) == isLandingInMenu, `a hit from inside a menu comes to another one`)
+	assert(getIfLanding(target, sender) == isLandingInMenu, `a hit on somebody in a menu comes to another one`)
+	-- what nobody is behind lands the way it did, on whoever is out
+	assert(getIfLanding(nil, target) == isLanding, `a loss nobody is behind is kept off somebody who's out`)
+	assert(getIfLanding(nil, sender) == isLandingInMenu, `a loss nobody is behind comes to another one in a menu`)
+	assert(getFightingUntil(sender) == nil and getFightingUntil(target) == nil, `asking the rule started a fight`)
+
+	-- back out their hits land again
+	AttributeDefinition.set(sender, AttributeDefinition.IsInMenu, false)
+	assert(getIfLanding(sender, target) == isLanding, `whoever left a menu hits another way than before it`)
+	assert(getIfLanding(target, sender) == isLanding, `whoever left a menu is hit another way than before it`)
+end
+
 -- the way into a menu is shut for as long as the fight is on, the way out of one never is
 local function walkMenu(fighting: Fighting)
 	local avatar = newAvatar()
@@ -196,7 +230,7 @@ local function walkCharacter(fighting: Fighting)
 		SpecUtil.getIfEqual(refusal, FightingUtil.getMenuRefusal(avatar, true, START_TIME + 1)),
 		`it isn't what a menu turns them down with`
 	)
-	-- a hit that was on its way when they went in lands on somebody after: the menu they sit in is theirs to use
+	-- whoever the server counts as in a menu was let into it: the menu they sit in is theirs to use
 	assert(FightingUtil.getCharacterRefusal(avatar, true, START_TIME + 1) == nil, `a menu is shut to who sits in it`)
 
 	-- whoever landed the hit is turned down the same
@@ -249,6 +283,12 @@ return {
 		else
 			walkNoAttacker()
 		end
+	end),
+
+	-- fire, then hide: the shot of whoever sits in a menu lands on nobody
+	Sender = SpecUtil.newScenario(function()
+		assert(CombatDefinition.IS_MENU_SAFE == IS_MENU_SAFE, `the menus of the game shelter another way`)
+		walkSender()
 	end),
 
 	Menu = SpecUtil.newScenario(function()
