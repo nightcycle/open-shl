@@ -14,6 +14,12 @@ export type GameContent = {
 	DataPath: string,
 	-- becomes ReplicatedStorage/lib/scene, with the folder names the shared components wait on
 	ScenePath: string,
+	-- becomes ReplicatedStorage/lib/base: what a residence is built from + furnished with. a game without residences
+	-- goes without it
+	BasePath: string?,
+	-- becomes ReplicatedStorage/lib/prop: what an avatar wears that isn't an item of its library. a game that puts
+	-- none on goes without it
+	PropPath: string?,
 	-- the items of the game, as <group>/<category>/<key>
 	CharacterPath: string,
 	-- the items it wears out of the library of SHL2, one <group>/<category>/<key> per line. a game without a list
@@ -49,6 +55,8 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 	shl2 = table.freeze({
 		DataPath = "data/shl-2",
 		ScenePath = "lib/scene/shl-2",
+		BasePath = "lib/base",
+		PropPath = "lib/prop",
 		CharacterPath = BORROW_PATH,
 		-- it's the game every shared setting was tuned for
 		Properties = {},
@@ -130,7 +138,15 @@ end
 -- what a game is built from. one whose content isn't in the repo yet says so here, rojo would only name a path
 Module.getContent = function(id: GameId): GameContent
 	local content = CONTENTS[id]
-	for _, path in { content.DataPath, content.ScenePath, content.CharacterPath } do
+	local paths = { content.DataPath, content.ScenePath, content.CharacterPath }
+	-- a library a game leaves out isn't looked for
+	if content.BasePath then
+		table.insert(paths, content.BasePath)
+	end
+	if content.PropPath then
+		table.insert(paths, content.PropPath)
+	end
+	for _, path in paths do
 		assert(fs.isDir(path), `GAME={id} is built from "{path}", which isn't there`)
 	end
 	return content

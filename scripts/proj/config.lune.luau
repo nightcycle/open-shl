@@ -85,20 +85,27 @@ do -- write in a do block now to make it easier to copy to other things later / 
 		node["DevPackages"] = {
 			["$path"] = "DevPackages",
 		}
-		node["lib"] = {
+		local lib: rojo.ProjectNode = {
 			["$className"] = "Folder",
-			["base"] = {
-				["$path"] = "lib/base",
-			} :: rojo.ProjectNode,
 			["character"] = game.newCharacterNode(CONTENT),
-			-- props are worn like character items, but are not part of the item library
-			["prop"] = {
-				["$path"] = "lib/prop",
-			} :: rojo.ProjectNode,
 			["scene"] = {
 				["$path"] = CONTENT.ScenePath,
 			} :: rojo.ProjectNode,
 		}
+		-- a library only some of the games use is only in the places of those: what waits on it there is never
+		-- required anywhere else
+		if CONTENT.BasePath then
+			lib["base"] = {
+				["$path"] = CONTENT.BasePath,
+			}
+		end
+		-- props are worn like character items, but are not part of the item library
+		if CONTENT.PropPath then
+			lib["prop"] = {
+				["$path"] = CONTENT.PropPath,
+			}
+		end
+		node["lib"] = lib
 	end)
 
 	appendService("StarterPlayer", function(node: rojo.ProjectNode)

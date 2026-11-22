@@ -25,12 +25,17 @@ local SCRIPT_MOUNT_PATHS = {
 	"ReplicatedStorage/DevPackages",
 	"StarterPlayer/StarterPlayerScripts/Client",
 }
--- the ones that did + are known about: all three are disabled leftovers of the models they sit in. another is only
--- added here once it's been read
-local ALLOWED_SCRIPT_PATHS = {
-	"ReplicatedStorage/lib/base/decorations/rocket-car/Wheel",
-	"ReplicatedStorage/lib/base/decorations/sports-car/Script",
-	"ReplicatedStorage/lib/scene/hero-character-editor/Lighting/SpotLight/Script",
+-- the ones that did + are known about: all three are disabled leftovers of the models they sit in, in libraries only
+-- shl2 mounts. another is only added here once it's been read, for the game whose place it's in: a place of a game
+-- that has none listed is held to having none
+local ALLOWED_SCRIPT_PATHS: { [game.GameId]: { string } } = {
+	shl1 = {},
+	shl2 = {
+		"ReplicatedStorage/lib/base/decorations/rocket-car/Wheel",
+		"ReplicatedStorage/lib/base/decorations/sports-car/Script",
+		"ReplicatedStorage/lib/scene/hero-character-editor/Lighting/SpotLight/Script",
+	},
+	shl3 = {},
 }
 -- what wally installs isn't written here, so it isn't held to the rules below (ui-labs runs its stories with getfenv)
 local PACKAGE_MOUNT_PATHS = { "ReplicatedStorage/Packages", "ReplicatedStorage/DevPackages" }
@@ -123,14 +128,26 @@ local function getCSGFailures(place: roblox.DataModel): { string }
 	return failures
 end
 
+local function getGameId(place: roblox.DataModel): string?
+	return (getSource(place, BUILD_CONFIG_PATH) or ""):match(GAME_PATTERN)
+end
+
 local function getScriptFailures(place: roblox.DataModel): { string }
 	local failures: { string } = {}
+	-- a place that doesn't say which game it is has nothing let through
+	local gameId = getGameId(place)
+	local allowedPaths: { string } = {}
+	for id, paths in ALLOWED_SCRIPT_PATHS do
+		if id == gameId then
+			allowedPaths = paths
+		end
+	end
 	for _, desc in place:GetDescendants() do
 		if not desc:IsA("LuaSourceContainer") then
 			continue
 		end
 		local fullName = getFullName(place, desc)
-		if not getIfInside(fullName, SCRIPT_MOUNT_PATHS) and table.find(ALLOWED_SCRIPT_PATHS, fullName) == nil then
+		if not getIfInside(fullName, SCRIPT_MOUNT_PATHS) and table.find(allowedPaths, fullName) == nil then
 			table.insert(failures, `{desc.ClassName} "{fullName}" is outside of every script mount`)
 		end
 		if getIfInside(fullName, PACKAGE_MOUNT_PATHS) then
@@ -152,10 +169,6 @@ local function getMapFailures(place: roblox.DataModel): { string }
 		return { `there is no "Workspace{PATH_DELIMITER}Map"` }
 	end
 	return {}
-end
-
-local function getGameId(place: roblox.DataModel): string?
-	return (getSource(place, BUILD_CONFIG_PATH) or ""):match(GAME_PATTERN)
 end
 
 -- the server finds what it runs in a map by its tags. one on the wrong class is skipped with a warning + one that's
