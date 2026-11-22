@@ -39,6 +39,15 @@ local ENTRIES: { Entry } = {
 		end,
 	},
 	{
+		Name = "Prop",
+		IsFeatured = FEATURES.Props,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Prop")
+			assert(not service.IsInitialized, `the prop service is already initialized`)
+			return service
+		end,
+	},
+	{
 		Name = "Session",
 		Load = function(): Service
 			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
