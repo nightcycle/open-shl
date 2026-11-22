@@ -40,6 +40,12 @@ do
 	end
 	-- the shell turns it on + off with the hud, a game that listed it would have it up over its menus
 	assert(not table.find(FLOW.CoreGuis, Enum.CoreGuiType.Backpack), `the hotbar isn't the flow's to turn on`)
+	-- what's on for good can't also come + go with the hud
+	local hudCoreGuis: { Enum.CoreGuiType } = FLOW.HudCoreGuis or {}
+	for _, coreGuiType in hudCoreGuis do
+		assert(coreGuiType ~= Enum.CoreGuiType.Backpack, `the hotbar isn't the flow's to turn on`)
+		assert(not table.find(FLOW.CoreGuis, coreGuiType), `"{coreGuiType.Name}" is listed twice`)
+	end
 end
 
 return FLOW

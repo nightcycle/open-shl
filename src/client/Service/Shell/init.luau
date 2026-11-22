@@ -75,6 +75,7 @@ export type ShellService = typeof(setmetatable(
 		_State: State,
 		_IsCameraModeAvailable: boolean, -- the free camera is flown with a keyboard
 		_IsBackpackEnabled: boolean,
+		_IsHudCoreGuiEnabled: boolean,
 		_HasHudShown: boolean,
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
@@ -95,6 +96,8 @@ local FIRST_SCREEN: Screen? = Flow.FirstScreen
 local MENU: { [PseudoEnum.MenuId]: MenuAction } = Flow.Menu
 -- what the engine is left to draw
 local CORE_GUIS: { Enum.CoreGuiType } = Flow.CoreGuis
+-- what of it comes + goes with the hud
+local HUD_CORE_GUIS: { Enum.CoreGuiType } = Flow.HudCoreGuis or table.freeze({})
 -- Variables
 -- References
 -- Private Functions
@@ -151,6 +154,13 @@ local function setState(self: ShellService, state: State)
 	if self._IsBackpackEnabled ~= isBackpackEnabled then
 		self._IsBackpackEnabled = isBackpackEnabled
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, isBackpackEnabled)
+	end
+	local isHudCoreGuiEnabled = state.IsGameplayHudVisible and not state.IsCameraMode
+	if self._IsHudCoreGuiEnabled ~= isHudCoreGuiEnabled then
+		self._IsHudCoreGuiEnabled = isHudCoreGuiEnabled
+		for _, coreGuiType in HUD_CORE_GUIS do
+			StarterGui:SetCoreGuiEnabled(coreGuiType, isHudCoreGuiEnabled)
+		end
 	end
 	if previous.IsGameplayHudVisible ~= state.IsGameplayHudVisible then
 		assert(SessionService.IsInitialized, `the session service isn't initialized`)
@@ -412,6 +422,7 @@ return ServiceLocker(function(): ShellService
 		_State = state,
 		_IsCameraModeAvailable = UserInputService.KeyboardEnabled,
 		_IsBackpackEnabled = false,
+		_IsHudCoreGuiEnabled = false,
 		_HasHudShown = false,
 		_CleanUpCallbacks = {},
 		_Connections = {},
