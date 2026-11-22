@@ -386,9 +386,15 @@ return {
 	STAGE_SIZE = UDim2.fromScale(0.5992, 0.8),
 	TURN_STEP_DEG = 45,
 	TURN_DURATION = 0.5,
-	-- the camera never moves: it looks past the mannequin in front so the pair stands clear of the panel. the anchors
-	-- sit on the floor, the point it used to aim for was that far off the middle of a body
+	-- the camera looks past the mannequin in front so the pair stands clear of the panel. the anchors sit on the floor,
+	-- the point it used to aim for was that far off the middle of a body
 	CAMERA_TARGET_OFFSET = Vector3.new(2, 3.1, 0),
+	-- the old camera never moved, which left the head of the tallest body out of the picture. this one backs off a
+	-- body + looks higher up by half of what the body is taller than the plain one, + comes as much closer to a
+	-- shorter one: all of it would draw every body the same size
+	CAMERA_FOLLOW = 0.5,
+	-- how long it takes to get to a new framing, at a steady pace
+	CAMERA_DURATION = 0.75,
 
 	-- the roll button runs at this size under the mannequins, whatever the file it came from says
 	RANDOMIZE_ANCHOR_POINT = Vector2.new(0.5, 1),

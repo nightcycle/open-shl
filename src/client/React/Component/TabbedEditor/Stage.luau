@@ -25,6 +25,8 @@ export type Properties = {}
 -- Constants
 local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/TabbedEditor/CONSTANTS")
 local EMPTY_APPEARANCE = AppearanceConstructor.new()
+-- a body that was never sized is the plain one
+local DEFAULT_HEIGHT = 1
 local TURN_SPEED_DEG = CONSTANTS.TURN_STEP_DEG / CONSTANTS.TURN_DURATION
 -- Variables
 -- References
@@ -47,6 +49,16 @@ local function getRig(scene: useScene.Scene?): Model?
 	return if scene and scene.IsAlive and scene.Rig.IsDone then scene.Rig.Value else nil
 end
 
+-- from where + at what a body of that height is looked at. both keep to the spot the body stands on, so its feet
+-- stay where they are in the picture however far the camera is off them
+local function getFraming(mount: Vector3, anchor: CFrame, height: number): CFrame
+	local reach = 1 + CONSTANTS.CAMERA_FOLLOW * (height - DEFAULT_HEIGHT)
+	return CFrame.lookAt(
+		mount + (mount - anchor.Position) * (reach - 1),
+		anchor:PointToWorldSpace(CONSTANTS.CAMERA_TARGET_OFFSET * reach)
+	)
+end
+
 local function turnButton(props: {
 	Position: UDim2,
 	OnClick: () -> (),
@@ -61,7 +73,8 @@ local function turnButton(props: {
 	})
 end
 -- Class
--- the two mannequins on the one set, seen from a camera that stays put: whichever identity is edited stands in front
+-- the two mannequins on the one set, seen from a camera that only gives way to how tall they are: whichever identity
+-- is edited stands in front
 return function(_: Properties): React.ReactNode
 	local topInset = React.useContext(AppTopInsetContext)
 	local isHeroFocus = React.useContext(IsHeroFocusContext)
@@ -71,10 +84,15 @@ return function(_: Properties): React.ReactNode
 	local mainAppearance = displayedCharacter.Identities.Main.Appearance
 	local secretIdentity = displayedCharacter.Identities.Secret
 	local secretAppearance = if secretIdentity then secretIdentity.Appearance else EMPTY_APPEARANCE
+	-- the two are one body, the camera goes by whoever is in front all the same
+	local frontScale = if isHeroFocus then mainAppearance.Scale else secretAppearance.Scale
+	local height = if frontScale then frontScale.Height else DEFAULT_HEIGHT
 
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local worldModelRef: { current: WorldModel? } = React.useRef(nil :: WorldModel?)
 	local cameraRef: { current: Camera? } = React.useRef(nil :: Camera?)
+	-- whether the camera was put anywhere yet
+	local isFramedRef = React.useRef(false)
 	-- how far the pair was asked to turn + how far it has so far, which trails behind
 	local turnDegRef = React.useRef(0)
 	local shownDegRef = React.useRef(0)
@@ -102,14 +120,30 @@ return function(_: Properties): React.ReactNode
 
 	React.useEffect(function()
 		local camera = cameraRef.current
-		if camera and cameraMount and frontAnchor then
-			camera.CFrame = CFrame.lookAt(
-				cameraMount.Position,
-				frontAnchor.CFrame:PointToWorldSpace(CONSTANTS.CAMERA_TARGET_OFFSET)
-			)
+		if not camera or not cameraMount or not frontAnchor then
+			return function() end
 		end
-		return function() end
-	end, { cameraMount :: any, frontAnchor })
+		local to = getFraming(cameraMount.Position, frontAnchor.CFrame, height)
+		-- the stage is come to with the camera where it belongs, it only moves for a body that's sized under it
+		if not isFramedRef.current then
+			isFramedRef.current = true
+			camera.CFrame = to
+			return function() end
+		end
+		local from = camera.CFrame
+		local startClock = os.clock()
+		local connection: RBXScriptConnection
+		connection = RunService.RenderStepped:Connect(function()
+			local alpha = math.min((os.clock() - startClock) / CONSTANTS.CAMERA_DURATION, 1)
+			camera.CFrame = from:Lerp(to, alpha)
+			if alpha == 1 then
+				connection:Disconnect()
+			end
+		end)
+		return function()
+			connection:Disconnect()
+		end
+	end, { cameraMount :: any, frontAnchor, height })
 
 	-- a rig that's dressed in another size is left standing where its old body stood, so the pair is put on its spots
 	-- every frame rather than only when one of them moves
