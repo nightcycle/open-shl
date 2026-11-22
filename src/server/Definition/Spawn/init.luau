@@ -23,6 +23,9 @@ export type Rule = {
 	EntryShieldDuration: number?,
 	-- the identity an avatar comes back in, without one it's whoever it was when it went down
 	IdentityKey: IdentityKey?,
+	-- studs from which whoever looks at an avatar reads how hurt it is off the bar the engine draws over it, never
+	-- with a name. without it the engine draws nothing over an avatar: what's read there is the game's to draw
+	HealthDisplayDistance: number?,
 }
 -- Constants
 local isRule = Type.intersection(
@@ -34,6 +37,7 @@ local isRule = Type.intersection(
 		ShieldDuration = Type.optional(Type.numberMin(0)),
 		EntryShieldDuration = Type.optional(Type.numberPositive),
 		IdentityKey = Type.optional(CharacterType.IdentityKey),
+		HealthDisplayDistance = Type.optional(Type.numberPositive),
 	}),
 	-- a duration is written onto the spots, which are only known by their tag
 	function(value: Rule): (boolean, string?)
@@ -66,6 +70,7 @@ local Module = {
 	SHIELD_DURATION = RULE.ShieldDuration,
 	ENTRY_SHIELD_DURATION = RULE.EntryShieldDuration,
 	IDENTITY_KEY = RULE.IdentityKey,
+	HEALTH_DISPLAY_DISTANCE = RULE.HealthDisplayDistance,
 	-- who a character is worn as from the start: the identity its avatar comes back in, + its hero in a game where it
 	-- comes back as whoever it was
 	START_IDENTITY_KEY = (RULE.IdentityKey or "Main") :: IdentityKey,

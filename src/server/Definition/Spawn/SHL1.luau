@@ -19,4 +19,5 @@ return table.freeze({
 	ShieldDuration = SHIELD_DURATION,
 	EntryShieldDuration = SHIELD_DURATION,
 	IdentityKey = "Secret" :: "Secret",
+	HealthDisplayDistance = nil,
 })

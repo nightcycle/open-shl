@@ -15,4 +15,5 @@ return table.freeze({
 	ShieldDuration = nil,
 	EntryShieldDuration = nil,
 	IdentityKey = nil,
+	HealthDisplayDistance = nil,
 })

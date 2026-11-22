@@ -73,6 +73,8 @@ local POWER_COLOR_SOURCE = CharacterEditorDefinition.POWER_COLOR_SOURCE
 local SPAWN_IDENTITY_KEY: IdentityKey? = SpawnDefinition.IDENTITY_KEY
 -- nil in a game where an avatar that's let out of the menu it came in behind is let out bare
 local ENTRY_SHIELD_DURATION: number? = SpawnDefinition.ENTRY_SHIELD_DURATION
+-- nil in a game that draws the health of an avatar itself
+local HEALTH_DISPLAY_DISTANCE: number? = SpawnDefinition.HEALTH_DISPLAY_DISTANCE
 -- Variables
 -- References
 -- Private Functions
@@ -222,11 +224,14 @@ local function onCharacter(self: AvatarService, player: Player, character: Model
 	AttributeDefinition.setDefaults(character, "Character")
 	local humanoid = character:FindFirstChildOfClass("Humanoid")
 	if humanoid then
-		-- the game draws its own name tag, the stock one would give the user name away
-		humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+		-- the game draws its own name tag, the stock one would give the user name away. a game that leaves health
+		-- to the bar of the engine has it drawn over whoever is hurt, for whoever looks from close enough
+		humanoid.DisplayDistanceType = if HEALTH_DISPLAY_DISTANCE
+			then Enum.HumanoidDisplayDistanceType.Viewer
+			else Enum.HumanoidDisplayDistanceType.None
 		-- npc humanoids don't get a stock tag on this player's screen either
 		humanoid.NameDisplayDistance = 0
-		humanoid.HealthDisplayDistance = 0
+		humanoid.HealthDisplayDistance = HEALTH_DISPLAY_DISTANCE or 0
 	end
 	local isInMenu = SessionService:GetIfInMenu(player)
 	self._HeldAvatars[player] = if isInMenu then character else nil
