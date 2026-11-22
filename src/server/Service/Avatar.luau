@@ -14,6 +14,7 @@ local AbilityService = require("@game/ServerScriptService/Server/Service/Ability
 local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local MapDefinition = require("@game/ServerScriptService/Server/Definition/Map")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
@@ -28,6 +29,7 @@ local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local IdentityType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity")
 type Option<V> = TypeUnionLib.Option<V>
 type Appearance = AppearanceType.Appearance
+type Item = AppearanceType.Item
 type Character = CharacterType.Character
 type PowerColorSource = CharacterEditorType.PowerColorSource
 type Grant = AbilityType.Grant
@@ -39,14 +41,23 @@ type Look = {
 	Appearance: Appearance,
 	Grants: { Grant },
 }
+-- what the server puts a player in over whoever they picked to be: worn, never saved
+export type Costume = {
+	IdentityKey: IdentityKey, -- who's out for as long as it's on
+	Items: { Item }, -- each takes the place of whatever that identity wears of its category
+	IsPowerless: boolean, -- none of the character's powers are handed out
+}
 type AvatarServiceImpl = {
 	__index: AvatarServiceImpl,
 	Dress: (self: AvatarService, player: Player) -> (),
+	Arm: (self: AvatarService, player: Player) -> (),
 	PlayEffect: (self: AvatarService, character: Model, effect: EffectDefinition) -> (),
 	GetAppearance: (self: AvatarService, player: Player) -> Option<Appearance>,
+	GetCostume: (self: AvatarService, player: Player) -> Option<Costume>,
 	GetIfMasked: (self: AvatarService, player: Player) -> boolean,
 	GetIfHeld: (self: AvatarService, player: Player) -> boolean,
 	SetMasked: (self: AvatarService, player: Player, isMasked: boolean) -> (),
+	SetCostume: (self: AvatarService, player: Player, costume: Costume?) -> (),
 }
 export type AvatarService = typeof(setmetatable(
 	{} :: {
@@ -56,6 +67,7 @@ export type AvatarService = typeof(setmetatable(
 		-- an avatar came in. its attributes are the ones every avatar starts out with, nobody saw it yet
 		Spawned: Signal.Signal<Player, Model>,
 		_IsUnmasked: { [Player]: true? },
+		_Costumes: { [Player]: Costume? },
 		-- the avatar of whoever came in behind a menu + wasn't let out of it since
 		_HeldAvatars: { [Player]: Model? },
 		_PlayerConnections: { [Player]: { RBXScriptConnection } },
@@ -132,6 +144,32 @@ local function getGrants(character: Character, identity: IdentityType.Identity):
 	return table.freeze(grants)
 end
 
+-- the look with the items of a costume on, each in the place of whatever is worn of its category
+local function wear(appearance: Appearance, items: { Item }): Appearance
+	return FreezeUtil.delta(appearance, function(t: Appearance): Appearance
+		for _, item in items do
+			local indexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
+			if indexRes.IsErr then
+				continue
+			end
+			for i = #t.Items, 1, -1 do
+				local wornIndexRes = ItemAppearanceDefinition.getIndex(t.Items[i].DefinitionId)
+				if
+					wornIndexRes.IsOk
+					and wornIndexRes.Value.Group == indexRes.Value.Group
+					and wornIndexRes.Value.Category == indexRes.Value.Category
+				then
+					table.remove(t.Items, i)
+				end
+			end
+		end
+		for _, item in items do
+			table.insert(t.Items, item)
+		end
+		return t
+	end)
+end
+
 local function getLook(self: AvatarService, player: Player): Option<Look>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
@@ -140,23 +178,30 @@ local function getLook(self: AvatarService, player: Player): Option<Look>
 		return Option.none()
 	end
 	local character = characterOpt.Value
-	local identityKey: IdentityKey = sessionOpt.Value.ActiveIdentityKey
+	-- a costume says who's out, whoever the session has
+	local costume = self._Costumes[player]
+	local identityKey: IdentityKey = if costume then costume.IdentityKey else sessionOpt.Value.ActiveIdentityKey
 	local identity = character.Identities[identityKey]
 	if not identity then
 		return Option.none()
 	end
+	-- an identity that doesn't carry the powers of its character is handed none of them, + neither is anybody in a
+	-- costume that comes without
+	local isArmed = PowerDefinition.getIfCarried(identityKey) and not (costume ~= nil and costume.IsPowerless)
 	local look: Look = {
 		IdentityKey = identityKey,
 		PersonaName = identity.Profile.Name,
 		Appearance = identity.Appearance,
-		-- an identity that doesn't carry the powers of its character is handed none of them
-		Grants = if PowerDefinition.getIfCarried(identityKey) then getGrants(character, identity) else table.freeze({}),
+		Grants = if isArmed then getGrants(character, identity) else table.freeze({}),
 	}
 	local secret = character.Identities.Secret
 	if identityKey == "Main" and self._IsUnmasked[player] and secret then
 		-- a hero with the mask off answers to their civilian name
 		look.PersonaName = secret.Profile.Name
 		look.Appearance = AppearanceUtil.unmask(identity.Appearance, secret.Appearance)
+	end
+	if costume then
+		look.Appearance = wear(look.Appearance, costume.Items)
 	end
 	return Option.some(look)
 end
@@ -237,12 +282,15 @@ local function onCharacter(self: AvatarService, player: Player, character: Model
 	self._HeldAvatars[player] = if isInMenu then character else nil
 	setInMenu(player, character, isInMenu)
 	self.Spawned:Fire(player, character)
-	-- a game can have an avatar come back as one identity whoever it went down as. a session that's told to change
-	-- who is out has the avatar dressed for it, which is the dress this one was about to get
+	-- a game can have an avatar come back as one identity whoever it went down as, + a costume that whoever heard of
+	-- the avatar just now put its player in has it come in as its own. a session that's told to change who is out has
+	-- the avatar dressed for it, which is the dress this one was about to get
+	local costume = self._Costumes[player]
+	local spawnIdentityKey: IdentityKey? = if costume then costume.IdentityKey else SPAWN_IDENTITY_KEY
 	local sessionOpt = SessionService:Get(player)
-	local isAnotherOut = sessionOpt.IsSome and sessionOpt.Value.ActiveIdentityKey ~= SPAWN_IDENTITY_KEY
-	if SPAWN_IDENTITY_KEY and isAnotherOut then
-		local identityRes = SessionService:SetActiveIdentity(player, SPAWN_IDENTITY_KEY)
+	local isAnotherOut = sessionOpt.IsSome and sessionOpt.Value.ActiveIdentityKey ~= spawnIdentityKey
+	if spawnIdentityKey and isAnotherOut then
+		local identityRes = SessionService:SetActiveIdentity(player, spawnIdentityKey)
 		if identityRes.IsOk then
 			return
 		end
@@ -305,6 +353,7 @@ local function remove(self: AvatarService, player: Player)
 	end
 	self._PlayerConnections[player] = nil
 	self._IsUnmasked[player] = nil
+	self._Costumes[player] = nil
 	self._HeldAvatars[player] = nil
 end
 -- Class
@@ -344,6 +393,16 @@ function AvatarService:Dress(player: Player)
 			self.Dressed:Fire(player, character)
 		end
 	end)
+end
+
+-- hands the avatar that's out the powers of its look + nothing else: for whoever was kept from them, without a dress
+function AvatarService:Arm(player: Player)
+	local character = player.Character
+	local lookOpt = getLook(self, player)
+	if not character or lookOpt.IsNone or not AbilityService.IsInitialized then
+		return
+	end
+	AbilityService:Grant(player, character, lookOpt.Value.Grants)
 end
 
 -- what everybody sees of a transformation, the costume changes behind it
@@ -395,6 +454,10 @@ function AvatarService:GetAppearance(player: Player): Option<Appearance>
 	return Option.some(lookOpt.Value.Appearance)
 end
 
+function AvatarService:GetCostume(player: Player): Option<Costume>
+	return Option.from(self._Costumes[player])
+end
+
 function AvatarService:GetIfMasked(player: Player): boolean
 	return self._IsUnmasked[player] == nil
 end
@@ -418,6 +481,15 @@ function AvatarService:SetMasked(player: Player, isMasked: boolean)
 	self:Dress(player)
 end
 
+-- only kept: nobody is dressed for it. the avatar that's out wears it from its next dress on, + keeps on what it has
+-- of one that's taken off until the dress after. it goes with the session, + there's none for a player without one
+function AvatarService:SetCostume(player: Player, costume: Costume?)
+	if not self._PlayerConnections[player] then
+		return
+	end
+	self._Costumes[player] = costume
+end
+
 return ServiceLocker(function(): AvatarService
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local self = setmetatable({
@@ -425,6 +497,7 @@ return ServiceLocker(function(): AvatarService
 		Dressed = Signal.new() :: Signal.Signal<Player, Model>,
 		Spawned = Signal.new() :: Signal.Signal<Player, Model>,
 		_IsUnmasked = {} :: { [Player]: true? },
+		_Costumes = {} :: { [Player]: Costume? },
 		_HeldAvatars = {} :: { [Player]: Model? },
 		_PlayerConnections = {},
 		_CleanUpCallbacks = {},
