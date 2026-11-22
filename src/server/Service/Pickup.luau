@@ -79,6 +79,11 @@ local function onTouched(pad: Pad, hit: BasePart)
 	if not rootPart or (rootPart.Position - part.Position).Magnitude > part.Size.Magnitude / 2 + TOUCH_REACH then
 		return
 	end
+	-- somebody who carries one already has nothing to take, so their touch doesn't cost the pad its second either: a
+	-- touch is the client's to send, + whoever kept sending theirs would keep everybody else from the pad
+	if PropService:GetIfCarried(player, pad.PropId) then
+		return
+	end
 	local now = os.clock()
 	if now - pad.AttemptTime < ATTEMPT_INTERVAL then
 		return
@@ -87,7 +92,7 @@ local function onTouched(pad: Pad, hit: BasePart)
 	if not pad.IsStocked then
 		return
 	end
-	-- only one that's really handed over empties it: somebody who carries one already takes nothing
+	-- only one that's really handed over empties it
 	local restockDuration = pad.RestockDuration
 	if PropService:Grant(player, pad.PropId) and restockDuration then
 		pad.IsStocked = false
