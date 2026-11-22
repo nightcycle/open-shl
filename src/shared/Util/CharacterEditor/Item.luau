@@ -27,6 +27,8 @@ type TextureGroup = AppearanceType.TextureGroup
 type TextureGroupKey = AppearanceType.TextureGroupKey
 -- Constants
 local DETAIL_TEXTURE_GROUP_KEY: TextureGroupKey = CharacterEditorDefinition.DETAIL_TEXTURE_GROUP_KEY :: TextureGroupKey
+-- false in a game where an item starts out the way it was made, whatever it takes the place of
+local IS_LOOK_KEPT = CharacterEditorDefinition.IS_LOOK_KEPT
 -- the detail group of a mask is its lenses, on anything else it's the edges
 local LENS_ITEM_TAG: AppearanceType.ItemDefinitionTag = "Mask"
 local IDENTITY_NAMES: { [IdentityKey]: string } = table.freeze({
@@ -43,9 +45,83 @@ local function getIfSameTextureGroup(a: TextureGroup, b: TextureGroup): boolean
 		and a.Pattern == b.Pattern
 end
 
--- an item nobody wore yet: the way it was made, or the way the game has what's worn already start it out
+local function getIfStacking(state: EditorState, definitionId: string): boolean
+	local pathOpt = CharacterEditorDefinition.getItemPath(definitionId)
+	local page = if pathOpt.IsSome then PageUtil.get(pathOpt.Value) else nil
+	if not page or page.Type ~= "Item" then
+		return false
+	end
+	return page.WearRule == "Multi" or (page.WearRule == "MultiHair" and state.Entitlements.HasMultiHair)
+end
+
+-- the first of what's worn that the item would take the place of, nothing in a category that stacks
+local function findReplaced(state: EditorState, definitionId: string): Item?
+	local indexRes = ItemAppearanceDefinition.getIndex(definitionId)
+	if indexRes.IsErr or getIfStacking(state, definitionId) then
+		return nil
+	end
+	for _, item in StateUtil.getIdentity(state).Appearance.Items do
+		local wornIndexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
+		if
+			item.DefinitionId ~= definitionId
+			and wornIndexRes.IsOk
+			and wornIndexRes.Value.Group == indexRes.Value.Group
+			and wornIndexRes.Value.Category == indexRes.Value.Category
+		then
+			return item
+		end
+	end
+	return nil
+end
+
+-- the look that was picked for one item on the item that comes after it: of every group both have, what was changed
+-- about it goes along + what was left the way the old one was made is the way the new one is made
+local function carry(item: Item, itemDef: ItemDefinition, previousItem: Item): Item
+	return FreezeUtil.delta(item, function(t: Item): Item
+		for _, key: TextureGroupKey in itemDef.TextureGroups do
+			local previousGroup = previousItem.TextureGroups[key]
+			if not previousGroup then
+				continue
+			end
+			local previousDefaultRes = ItemAppearanceDefinition.getDefaultTextureGroup(previousItem.DefinitionId, key)
+			local defaultRes = ItemAppearanceDefinition.getDefaultTextureGroup(item.DefinitionId, key)
+			if previousDefaultRes.IsErr or defaultRes.IsErr then
+				continue
+			end
+			local previousDefault, default = previousDefaultRes.Value, defaultRes.Value
+			local group = TextureGroupConstructor.new(
+				if previousGroup.Color == previousDefault.Color then default.Color else previousGroup.Color,
+				if previousGroup.Material == previousDefault.Material then default.Material else previousGroup.Material,
+				if previousGroup.Transparency == previousDefault.Transparency
+					then default.Transparency
+					else previousGroup.Transparency
+			)
+			-- no item is made with a pattern, one that's on was picked
+			local pattern = previousGroup.Pattern
+			if pattern ~= nil then
+				group = FreezeUtil.delta(group, function(patterned: TextureGroup): TextureGroup
+					patterned.Pattern = pattern
+					return patterned
+				end)
+			end
+			if not getIfSameTextureGroup(group, default) then
+				t.TextureGroups[key] = group
+			end
+		end
+		return t
+	end)
+end
+
+-- an item nobody wore yet: the way it was made, or the way the game has what's worn already start it out. where a
+-- game keeps a look it comes in the one of what it's about to take the place of
 local function newItem(state: EditorState, definitionId: string): Item
-	return WornUtil.newItem(StateUtil.getIdentity(state).Appearance, definitionId)
+	local item = WornUtil.newItem(StateUtil.getIdentity(state).Appearance, definitionId)
+	local replacedItem = if IS_LOOK_KEPT then findReplaced(state, definitionId) else nil
+	if not replacedItem then
+		return item
+	end
+	local itemDefRes = ItemAppearanceDefinition.get(definitionId)
+	return if itemDefRes.IsOk then carry(item, itemDefRes.Value, replacedItem) else item
 end
 
 -- the worn item when it's worn, the one that's tried on otherwise
@@ -77,15 +153,6 @@ local function edit(state: EditorState, definitionId: string, fn: (item: Item) -
 	return StateUtil.delta(state, function(t: EditorState)
 		t.PendingItem = editedItem
 	end)
-end
-
-local function getIfStacking(state: EditorState, definitionId: string): boolean
-	local pathOpt = CharacterEditorDefinition.getItemPath(definitionId)
-	local page = if pathOpt.IsSome then PageUtil.get(pathOpt.Value) else nil
-	if not page or page.Type ~= "Item" then
-		return false
-	end
-	return page.WearRule == "Multi" or (page.WearRule == "MultiHair" and state.Entitlements.HasMultiHair)
 end
 
 -- Class
@@ -276,31 +343,7 @@ function Util.newPending(state: EditorState, definitionId: string): Item
 	then
 		return newItem(state, definitionId)
 	end
-	return FreezeUtil.delta(newItem(state, definitionId), function(t: Item): Item
-		for _, key: TextureGroupKey in itemDefRes.Value.TextureGroups do
-			local previousGroup = previousItem.TextureGroups[key]
-			if not previousGroup then
-				continue
-			end
-			local previousDefaultRes = ItemAppearanceDefinition.getDefaultTextureGroup(previousItem.DefinitionId, key)
-			local defaultRes = ItemAppearanceDefinition.getDefaultTextureGroup(definitionId, key)
-			if previousDefaultRes.IsErr or defaultRes.IsErr then
-				continue
-			end
-			local previousDefault, default = previousDefaultRes.Value, defaultRes.Value
-			local group = TextureGroupConstructor.new(
-				if previousGroup.Color == previousDefault.Color then default.Color else previousGroup.Color,
-				if previousGroup.Material == previousDefault.Material then default.Material else previousGroup.Material,
-				if previousGroup.Transparency == previousDefault.Transparency
-					then default.Transparency
-					else previousGroup.Transparency
-			)
-			if not getIfSameTextureGroup(group, default) then
-				t.TextureGroups[key] = group
-			end
-		end
-		return t
-	end)
+	return carry(newItem(state, definitionId), itemDefRes.Value, previousItem)
 end
 
 function Util.add(state: EditorState, definitionId: string): Result<EditorState, string>

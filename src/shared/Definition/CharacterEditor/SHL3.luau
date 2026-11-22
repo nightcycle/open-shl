@@ -263,6 +263,8 @@ local EDITOR: EditorDefinition = {
 	Scale = SCALE,
 	PatternChoices = getPatternChoices(),
 	PowerColorSource = POWER_COLOR_SOURCE,
+	-- a color was the slot's in the old game, not the piece's: it stayed through another suit, shirt or head of hair
+	IsLookKept = true,
 	Root = ROOT,
 }
 return EDITOR

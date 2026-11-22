@@ -119,6 +119,9 @@ Module.CHANNEL_DEFAULTS = EDITOR.ChannelDefaults
 -- what an identity goes by when its name was left empty, the name of the account goes where the %s is. nil in a game
 -- where an empty name stays empty
 Module.NAME_DEFAULTS = EDITOR.NameDefaults
+-- what goes on in the place of something worn comes in the look that was picked for it, false in a game where an item
+-- starts out the way it was made
+Module.IS_LOOK_KEPT = EDITOR.IsLookKept == true
 Module.DETAIL_TEXTURE_GROUP_KEY = EditorPageDefinition.DETAIL_TEXTURE_GROUP_KEY
 
 Module.DEFINITION = EDITOR.Root
