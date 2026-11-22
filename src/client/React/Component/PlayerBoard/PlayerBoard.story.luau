@@ -44,8 +44,9 @@ return UILabs.CreateReactStory({
 	controls = {
 		Style = StyleStory.newControl("shl3"),
 		PlayerCount = UILabs.Slider(6, 0, MAX_PLAYERS, 1),
-		-- off, it's the list of a game that has none yet: the cells under the head stay empty
-		HasBounties = UILabs.Boolean(false),
+		-- off, it's the list of a place where nobody fights: nobody is on a side there, the cells under the head
+		-- stay empty
+		HasBounties = UILabs.Boolean(true),
 	},
 }, function(props)
 	local isOpen, setIsOpen = React.useState(true)
