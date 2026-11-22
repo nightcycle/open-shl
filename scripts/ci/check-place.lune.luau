@@ -56,7 +56,19 @@ local TAG_PATTERN = 'newTag%(%s*"([^"]+)"%s*,%s*"([^"]+)"%s*%)'
 local NEEDED_TAGS: { [game.GameId]: { string } } = {
 	shl1 = { "Spawn", "PlayArea", "NightWindows" },
 	shl2 = { "StreetLamp", "NightWindows", "Uniform", "Hazard", "Beacon", "Gate", "Reactor", "Colorizer", "Rebuilt" },
-	shl3 = { "Beacon", "Spawn", "PlayArea", "Water", "IntroCamera", "PropPad" },
+	shl3 = {
+		"Beacon",
+		"Spawn",
+		"PlayArea",
+		"Water",
+		"IntroCamera",
+		"PropPad",
+		"JailCell",
+		"JailCenter",
+		"Road",
+		"HeroGate",
+		"Troublesome",
+	},
 }
 -- where a game lists the halves of its abilities, each side in a module that goes by the name of the game. the two
 -- lists are kept by hand + neither side can see the other's, so only a read of both tells that they agree

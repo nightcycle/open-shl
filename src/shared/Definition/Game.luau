@@ -67,7 +67,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Music = false,
 		Uniforms = false,
 		CustomServers = false,
-		Teams = false,
+		-- heroes + villains where a place has its players fight, + the jail a villain comes in at
+		Teams = true,
 		Jobs = false,
 		-- what its pads hand out: the two that are built so far, the rest of them lie there
 		Props = true,
