@@ -11,6 +11,7 @@ local Result = TypeUnionLib.Result
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local BaseUtil = require("@game/ReplicatedStorage/Shared/Util/Base")
+local EconomyService = require("@game/ServerScriptService/Server/Service/Economy")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local FurnitureDefinition = require("@game/ReplicatedStorage/Shared/Definition/Furniture")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
@@ -411,6 +412,28 @@ local function setTheme(self: ResidenceService, player: Player, themeId: string)
 	end
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
+
+local function purchaseFurniture(player: Player, furnitureId: string): Result<true, string>
+	assert(EconomyService.IsInitialized, `the economy service isn't initialized`)
+	local definitionRes = FurnitureDefinition.get(furnitureId)
+	if definitionRes.IsErr then
+		return definitionRes
+	end
+	return EconomyService:Purchase(player, definitionRes.Value, function(save: PlayerSave): { string }
+		return save.Inventory.FurnitureIds
+	end)
+end
+
+local function purchaseTheme(player: Player, themeId: string): Result<true, string>
+	assert(EconomyService.IsInitialized, `the economy service isn't initialized`)
+	local definitionRes = ThemeDefinition.get(themeId)
+	if definitionRes.IsErr then
+		return definitionRes
+	end
+	return EconomyService:Purchase(player, definitionRes.Value, function(save: PlayerSave): { string }
+		return save.Inventory.ThemeIds
+	end)
+end
 -- Class
 local ResidenceService = {} :: ResidenceServiceImpl
 ResidenceService.__index = ResidenceService
@@ -419,6 +442,7 @@ return ServiceLocker(function(): ResidenceService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	assert(AvatarService.IsInitialized, `the avatar service isn't initialized`)
+	assert(EconomyService.IsInitialized, `the economy service isn't initialized`)
 	local self = setmetatable({
 		IsInitialized = true :: true,
 		_Slots = getSlots(),
@@ -462,6 +486,19 @@ return ServiceLocker(function(): ResidenceService
 	NetworkService:Handle(RemoteDefinition.SetBaseTheme, function(player: Player, themeId: string): Result<true, string>
 		return setTheme(self, player, themeId)
 	end)
+	-- furniture + themes are for a base, they're sold where they're put
+	NetworkService:Handle(
+		RemoteDefinition.PurchaseFurniture,
+		function(player: Player, furnitureId: string): Result<true, string>
+			return purchaseFurniture(player, furnitureId)
+		end
+	)
+	NetworkService:Handle(
+		RemoteDefinition.PurchaseTheme,
+		function(player: Player, themeId: string): Result<true, string>
+			return purchaseTheme(player, themeId)
+		end
+	)
 
 	-- whatever wrote to the save of an owner, the players inside only hear of it when what they see changed
 	local changedConnection = SessionService.Changed:Connect(

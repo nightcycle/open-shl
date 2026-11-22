@@ -8,14 +8,11 @@ local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
-local FurnitureDefinition = require("@game/ReplicatedStorage/Shared/Definition/Furniture")
-local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
-local ThemeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Theme")
 -- Types
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
@@ -85,26 +82,6 @@ local function update(player: Player, fn: (save: PlayerSave) -> PlayerSave?): Re
 		return saveRes
 	end
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
-end
-
-local function purchaseFurniture(self: EconomyService, player: Player, furnitureId: string): Result<true, string>
-	local definitionRes = FurnitureDefinition.get(furnitureId)
-	if definitionRes.IsErr then
-		return definitionRes
-	end
-	return self:Purchase(player, definitionRes.Value, function(save: PlayerSave): { string }
-		return save.Inventory.FurnitureIds
-	end)
-end
-
-local function purchaseTheme(self: EconomyService, player: Player, themeId: string): Result<true, string>
-	local definitionRes = ThemeDefinition.get(themeId)
-	if definitionRes.IsErr then
-		return definitionRes
-	end
-	return self:Purchase(player, definitionRes.Value, function(save: PlayerSave): { string }
-		return save.Inventory.ThemeIds
-	end)
 end
 
 -- a pass is never saved, the session holds it for the visit + everything that reads an entitlement reads it there
@@ -400,21 +377,6 @@ return ServiceLocker(function(): EconomyService
 			return grantProduct(player, definitionRes.Value, nil)
 		end
 	)
-	-- furniture + themes are for a residence, a game without one has nowhere to put what its players would pay for
-	if GameDefinition.FEATURES.Residences then
-		NetworkService:Handle(
-			RemoteDefinition.PurchaseFurniture,
-			function(player: Player, furnitureId: string): Result<true, string>
-				return purchaseFurniture(self, player, furnitureId)
-			end
-		)
-		NetworkService:Handle(
-			RemoteDefinition.PurchaseTheme,
-			function(player: Player, themeId: string): Result<true, string>
-				return purchaseTheme(self, player, themeId)
-			end
-		)
-	end
 
 	-- the engine holds on to the callback for as long as the server runs, the service can be gone when it's called
 	MarketplaceService.ProcessReceipt = function(receipt: unknown): Enum.ProductPurchaseDecision
