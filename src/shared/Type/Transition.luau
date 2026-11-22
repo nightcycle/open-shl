@@ -96,4 +96,17 @@ Types.DeathDefinition = Type.strictInterface({
 	FreezeDuration = Type.number,
 })
 
+-- what a game's characters swap + die by. a style it has no row for is one its editor has no page to pick
+export type TransitionCatalogue = {
+	Transformations: { [PseudoEnum.TransformationStyle]: TransformationDefinition },
+	Deaths: { [PseudoEnum.DeathStyle]: DeathDefinition },
+}
+Types.TransitionCatalogue = Type.strictInterface({
+	Transformations = Type.map(
+		Type.literal(table.unpack(PseudoEnum.getEnumItems("TransformationStyle"))),
+		Types.TransformationDefinition
+	),
+	Deaths = Type.map(Type.literal(table.unpack(PseudoEnum.getEnumItems("DeathStyle"))), Types.DeathDefinition),
+})
+
 return Types
