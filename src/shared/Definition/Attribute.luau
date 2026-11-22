@@ -71,6 +71,8 @@ Module.IdentityKey = new("Character", "IdentityKey", CharacterType.IdentityKey, 
 Module.IsInMenu = new("Character", "IsInMenu", Type.boolean, false) :: Attribute<boolean>
 -- when the fight it's in is over, on the clock of the server. nil for one that didn't lose health since it came in
 Module.FightingUntil = new("Character", "FightingUntil", Type.optional(Type.numberMin(0)), nil) :: Attribute<number?>
+-- the prop the server counts as in its hand, nil for an empty hand + in a game without props
+Module.HeldPropId = new("Character", "HeldPropId", Type.optional(Type.string), nil) :: Attribute<string?>
 -- its player sat fights out: it hurts nobody + nobody hurts it. nil in a game where nobody gets to pick, which is a
 -- character that fights
 Module.IsPeaceful = new("Character", "IsPeaceful", Type.optional(Type.boolean), nil) :: Attribute<boolean?>

@@ -10,6 +10,7 @@ local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
+local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
 local ServerType = require("@game/ReplicatedStorage/Shared/Type/Server")
@@ -266,6 +267,10 @@ Module.ProfilesChanged = newServerEvent("ProfilesChanged", isProfiles) :: Server
 Module.AbilityReported =
 	newClientEvent("AbilityReported", AbilityType.Report, ABILITY_LIMIT) :: ClientEvent<AbilityType.Report>
 Module.AbilityUpdated = newServerEvent("AbilityUpdated", AbilityType.Update) :: ServerEvent<AbilityType.Update>
+
+-- props
+-- a click with the prop that's in the hand. the server holds it to the pace of the prop, nothing is answered
+Module.PropReported = newClientEvent("PropReported", PropType.Report, INPUT_LIMIT) :: ClientEvent<PropType.Report>
 
 -- effects
 Module.VFXReplicated = newServerEvent("VFXReplicated", VFXType.Message) :: ServerEvent<VFXType.Message>
