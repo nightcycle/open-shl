@@ -29,12 +29,15 @@ type EntitlementKey = SessionEntitlementsContext.EntitlementKey
 -- what the game the layout was made for hands out: five slots, ten to whoever has the pass
 local SLOT_COUNT = 5
 local MAX_SLOT_COUNT = 10
+-- the sizes it offers beside the plain one, the tallest first: that's the body whose feet the camera has to keep
+-- over the two buttons
+local HEIGHTS: { number } = table.freeze({ 1.4, 1.2, 0.9, 0.75 })
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
 
-local function newCharacter(slot: number): Character
+local function newCharacter(slot: number, height: number): Character
 	local rng = Random.new(slot)
 	return FreezeUtil.delta(RandomCharacter.Character(RandomUtil.newSeed(rng)), function(t: Character): Character
 		-- the last hero goes without a name, the list has a placeholder for those
@@ -44,8 +47,8 @@ local function newCharacter(slot: number): Character
 		-- every other one is of another height, so the camera has something to frame
 		if slot % 2 == 0 then
 			t.Identities.Main.Appearance.Scale = {
-				Height = 1.4,
-				Width = 1.4,
+				Height = height,
+				Width = height,
 			}
 		end
 		return t
@@ -58,6 +61,8 @@ return UILabs.CreateReactStory({
 	controls = {
 		Style = StyleStory.newControl("shl3"),
 		SlotCount = UILabs.Slider(SLOT_COUNT, 0, MAX_SLOT_COUNT, 1),
+		-- how tall every other hero is, the ones between them are plain
+		Height = UILabs.Choose(HEIGHTS),
 		HasExtraSlots = UILabs.Boolean(false),
 		IsSelectFailing = UILabs.Boolean(false),
 		-- off, it's the select a join ends on: there's no way out of that one
@@ -65,15 +70,16 @@ return UILabs.CreateReactStory({
 	},
 }, function(props)
 	local slotCount: number = props.controls.SlotCount
+	local height: number = props.controls.Height
 	local hasExtraSlots: boolean = props.controls.HasExtraSlots
 	local characters = React.useMemo(function(): { Character }
 		local out: { Character } = {}
 		for slot = 1, slotCount do
-			table.insert(out, newCharacter(slot))
+			table.insert(out, newCharacter(slot, height))
 		end
 		table.freeze(out)
 		return out
-	end, { slotCount })
+	end, { slotCount, height })
 	local entitlements = React.useMemo(function(): { EntitlementKey }
 		local out: { EntitlementKey } = {}
 		if hasExtraSlots then
