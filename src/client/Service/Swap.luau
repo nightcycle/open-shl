@@ -117,6 +117,10 @@ local function start(self: SwapService)
 	if humanoid.Health <= 0 or AttributeDefinition.get(avatar, AttributeDefinition.IsDead) then
 		return
 	end
+	-- one that's held is whoever the server dressed it as until it got away, the swap would be turned down
+	if AttributeDefinition.get(avatar, AttributeDefinition.IsJailed) then
+		return
+	end
 	local identity = characterOpt.Value.Identities[SessionService:GetActiveIdentityKey()]
 	if not identity then
 		return
