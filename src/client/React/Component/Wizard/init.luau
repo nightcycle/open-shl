@@ -29,14 +29,10 @@ type TextFilter = EditorTypes.TextFilter
 export type FilteredText = EditorTypes.FilteredText
 export type ActionInfo = EditorTypes.ActionInfo
 export type Properties = EditorTypes.Properties
--- where the walk is + what it takes to get back from there
+-- where the walk is. the draft isn't the walk's: it's the one editor's from the first stop to the last, whichever
+-- way the stops are gone through
 type Walk = {
 	StepIndex: number,
-	-- the draft as each stop so far was come to: a step back puts the one of the stop before in place again
-	Entries: { Character },
-	-- what the draft starts over from + how often it has, every step back is one more
-	Base: Character,
-	Epoch: number,
 	-- the stop whose page is on its way off the screen, the stop after it was cut to otherwise
 	SlidFrom: number?,
 }
@@ -165,19 +161,15 @@ end
 
 local function walker(props: Properties)
 	local style = React.useContext(StyleContext)
-	local storedCharacter = React.useContext(CharacterContext)
 	local walk: Walk, setWalk: (Walk) -> () = React.useState(function(): Walk
 		return {
 			StepIndex = 1,
-			Entries = { storedCharacter },
-			Base = storedCharacter,
-			Epoch = 0,
 		}
 	end)
 	-- how far the mannequin is turned, a step back leaves it the way it stands
 	local turn, setTurn = React.useState(0)
 	-- whether the player sits fights out once the walk is through. it's nothing of the draft: the walk starts out
-	-- the way the player is + a step back doesn't take the pick back
+	-- the way the player is
 	local isPeaceful, setIsPeaceful = React.useState(props.IsPeaceful == true)
 	local stepIndex = walk.StepIndex
 	local step = STEPS[stepIndex]
@@ -200,19 +192,14 @@ local function walker(props: Properties)
 			})
 			return
 		end
-		local entries = table.clone(walk.Entries)
-		entries[stepIndex + 1] = draft
 		setWalk({
 			StepIndex = stepIndex + 1,
-			Entries = entries,
-			Base = walk.Base,
-			Epoch = walk.Epoch,
 			SlidFrom = if step.Page.IsSlidingOut and STEPS[stepIndex + 1].Page ~= step.Page then stepIndex else nil,
 		})
 	end
 
-	-- a step back takes back whatever the stop before did + shows it again. from the first stops there's nothing to
-	-- go back to: what was made so far is given up
+	-- a step back only shows the stop before again: whatever was picked, there or on a stop after it, stays picked.
+	-- from the first stops there's nothing to go back to: what was made so far is given up
 	local function goBack()
 		if props.IsSaving then
 			return
@@ -223,12 +210,8 @@ local function walker(props: Properties)
 			})
 			return
 		end
-		local entries = table.move(walk.Entries, 1, stepIndex - 1, 1, {})
 		setWalk({
 			StepIndex = stepIndex - 1,
-			Entries = entries,
-			Base = entries[stepIndex - 1],
-			Epoch = walk.Epoch + 1,
 		})
 	end
 
@@ -243,11 +226,9 @@ local function walker(props: Properties)
 		OnPeaceful = setIsPeaceful,
 		OnForward = goOn,
 	})
-	local editors: { [string]: React.ReactNode } = {}
-	-- keyed by how often the draft was put back, so it starts over from the one that's put in place
-	editors[`Editor-{walk.Epoch}`] = e(CharacterContext.Provider, {
-		value = walk.Base,
-	}, {
+
+	return e(React.Fragment, {}, {
+		-- one editor for the whole of the walk: it starts out from what's stored + only the way out starts it over
 		Editor = e(EditableCharacterProvider, {
 			FilteredText = props.FilteredText,
 			OnFilterText = function(filter: TextFilter)
@@ -265,10 +246,6 @@ local function walker(props: Properties)
 			}),
 			Strips = e(React.Fragment, {}, strips),
 		}),
-	})
-
-	return e(React.Fragment, {}, {
-		Editors = e(React.Fragment, {}, editors),
 		RotateBar = e(rotateBar, {
 			IsUp = step.Page.Kind ~= "Cover",
 			OnTurn = function(direction: number)
@@ -295,8 +272,8 @@ local function walker(props: Properties)
 end
 -- Class
 -- the editor as a walk: one page at a time in one direction, the mannequin of the booth in the gap between the two
--- panels of a page. there's a way back one stop at a time + none ahead but the button of the page. it ends on its
--- last page, which saves
+-- panels of a page. there's a way back one stop at a time, which takes nothing back, + none ahead but the button of
+-- the page. it ends on its last page, which saves
 return function(props: Properties): React.ReactNode
 	local character = React.useContext(CharacterContext)
 	local walkers: { [string]: React.ReactNode } = {}
