@@ -15,6 +15,7 @@ local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/C
 -- Hooks
 local useAttributeValue = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useAttributeValue")
 local usePlayerCharacter = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/usePlayerCharacter")
+local usePlayers = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/usePlayers")
 local useSignalState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useSignalState")
 -- Contexts
 -- Types
@@ -79,35 +80,6 @@ local MODE_TEXTS: ModeTexts? = GameDefinition.tune(nil :: ModeTexts?, {
 -- References
 -- Private Functions
 local e = React.createElement
-
--- everybody in the game, a player that is on their way out is already left out
-local function usePlayers(): { Player }
-	local players: { Player }, setPlayers: ({ Player }) -> () = React.useState(Players:GetPlayers())
-	React.useEffect(function()
-		local function update(leavingPlayer: Player?)
-			local out: { Player } = {}
-			for _, player in Players:GetPlayers() do
-				if player ~= leavingPlayer then
-					table.insert(out, player)
-				end
-			end
-			table.freeze(out)
-			setPlayers(out)
-		end
-		local addedConnection = Players.PlayerAdded:Connect(function()
-			update(nil)
-		end)
-		local removingConnection = Players.PlayerRemoving:Connect(function(player: Player)
-			update(player)
-		end)
-		update(nil)
-		return function()
-			addedConnection:Disconnect()
-			removingConnection:Disconnect()
-		end
-	end, {})
-	return players
-end
 
 -- the head isn't there yet when the avatar replicates + is swapped for another when the body is rebuilt
 local function useHead(character: Model?): BasePart?
