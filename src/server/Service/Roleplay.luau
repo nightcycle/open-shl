@@ -114,6 +114,10 @@ return ServiceLocker(function(): RoleplayService
 			if not roleplay then
 				return
 			end
+			-- the remote lets every expression there is through, a game only has the ones it has rows for
+			if expressionId and ExpressionDefinition.get(expressionId).IsErr then
+				return
+			end
 			roleplay.ExpressionId = expressionId
 			if player.Character then
 				applyExpression(player, player.Character, roleplay)
