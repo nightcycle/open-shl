@@ -19,6 +19,7 @@ local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/C
 local PlayerBoard = require("@self/PlayerBoard")
 local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
+local StockHealth = require("@self/StockHealth")
 -- Hooks
 -- Contexts
 -- Types
@@ -49,6 +50,8 @@ local REGISTRY: Registry = {
 		NameTag = NameTag,
 		CombatFeedback = CombatFeedback,
 		ServerId = ServerId,
+		-- it draws nothing: the health bar is the engine's, this keeps it on what the game says is left
+		StockHealth = StockHealth,
 	},
 	TOP_OVERLAYS = {},
 }
