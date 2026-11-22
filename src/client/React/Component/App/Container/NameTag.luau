@@ -20,8 +20,10 @@ local useSignalState = require("@game/StarterPlayer/StarterPlayerScripts/Client/
 -- Contexts
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
 type IdentityKey = CharacterType.IdentityKey
+type TeamId = CombatType.TeamId
 type PublicProfile = ProfileType.PublicProfile
 -- when the name over somebody gives way to what they tell about themselves
 type BioTiming = {
@@ -68,6 +70,15 @@ local ALIGNMENT_COLORS: { [PseudoEnum.Alignment]: Color3 }? =
 		},
 	})
 local NO_ALIGNMENTS: { [number]: PseudoEnum.Alignment } = table.freeze({})
+-- what a name is written in by the side its avatar came in on, where the server puts everybody on one. an avatar
+-- without a side + a game without a table are in the color of the look
+local TEAM_COLORS: { [TeamId]: Color3 }? = GameDefinition.tune(nil :: { [TeamId]: Color3 }?, {
+	-- the blue + the red its name label had for the two
+	shl3 = {
+		Heroes = Color3.fromRGB(0, 0, 255),
+		Villains = Color3.fromRGB(255, 0, 0),
+	},
+})
 -- only a game where who fights is each player's own pick says which they picked
 local MODE_TEXTS: ModeTexts? = GameDefinition.tune(nil :: ModeTexts?, {
 	-- the words its player list had for the two
@@ -171,9 +182,20 @@ local function playerTag(props: {
 	local isNameHidden = useAttributeValue(character, AttributeDefinition.IsNameHidden)
 	local identityKey = useAttributeValue(character, AttributeDefinition.IdentityKey)
 	local isPeaceful = useAttributeValue(character, AttributeDefinition.IsPeaceful)
+	local teamId: TeamId? = useAttributeValue(character, AttributeDefinition.TeamId)
 	-- a name over an avatar that's out of sight would say where it is
 	if not head or isNameHidden then
 		return nil
+	end
+	-- the side the server put the avatar on comes before the one its player says they're on: a game has the one or
+	-- the other
+	local sideColor3: Color3? = nil
+	if identityKey == SIDED_IDENTITY_KEY then
+		if TEAM_COLORS and teamId then
+			sideColor3 = TEAM_COLORS[teamId]
+		elseif ALIGNMENT_COLORS and props.Alignment then
+			sideColor3 = ALIGNMENT_COLORS[props.Alignment]
+		end
 	end
 	return e(
 		NameTag,
@@ -183,11 +205,7 @@ local function playerTag(props: {
 			UserName = props.Player.Name,
 			IsInMenu = isInMenu,
 			Bio = if isBioShown then props.Bio else nil,
-			TeamColor3 = if ALIGNMENT_COLORS
-					and props.Alignment
-					and identityKey == SIDED_IDENTITY_KEY
-				then ALIGNMENT_COLORS[props.Alignment]
-				else nil,
+			TeamColor3 = sideColor3,
 			Mode = if MODE_TEXTS then (if isPeaceful then MODE_TEXTS.Peaceful else MODE_TEXTS.Fighting) else nil,
 		} :: NameTag.Properties
 	)
