@@ -6,6 +6,7 @@ local Players = game:GetService("Players")
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
 local PlayerBoard = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/PlayerBoard")
@@ -23,15 +24,19 @@ local e = React.createElement
 -- everybody in the game, in the order the engine lists them: what roblox knows them as + the name of whoever their
 -- avatar is out as. the server says that on the player: an avatar is only here while it's in range, in the old place
 -- every one of them was. whoever wasn't dressed yet has no name to go by, neither has one that wasn't given any.
--- nobody has a price on them: there are no sides to be on the wrong one of yet
+-- what's on somebody's head is read off their avatar by the rule the server pays by: nothing for whoever is on the
+-- side nobody is paid for, has no avatar or is in a place without sides. the old place had a hero read as worth
+-- what a villain starts at
 local function getRows(): { Row }
 	local out: { Row } = {}
 	for _, player in Players:GetPlayers() do
 		local personaName = AttributeDefinition.get(player, AttributeDefinition.ActivePersonaName)
+		local avatar = player.Character
 		local row: Row = {
 			UserId = player.UserId,
 			UserName = player.Name,
 			Name = if personaName ~= "" then personaName else nil,
+			Bounty = if avatar then CombatDefinition.getBounty(avatar) else nil,
 		}
 		table.freeze(row)
 		table.insert(out, row)
