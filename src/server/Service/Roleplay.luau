@@ -17,10 +17,8 @@ local NetworkService = require("@game/ServerScriptService/Server/Service/Network
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 -- Types
-local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type ExpressionId = ExpressionDefinition.ExpressionId
-type PlayerSave = SaveType.PlayerSave
 type Session = SessionService.Session
 -- none of it is saved. it belongs to the player rather than to the avatar, so it's still there after a respawn
 type Roleplay = {
@@ -139,21 +137,6 @@ return ServiceLocker(function(): RoleplayService
 			roleplay.IsHandcuffed = isHandcuffed
 			if player.Character then
 				applyHandcuffs(player.Character, roleplay)
-			end
-		end)
-	)
-	table.insert(
-		self._Connections,
-		NetworkService:Connect(RemoteDefinition.SetApartmentLocked, function(player: Player, isLocked: boolean)
-			local saveRes = SessionService:Update(player, function(save: PlayerSave): PlayerSave?
-				if save.IsApartmentLocked == isLocked then
-					return nil
-				end
-				save.IsApartmentLocked = isLocked
-				return save
-			end)
-			if saveRes.IsErr then
-				warn(`apartment lock err: {saveRes.Value}`)
 			end
 		end)
 	)

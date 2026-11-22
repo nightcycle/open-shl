@@ -333,6 +333,7 @@ end
 -- the requests only this game takes: a base is furnished, + what it's furnished with is sold where it's put
 local function start(rooms: Rooms): (() -> ())?
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	assert(AvatarService.IsInitialized, `the avatar service isn't initialized`)
 	assert(EconomyService.IsInitialized, `the economy service isn't initialized`)
 	NetworkService:Handle(
@@ -368,7 +369,25 @@ local function start(rooms: Rooms): (() -> ())?
 			return purchaseTheme(player, themeId)
 		end
 	)
-	return nil
+	-- the lock of a door is its owner's to set from wherever they are
+	local lockConnection = NetworkService:Connect(
+		RemoteDefinition.SetApartmentLocked,
+		function(player: Player, isLocked: boolean)
+			local saveRes = SessionService:Update(player, function(save: PlayerSave): PlayerSave?
+				if save.IsApartmentLocked == isLocked then
+					return nil
+				end
+				save.IsApartmentLocked = isLocked
+				return save
+			end)
+			if saveRes.IsErr then
+				warn(`apartment lock err: {saveRes.Value}`)
+			end
+		end
+	)
+	return function()
+		lockConnection:Disconnect()
+	end
 end
 -- Class
 -- a residence of superhero life 2 is an apartment over a base: everybody gets one behind a door of the lobby, its
