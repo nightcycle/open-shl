@@ -43,8 +43,8 @@ Types.Screen = Type.union(
 export type ScreenType = "None" | "CharacterSelect" | "CharacterEditor" | "ArtifactMenu"
 Types.ScreenType = Type.literal("None", "CharacterSelect", "CharacterEditor", "ArtifactMenu")
 -- a menu over the gameplay hud, one at most is open
-export type PanelId = "Music" | "Actions" | "Database" | "Shop" | "Build"
-Types.PanelId = Type.literal("Music", "Actions", "Database", "Shop", "Build")
+export type PanelId = "Music" | "Actions" | "Database" | "Shop" | "Build" | "TeamChange"
+Types.PanelId = Type.literal("Music", "Actions", "Database", "Shop", "Build", "TeamChange")
 -- a phase a game goes through on the way in. the browser isn't one, it's a side room of the mode screen, + what
 -- follows the last one is the game itself
 export type Stop = "Loading" | "ModeSelect" | "Intro"
