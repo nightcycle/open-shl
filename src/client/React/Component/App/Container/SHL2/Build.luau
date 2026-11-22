@@ -4,6 +4,7 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local BuildService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Build")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local ResidenceService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Residence")
@@ -28,11 +29,12 @@ local REFUSAL_DURATION = 4
 local e = React.createElement
 -- Class
 return function(): React.ReactNode
+	assert(BuildService.IsInitialized, `the build service isn't initialized`)
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(ResidenceService.IsInitialized, `the residence service isn't initialized`)
 	assert(ShellService.IsInitialized, `the shell service isn't initialized`)
-	local selectedFurnitureId: string? = useSignalState(ResidenceService.FurnitureIdChanged, function(): string?
-		return ResidenceService:GetFurnitureId()
+	local selectedFurnitureId: string? = useSignalState(BuildService.FurnitureIdChanged, function(): string?
+		return BuildService:GetFurnitureId()
 	end)
 	-- the menu is only up inside of the player's own residence
 	local state: ResidenceState? = useSignalState(ResidenceService.StateChanged, function(): ResidenceState?
@@ -44,7 +46,7 @@ return function(): React.ReactNode
 	local isPurchasingRef = React.useRef(false)
 	local isApplyingRef = React.useRef(false)
 	React.useEffect(function()
-		local connection = ResidenceService.RequestFailed:Connect(function(message: string)
+		local connection = BuildService.RequestFailed:Connect(function(message: string)
 			setRefusal({
 				Message = message,
 			})
@@ -95,7 +97,7 @@ return function(): React.ReactNode
 				elseif action.Type == "PurchaseTheme" then
 					purchase(RemoteDefinition.PurchaseTheme, action.ThemeId)
 				elseif action.Type == "SelectFurniture" then
-					local furnitureRes = ResidenceService:SetFurnitureId(action.FurnitureId)
+					local furnitureRes = BuildService:SetFurnitureId(action.FurnitureId)
 					if furnitureRes.IsErr then
 						setRefusal({
 							Message = furnitureRes.Value,
@@ -109,7 +111,7 @@ return function(): React.ReactNode
 					end
 					isApplyingRef.current = true
 					task.spawn(function()
-						local themeRes = ResidenceService:ApplyTheme(action.ThemeId)
+						local themeRes = BuildService:ApplyTheme(action.ThemeId)
 						isApplyingRef.current = false
 						if not isMountedRef.current then
 							return

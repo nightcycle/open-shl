@@ -97,6 +97,15 @@ local ENTRIES: { Entry } = {
 		end,
 	},
 	{
+		Name = "Build",
+		IsFeatured = FEATURES.Furniture,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Build")
+			assert(not service.IsInitialized, `the build service is already initialized`)
+			return service
+		end,
+	},
+	{
 		Name = "QuestGiver",
 		IsFeatured = FEATURES.Quests,
 		Load = function(): Service
