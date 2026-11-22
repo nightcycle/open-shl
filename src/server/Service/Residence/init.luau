@@ -25,6 +25,7 @@ local ThemeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Theme
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local ResidenceType = require("@game/ServerScriptService/Server/Type/Residence")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Result<V, E> = TypeUnionLib.Result<V, E>
@@ -38,10 +39,9 @@ type Session = SessionService.Session
 type ResidenceState = SessionType.ResidenceState
 type FurniturePlacement = SessionType.FurniturePlacement
 type FurnitureMove = SessionType.FurnitureMove
-type Slot = {
-	Id: ResidenceId,
-	Plate: TextLabel, -- next to the door in the lobby, it reads who lives behind it
-}
+type Slot = ResidenceType.Slot
+type Rooms = ResidenceType.Rooms
+type Rule = ResidenceType.Rule
 type ResidenceServiceImpl = {
 	__index: ResidenceServiceImpl,
 }
@@ -84,9 +84,13 @@ local function getSlots(): { Slot }
 			warn(`"{door.Name}" isn't the door of a residence`)
 			continue
 		end
+		local label: TextLabel = plate
 		table.insert(out, {
 			Id = door.Name :: ResidenceId,
-			Plate = plate,
+			-- the plate next to the door in the lobby reads who lives behind it
+			SetOwner = function(player: Player?)
+				label.Text = if player then player.Name else VACANT_TEXT
+			end,
 		})
 	end
 	-- the same order on every server: one column of the tower from the ground up, then the other
@@ -193,107 +197,22 @@ local function newCFrame(furnitureId: string, x: number, z: number, rotationDeg:
 	return Result.ok(cframe)
 end
 
-local function assign(self: ResidenceService, player: Player)
-	for _, owner in self._Owners do
-		if owner == player then
-			return
-		end
-	end
-	for _, slot in self._Slots do
-		if self._Owners[slot.Id] then
-			continue
-		end
-		self._Owners[slot.Id] = player
-		slot.Plate.Text = player.Name
-		AttributeDefinition.set(player, AttributeDefinition.ResidenceId, slot.Id)
-		return
-	end
-	warn(`every residence is taken, {player.Name} goes without one`)
-end
-
-local function leave(self: ResidenceService, player: Player)
-	local host = self._Hosts[player]
-	if not host then
-		return
-	end
-	self._Hosts[player] = nil
-	for _, other in self._Hosts do
-		if other == host then
-			return
-		end
-	end
-	-- nobody is left to tell of a change
-	self._States[host] = nil
-end
-
--- whoever is still inside is walked out by their own client as the owner goes
-local function free(self: ResidenceService, player: Player)
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	leave(self, player)
-	for visitor, host in self._Hosts do
-		if host == player then
-			self._Hosts[visitor] = nil
-		end
-	end
-	self._States[player] = nil
-	for _, slot in self._Slots do
-		if self._Owners[slot.Id] == player then
-			self._Owners[slot.Id] = nil
-			slot.Plate.Text = VACANT_TEXT
-		end
-	end
-	-- a client finds the owner of a door by it, the player is still around for a moment as the next one moves in
-	AttributeDefinition.set(player, AttributeDefinition.ResidenceId, nil)
-	-- somebody who came in while every residence was taken moves in now
-	for _, other in Players:GetPlayers() do
-		if other ~= player and SessionService:Get(other).IsSome then
-			assign(self, other)
-		end
-	end
-end
-
--- the lock only keeps the door shut, a visitor who's already inside stays
-local function enter(self: ResidenceService, player: Player, residenceId: ResidenceId): Result<ResidenceState, string>
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	if SessionService:Get(player).IsNone then
-		return Result.err(`{player.Name} has no session`)
-	end
-	local owner = self._Owners[residenceId]
-	local sessionOpt = if owner then SessionService:Get(owner) else nil
-	if not owner or not sessionOpt or sessionOpt.IsNone then
-		return Result.err(`nobody lives in "{residenceId}"`)
-	end
-	local save = sessionOpt.Value.Save
-	if owner ~= player and save.IsApartmentLocked then
-		return Result.err(`the door is locked`)
-	end
-	leave(self, player)
-	local state = newState(residenceId, owner, save)
-	self._Hosts[player] = owner
-	self._States[owner] = state
-	return Result.ok(state)
-end
-
 -- a base is only built on by its owner + from the inside
-local function getSave(self: ResidenceService, player: Player): Result<PlayerSave, string>
+local function getSave(rooms: Rooms, player: Player): Result<PlayerSave, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
 	if sessionOpt.IsNone then
 		return Result.err(`{player.Name} has no session`)
 	end
-	if self._Hosts[player] ~= player then
+	if rooms.GetHost(player) ~= player then
 		return Result.err(`{player.Name} isn't in their base`)
 	end
 	return Result.ok(sessionOpt.Value.Save)
 end
 
-local function place(
-	self: ResidenceService,
-	player: Player,
-	placement: FurniturePlacement
-): Result<PlacedFurniture, string>
+local function place(rooms: Rooms, player: Player, placement: FurniturePlacement): Result<PlacedFurniture, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local saveRes = getSave(self, player)
+	local saveRes = getSave(rooms, player)
 	if saveRes.IsErr then
 		return saveRes
 	end
@@ -333,13 +252,9 @@ local function place(
 	return Result.ok(placed)
 end
 
-local function move(
-	self: ResidenceService,
-	player: Player,
-	furnitureMove: FurnitureMove
-): Result<PlacedFurniture, string>
+local function move(rooms: Rooms, player: Player, furnitureMove: FurnitureMove): Result<PlacedFurniture, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local saveRes = getSave(self, player)
+	local saveRes = getSave(rooms, player)
 	if saveRes.IsErr then
 		return saveRes
 	end
@@ -366,9 +281,9 @@ local function move(
 	return Result.ok(placed)
 end
 
-local function remove(self: ResidenceService, player: Player, placedId: string): Result<true, string>
+local function remove(rooms: Rooms, player: Player, placedId: string): Result<true, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local saveRes = getSave(self, player)
+	local saveRes = getSave(rooms, player)
 	if saveRes.IsErr then
 		return saveRes
 	end
@@ -386,9 +301,9 @@ local function remove(self: ResidenceService, player: Player, placedId: string):
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
 
-local function setTheme(self: ResidenceService, player: Player, themeId: string): Result<true, string>
+local function setTheme(rooms: Rooms, player: Player, themeId: string): Result<true, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local saveRes = getSave(self, player)
+	local saveRes = getSave(rooms, player)
 	if saveRes.IsErr then
 		return saveRes
 	end
@@ -434,6 +349,149 @@ local function purchaseTheme(player: Player, themeId: string): Result<true, stri
 		return save.Inventory.ThemeIds
 	end)
 end
+
+-- the requests only this game takes: a base is furnished, + what it's furnished with is sold where it's put
+local function start(rooms: Rooms): (() -> ())?
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	assert(AvatarService.IsInitialized, `the avatar service isn't initialized`)
+	assert(EconomyService.IsInitialized, `the economy service isn't initialized`)
+	NetworkService:Handle(
+		RemoteDefinition.PlaceFurniture,
+		function(player: Player, placement: FurniturePlacement): Result<PlacedFurniture, string>
+			return place(rooms, player, placement)
+		end
+	)
+	NetworkService:Handle(
+		RemoteDefinition.MoveFurniture,
+		function(player: Player, furnitureMove: FurnitureMove): Result<PlacedFurniture, string>
+			return move(rooms, player, furnitureMove)
+		end
+	)
+	NetworkService:Handle(
+		RemoteDefinition.RemoveFurniture,
+		function(player: Player, placedId: string): Result<true, string>
+			return remove(rooms, player, placedId)
+		end
+	)
+	NetworkService:Handle(RemoteDefinition.SetBaseTheme, function(player: Player, themeId: string): Result<true, string>
+		return setTheme(rooms, player, themeId)
+	end)
+	NetworkService:Handle(
+		RemoteDefinition.PurchaseFurniture,
+		function(player: Player, furnitureId: string): Result<true, string>
+			return purchaseFurniture(player, furnitureId)
+		end
+	)
+	NetworkService:Handle(
+		RemoteDefinition.PurchaseTheme,
+		function(player: Player, themeId: string): Result<true, string>
+			return purchaseTheme(player, themeId)
+		end
+	)
+	return nil
+end
+
+-- what's one game's own of a residence
+local RULE: Rule = table.freeze({
+	GetSlots = getSlots,
+	-- everybody is given one
+	GetIfHoused = function(_save: PlayerSave): boolean
+		return true
+	end,
+	GetIfLocked = function(save: PlayerSave): boolean
+		return save.IsApartmentLocked
+	end,
+	NewState = newState,
+	Start = start,
+})
+assert(ResidenceType.Rule(RULE))
+
+local function assign(self: ResidenceService, player: Player)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	for _, owner in self._Owners do
+		if owner == player then
+			return
+		end
+	end
+	-- who gets a residence is the game's to say
+	local sessionOpt = SessionService:Get(player)
+	if sessionOpt.IsNone or not RULE.GetIfHoused(sessionOpt.Value.Save) then
+		return
+	end
+	for _, slot in self._Slots do
+		if self._Owners[slot.Id] then
+			continue
+		end
+		self._Owners[slot.Id] = player
+		slot.SetOwner(player)
+		AttributeDefinition.set(player, AttributeDefinition.ResidenceId, slot.Id)
+		return
+	end
+	warn(`every residence is taken, {player.Name} goes without one`)
+end
+
+local function leave(self: ResidenceService, player: Player)
+	local host = self._Hosts[player]
+	if not host then
+		return
+	end
+	self._Hosts[player] = nil
+	for _, other in self._Hosts do
+		if other == host then
+			return
+		end
+	end
+	-- nobody is left to tell of a change
+	self._States[host] = nil
+end
+
+-- whoever is still inside is walked out by their own client as the owner goes
+local function free(self: ResidenceService, player: Player)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	leave(self, player)
+	for visitor, host in self._Hosts do
+		if host == player then
+			self._Hosts[visitor] = nil
+		end
+	end
+	self._States[player] = nil
+	for _, slot in self._Slots do
+		if self._Owners[slot.Id] == player then
+			self._Owners[slot.Id] = nil
+			slot.SetOwner(nil)
+		end
+	end
+	-- a client finds the owner of a door by it, the player is still around for a moment as the next one moves in
+	AttributeDefinition.set(player, AttributeDefinition.ResidenceId, nil)
+	-- somebody who came in while every residence was taken moves in now
+	for _, other in Players:GetPlayers() do
+		if other ~= player and SessionService:Get(other).IsSome then
+			assign(self, other)
+		end
+	end
+end
+
+-- the lock only keeps the door shut, a visitor who's already inside stays
+local function enter(self: ResidenceService, player: Player, residenceId: ResidenceId): Result<ResidenceState, string>
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	if SessionService:Get(player).IsNone then
+		return Result.err(`{player.Name} has no session`)
+	end
+	local owner = self._Owners[residenceId]
+	local sessionOpt = if owner then SessionService:Get(owner) else nil
+	if not owner or not sessionOpt or sessionOpt.IsNone then
+		return Result.err(`nobody lives in "{residenceId}"`)
+	end
+	local save = sessionOpt.Value.Save
+	if owner ~= player and RULE.GetIfLocked(save) then
+		return Result.err(`the door is locked`)
+	end
+	leave(self, player)
+	local state = RULE.NewState(residenceId, owner, save)
+	self._Hosts[player] = owner
+	self._States[owner] = state
+	return Result.ok(state)
+end
 -- Class
 local ResidenceService = {} :: ResidenceServiceImpl
 ResidenceService.__index = ResidenceService
@@ -441,11 +499,13 @@ ResidenceService.__index = ResidenceService
 return ServiceLocker(function(): ResidenceService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	assert(AvatarService.IsInitialized, `the avatar service isn't initialized`)
-	assert(EconomyService.IsInitialized, `the economy service isn't initialized`)
+	local slots = RULE.GetSlots()
+	for _, slot in slots do
+		assert(ResidenceType.Slot(slot))
+	end
 	local self = setmetatable({
 		IsInitialized = true :: true,
-		_Slots = getSlots(),
+		_Slots = slots,
 		_Owners = {},
 		_Hosts = {},
 		_States = {},
@@ -465,40 +525,16 @@ return ServiceLocker(function(): ResidenceService
 			leave(self, player)
 		end)
 	)
-	NetworkService:Handle(
-		RemoteDefinition.PlaceFurniture,
-		function(player: Player, placement: FurniturePlacement): Result<PlacedFurniture, string>
-			return place(self, player, placement)
-		end
-	)
-	NetworkService:Handle(
-		RemoteDefinition.MoveFurniture,
-		function(player: Player, furnitureMove: FurnitureMove): Result<PlacedFurniture, string>
-			return move(self, player, furnitureMove)
-		end
-	)
-	NetworkService:Handle(
-		RemoteDefinition.RemoveFurniture,
-		function(player: Player, placedId: string): Result<true, string>
-			return remove(self, player, placedId)
-		end
-	)
-	NetworkService:Handle(RemoteDefinition.SetBaseTheme, function(player: Player, themeId: string): Result<true, string>
-		return setTheme(self, player, themeId)
-	end)
-	-- furniture + themes are for a base, they're sold where they're put
-	NetworkService:Handle(
-		RemoteDefinition.PurchaseFurniture,
-		function(player: Player, furnitureId: string): Result<true, string>
-			return purchaseFurniture(player, furnitureId)
-		end
-	)
-	NetworkService:Handle(
-		RemoteDefinition.PurchaseTheme,
-		function(player: Player, themeId: string): Result<true, string>
-			return purchaseTheme(player, themeId)
-		end
-	)
+	-- the game's own part asks about who's inside through this, it's never handed the service
+	local rooms: Rooms = table.freeze({
+		GetHost = function(player: Player): Player?
+			return self._Hosts[player]
+		end,
+	})
+	local stop = RULE.Start(rooms)
+	if stop then
+		table.insert(self._CleanUpCallbacks, stop)
+	end
 
 	-- whatever wrote to the save of an owner, the players inside only hear of it when what they see changed
 	local changedConnection = SessionService.Changed:Connect(
@@ -507,7 +543,7 @@ return ServiceLocker(function(): ResidenceService
 			if not priorState or session.Save == priorSession.Save then
 				return
 			end
-			local state = newState(priorState.ResidenceId, player, session.Save)
+			local state = RULE.NewState(priorState.ResidenceId, player, session.Save)
 			if StateUtil.getIfEqual(state, priorState) then
 				return
 			end
@@ -542,7 +578,7 @@ return ServiceLocker(function(): ResidenceService
 			if owner then
 				AttributeDefinition.set(owner, AttributeDefinition.ResidenceId, nil)
 			end
-			slot.Plate.Text = VACANT_TEXT
+			slot.SetOwner(nil)
 		end
 	end)
 
