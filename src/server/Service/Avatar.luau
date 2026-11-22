@@ -321,6 +321,8 @@ function AvatarService:Dress(player: Player)
 	end
 	local look = lookOpt.Value
 	AttributeDefinition.set(character, AttributeDefinition.PersonaName, look.PersonaName)
+	-- the name is told on the player as well, for whoever lists everybody from where the avatar isn't in range
+	AttributeDefinition.set(player, AttributeDefinition.ActivePersonaName, look.PersonaName)
 	AttributeDefinition.set(character, AttributeDefinition.IdentityKey, look.IdentityKey)
 	AttributeDefinition.set(character, AttributeDefinition.IsMasked, self:GetIfMasked(player))
 	if AbilityService.IsInitialized then

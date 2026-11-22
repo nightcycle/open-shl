@@ -100,6 +100,9 @@ Module.HasExtraPowers = new("Player", "HasExtraPowers", Type.boolean, false) :: 
 Module.HasAdvancedRoleplay = new("Player", "HasAdvancedRoleplay", Type.boolean, false) :: Attribute<boolean>
 -- "" until the server picked one
 Module.ActiveCharacterId = new("Player", "ActiveCharacterId", Type.string, "") :: Attribute<string>
+-- who their avatar was last dressed as: an avatar that's out of range isn't on a client, its player is. "" until the
+-- first dress
+Module.ActivePersonaName = new("Player", "ActivePersonaName", Type.string, "") :: Attribute<string>
 Module.IsTutorialEnabled = new("Player", "IsTutorialEnabled", Type.boolean, true) :: Attribute<boolean>
 Module.IsApartmentLocked = new("Player", "IsApartmentLocked", Type.boolean, true) :: Attribute<boolean>
 -- whoever was sent to this server by the game picked their mode on the way, they aren't asked again
