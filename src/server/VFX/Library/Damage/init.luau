@@ -8,6 +8,8 @@ local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Comb
 local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local ServerVFX = require("@game/ServerScriptService/Server/VFX")
 -- Types
+local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
+type ServerScope = VFXType.ServerScope
 export type Properties = {
 	Target: Model,
 	Amount: number,
@@ -23,7 +25,7 @@ local isProperties = Type.strictInterface({
 -- Class
 -- takes health off a character, whoever asks + whatever the rules of the mode. true if it landed, which it never
 -- does on one that's invulnerable
-return ServerVFX.newEvent("Damage", isProperties, function(props: Properties): boolean
+return ServerVFX.newEvent("Damage", isProperties, function(props: Properties, scope: ServerScope): boolean
 	local target = props.Target
 	local humanoid = target:FindFirstChildWhichIsA("Humanoid")
 	if not humanoid or humanoid.Health <= 0 or AttributeDefinition.get(target, AttributeDefinition.IsDead) then
@@ -35,14 +37,21 @@ return ServerVFX.newEvent("Damage", isProperties, function(props: Properties): b
 	local priorHealth = AttributeDefinition.get(target, AttributeDefinition.Health)
 	local health = math.max(0, priorHealth - props.Amount)
 	AttributeDefinition.set(target, AttributeDefinition.Health, health)
-	if health <= 0 then
+	local isDown = health <= 0
+	if isDown then
 		AttributeDefinition.set(target, AttributeDefinition.IsDead, true)
 		FightingUtil.clear(target)
 		humanoid.Health = 0
-	elseif health < priorHealth and CombatDefinition.FIGHTING then
+	end
+	if health < priorHealth and CombatDefinition.FIGHTING then
 		-- whatever takes health off a character comes through here, so this is where a game that keeps a fight out
-		-- of its menus counts one from
-		FightingUtil.hit(target, CombatDefinition.getTime())
+		-- of its menus counts one from: for whoever lost it + is still up, + for the character the effect belongs
+		-- to, who took it off them
+		local now = CombatDefinition.getTime()
+		if not isDown then
+			FightingUtil.hit(target, now)
+		end
+		FightingUtil.land(scope.Character, target, now)
 	end
 	return true
 end)

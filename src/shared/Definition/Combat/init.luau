@@ -46,7 +46,8 @@ Module.IS_MENU_SAFE = RULE.IsMenuSafe
 -- if who fights is each player's own pick: whoever sat fights out hurts nobody + nobody hurts them
 Module.IS_OPTIONAL = RULE.IsOptional == true
 
--- how long a loss of health keeps somebody out of the menus, nil in a game where they get into one whenever
+-- how long a loss of health keeps the two of it out of the menus, who lost it + who took it off them. nil in a game
+-- where they get into one whenever
 Module.FIGHTING = RULE.Fighting
 
 -- the clock a fight is timed on: the server's, every client keeps up with it by itself
@@ -54,8 +55,8 @@ Module.getTime = function(): number
 	return Workspace:GetServerTimeNow()
 end
 
--- when the fight of somebody who loses health right now is over: a loss adds to what's left of the one before, as
--- far off as the game lets a fight get. nil in a game that keeps no such time
+-- when the fight of somebody who loses health right now is over, + of whoever takes it off them: a loss adds to
+-- what's left of the one before, as far off as the game lets a fight get. nil in a game that keeps no such time
 Module.getFightingUntil = function(fightingUntil: number?, now: number): number?
 	local fighting = RULE.Fighting
 	if not fighting then

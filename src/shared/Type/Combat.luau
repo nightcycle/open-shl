@@ -34,7 +34,8 @@ Types.Regeneration = Type.strictInterface({
 	Interval = Type.numberPositive,
 })
 
--- how long somebody who lost health counts as in a fight: every loss adds to what's left of the one before
+-- how long the two of a hit count as in a fight, who lost health + who took it off them: every loss adds to what's
+-- left of the one before
 export type Fighting = {
 	Duration: number, -- seconds a loss of health adds
 	MaxDuration: number, -- seconds it's never further off than

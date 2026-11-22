@@ -90,6 +90,49 @@ local function walkNoClock()
 	assert(getFightingUntil(avatar) == nil, `a death wrote a fight down`)
 end
 
+-- whoever lands a hit is in the fight they started: for as long as whoever they hit, + no longer than a fight gets
+local function walkAttacker(fighting: Fighting)
+	local duration, maxDuration = fighting.Duration, fighting.MaxDuration
+	local attacker, victim = newAvatar(), newAvatar()
+	FightingUtil.land(attacker, victim, START_TIME)
+	assert(getFightingUntil(attacker) == START_TIME + duration, `one hit landed is no fight of {duration} seconds`)
+	-- what the victim lost is counted where they lost it, not here
+	assert(getFightingUntil(victim) == nil, `a hit that landed was counted for who it landed on`)
+	assert(
+		FightingUtil.getMenuRefusal(attacker, true, START_TIME + 1) ~= nil,
+		`whoever just landed a hit gets into a menu`
+	)
+
+	FightingUtil.hit(victim, START_TIME)
+	for index = 1, 2 do
+		FightingUtil.land(attacker, victim, START_TIME + index)
+		FightingUtil.hit(victim, START_TIME + index)
+	end
+	local fightingUntil = getFightingUntil(attacker)
+	assert(fightingUntil == START_TIME + 2 + maxDuration, `three hits landed are a fight until {fightingUntil}`)
+	assert(fightingUntil == getFightingUntil(victim), `the two of a fight aren't in it for as long`)
+
+	-- a loss nobody is behind, one somebody brought on themselves + one that lands after whoever sent it went down
+	local bystander = newAvatar()
+	FightingUtil.land(nil, bystander, START_TIME)
+	assert(getFightingUntil(bystander) == nil, `a loss without an attacker was counted as a hit landed`)
+	FightingUtil.land(bystander, bystander, START_TIME)
+	assert(getFightingUntil(bystander) == nil, `somebody landed a hit on themselves`)
+	AttributeDefinition.set(bystander, AttributeDefinition.IsDead, true)
+	FightingUtil.land(bystander, victim, START_TIME)
+	assert(getFightingUntil(bystander) == nil, `the dead are in a fight for a hit that landed late`)
+end
+
+-- a game that keeps no fight has nobody in one for a hit they landed either
+local function walkNoAttacker()
+	local attacker, victim = newAvatar(), newAvatar()
+	for index = 0, 2 do
+		FightingUtil.land(attacker, victim, START_TIME + index)
+		assert(getFightingUntil(attacker) == nil, `a hit landed was written down in a game that keeps no fight`)
+		assert(getFightingUntil(victim) == nil, `a hit landed was counted for who it landed on`)
+	end
+end
+
 -- the way into a menu is shut for as long as the fight is on, the way out of one never is
 local function walkMenu(fighting: Fighting)
 	local avatar = newAvatar()
@@ -148,6 +191,15 @@ return {
 			walkClock(FIGHTING)
 		else
 			walkNoClock()
+		end
+	end),
+
+	-- the one who lands a hit is in the fight as well
+	Attacker = SpecUtil.newScenario(function()
+		if FIGHTING then
+			walkAttacker(FIGHTING)
+		else
+			walkNoAttacker()
 		end
 	end),
 
