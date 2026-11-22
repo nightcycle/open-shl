@@ -16,6 +16,10 @@ local DATA_MODEL_TIMEOUT = 10
 -- studs the middle of a body of height 1 is over the ground it stands on. the plain block body of shl1 + shl3 has the
 -- longer hip, at the height of the other body its feet would be in the floor
 local STAND_HEIGHT = GameDefinition.tune(2.5, { shl1 = 3, shl3 = 3 })
+-- how see-through the real head of an avatar is left under the one that stands in for it. the engine draws its health
+-- bar over no head that's gone altogether, so a game that leaves health to that bar keeps the least of a head the
+-- engine still draws one over: there's nothing of it to see. in every other game it's gone
+local AVATAR_HEAD_TRANSPARENCY = GameDefinition.tune(1, { shl3 = 0.99 })
 -- Variables
 -- References
 -- Private Functions
@@ -30,7 +34,8 @@ local function applyEdits(rig: Model, description: HumanoidDescription)
 		warn(`rig "{rig.Name}" has no head to edit`)
 		return
 	end
-	realHead.Transparency = 1
+	-- only an avatar has a bar to draw, the head of a body nobody plays is gone in every game
+	realHead.Transparency = if Players:GetPlayerFromCharacter(rig) then AVATAR_HEAD_TRANSPARENCY else 1
 	-- a decal still renders on an invisible part, the stock face would show through
 	for _, v in realHead:GetChildren() do
 		if v:IsA("Decal") then
