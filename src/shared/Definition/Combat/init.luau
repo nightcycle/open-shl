@@ -12,6 +12,7 @@ local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 export type Fighting = CombatType.Fighting
 export type Knockback = CombatType.Knockback
 export type Regeneration = CombatType.Regeneration
+export type Bounty = CombatType.Bounty
 export type CombatRule = CombatType.CombatRule
 -- Constants
 -- what a hit comes to is the game's own, the rule of another game is never required
@@ -45,6 +46,15 @@ Module.IS_MENU_SAFE = RULE.IsMenuSafe
 
 -- if who fights is each player's own pick: whoever sat fights out hurts nobody + nobody hurts them
 Module.IS_OPTIONAL = RULE.IsOptional == true
+
+-- if nobody is hurt by their own side. nil in a game whose players take none
+Module.IS_TEAM_SAFE = RULE.IsTeamSafe
+
+-- if whoever is held in jail is left alone until they make trouble. nil in a game that holds nobody
+Module.IS_JAIL_SAFE = RULE.IsJailSafe
+
+-- what downing somebody is worth + on which side, nil in a game where nobody is paid for it
+Module.BOUNTY = RULE.Bounty
 
 -- how long a loss of health keeps the two of it out of the menus, who lost it + who took it off them. nil in a game
 -- where they get into one whenever
@@ -87,6 +97,21 @@ Module.getIfHostile = function(attacker: Model?, victim: Model): boolean
 			return false
 		end
 	end
+	-- somebody of a side leaves their own alone. a body that's on none is on nobody's
+	if RULE.IsTeamSafe and attacker ~= nil then
+		local teamId = AttributeDefinition.get(victim, AttributeDefinition.TeamId)
+		if teamId ~= nil and teamId == AttributeDefinition.get(attacker, AttributeDefinition.TeamId) then
+			return false
+		end
+	end
+	-- whoever sits in jail is left alone until they make trouble
+	if
+		RULE.IsJailSafe
+		and AttributeDefinition.get(victim, AttributeDefinition.IsJailed) == true
+		and AttributeDefinition.get(victim, AttributeDefinition.IsTroublesome) ~= true
+	then
+		return false
+	end
 	-- one who sat fights out is left alone + leaves everybody alone
 	if RULE.IsOptional then
 		local isPeaceful = AttributeDefinition.get(victim, AttributeDefinition.IsPeaceful) == true
@@ -109,6 +134,17 @@ Module.getDamage = function(attacker: Model?, victim: Model, amount: number): nu
 		return nil
 	end
 	return amount * RULE.PlayerScale
+end
+
+-- what whoever downs that character is paid: the price on the head of its side, + as much again for everybody it
+-- downed since it came in. nil for one nobody is paid for. both sides can ask, only the server pays
+Module.getBounty = function(victim: Model): number?
+	local bounty = RULE.Bounty
+	if not bounty or AttributeDefinition.get(victim, AttributeDefinition.TeamId) ~= bounty.TeamId then
+		return nil
+	end
+	local killStreak = AttributeDefinition.get(victim, AttributeDefinition.KillStreak) or 0
+	return (killStreak + 1) * bounty.Amount
 end
 
 -- the pace somebody who's hit is sent off at, away from whoever hit them. nil in a game that doesn't send them off +

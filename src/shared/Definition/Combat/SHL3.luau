@@ -8,7 +8,9 @@ type CombatRule = CombatType.CombatRule
 -- Constants
 -- a power lists what it takes off anything, a hit on somebody's character is half as much again + sends them off.
 -- health comes back the way the engine hands it out by itself: a hundredth of it a second. a menu shelters whoever
--- sits in it, so nobody gets into one for a quarter of a minute after they lost health or took it off somebody
+-- sits in it, so nobody gets into one for a quarter of a minute after they lost health or took it off somebody.
+-- where a place has sides nobody hurts their own, a villain that's held is left alone until it makes trouble, +
+-- downing a villain pays: fifty, + fifty more for everybody that villain downed since it came in
 local RULE: CombatRule = {
 	PlayerScale = 1.5,
 	IsMenuSafe = true,
@@ -25,6 +27,12 @@ local RULE: CombatRule = {
 	Regeneration = {
 		Amount = 1,
 		Interval = 1,
+	},
+	IsTeamSafe = true,
+	IsJailSafe = true,
+	Bounty = {
+		TeamId = "Villains",
+		Amount = 50,
 	},
 }
 -- Variables
