@@ -3,31 +3,12 @@
 -- Packages
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
+local TakeDownUtil = require("@game/ServerScriptService/Server/Util/TakeDown")
 -- Types
 -- Constants
 -- Variables
 -- References
 -- Private Functions
-local function getIfAlive(character: Model): boolean
-	local humanoid = character:FindFirstChildWhichIsA("Humanoid")
-	return humanoid ~= nil
-		and humanoid.Health > 0
-		and not AttributeDefinition.get(character, AttributeDefinition.IsDead)
-end
-
--- the avatar goes down the way one does whose last health a hit took, whatever it had left + whatever kept it from
--- harm: this is no hit, nothing stands in its way
-local function takeDown(character: Model)
-	local humanoid = character:FindFirstChildWhichIsA("Humanoid")
-	if not humanoid then
-		return
-	end
-	AttributeDefinition.set(character, AttributeDefinition.Health, 0)
-	AttributeDefinition.set(character, AttributeDefinition.IsDead, true)
-	FightingUtil.clear(character)
-	humanoid.Health = 0
-end
 -- Class
 -- the server's side of who fights where that's each player's own pick: whether an avatar sat fights out is the
 -- server's to write, a client only reads it + asks for the other
@@ -49,8 +30,8 @@ function Util.change(character: Model?, isHeld: boolean, isPeaceful: boolean)
 	end
 	if isHeld then
 		Util.apply(character, isPeaceful)
-	elseif getIfAlive(character) then
-		takeDown(character)
+	elseif TakeDownUtil.getIfAlive(character) then
+		TakeDownUtil.takeDown(character)
 	end
 end
 
