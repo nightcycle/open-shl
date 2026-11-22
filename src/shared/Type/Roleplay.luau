@@ -45,6 +45,22 @@ Types.ExpressionId = Type.literal(
 	"Surprised"
 )
 
+-- a row of a game's expressions, each slot holds the key of its face image
+export type ExpressionFace = {
+	Id: ExpressionId,
+	Name: string,
+	Eyebrows: string,
+	Eyes: string,
+	Mouth: string,
+}
+Types.ExpressionFace = Type.strictInterface({
+	Id = Types.ExpressionId,
+	Name = Type.string,
+	Eyebrows = Type.string,
+	Eyes = Type.string,
+	Mouth = Type.string,
+})
+
 export type ExpressionDefinition = {
 	Id: ExpressionId,
 	Name: string,
