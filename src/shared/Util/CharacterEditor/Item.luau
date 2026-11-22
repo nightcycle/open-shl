@@ -127,6 +127,22 @@ local function newItem(state: EditorState, definitionId: string): Item
 	return ShareUtil.tint(appearance.Items, item)
 end
 
+-- what goes on in the place of an item that's taken off, where its page names something: what it was worn on is never
+-- left bare. it comes in what was picked for the groups both have
+local function newStandIn(state: EditorState, item: Item): Item?
+	local pathOpt = CharacterEditorDefinition.getItemPath(item.DefinitionId)
+	local page = if pathOpt.IsSome then PageUtil.get(pathOpt.Value) else nil
+	local standInId = if page and page.Type == "Item" then page.StandInId else nil
+	if not standInId then
+		return nil
+	end
+	local itemDefRes = ItemAppearanceDefinition.get(standInId)
+	if itemDefRes.IsErr then
+		return nil
+	end
+	return carry(WornUtil.newItem(StateUtil.getIdentity(state).Appearance, standInId), itemDefRes.Value, item)
+end
+
 -- the worn item when it's worn, the one that's tried on otherwise
 local function edit(state: EditorState, definitionId: string, fn: (item: Item) -> ()): EditorState
 	local appearance = StateUtil.getIdentity(state).Appearance
@@ -377,16 +393,24 @@ function Util.add(state: EditorState, definitionId: string): Result<EditorState,
 	end))
 end
 
+-- an item whose page names a stand-in leaves that in its place
 function Util.remove(state: EditorState, definitionId: string): Result<EditorState, string>
 	local appearance = StateUtil.getIdentity(state).Appearance
-	if not Util.find(appearance, definitionId) then
+	local removedItem = Util.find(appearance, definitionId)
+	if not removedItem then
 		return Result.ok(state)
 	end
+	local standIn = newStandIn(state, removedItem)
 	local removedState = StateUtil.setFocusedAppearance(
 		state,
 		FreezeUtil.delta(appearance, function(t: Appearance): Appearance
 			for i = #t.Items, 1, -1 do
-				if t.Items[i].DefinitionId == definitionId then
+				if t.Items[i].DefinitionId ~= definitionId then
+					continue
+				end
+				if standIn then
+					t.Items[i] = standIn
+				else
 					table.remove(t.Items, i)
 				end
 			end
