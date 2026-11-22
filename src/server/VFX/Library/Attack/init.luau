@@ -3,6 +3,7 @@
 -- Packages
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
+local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local Damage = require("@game/ServerScriptService/Server/VFX/Library/Damage")
 local ServerVFX = require("@game/ServerScriptService/Server/VFX")
@@ -35,6 +36,17 @@ return ServerVFX.newEvent("Attack", isProperties, function(props: Properties, sc
 		Target = target,
 		Amount = amount,
 	})
+	-- the hit that took the last of somebody's health is the only one that can say so: a body that's down takes no
+	-- other. it's said where downing somebody is worth something to whoever did, for whoever pays to read once
+	local player = scope.Player
+	if
+		isLanded
+		and player
+		and CombatDefinition.BOUNTY
+		and AttributeDefinition.get(target, AttributeDefinition.IsDead)
+	then
+		AttributeDefinition.set(target, AttributeDefinition.DownedBy, player.UserId)
+	end
 	-- only a hit that got through sends them off: whatever keeps the health of somebody keeps them where they are
 	local knockback = CombatDefinition.KNOCKBACK
 	if isLanded and knockback and character then
