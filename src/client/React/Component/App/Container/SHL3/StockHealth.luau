@@ -77,14 +77,18 @@ local function playerHealth(props: {
 	local character = usePlayerCharacter(props.Player)
 	local humanoid = useHumanoid(character)
 	local health = useAttributeValue(character, AttributeDefinition.Health)
+	local isNameHidden = useAttributeValue(character, AttributeDefinition.IsNameHidden)
+	-- a bar over an avatar that's out of sight would say where it is, as its name would: somebody else's is full for
+	-- as long as nobody is shown who they are
+	local shownHealth = if isNameHidden and props.Player ~= Players.LocalPlayer then MAX_HEALTH else health
 
 	React.useEffect(function()
 		-- that it's dead is the server's to say, which it does on the humanoid itself
-		if humanoid and humanoid.Health > 0 and health > 0 then
-			humanoid.Health = humanoid.MaxHealth * health / MAX_HEALTH
+		if humanoid and humanoid.Health > 0 and shownHealth > 0 then
+			humanoid.Health = humanoid.MaxHealth * shownHealth / MAX_HEALTH
 		end
 		return function() end
-	end, { humanoid :: any, health })
+	end, { humanoid :: any, shownHealth })
 
 	return nil
 end
