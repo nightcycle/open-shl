@@ -1,7 +1,6 @@
 --!strict
 --!native
 -- Services
-local RunService = game:GetService("RunService")
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local React = require("@game/ReplicatedStorage/Packages/React")
@@ -13,6 +12,7 @@ local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
 -- Hooks
+local useFraming = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useFraming")
 local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
 local AppTopInsetContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/TopInset")
@@ -27,6 +27,13 @@ export type Properties = {
 local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/SuitManager/CONSTANTS")
 -- a body that was never sized is the plain one
 local DEFAULT_HEIGHT = 1
+-- the camera starts out where the stage has it, then turns to whoever stands there
+local FRAMING: useFraming.Rule = table.freeze({
+	TargetOffset = CONSTANTS.CAMERA_TARGET_OFFSET,
+	Follow = CONSTANTS.CAMERA_FOLLOW,
+	Duration = CONSTANTS.CAMERA_DURATION,
+	IsEasedIn = true,
+})
 -- Variables
 -- References
 local SceneTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/character-select") :: Folder
@@ -34,14 +41,6 @@ local CameraMount = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/char
 local RigAnchor = IndexUtil.waitForPath("game/ReplicatedStorage/lib/scene/character-select/RigAnchor") :: BasePart
 -- Private Functions
 local e = React.createElement
-
--- from where + at what a body of that height is looked at
-local function getFraming(height: number): CFrame
-	local growth = height - DEFAULT_HEIGHT
-	local position = (CameraMount.CFrame * CFrame.new(0, 0, CONSTANTS.CAMERA_RETREAT * growth)).Position
-	local focus = RigAnchor.Position + Vector3.new(0, CONSTANTS.FOCUS_HEIGHT + CONSTANTS.FOCUS_RISE * growth, 0)
-	return CFrame.lookAt(position, focus)
-end
 -- Class
 -- one stage with one mannequin on it, whoever is picked is who it's dressed as
 return function(props: Properties): React.ReactNode
@@ -50,7 +49,7 @@ return function(props: Properties): React.ReactNode
 	local height = if appearance and appearance.Scale then appearance.Scale.Height else DEFAULT_HEIGHT
 
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
-	local camera: Camera?, setCamera: (Camera?) -> () = React.useState(nil :: Camera?)
+	local cameraRef: { current: Camera? } = React.useRef(nil :: Camera?)
 	local worldModel: WorldModel?, setWorldModel: (WorldModel?) -> () = React.useState(nil :: WorldModel?)
 	React.useEffect(function()
 		local viewport = viewportRef.current
@@ -68,34 +67,17 @@ return function(props: Properties): React.ReactNode
 		newWorldModel.Parent = viewport
 		newCamera.Parent = viewport
 		viewport.CurrentCamera = newCamera
-		setCamera(newCamera)
+		cameraRef.current = newCamera
 		setWorldModel(newWorldModel)
 		return function()
+			cameraRef.current = nil
 			newWorldModel:Destroy()
 			newCamera:Destroy()
 		end
 	end, {})
 
-	-- the camera starts out where the stage has it, then turns to whoever stands there
-	React.useEffect(function()
-		if not camera then
-			return function() end
-		end
-		local from = camera.CFrame
-		local to = getFraming(height)
-		local startClock = os.clock()
-		local connection: RBXScriptConnection
-		connection = RunService.RenderStepped:Connect(function()
-			local alpha = math.min((os.clock() - startClock) / CONSTANTS.CAMERA_DURATION, 1)
-			camera.CFrame = from:Lerp(to, alpha)
-			if alpha == 1 then
-				connection:Disconnect()
-			end
-		end)
-		return function()
-			connection:Disconnect()
-		end
-	end, { camera :: any, height })
+	-- after the camera was made: the two effects run in the order they stand in
+	useFraming(cameraRef, CameraMount, RigAnchor, height, FRAMING)
 
 	-- the bare stage stands in until the rig of the scene was made, so there's no hole where the room is
 	local standIn = React.useState(function(): Folder

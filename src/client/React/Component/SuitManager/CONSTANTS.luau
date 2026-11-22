@@ -61,11 +61,12 @@ return {
 	-- right edge as a button of the hud is off its own
 	EXIT_POSITION = UDim2.new(1, -30, 0, 30),
 
-	-- the camera frames a body by how tall it is. it looks at a point this many studs over the floor on a plain one,
-	-- for a body that's taller by a whole height it backs off by 4.25 studs + looks 2.5 higher up
-	FOCUS_HEIGHT = 3.1,
-	FOCUS_RISE = 2.5,
-	CAMERA_RETREAT = 4.25,
+	-- the camera looks at a point this far over the spot a plain body stands on. it gives way to how tall a body is
+	-- the way the one of the editor does, which keeps the feet where they are in the picture: backing off + looking
+	-- higher up alone had the feet of the tallest body end up behind the two buttons. at half of what a body is
+	-- taller the tallest head of hair on it is out of the top of the picture, so this one makes up for a little more
+	CAMERA_TARGET_OFFSET = Vector3.new(0, 3.1, 0),
+	CAMERA_FOLLOW = 0.6,
 	-- how long it takes to get to a new framing, at a steady pace
 	CAMERA_DURATION = 0.75,
 }
