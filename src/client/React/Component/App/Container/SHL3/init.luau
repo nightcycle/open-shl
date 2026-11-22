@@ -3,10 +3,6 @@
 -- Packages
 -- Modules
 -- Components
-local Actions = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Actions")
-local ArtifactMenu =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ArtifactMenu")
-local Build = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Build")
 local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
 local CharacterSelect =
@@ -15,58 +11,43 @@ local CombatFeedback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CombatFeedback")
 local CurrencyPopup =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CurrencyPopup")
-local DailyReward = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/DailyReward")
-local Database = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Database")
-local HUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/HUD")
-local Intro = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Intro")
+local EdgeHUD = require("@self/EdgeHUD")
+local FlyIn = require("@self/FlyIn")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
 local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
-local Music = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Music")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
-local QuestBanner = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/QuestBanner")
-local ServerBrowser =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerBrowser")
 local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
-local Tutorial = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Tutorial")
 -- Hooks
 -- Contexts
 -- Types
 local AppTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Types")
 type Registry = AppTypes.Registry
 -- Constants
+-- a slot another game fills as well is filled by the same container here: what a game has to itself is the layout that
+-- container picks. the menus that aren't built for it yet have no slot, their button opens nothing
 local REGISTRY: Registry = {
-	HUD = HUD,
+	HUD = EdgeHUD,
 	BOOT_PHASES = {
 		Loading = Loading,
 		ModeSelect = ModeSelect,
-		ServerBrowser = ServerBrowser,
-		Intro = Intro,
+		-- its intro is a flight along other way-points, with a screen that's told other things
+		Intro = FlyIn,
 	},
 	SCREENS = {
 		CharacterSelect = CharacterSelect,
 		CharacterEditor = CharacterEditor,
-		ArtifactMenu = ArtifactMenu,
 	},
 	PANELS = {
-		Music = Music,
-		Actions = Actions,
-		Database = Database,
 		Shop = Shop,
-		Build = Build,
 	},
 	OVERLAYS = {
-		QuestBanner = QuestBanner,
 		CurrencyPopup = CurrencyPopup,
-		DailyReward = DailyReward,
 		NameTag = NameTag,
 		CombatFeedback = CombatFeedback,
 		ServerId = ServerId,
 	},
-	TOP_OVERLAYS = {
-		-- the captain has a word to say about the mode screen as well
-		Tutorial = Tutorial,
-	},
+	TOP_OVERLAYS = {},
 }
 -- Variables
 -- References

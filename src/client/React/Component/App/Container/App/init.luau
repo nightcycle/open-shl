@@ -7,15 +7,11 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
 local App = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App")
-local CharacterProvider =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterProvider")
+local CharacterProvider = require("@self/CharacterProvider")
 local Registry = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container")
-local SessionProvider =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/SessionProvider")
-local ShellProvider =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ShellProvider")
-local StyleProvider =
-	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/StyleProvider")
+local SessionProvider = require("@self/SessionProvider")
+local ShellProvider = require("@self/ShellProvider")
+local StyleProvider = require("@self/StyleProvider")
 -- Hooks
 -- Contexts
 -- Types

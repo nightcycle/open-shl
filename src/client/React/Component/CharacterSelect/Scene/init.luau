@@ -8,7 +8,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 -- Components
-local Booth = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterSelect/Booth")
+local Booth = require("@self/Booth")
 -- Hooks
 -- Contexts
 local AppTopInsetContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/TopInset")

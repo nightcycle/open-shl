@@ -10,7 +10,7 @@ local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Defini
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 -- Components
-local AssetList = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/TabbedEditor/AssetList")
+local AssetList = require("@self/AssetList")
 -- Hooks
 -- Contexts
 local CharacterEditorFieldCallback =

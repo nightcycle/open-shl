@@ -10,12 +10,12 @@ local CharacterSelect =
 local CombatFeedback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CombatFeedback")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
-local MenuDrawer = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/MenuDrawer")
+local MenuDrawer = require("@self/MenuDrawer")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
-local Rules = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Rules")
+local Rules = require("@self/Rules")
 local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
-local Ticker = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Ticker")
+local Ticker = require("@self/Ticker")
 -- Hooks
 -- Contexts
 -- Types

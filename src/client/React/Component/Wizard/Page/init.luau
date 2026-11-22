@@ -9,9 +9,9 @@ local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definit
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
 -- Components
-local Names = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Names")
-local Stepper = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Stepper")
-local Swatches = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Swatches")
+local Names = require("@self/Names")
+local Stepper = require("@self/Stepper")
+local Swatches = require("@self/Swatches")
 -- Hooks
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts

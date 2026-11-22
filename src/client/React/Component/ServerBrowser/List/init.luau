@@ -7,7 +7,7 @@ local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxCompone
 -- Modules
 -- Components
 local BarButton = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ServerBrowser/BarButton")
-local Card = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ServerBrowser/Card")
+local Card = require("@self/Card")
 local Notice = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ServerBrowser/Notice")
 -- Hooks
 -- Contexts

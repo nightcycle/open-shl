@@ -32,13 +32,13 @@ export type Properties = {}
 -- how the shop is laid out is the game's own, the layout of another game is never required
 local Layout: Layout = GameDefinition.pick({
 	shl1 = function(): Layout
-		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CashShop")
+		return require("@self/CashShop")
 	end,
 	shl2 = function(): Layout
 		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ShopMenu")
 	end,
 	shl3 = function(): Layout
-		return require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/RobuxShop")
+		return require("@self/RobuxShop")
 	end,
 })
 local PLACEMENT: Placement = {
