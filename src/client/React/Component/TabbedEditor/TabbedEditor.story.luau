@@ -7,6 +7,9 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
+local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local RandomCharacter = require("@game/ReplicatedStorage/Shared/Random/Character")
 local StyleStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/Story")
@@ -18,14 +21,86 @@ local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Clien
 local SessionPowerLimitContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/PowerLimit")
 -- Types
+local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+type Character = CharacterType.Character
+type Item = AppearanceType.Item
+type ItemGroup = AppearanceType.ItemGroup
+type TextureGroupKey = AppearanceType.TextureGroupKey
 -- Constants
 -- the word the filter of the story takes offense at
 local CENSORED_PATTERN = "[Dd]arn"
+local SCALE = CharacterEditorDefinition.SCALE
+-- a game without body sizes has the one
+local DEFAULT_HEIGHT = if SCALE then SCALE.Default.Height else 1
+local HEIGHTS: { number } = if SCALE then SCALE.Heights else table.freeze({ DEFAULT_HEIGHT })
+local HAIR_GROUP: ItemGroup = "cosmetics"
+local HAIR_CATEGORY = "hair"
+local HAIR_TEXTURE_GROUP_KEY: TextureGroupKey = "Hair"
+-- no head of hair is made in it, so another one that's picked shows whether it came in the color of the last
+local HAIR_COLOR = Color3.fromRGB(190, 40, 160)
+-- what the everyday identity is in while the story has the colors of the two apart
+local APART_HAIR_COLOR = Color3.fromRGB(30, 120, 60)
+local APART_SKIN_COLOR = Color3.fromRGB(90, 60, 40)
 -- Variables
 -- References
 -- Private Functions
 local e = React.createElement
+
+local function getIfHair(item: Item): boolean
+	local indexRes = ItemAppearanceDefinition.getIndex(item.DefinitionId)
+	return indexRes.IsOk and indexRes.Value.Group == HAIR_GROUP and indexRes.Value.Category == HAIR_CATEGORY
+end
+
+-- a character the way the controls have it: a body of that height, one head of hair in that color on both identities
+-- + the same skin under it, unless the everyday one is to have a skin + a hair color of its own
+local function dress(character: Character, height: number, hairColor: Color3, isColorApart: boolean): Character
+	return FreezeUtil.delta(character, function(t: Character): Character
+		local main = t.Identities.Main
+		-- the head of hair the hero was rolled, the first one of the game for one that was rolled bald
+		local hairId: string? = nil
+		for _, item in main.Appearance.Items do
+			hairId = hairId or (if getIfHair(item) then item.DefinitionId else nil)
+		end
+		local hairDef = ItemAppearanceDefinition.list(HAIR_GROUP, HAIR_CATEGORY)[1]
+		hairId = hairId or (if hairDef then hairDef.Id else nil)
+		for identityKey, identity in t.Identities do
+			if not identity then
+				continue
+			end
+			local isOwn = isColorApart and identityKey ~= "Main"
+			local appearance = identity.Appearance
+			if SCALE then
+				appearance.Scale = {
+					Height = height,
+					Width = height * SCALE.Default.Width / SCALE.Default.Height,
+				}
+			end
+			appearance.SkinColor = if isOwn then APART_SKIN_COLOR else main.Appearance.SkinColor
+			for index = #appearance.Items, 1, -1 do
+				if getIfHair(appearance.Items[index]) then
+					table.remove(appearance.Items, index)
+				end
+			end
+			local defaultRes = if hairId
+				then ItemAppearanceDefinition.getDefaultTextureGroup(hairId, HAIR_TEXTURE_GROUP_KEY)
+				else nil
+			if hairId and defaultRes and defaultRes.IsOk then
+				table.insert(appearance.Items, {
+					DefinitionId = hairId,
+					TextureGroups = {
+						[HAIR_TEXTURE_GROUP_KEY] = {
+							Color = if isOwn then APART_HAIR_COLOR else hairColor,
+							Material = defaultRes.Value.Material,
+							Transparency = defaultRes.Value.Transparency,
+						},
+					},
+				})
+			end
+		end
+		return t
+	end)
+end
 -- Class
 -- the pages are bound to the editor of the game the place is built for: in a place of another game the shell, the art
 -- + the picker show, the lists stay empty
@@ -37,18 +112,38 @@ return UILabs.CreateReactStory({
 		HasPowerPass = UILabs.Boolean(false),
 		IsRandomizable = UILabs.Boolean(true),
 		IsSaveFailing = UILabs.Boolean(false),
+		-- how tall the body under the camera is, the smallest + the tallest are the ones to look at
+		Height = UILabs.Choose(HEIGHTS, table.find(HEIGHTS, DEFAULT_HEIGHT)),
+		-- what the head of hair of the character is colored, another one out of the list is to come in it
+		HairColor = UILabs.Datatype.Color3(HAIR_COLOR),
+		-- the everyday identity in a skin + a hair color of its own: the switch of the hair page is found apart
+		IsColorApart = UILabs.Boolean(false),
 	},
 }, function(props)
-	local character: CharacterType.Character, setCharacter: (CharacterType.Character) -> () = React.useState(
-		function(): CharacterType.Character
-			return RandomCharacter.Character()
-		end
-	)
+	local height: number = props.controls.Height :: number
+	local hairColor: Color3 = props.controls.HairColor
+	local isColorApart: boolean = props.controls.IsColorApart
+	local character: Character, setCharacter: (Character) -> () = React.useState(function(): Character
+		return dress(RandomCharacter.Character(), height, hairColor, isColorApart)
+	end)
 	-- how often the draft was replaced, every time the editor starts over from what's stored
 	local openCount, setOpenCount = React.useState(0)
 	local errorMessage: string?, setErrorMessage: (string?) -> () = React.useState(nil :: string?)
 	local filteredText: ParentComponent.FilteredText?, setFilteredText: (ParentComponent.FilteredText?) -> () =
 		React.useState(nil :: ParentComponent.FilteredText?)
+
+	-- a control that's moved is put on the character that's stored + the editor starts over from it, what's saved
+	-- out of the editor after that stays the way it was saved. the first run is the mount: the roll came dressed
+	local isMountedRef = React.useRef(false)
+	React.useEffect(function()
+		if not isMountedRef.current then
+			isMountedRef.current = true
+			return function() end
+		end
+		setCharacter(dress(character, height, hairColor, isColorApart))
+		setOpenCount(openCount + 1)
+		return function() end
+	end, { height :: any, hairColor, isColorApart })
 
 	local menus: { [string]: React.ReactNode } = {}
 	menus[`Menu-{openCount}`] = e(
@@ -77,7 +172,7 @@ return UILabs.CreateReactStory({
 				elseif action.Type == "Randomize" then
 					-- stands in for the server, which is who rolls a character in the game
 					setErrorMessage(nil)
-					setCharacter(RandomCharacter.Character())
+					setCharacter(dress(RandomCharacter.Character(), height, hairColor, isColorApart))
 					setOpenCount(openCount + 1)
 				end
 			end,
