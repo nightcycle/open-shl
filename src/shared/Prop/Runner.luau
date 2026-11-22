@@ -163,15 +163,16 @@ function Runner:Use(aim: Aim?): boolean
 			return false
 		end
 	end
+	-- one that was let through early doesn't bring the one after it any closer
+	self._NextUseTime = math.max(now, self._NextUseTime) + (rule.Lockout or rule.Duration)
+	if self._OnUsed then
+		self._OnUsed(aim)
+	end
 	-- one that was let through a moment early finds the last one still on its last moment
 	if self.IsUsing then
 		finish(self, false)
 	else
 		stop(self, "Rest")
-	end
-	self._NextUseTime = now + (rule.Lockout or rule.Duration)
-	if self._OnUsed then
-		self._OnUsed(aim)
 	end
 	self.IsUsing = true
 	self._UseAim = aim
