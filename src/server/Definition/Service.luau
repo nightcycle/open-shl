@@ -251,9 +251,11 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
-	-- these two put the server up for others to join, so they start once all of it is there + stop before any of it does
+	-- puts the server up for others to join by its id, so it starts once all of it is there + stops before any of it
+	-- does. a game without a list of servers has no box to enter an id in, there it wrote a record nobody looked up
 	{
 		Name = "ServerId",
+		IsFeatured = FEATURES.CustomServers,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/ServerId")
 			assert(not service.IsInitialized, `the server id service is already initialized`)
