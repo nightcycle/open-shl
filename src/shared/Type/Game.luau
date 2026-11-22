@@ -17,6 +17,7 @@ Types.GameId = Type.literal("shl1", "shl2", "shl3")
 -- game answers for every one of them, so a new one can't be forgotten for any
 export type Features = {
 	Residences: boolean,
+	Furniture: boolean, -- a residence is its owner's to furnish: build mode + what's put down in it
 	Quests: boolean,
 	Tutorial: boolean,
 	Music: boolean,
@@ -35,6 +36,7 @@ export type Features = {
 }
 Types.Features = Type.strictInterface({
 	Residences = Type.boolean,
+	Furniture = Type.boolean,
 	Quests = Type.boolean,
 	Tutorial = Type.boolean,
 	Music = Type.boolean,

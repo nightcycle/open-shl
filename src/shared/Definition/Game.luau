@@ -18,6 +18,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 	shl1 = table.freeze({
 		-- its flats are scenery
 		Residences = false,
+		Furniture = false,
 		Quests = false,
 		Tutorial = false,
 		Music = false,
@@ -40,6 +41,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 	-- the game all of it was written for: what's on is what ran before there was a second one
 	shl2 = table.freeze({
 		Residences = true,
+		Furniture = true,
 		Quests = true,
 		Tutorial = true,
 		Music = true,
@@ -59,6 +61,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 	-- what it boots with so far, the rest goes on as each of them is built for it
 	shl3 = table.freeze({
 		Residences = false,
+		Furniture = false,
 		Quests = false,
 		Tutorial = false,
 		Music = false,
