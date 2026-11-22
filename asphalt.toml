@@ -251,6 +251,8 @@ output_path = "Generated"
 "core/ability/arrow-thud.ogg" = { id = 16211030 }
 "shl-1/ability/bow.ogg" = { id = 16211041 }
 "shl-3/ability/gun-shot.ogg" = { id = 210112900 }
+"shl-3/prop/cheeseburger-bite.ogg" = { id = 16647579 }
+"shl-3/prop/cheeseburger-open.ogg" = { id = 16647570 }
 
 # the same goes for asset/animation/shl-3, its lines are at the end of the table below
 [inputs.Animation]

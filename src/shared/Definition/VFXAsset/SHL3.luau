@@ -22,6 +22,9 @@ type VFXAssetCatalogue = VFXAssetType.VFXAssetCatalogue
 local SOUNDS: { [SoundKey]: SoundDefinition } = {
 	-- the one file an arrow of shl1 is heard landing by
 	Bow = { Url = Audio.core.ability["arrow-thud.ogg"], Volume = 1, PlaybackSpeed = 1 },
+	-- a bite of the burger + the wrapper coming off it
+	CheeseburgerBite = { Url = Audio["shl-3"].prop["cheeseburger-bite.ogg"], Volume = 1, PlaybackSpeed = 1 },
+	CheeseburgerOpen = { Url = Audio["shl-3"].prop["cheeseburger-open.ogg"], Volume = 1, PlaybackSpeed = 1 },
 	GunShot = { Url = Audio["shl-3"].ability["gun-shot.ogg"], Volume = 1, PlaybackSpeed = 1 },
 	-- the one file both games shoot their lasers with
 	PewPew = { Url = Audio.core.ability["pew-pew.ogg"], Volume = 1, PlaybackSpeed = 1 },
@@ -44,6 +47,8 @@ local ANIMATIONS: { [AnimationKey]: AnimationDefinition } = {
 local MESHES: { [MeshKey]: MeshDefinition } = {
 	Claw = { MeshUrl = "rbxassetid://10681506", TextureUrl = "" },
 	Katana = { MeshUrl = "rbxassetid://11442510", TextureUrl = "" },
+	-- what a prop is drawn by comes with the picture it was uploaded with
+	Cheeseburger = { MeshUrl = "rbxassetid://16646125", TextureUrl = "rbxassetid://16432575" },
 }
 local PARTICLES: { [ParticleKey]: ParticleDefinition } = {}
 local DECALS: { [DecalKey]: DecalDefinition } = {}
