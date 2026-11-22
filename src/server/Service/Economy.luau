@@ -17,16 +17,15 @@ local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remo
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local ThemeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Theme")
 -- Types
-local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 type Result<V, E> = TypeUnionLib.Result<V, E>
-type BaseInventory = BaseType.BaseInventory
 type EntitlementKey = EconomyType.EntitlementKey
 type ProductDefinition = EconomyType.ProductDefinition
 type Receipt = EconomyType.Receipt
 type PlayerSave = SaveType.PlayerSave
-type Purchasable = {
+-- what a game sells for one of its currencies + a player owns once
+export type Purchasable = {
 	Id: string,
 	Name: string,
 	Price: number,
@@ -39,6 +38,12 @@ type EconomyServiceImpl = {
 		player: Player,
 		currency: PseudoEnum.Currency,
 		amount: number
+	) -> Result<true, string>,
+	Purchase: (
+		self: EconomyService,
+		player: Player,
+		purchasable: Purchasable,
+		getOwnedIds: (save: PlayerSave) -> { string }
 	) -> Result<true, string>,
 }
 export type EconomyService = typeof(setmetatable(
@@ -82,48 +87,23 @@ local function update(player: Player, fn: (save: PlayerSave) -> PlayerSave?): Re
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
 
--- the price is taken + the piece is owned in one write, a save never holds one without the other
-local function purchase(
-	player: Player,
-	purchasable: Purchasable,
-	getOwnedIds: (inventory: BaseInventory) -> { string }
-): Result<true, string>
-	assert(SessionService.IsInitialized, `the session service isn't initialized`)
-	local sessionOpt = SessionService:Get(player)
-	if sessionOpt.IsNone then
-		return Result.err(`{player.Name} has no session`)
-	end
-	local save = sessionOpt.Value.Save
-	if table.find(getOwnedIds(save.Inventory), purchasable.Id) then
-		return Result.err(`"{purchasable.Name}" is already owned`)
-	end
-	if save.Balances[purchasable.Currency] < purchasable.Price then
-		return Result.err(`not enough {ProductDefinition.getCurrencyName(purchasable.Currency)}`)
-	end
-	return update(player, function(t: PlayerSave): PlayerSave?
-		t.Balances[purchasable.Currency] -= purchasable.Price
-		table.insert(getOwnedIds(t.Inventory), purchasable.Id)
-		return t
-	end)
-end
-
-local function purchaseFurniture(player: Player, furnitureId: string): Result<true, string>
+local function purchaseFurniture(self: EconomyService, player: Player, furnitureId: string): Result<true, string>
 	local definitionRes = FurnitureDefinition.get(furnitureId)
 	if definitionRes.IsErr then
 		return definitionRes
 	end
-	return purchase(player, definitionRes.Value, function(inventory: BaseInventory): { string }
-		return inventory.FurnitureIds
+	return self:Purchase(player, definitionRes.Value, function(save: PlayerSave): { string }
+		return save.Inventory.FurnitureIds
 	end)
 end
 
-local function purchaseTheme(player: Player, themeId: string): Result<true, string>
+local function purchaseTheme(self: EconomyService, player: Player, themeId: string): Result<true, string>
 	local definitionRes = ThemeDefinition.get(themeId)
 	if definitionRes.IsErr then
 		return definitionRes
 	end
-	return purchase(player, definitionRes.Value, function(inventory: BaseInventory): { string }
-		return inventory.ThemeIds
+	return self:Purchase(player, definitionRes.Value, function(save: PlayerSave): { string }
+		return save.Inventory.ThemeIds
 	end)
 end
 
@@ -369,6 +349,32 @@ function EconomyService:Grant(player: Player, currency: PseudoEnum.Currency, amo
 	end)
 end
 
+-- the price is taken + the piece is owned in one write, a save never holds one without the other. where a save keeps
+-- what's owned is whoever sells it to say
+function EconomyService:Purchase(
+	player: Player,
+	purchasable: Purchasable,
+	getOwnedIds: (save: PlayerSave) -> { string }
+): Result<true, string>
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local sessionOpt = SessionService:Get(player)
+	if sessionOpt.IsNone then
+		return Result.err(`{player.Name} has no session`)
+	end
+	local save = sessionOpt.Value.Save
+	if table.find(getOwnedIds(save), purchasable.Id) then
+		return Result.err(`"{purchasable.Name}" is already owned`)
+	end
+	if save.Balances[purchasable.Currency] < purchasable.Price then
+		return Result.err(`not enough {ProductDefinition.getCurrencyName(purchasable.Currency)}`)
+	end
+	return update(player, function(t: PlayerSave): PlayerSave?
+		t.Balances[purchasable.Currency] -= purchasable.Price
+		table.insert(getOwnedIds(t), purchasable.Id)
+		return t
+	end)
+end
+
 return ServiceLocker(function(): EconomyService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
@@ -399,13 +405,13 @@ return ServiceLocker(function(): EconomyService
 		NetworkService:Handle(
 			RemoteDefinition.PurchaseFurniture,
 			function(player: Player, furnitureId: string): Result<true, string>
-				return purchaseFurniture(player, furnitureId)
+				return purchaseFurniture(self, player, furnitureId)
 			end
 		)
 		NetworkService:Handle(
 			RemoteDefinition.PurchaseTheme,
 			function(player: Player, themeId: string): Result<true, string>
-				return purchaseTheme(player, themeId)
+				return purchaseTheme(self, player, themeId)
 			end
 		)
 	end
