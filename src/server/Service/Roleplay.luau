@@ -12,6 +12,7 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local ExpressionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Expression")
 local FaceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance/Face")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local ItemUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance/Item")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
@@ -41,6 +42,9 @@ export type RoleplayService = typeof(setmetatable(
 	{} :: RoleplayServiceImpl
 ))
 -- Constants
+-- if what a player does to their own avatar is taken: an expression, the mask, their own cuffs. a game that only has
+-- the server cuff somebody runs this for that alone, no client of it is listened to
+local IS_PLAYER_LED = GameDefinition.FEATURES.Roleplay
 -- Variables
 -- References
 local HandcuffsTemplate = IndexUtil.waitForPath("game/ReplicatedStorage/lib/prop/handcuffs") :: Model
@@ -108,6 +112,10 @@ RoleplayService.__index = RoleplayService
 -- cuffs the server puts on + takes off, for a game that holds somebody: they stay on through every avatar the player
 -- gets until they're taken off here. nothing for a player without a session
 function RoleplayService:SetRestrained(player: Player, isRestrained: boolean)
+	-- whoever restrains somebody as their session starts may have heard of it before this did
+	if not self._Roleplays[player] and SessionService.IsInitialized and SessionService:Get(player).IsSome then
+		add(self, player)
+	end
 	local roleplay = self._Roleplays[player]
 	if not roleplay or roleplay.IsRestrained == isRestrained then
 		return
@@ -130,45 +138,47 @@ return ServiceLocker(function(): RoleplayService
 		_Connections = {},
 	}, RoleplayService)
 
-	table.insert(
-		self._Connections,
-		NetworkService:Connect(RemoteDefinition.SetExpression, function(player: Player, expressionId: ExpressionId?)
-			local roleplay = self._Roleplays[player]
-			if not roleplay then
-				return
-			end
-			-- the remote lets every expression there is through, a game only has the ones it has rows for
-			if expressionId and ExpressionDefinition.get(expressionId).IsErr then
-				return
-			end
-			roleplay.ExpressionId = expressionId
-			if player.Character then
-				applyExpression(player, player.Character, roleplay)
-			end
-		end)
-	)
-	table.insert(
-		self._Connections,
-		NetworkService:Connect(RemoteDefinition.SetMasked, function(player: Player, isMasked: boolean)
-			-- the avatar service renders the look without the mask, a dress is the only thing that changes items
-			AvatarService:SetMasked(player, isMasked)
-		end)
-	)
-	table.insert(
-		self._Connections,
-		NetworkService:Connect(RemoteDefinition.SetHandcuffed, function(player: Player, isHandcuffed: boolean)
-			-- only ever the player's own half: a pair the server put on stays on
-			local roleplay = self._Roleplays[player]
-			if not roleplay or roleplay.IsHandcuffed == isHandcuffed then
-				return
-			end
-			local wasCuffed = getIfCuffed(roleplay)
-			roleplay.IsHandcuffed = isHandcuffed
-			if player.Character and getIfCuffed(roleplay) ~= wasCuffed then
-				applyHandcuffs(player.Character, roleplay)
-			end
-		end)
-	)
+	if IS_PLAYER_LED then
+		table.insert(
+			self._Connections,
+			NetworkService:Connect(RemoteDefinition.SetExpression, function(player: Player, expressionId: ExpressionId?)
+				local roleplay = self._Roleplays[player]
+				if not roleplay then
+					return
+				end
+				-- the remote lets every expression there is through, a game only has the ones it has rows for
+				if expressionId and ExpressionDefinition.get(expressionId).IsErr then
+					return
+				end
+				roleplay.ExpressionId = expressionId
+				if player.Character then
+					applyExpression(player, player.Character, roleplay)
+				end
+			end)
+		)
+		table.insert(
+			self._Connections,
+			NetworkService:Connect(RemoteDefinition.SetMasked, function(player: Player, isMasked: boolean)
+				-- the avatar service renders the look without the mask, a dress is the only thing that changes items
+				AvatarService:SetMasked(player, isMasked)
+			end)
+		)
+		table.insert(
+			self._Connections,
+			NetworkService:Connect(RemoteDefinition.SetHandcuffed, function(player: Player, isHandcuffed: boolean)
+				-- only ever the player's own half: a pair the server put on stays on
+				local roleplay = self._Roleplays[player]
+				if not roleplay or roleplay.IsHandcuffed == isHandcuffed then
+					return
+				end
+				local wasCuffed = getIfCuffed(roleplay)
+				roleplay.IsHandcuffed = isHandcuffed
+				if player.Character and getIfCuffed(roleplay) ~= wasCuffed then
+					applyHandcuffs(player.Character, roleplay)
+				end
+			end)
+		)
+	end
 
 	-- a dress draws the saved face + takes every item off, whatever the player has going is put back on top
 	local dressedConnection = AvatarService.Dressed:Connect(function(player: Player, character: Model)
