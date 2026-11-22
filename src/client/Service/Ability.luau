@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 -- Packages
 local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
+local Signal = require("@game/ReplicatedStorage/Packages/Signal")
 -- Modules
 local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/AbilityCondition")
 local AbilityLibrary = require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library")
@@ -38,14 +39,31 @@ type Loadout = {
 	-- the conditions that are this client's to work out + tell the server of, by their key
 	Inputs: { [string]: Condition },
 	HumanoidStates: { [string]: Condition },
+	-- the abilities whose tool is in the hand
+	EquippedIds: { [string]: true },
+	-- the tools that left the hand a moment ago + aren't counted as put away yet, by their ability: what took their
+	-- place may be about to give way to them. only ever in a game that keeps the hand
+	LeavingTools: { [string]: Tool },
+	-- one of its tools is out or one of its machines isn't where it rests
+	IsEngaged: boolean,
 	Connections: { RBXScriptConnection },
 }
 type AbilityServiceImpl = {
 	__index: AbilityServiceImpl,
+	-- if an ability of the local player has their hand: one of its tools is out, or one of its machines isn't where
+	-- it rests
+	GetIfEngaged: (self: AbilityService) -> boolean,
+	-- has an engaged ability keep the hand from then on, the way the server does it + before it hears of anything:
+	-- a tool that isn't a power's goes straight back as it's picked + the tool it took the place of comes back out,
+	-- the ability never hears that it left. without, whatever is picked is in the hand
+	KeepHand: (self: AbilityService) -> (),
 }
 export type AbilityService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
+		-- an ability of the local player took their hand or let go of it
+		EngagedChanged: Signal.Signal<boolean>,
+		_IsHandKept: boolean,
 		_Loadout: Loadout?,
 		-- what the server last gave the character, kept for an avatar that shows up after the news of it did
 		_Grants: { Grant },
@@ -75,6 +93,83 @@ local function unload(self: AbilityService)
 		machine:Destroy()
 	end
 	loadout.Store:Destroy()
+	if loadout.IsEngaged then
+		loadout.IsEngaged = false
+		self.EngagedChanged:Fire(false)
+	end
+end
+
+local settleHand: (self: AbilityService, loadout: Loadout) -> ()
+
+-- an ability has the hand while one of its tools is out or one of its machines isn't where it rests
+local function refreshEngaged(self: AbilityService, loadout: Loadout)
+	local isEngaged = next(loadout.EquippedIds) ~= nil
+	if not isEngaged then
+		for _, machine in loadout.Machines do
+			if machine.StateId ~= machine.Definition.Layout.InitialStateId then
+				isEngaged = true
+				break
+			end
+		end
+	end
+	if isEngaged == loadout.IsEngaged or self._Loadout ~= loadout then
+		return
+	end
+	loadout.IsEngaged = isEngaged
+	self.EngagedChanged:Fire(isEngaged)
+	-- whatever else is in the hand it took goes back
+	if isEngaged and self._IsHandKept then
+		task.defer(settleHand, self, loadout)
+	end
+end
+
+-- the tool of an ability is in the hand, or it's put away for good
+local function setEquipped(self: AbilityService, loadout: Loadout, id: string, isEquipped: boolean)
+	if isEquipped then
+		loadout.EquippedIds[id] = true
+	else
+		loadout.EquippedIds[id] = nil
+	end
+	loadout.Store:Set(AbilityCondition.equipped(id).Key, isEquipped, Aim.get(loadout.Character))
+	refreshEngaged(self, loadout)
+end
+
+-- every tool that's on its way out of the hand is put away for good: nothing is about to give way to it
+local function flushHand(self: AbilityService, loadout: Loadout)
+	for id in loadout.LeavingTools do
+		loadout.LeavingTools[id] = nil
+		setEquipped(self, loadout, id, false)
+	end
+end
+
+-- puts the hand right once whatever changed in it is in, the way the server does. an engaged ability keeps it: a tool
+-- that isn't a power's goes back where it came from + the tool it took the place of comes back out, without its
+-- ability ever hearing that it left. a tool that left the hand to nothing is put away for good
+function settleHand(self: AbilityService, loadout: Loadout)
+	if not self.IsInitialized or self._Loadout ~= loadout then
+		return
+	end
+	local character = loadout.Character
+	local backpack = Players.LocalPlayer:FindFirstChildOfClass("Backpack")
+	local isTakenBack = false
+	if backpack and loadout.IsEngaged then
+		for _, child in character:GetChildren() do
+			if child:IsA("Tool") and child:GetAttribute(PowerDefinition.TOOL_ID_ATTRIBUTE) == nil then
+				child.Parent = backpack
+				isTakenBack = true
+			end
+		end
+	end
+	for id, tool in loadout.LeavingTools do
+		loadout.LeavingTools[id] = nil
+		if isTakenBack and tool.Parent == backpack then
+			tool.Parent = character
+		end
+		-- one that's out again by now never left as far as its ability goes
+		if tool.Parent ~= character then
+			setEquipped(self, loadout, id, false)
+		end
+	end
 end
 
 local function report(key: string, isActive: boolean, aim: Aim)
@@ -232,6 +327,9 @@ local function load(self: AbilityService, grants: { Grant })
 		Machines = {},
 		Inputs = {},
 		HumanoidStates = {},
+		EquippedIds = {},
+		LeavingTools = {},
+		IsEngaged = false,
 		Connections = {},
 	}
 	self._Loadout = loadout
@@ -239,31 +337,58 @@ local function load(self: AbilityService, grants: { Grant })
 		local definition = AbilityLibrary.get(grant.Id)
 		if definition then
 			addConditions(definition, loadout)
-			loadout.Machines[grant.Id] = newMachine(character, grant, definition, store)
+			local machine = newMachine(character, grant, definition, store)
+			loadout.Machines[grant.Id] = machine
+			-- gone with the machine
+			machine.StateChanged:Connect(function()
+				refreshEngaged(self, loadout)
+			end)
 		end
 	end
+	-- a machine can be off where it rests by the time it's made
+	refreshEngaged(self, loadout)
 
 	-- a tool is equipped by being moved into the avatar
-	local function setEquipped(inst: Instance, isEquipped: boolean)
+	local function onChild(inst: Instance, isEquipped: boolean)
 		local abilityId = getAbilityId(inst)
-		if abilityId then
-			store:Set(AbilityCondition.equipped(abilityId).Key, isEquipped, Aim.get(character))
+		if not abilityId then
+			-- a tool that isn't a power's in a hand an ability has: the engine is still putting it there, it's sent
+			-- back once it's in
+			if isEquipped and self._IsHandKept and loadout.IsEngaged and inst:IsA("Tool") then
+				task.defer(settleHand, self, loadout)
+			end
+		elseif isEquipped then
+			-- back before it counted as put away: its ability never hears that it left
+			if loadout.LeavingTools[abilityId] then
+				loadout.LeavingTools[abilityId] = nil
+				return
+			end
+			-- a switch between two powers: the one that left is put away first, the way the hotbar did it
+			flushHand(self, loadout)
+			setEquipped(self, loadout, abilityId, true)
+		elseif self._IsHandKept and loadout.EquippedIds[abilityId] then
+			-- the hotbar takes one tool out of the hand + puts the next in in one go: whatever took its place is
+			-- there by the time this step is over, + may be about to give way to it
+			loadout.LeavingTools[abilityId] = inst :: Tool
+			task.defer(settleHand, self, loadout)
+		else
+			setEquipped(self, loadout, abilityId, false)
 		end
 	end
 	table.insert(
 		loadout.Connections,
 		character.ChildAdded:Connect(function(child: Instance)
-			setEquipped(child, true)
+			onChild(child, true)
 		end)
 	)
 	table.insert(
 		loadout.Connections,
 		character.ChildRemoved:Connect(function(child: Instance)
-			setEquipped(child, false)
+			onChild(child, false)
 		end)
 	)
 	for _, child in character:GetChildren() do
-		setEquipped(child, true)
+		onChild(child, true)
 	end
 
 	table.insert(
@@ -313,11 +438,25 @@ end
 local AbilityService = {} :: AbilityServiceImpl
 AbilityService.__index = AbilityService
 
+function AbilityService:GetIfEngaged(): boolean
+	assert(self.IsInitialized, `the ability service isn't initialized`)
+	local loadout = self._Loadout
+	return loadout ~= nil and loadout.IsEngaged
+end
+
+-- said once as the game starts, before the player has abilities
+function AbilityService:KeepHand()
+	assert(self.IsInitialized, `the ability service isn't initialized`)
+	self._IsHandKept = true
+end
+
 return ServiceLocker(function(): AbilityService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(VFXService.IsInitialized, `the vfx service isn't initialized`)
 	local self = setmetatable({
 		IsInitialized = true :: true,
+		EngagedChanged = Signal.new() :: Signal.Signal<boolean>,
+		_IsHandKept = false,
 		_Loadout = nil :: Loadout?,
 		_Grants = {},
 		_HeldCounts = {},
@@ -363,6 +502,7 @@ end, function(self: AbilityService)
 		v:Disconnect()
 	end
 	unload(self)
+	self.EngagedChanged:Destroy()
 	for _, v in self._CleanUpCallbacks do
 		task.spawn(v)
 	end
