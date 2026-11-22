@@ -14,6 +14,8 @@ local Types = {}
 export type SoundKey =
 	"Boom"
 	| "Bow"
+	| "CheeseburgerBite"
+	| "CheeseburgerOpen"
 	| "ForceWhoosh"
 	| "GunShot"
 	| "Impact"
@@ -32,6 +34,8 @@ export type SoundKey =
 Types.SoundKey = Type.literal(
 	"Boom",
 	"Bow",
+	"CheeseburgerBite",
+	"CheeseburgerOpen",
 	"ForceWhoosh",
 	"GunShot",
 	"Impact",
@@ -124,6 +128,7 @@ export type MeshKey =
 	| "Bow"
 	| "Arrow"
 	| "Icicle"
+	| "Cheeseburger"
 Types.MeshKey = Type.literal(
 	"Sword",
 	"ThrowingStar",
@@ -136,7 +141,8 @@ Types.MeshKey = Type.literal(
 	"Handgun",
 	"Bow",
 	"Arrow",
-	"Icicle"
+	"Icicle",
+	"Cheeseburger"
 )
 export type MeshDefinition = {
 	MeshUrl: string,
