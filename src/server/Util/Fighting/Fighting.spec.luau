@@ -178,6 +178,54 @@ local function walkNoMenu()
 		)
 	end
 end
+
+-- nobody becomes another character in a fight, but for whoever the server counts as in a menu: they were let in
+local function walkCharacter(fighting: Fighting)
+	local avatar = newAvatar()
+	assert(FightingUtil.getCharacterRefusal(avatar, false, START_TIME) == nil, `an avatar nobody hurt stays who it is`)
+	assert(FightingUtil.getCharacterRefusal(nil, false, START_TIME) == nil, `a player without an avatar is turned down`)
+
+	FightingUtil.hit(avatar, START_TIME)
+	local fightingUntil = START_TIME + fighting.Duration
+	local refusal = FightingUtil.getCharacterRefusal(avatar, false, START_TIME + 1)
+	assert(refusal ~= nil, `an avatar that was just hit becomes another character`)
+	assert(CombatType.MenuRefusal(refusal))
+	assert(table.isfrozen(refusal), `the refusal isn't frozen`)
+	assert(refusal.Type == "Fighting" and refusal.Until == fightingUntil, `the refusal names another fight`)
+	assert(
+		SpecUtil.getIfEqual(refusal, FightingUtil.getMenuRefusal(avatar, true, START_TIME + 1)),
+		`it isn't what a menu turns them down with`
+	)
+	-- a hit that was on its way when they went in lands on somebody after: the menu they sit in is theirs to use
+	assert(FightingUtil.getCharacterRefusal(avatar, true, START_TIME + 1) == nil, `a menu is shut to who sits in it`)
+
+	-- whoever landed the hit is turned down the same
+	local attacker = newAvatar()
+	FightingUtil.land(attacker, avatar, START_TIME)
+	assert(FightingUtil.getCharacterRefusal(attacker, false, START_TIME + 1) ~= nil, `whoever landed a hit is let go`)
+
+	assert(
+		FightingUtil.getCharacterRefusal(avatar, false, fightingUntil - 1) ~= nil,
+		`they become another character before the fight is over`
+	)
+	assert(FightingUtil.getCharacterRefusal(avatar, false, fightingUntil) == nil, `they're kept as they are after it`)
+	FightingUtil.hit(avatar, fightingUntil)
+	FightingUtil.clear(avatar)
+	assert(FightingUtil.getCharacterRefusal(avatar, false, fightingUntil) == nil, `the dead are kept as they were`)
+end
+
+-- everybody is whoever they ask to be in a game that keeps no fight
+local function walkNoCharacter()
+	local avatar = newAvatar()
+	FightingUtil.hit(avatar, START_TIME)
+	AttributeDefinition.set(avatar, AttributeDefinition.FightingUntil, START_TIME + 60)
+	for _, isInMenu in { true, false } do
+		assert(
+			FightingUtil.getCharacterRefusal(avatar, isInMenu, START_TIME + 1) == nil,
+			`somebody was turned down in a game that keeps no fight`
+		)
+	end
+end
 -- Class
 return {
 	-- the rule of the game says what's written down here
@@ -208,6 +256,14 @@ return {
 			walkMenu(FIGHTING)
 		else
 			walkNoMenu()
+		end
+	end),
+
+	Character = SpecUtil.newScenario(function()
+		if FIGHTING then
+			walkCharacter(FIGHTING)
+		else
+			walkNoCharacter()
 		end
 	end),
 }

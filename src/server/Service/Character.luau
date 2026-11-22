@@ -13,6 +13,8 @@ local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterShareUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Share")
 local CharacterSlotUtil = require("@game/ServerScriptService/Server/Util/CharacterSlot")
+local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
+local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
@@ -158,6 +160,21 @@ local function filterProfile(
 	})
 end
 
+-- turns down whoever asks to be another character in the middle of a fight: the line they're turned down with, nil
+-- if they aren't. their client hears why the way it does when a menu stays shut to it, which is what it takes this
+-- for: it's back where it would be had the button been faded in time
+local function refuseFighting(player: Player): string?
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local isInMenu = SessionService:GetIfInMenu(player)
+	local refusal = FightingUtil.getCharacterRefusal(player.Character, isInMenu, CombatDefinition.getTime())
+	if not refusal then
+		return nil
+	end
+	NetworkService:Fire(RemoteDefinition.MenuRefused, player, refusal)
+	return `the avatar is in a fight`
+end
+
 local function getPowers(character: Character, powerLimit: number): Result<{ Power }, string>
 	local out: { Power } = {}
 	local ids: { string } = {}
@@ -285,6 +302,12 @@ local function saveCharacter(player: Player, edited: Character): Result<Characte
 	if sessionOpt.IsNone then
 		return Result.err(`no slot holds the character`)
 	end
+	-- the character that's out changes on the avatar as it's saved: its look + its powers. for whoever is in a
+	-- fight that's another character all the same
+	local fightError = if edited.Id == sessionOpt.Value.Save.ActiveCharacterId then refuseFighting(player) else nil
+	if fightError then
+		return Result.err(fightError)
+	end
 	local entitlements = SessionService:GetEntitlements(player)
 	local powersRes = getPowers(edited, ProductDefinition.getPowerLimit(entitlements))
 	if powersRes.IsErr then
@@ -333,6 +356,11 @@ local function selectCharacter(player: Player, characterId: string): Result<true
 	end
 	if not getCharacter(sessionOpt.Value.Save, characterId) then
 		return Result.err(`no slot holds the character`)
+	end
+	-- nobody walks out of a fight as somebody else
+	local fightError = refuseFighting(player)
+	if fightError then
+		return Result.err(fightError)
 	end
 	local saveRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
 		if t.ActiveCharacterId == characterId then

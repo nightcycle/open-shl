@@ -200,7 +200,8 @@ Module.FilterText =
 	newClientFunction("FilterText", Type.string, Type.string, FILTER_LIMIT) :: ClientFunction<string, string>
 Module.CharacterChanged = newServerEvent("CharacterChanged", isCharacter) :: ServerEvent<Character>
 Module.SetInMenu = newClientEvent("SetInMenu", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
--- the server didn't take a client's word for being in a menu, this is why. being out of one is never turned down
+-- the server didn't take a client's word for being in a menu, this is why. being out of one is never turned down.
+-- whoever asks to be another character from where the server doesn't count them as in one hears it as well
 Module.MenuRefused = newServerEvent("MenuRefused", CombatType.MenuRefusal) :: ServerEvent<MenuRefusal>
 -- whether the player sits fights out, only taken in a game where that's each player's own pick. what the server made
 -- of it is read off the avatar

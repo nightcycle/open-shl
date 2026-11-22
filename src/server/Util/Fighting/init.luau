@@ -59,4 +59,14 @@ function Util.getMenuRefusal(character: Model?, isInMenu: boolean, now: number):
 	})
 end
 
+-- why somebody doesn't become another character when their player says so, nil if they do. that's what a menu is
+-- for: whoever is counted as in one is taken at their word, whoever isn't + wouldn't be let into one either is in a
+-- fight they'd walk out of as somebody else
+function Util.getCharacterRefusal(character: Model?, isInMenu: boolean, now: number): MenuRefusal?
+	if isInMenu then
+		return nil
+	end
+	return Util.getMenuRefusal(character, true, now)
+end
+
 return Util
