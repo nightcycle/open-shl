@@ -46,10 +46,10 @@ local CATALOGUE: EmoteCatalogue = {
 			IsRooting = true,
 		},
 	},
-	-- not an emote, a cuffed character can still walk around
+	-- not an emote, a cuffed character can still walk around. the arms are held the same way wherever somebody is cuffed
 	Handcuffs = {
 		Name = "Handcuffs",
-		AnimationId = Animation["shl-2"].emote["handcuffs.rbxm"],
+		AnimationId = Animation.core.emote["handcuffs.rbxm"],
 		IsLooped = true,
 		IsRooting = false,
 	},

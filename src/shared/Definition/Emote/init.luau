@@ -24,7 +24,7 @@ local CATALOGUE: EmoteCatalogue = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): EmoteCatalogue
-		error(`shl3 has no emotes yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(RoleplayType.EmoteCatalogue(CATALOGUE))
