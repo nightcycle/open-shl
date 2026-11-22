@@ -23,12 +23,18 @@ local BUTTONS: Buttons = {
 			Position = 0.6,
 		},
 	},
-	-- the gaps are where the team change (0.6) + the mode changer (0.8) go once they have a menu
+	-- the gap is where the mode changer (0.8) goes once it has a menu
 	RIGHT = {
 		{
 			MenuId = PseudoEnum.MenuId.Database,
 			Image = Image["shl-3"].ui.info["open.png"],
 			Position = 0.5,
+		},
+		-- only where there are sides to change, whatever puts the hud up leaves it out of a place without them
+		{
+			MenuId = PseudoEnum.MenuId.Team,
+			Image = Image["shl-3"].ui["team-change"]["open.png"],
+			Position = 0.6,
 		},
 		{
 			MenuId = PseudoEnum.MenuId.Shop,

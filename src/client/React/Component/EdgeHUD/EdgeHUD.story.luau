@@ -20,6 +20,10 @@ local BUTTONS: ParentComponent.Buttons =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/HUD/CONSTANTS/SHL3")
 local SWAP_FADE = 0.5
 local FIGHTING_FADE = 0.7
+-- whoever is held has the switch slid out of reach
+local JAILED_AWAY: { [PseudoEnum.MenuId]: true } = table.freeze({
+	[PseudoEnum.MenuId.Swap] = true :: true,
+})
 -- Variables
 -- References
 -- Private Functions
@@ -32,12 +36,32 @@ return UILabs.CreateReactStory({
 		Style = StyleStory.newControl("shl3"),
 		IsSwapCooling = UILabs.Boolean(false),
 		IsFighting = UILabs.Boolean(false),
+		-- off, it's the hud of a place where nobody fights: nobody is on a side there to change it
+		HasSides = UILabs.Boolean(true),
+		IsJailed = UILabs.Boolean(false),
 	},
 }, function(props)
 	local pressedMenuId: PseudoEnum.MenuId?, setPressedMenuId: (PseudoEnum.MenuId?) -> () =
 		React.useState(nil :: PseudoEnum.MenuId?)
 	local isSwapCooling: boolean = props.controls.IsSwapCooling
 	local isFighting: boolean = props.controls.IsFighting
+	local hasSides: boolean = props.controls.HasSides
+	local isJailed: boolean = props.controls.IsJailed
+	local buttons = React.useMemo(function(): ParentComponent.Buttons
+		if hasSides then
+			return BUTTONS
+		end
+		local right = {}
+		for _, buttonInfo in BUTTONS.RIGHT do
+			if buttonInfo.MenuId ~= PseudoEnum.MenuId.Team then
+				table.insert(right, buttonInfo)
+			end
+		end
+		return {
+			LEFT = BUTTONS.LEFT,
+			RIGHT = right,
+		}
+	end, { hasSides })
 	local fades = React.useMemo(function(): { [PseudoEnum.MenuId]: number }
 		local out: { [PseudoEnum.MenuId]: number } = {}
 		if isSwapCooling then
@@ -73,8 +97,9 @@ return UILabs.CreateReactStory({
 				ParentComponent,
 				{
 					Size = UDim2.fromScale(1, 1),
-					Buttons = BUTTONS,
+					Buttons = buttons,
 					Fades = fades,
+					Away = if isJailed then JAILED_AWAY else nil,
 					OnAction = function(action: ParentComponent.ActionInfo)
 						if action.Type == "Press" then
 							setPressedMenuId(action.MenuId)
