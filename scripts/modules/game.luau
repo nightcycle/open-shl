@@ -55,7 +55,7 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 	shl2 = table.freeze({
 		DataPath = "data/shl-2",
 		ScenePath = "lib/scene/shl-2",
-		BasePath = "lib/base",
+		BasePath = "lib/base/shl-2",
 		PropPath = "lib/prop",
 		CharacterPath = BORROW_PATH,
 		-- it's the game every shared setting was tuned for
