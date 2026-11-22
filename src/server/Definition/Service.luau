@@ -108,9 +108,11 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- what a player does to their own avatar, where the game has them at it, + the cuffs the server puts on somebody:
+	-- a game that holds its villains runs it for those alone
 	{
 		Name = "Roleplay",
-		IsFeatured = FEATURES.Roleplay,
+		IsFeatured = FEATURES.Roleplay or FEATURES.Teams,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Roleplay")
 			assert(not service.IsInitialized, `the roleplay service is already initialized`)
@@ -141,6 +143,26 @@ local ENTRIES: { Entry } = {
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Economy")
 			assert(not service.IsInitialized, `the economy service is already initialized`)
+			return service
+		end,
+	},
+	-- who's on which side, where players take one, + the jail the avatars of one of them come in at. downing somebody
+	-- pays, so the sides start once there's something to pay with
+	{
+		Name = "Team",
+		IsFeatured = FEATURES.Teams,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Team")
+			assert(not service.IsInitialized, `the team service is already initialized`)
+			return service
+		end,
+	},
+	{
+		Name = "Jail",
+		IsFeatured = FEATURES.Teams,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Jail")
+			assert(not service.IsInitialized, `the jail service is already initialized`)
 			return service
 		end,
 	},

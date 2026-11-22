@@ -33,6 +33,16 @@ Module.Colorizer = newTag("Colorizer", "Model") :: Tag<Model>
 Module.Rebuilt = newTag("Rebuilt", "Model") :: Tag<Model>
 -- a part that hands whoever steps on it the prop it's named after
 Module.PropPad = newTag("PropPad", "BasePart") :: Tag<BasePart>
+-- where somebody who's held is put as they come in, a model that holds its SpawnPoint
+Module.JailCell = newTag("JailCell", "Model") :: Tag<Model>
+-- whoever is held + gets further from it than its Radius is free
+Module.JailCenter = newTag("JailCenter", "BasePart") :: Tag<BasePart>
+-- + so is one that sets a foot on any part filed under it
+Module.Road = newTag("Road", "Folder") :: Tag<Folder>
+-- a pane only a hero or whoever holds the key walks through
+Module.HeroGate = newTag("HeroGate", "BasePart") :: Tag<BasePart>
+-- whoever is held + touches it is fair game from then on
+Module.Troublesome = newTag("Troublesome", "BasePart") :: Tag<BasePart>
 
 -- where an avatar comes into the world
 Module.Spawn = newTag("Spawn", "SpawnLocation") :: Tag<SpawnLocation>
@@ -48,6 +58,8 @@ Module.CycleLength = newAttribute("CycleLength", Type.optional(Type.numberPositi
 Module.PropId = newAttribute("PropId", Type.string) :: Attribute<string>
 -- seconds a pad is out of stock for once it handed one out, it never is without
 Module.RestockDuration = newAttribute("RestockDuration", Type.optional(Type.numberPositive)) :: Attribute<number?>
+-- studs from the center of a jail to where it lets go
+Module.Radius = newAttribute("Radius", Type.numberPositive) :: Attribute<number>
 
 Module.list = MapDefinition.list
 Module.get = MapDefinition.get
