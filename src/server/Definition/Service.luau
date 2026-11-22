@@ -117,13 +117,22 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
-	-- what an avatar holds that isn't a power
+	-- what an avatar holds that isn't a power, + the pads of the map that hand it out
 	{
 		Name = "Prop",
 		IsFeatured = FEATURES.Props,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Prop")
 			assert(not service.IsInitialized, `the prop service is already initialized`)
+			return service
+		end,
+	},
+	{
+		Name = "Pickup",
+		IsFeatured = FEATURES.Props,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Pickup")
+			assert(not service.IsInitialized, `the pickup service is already initialized`)
 			return service
 		end,
 	},
