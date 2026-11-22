@@ -31,6 +31,7 @@ export type Features = {
 	DayNight: boolean, -- a clock that lights the lamps + the windows
 	Fixtures: boolean, -- what a map tags for the server to run: beacons, gates, hazards, a reactor + what's put back up
 	PlayerMode: boolean, -- who fights + who sits fights out is each player's own pick, in one place
+	Leaderstats: boolean, -- what the server tells of a player in the columns of the engine's list of players
 }
 Types.Features = Type.strictInterface({
 	Residences = Type.boolean,
@@ -48,6 +49,7 @@ Types.Features = Type.strictInterface({
 	DayNight = Type.boolean,
 	Fixtures = Type.boolean,
 	PlayerMode = Type.boolean,
+	Leaderstats = Type.boolean,
 })
 
 -- a way to get a value for every game. only the one of the game that's built is ever called, so what another's needs

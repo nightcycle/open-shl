@@ -35,6 +35,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		-- its map marks none of them
 		Fixtures = false,
 		PlayerMode = true,
+		Leaderstats = false,
 	}),
 	-- the game all of it was written for: what's on is what ran before there was a second one
 	shl2 = table.freeze({
@@ -53,6 +54,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		DayNight = true,
 		Fixtures = true,
 		PlayerMode = false,
+		Leaderstats = false,
 	}),
 	-- what it boots with so far, the rest goes on as each of them is built for it
 	shl3 = table.freeze({
@@ -73,6 +75,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		DayNight = false,
 		Fixtures = true,
 		PlayerMode = false,
+		-- what a player has to spend was read off the list of players in its old place, + nowhere else
+		Leaderstats = true,
 	}),
 })
 -- Variables
