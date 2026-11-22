@@ -6,10 +6,12 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
 -- Components
+local ExitButton = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/ExitButton")
 local Scene = require("@self/Scene")
 -- Hooks
 local useOpen = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/SuitManager/useOpen")
 -- Contexts
+local AppHasHudShownContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/HasHudShown")
 local SessionActiveCharacterIdContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ActiveCharacterId")
 local SessionCharactersContext =
@@ -222,9 +224,11 @@ local function slotOffer(props: {
 end
 -- Class
 -- the character select as a list: every slot is a row on the left, whoever is picked stands on the stage in the
--- middle + is worn or edited from the two buttons under it. there's no way out but one of those two
+-- middle + is worn or edited from the two buttons under it. whoever came to it from the game can also leave it as
+-- they came, the one a join ends on has no way out but one of those two
 return function(props: Properties): React.ReactNode
 	local style = React.useContext(StyleContext)
+	local hasHudShown = React.useContext(AppHasHudShownContext)
 	local characters = React.useContext(SessionCharactersContext)
 	local activeCharacterId = React.useContext(SessionActiveCharacterIdContext)
 	local entitlements = React.useContext(SessionEntitlementsContext)
@@ -319,6 +323,19 @@ return function(props: Properties): React.ReactNode
 			Offer = table.find(entitlements, "ExtraCharacterSlots") == nil and e(slotOffer, {
 				OnClick = buySlots,
 			}),
+			-- the old place had none: it only ever asked who to play as. nobody is picked on the way out of this one
+			Exit = hasHudShown and e(
+				ExitButton,
+				{
+					Position = CONSTANTS.EXIT_POSITION,
+					ZIndex = 3,
+					[React.Event.Activated] = function()
+						props.OnAction({
+							Type = "Exit",
+						})
+					end,
+				} :: ExitButton.Properties
+			),
 		}
 	))
 end

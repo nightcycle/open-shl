@@ -57,6 +57,10 @@ return {
 	OFFER_TEXT_POSITION = UDim2.fromScale(0.5, 0.495),
 	OFFER_TEXT_SIZE = UDim2.fromScale(0.957, 0.098),
 
+	-- the way out is the exit of the look, in the corner nothing else of the menu reaches: as far off the top + the
+	-- right edge as a button of the hud is off its own
+	EXIT_POSITION = UDim2.new(1, -30, 0, 30),
+
 	-- the camera frames a body by how tall it is. it looks at a point this many studs over the floor on a plain one,
 	-- for a body that's taller by a whole height it backs off by 4.25 studs + looks 2.5 higher up
 	FOCUS_HEIGHT = 3.1,
