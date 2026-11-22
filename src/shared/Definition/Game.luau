@@ -69,7 +69,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		CustomServers = false,
 		Teams = false,
 		Jobs = false,
-		Props = false,
+		-- what its pads hand out: the two that are built so far, the rest of them lie there
+		Props = true,
 		PrivateServerToggle = false,
 		-- its faces have no expressions yet
 		Roleplay = false,
