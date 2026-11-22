@@ -15,6 +15,7 @@ local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
+local ToolUtil = require("@game/ServerScriptService/Server/Util/Tool")
 local VFXService = require("@game/ServerScriptService/Server/Service/VFX")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
@@ -63,18 +64,6 @@ local LENIENCY = 0.15
 -- Variables
 -- References
 -- Private Functions
-local function newTool(definition: PowerDefinition.PowerDefinition): Tool
-	local icon = definition.Icon
-	local tool = Instance.new("Tool")
-	tool.Name = definition.Name
-	tool.ToolTip = definition.Name
-	tool.TextureId = if icon.Type == "Decal" then icon.Url else icon.SheetUrl
-	tool.RequiresHandle = false
-	tool.CanBeDropped = false
-	tool:SetAttribute(PowerDefinition.TOOL_ID_ATTRIBUTE, definition.Id)
-	return tool
-end
-
 local function removeTools(player: Player, character: Model)
 	local backpack = player:FindFirstChildOfClass("Backpack")
 	for _, holder: Instance in { backpack or character, character } do
@@ -290,7 +279,8 @@ function AbilityService:Grant(player: Player, character: Model, grants: { Grant 
 		local definition = AbilityLibrary.get(grant.Id)
 		-- one that isn't built yet still takes up its slot of the hotbar
 		if not definition or definition.Layout.HasTool then
-			local tool = newTool(powerRes.Value)
+			local power = powerRes.Value
+			local tool = ToolUtil.new(power.Name, power.Icon, PowerDefinition.TOOL_ID_ATTRIBUTE, power.Id)
 			local key = AbilityCondition.equipped(grant.Id).Key
 			table.insert(
 				loadout.Connections,
