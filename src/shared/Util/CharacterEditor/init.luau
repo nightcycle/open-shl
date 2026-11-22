@@ -181,14 +181,28 @@ local function setTexture(group: TextureGroup, color: Color3, material: Enum.Mat
 	end)
 end
 
--- what every identity has the same goes to the others as it's edited on the one in focus
-local function share(res: Result<EditorState, string>): Result<EditorState, string>
+-- the skin + the hair color of the identities are tied together the way the switch was last pressed. until it's
+-- pressed they are for as long as the draft has them the same, which is how the character was found
+local function getIfColorMatched(state: EditorState): boolean
+	if not ShareUtil.IS_COLOR_LINKED then
+		return false
+	end
+	local isColorMatched = state.IsColorMatched
+	if isColorMatched ~= nil then
+		return isColorMatched
+	end
+	return ShareUtil.getIfColorMatched(state.Character)
+end
+
+-- what every identity has the same goes to the others as it's edited on the one in focus. the switch is asked of
+-- the state the edit was made to: a color picked on one identity is what makes the two differ
+local function share(state: EditorState, res: Result<EditorState, string>): Result<EditorState, string>
 	if res.IsErr or not ShareUtil.IS_ANY then
 		return res
 	end
-	local state = res.Value
-	local character = ShareUtil.apply(state.Character, state.IdentityKey)
-	return if character == state.Character then res else Result.ok(StateUtil.setCharacter(state, character))
+	local editedState = res.Value
+	local character = ShareUtil.apply(editedState.Character, editedState.IdentityKey, getIfColorMatched(state))
+	return if character == editedState.Character then res else Result.ok(StateUtil.setCharacter(editedState, character))
 end
 
 -- the height or the build that's picked: a body that was never sized is the game's default one
@@ -354,7 +368,7 @@ function Util.getTags(state: EditorState): Tags
 	end
 	local lensTag: Tag = if hasLenses then "HasLenses" else "HasNoLenses"
 	tags[lensTag] = true
-	if ShareUtil.IS_COLOR_LINKED then
+	if getIfColorMatched(state) then
 		tags["IsColorMatched" :: Tag] = true
 	end
 	table.freeze(tags)
@@ -462,9 +476,18 @@ function Util.setTag(state: EditorState, tag: Tag, isSelected: boolean): Result<
 		local isSuper = (tag == "IsSuper") == isSelected
 		return Result.ok(Util.setIdentityKey(state, if isSuper then "Main" else "Secret"))
 	elseif tag == "IsColorMatched" then
-		-- stub: the colors of the identities are tied together + nothing takes them apart yet, the press is taken +
-		-- changes nothing
-		return Result.ok(state)
+		-- a game without the switch takes the press + changes nothing
+		if not ShareUtil.IS_COLOR_LINKED or getIfColorMatched(state) == isSelected then
+			return Result.ok(state)
+		end
+		local matchedState = StateUtil.delta(state, function(t: EditorState)
+			t.IsColorMatched = isSelected
+		end)
+		if not isSelected then
+			return Result.ok(matchedState)
+		end
+		-- tied together again they're the hero's: its skin + its hair color go to every identity
+		return Result.ok(StateUtil.setCharacter(matchedState, ShareUtil.apply(matchedState.Character, "Main", true)))
 	end
 	local page = PageUtil.get(state.Path)
 	if page and page.Type == "Set" then
@@ -472,14 +495,14 @@ function Util.setTag(state: EditorState, tag: Tag, isSelected: boolean): Result<
 		if tag ~= "IsItemAdded" then
 			return Result.err(`a set has nothing like that to change`)
 		end
-		return share(setSet(state, page.DefinitionIds, isSelected))
+		return share(state, setSet(state, page.DefinitionIds, isSelected))
 	end
 	local itemDef = PageUtil.getItemDefinition(state)
 	if not itemDef then
 		return Result.err(`no item is selected`)
 	end
 	if tag == "IsItemAdded" then
-		return share(if isSelected then addItem(state, itemDef.Id) else ItemUtil.remove(state, itemDef.Id))
+		return share(state, if isSelected then addItem(state, itemDef.Id) else ItemUtil.remove(state, itemDef.Id))
 	elseif tag == "HasLenses" or tag == "HasNoLenses" then
 		return ItemUtil.setLenses(state, itemDef, (tag == "HasLenses") == isSelected)
 	end
@@ -563,6 +586,7 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 	end
 	if field.Type == "Text" and edit.Type == "Text" then
 		return share(
+			state,
 			ProfileUtil.setText(
 				state,
 				field.Binding.Key,
@@ -618,9 +642,9 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		end
 		local binding = field.Binding
 		if binding.Type == "WornTexture" then
-			return share(setWornTexture(state, binding, setPattern))
+			return share(state, setWornTexture(state, binding, setPattern))
 		end
-		return share(setItemTexture(state, binding, setPattern))
+		return share(state, setItemTexture(state, binding, setPattern))
 	elseif field.Type == "ChoiceList" and (edit.Type == "Power" or edit.Type == "PowerColor") then
 		local binding = field.Binding
 		if binding.Type == "PowerSlot" then
@@ -644,19 +668,22 @@ function Util.write(state: EditorState, field: FieldDefinition, edit: FieldEdit)
 		end
 		local binding = field.Binding
 		if binding.Type == "SkinColor" then
-			return share(setSkinColor(state, color))
+			return share(state, setSkinColor(state, color))
 		elseif binding.Type == "WornTexture" then
-			return share(setWornTexture(state, binding, setColor))
+			return share(state, setWornTexture(state, binding, setColor))
 		end
-		return share(setItemTexture(state, binding, setColor))
+		return share(state, setItemTexture(state, binding, setColor))
 	elseif field.Type == "Material" and edit.Type == "Material" then
 		local material = edit.Material
 		if getIfFiltered(field.Filtered, material) then
 			return Result.err(`that material isn't offered here`)
 		end
-		return share(setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
-			return setTexture(group, group.Color, material)
-		end))
+		return share(
+			state,
+			setItemTexture(state, field.Binding, function(group: TextureGroup): TextureGroup
+				return setTexture(group, group.Color, material)
+			end)
+		)
 	elseif field.Type == "Toggle" and edit.Type == "Toggle" then
 		return Util.setTag(state, field.Focus, edit.IsSelected)
 	end

@@ -80,12 +80,13 @@ local TABS: { TabInfo } = {
 			{ Image = ART["skin-color.png"], Box = box(0.7586, 0.1767, 0.2008, 0.2008), Page = "Hair/Skin Color" },
 			{ Image = ART["hair-color.png"], Box = box(0.7564, 0.537, 0.2008, 0.2008), Folders = { "Hair/Hair" } },
 		} :: { SwatchInfo },
+		-- the picture is how the skin + the hair color of the two stand, not what a press would make of them
 		Toggles = {
 			{
 				Page = "Hair/Matching",
 				Box = box(0.3722, 0.8093, 0.2546, 0.2546),
-				Image = ART["matching-combine.png"],
-				SelectedImage = ART["matching-separate.png"],
+				Image = ART["matching-separate.png"],
+				SelectedImage = ART["matching-combine.png"],
 			},
 		} :: { ToggleInfo },
 	},
