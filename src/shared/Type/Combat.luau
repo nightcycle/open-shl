@@ -63,6 +63,20 @@ Types.MenuRefusal = Type.strictInterface({
 	Until = Type.number,
 })
 
+-- the two sides of a game whose players take one
+export type TeamId = "Heroes" | "Villains"
+Types.TeamId = Type.literal("Heroes", "Villains")
+
+-- what downing somebody is worth to whoever did it
+export type Bounty = {
+	TeamId: TeamId, -- the side with a price on its head
+	Amount: number, -- credits for the one who's downed, + as much again for everybody they downed since they came in
+}
+Types.Bounty = Type.strictInterface({
+	TeamId = Types.TeamId,
+	Amount = Type.intersection(Type.integer, Type.numberPositive),
+})
+
 -- what a game makes of one character hitting another
 export type CombatRule = {
 	PlayerScale: number, -- what a hit on somebody's character is multiplied by
@@ -72,6 +86,9 @@ export type CombatRule = {
 	Fighting: Fighting?, -- nobody is kept out of a menu without
 	Knockback: Knockback?, -- nobody is sent off without
 	Regeneration: Regeneration?, -- health only comes back by a power without
+	IsTeamSafe: boolean?, -- nobody is hurt by their own side, everybody is fair game without
+	IsJailSafe: boolean?, -- nobody is hurt in jail for as long as they keep out of trouble
+	Bounty: Bounty?, -- nobody is paid for downing anybody without
 }
 Types.CombatRule = Type.intersection(
 	Type.strictInterface({
@@ -82,6 +99,9 @@ Types.CombatRule = Type.intersection(
 		Fighting = Type.optional(Types.Fighting),
 		Knockback = Type.optional(Types.Knockback),
 		Regeneration = Type.optional(Types.Regeneration),
+		IsTeamSafe = Type.optional(Type.boolean),
+		IsJailSafe = Type.optional(Type.boolean),
+		Bounty = Type.optional(Types.Bounty),
 	}),
 	-- a menu that shelters nobody has nobody to keep out of it
 	function(value: CombatRule): (boolean, string?)

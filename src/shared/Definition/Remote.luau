@@ -19,6 +19,7 @@ local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type Character = CharacterType.Character
 type IdentityKey = CharacterType.IdentityKey
 type MenuRefusal = CombatType.MenuRefusal
+type TeamId = CombatType.TeamId
 type BaseInventory = BaseType.BaseInventory
 type PlacedFurniture = BaseType.PlacedFurniture
 type ResidenceId = BaseType.ResidenceId
@@ -207,6 +208,12 @@ Module.MenuRefused = newServerEvent("MenuRefused", CombatType.MenuRefusal) :: Se
 -- whether the player sits fights out, only taken in a game where that's each player's own pick. what the server made
 -- of it is read off the avatar
 Module.SetPeaceful = newClientEvent("SetPeaceful", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
+
+-- teams
+-- the player asks for the other side. the server says which they're on now, or why they stay: an error is the line
+-- they're shown. the avatar that's out goes down for it, the one that comes back is the first on the new side
+Module.ChangeTeam =
+	newClientFunction("ChangeTeam", Type.none, CombatType.TeamId, REQUEST_LIMIT, true) :: ClientFunction<TeamId, nil>
 
 -- roleplay
 Module.SetExpression =

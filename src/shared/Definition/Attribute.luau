@@ -10,10 +10,12 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
 type ResidenceId = BaseType.ResidenceId
 type IdentityKey = CharacterType.IdentityKey
+type TeamId = CombatType.TeamId
 type EntitlementKey = EconomyType.EntitlementKey
 type ExpressionId = RoleplayType.ExpressionId
 export type Validator = (value: unknown) -> (boolean, string?)
@@ -76,6 +78,23 @@ Module.HeldPropId = new("Character", "HeldPropId", Type.optional(Type.string), n
 -- its player sat fights out: it hurts nobody + nobody hurts it. nil in a game where nobody gets to pick, which is a
 -- character that fights
 Module.IsPeaceful = new("Character", "IsPeaceful", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
+-- the side it came in on + keeps for as long as it's in the world, whatever its player picks after. nil in a game or
+-- a place without sides
+Module.TeamId = new("Character", "TeamId", Type.optional(CombatType.TeamId), nil) :: Attribute<TeamId?>
+-- how many it downed since it came in, nil without sides
+Module.KillStreak = new(
+	"Character",
+	"KillStreak",
+	Type.optional(Type.intersection(Type.integer, Type.numberMin(0))),
+	nil
+) :: Attribute<number?>
+-- the user id of the player whose hit took the last of its health. nil for one that's up, that went down any other
+-- way + in a game where downing somebody is worth nothing
+Module.DownedBy = new("Character", "DownedBy", Type.optional(Type.integer), nil) :: Attribute<number?>
+-- it's held: it has no powers + isn't let out by anything but getting away. nil in a game without a jail
+Module.IsJailed = new("Character", "IsJailed", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
+-- it made trouble while it was held, which is the end of being left alone for it
+Module.IsTroublesome = new("Character", "IsTroublesome", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
 Module.IsMasked = new("Character", "IsMasked", Type.boolean, true) :: Attribute<boolean>
 Module.IsHandcuffed = new("Character", "IsHandcuffed", Type.boolean, false) :: Attribute<boolean>
 -- nothing takes health off it
