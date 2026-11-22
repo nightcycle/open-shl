@@ -27,6 +27,8 @@ local HAIR_TEXTURE_GROUP_KEY: TextureGroupKey = "Hair"
 local IsItemShared: { [string]: true } = {}
 -- the ones of them that are a head of hair with a color to pick: the switch of the game has that color follow it
 local IsHairColored: { [string]: true } = {}
+-- the ones that are hair nobody picks a color for, a beard: they take the color of the head of hair they're worn with
+local IsHairTinted: { [string]: true } = {}
 local IsBackstoryShared = false
 -- the game has a switch that ties the skin + the hair color of the identities together
 local IsColorLinked = false
@@ -119,17 +121,53 @@ local function dye(sourceHair: Item, hair: Item): Item
 	return out
 end
 
+-- what takes the color of a head of hair in the color of the one among those items: a beard that's put on comes as
+-- it was made, + the hair it's worn with may be colored after it. the very list comes back when all of it is already
+local function tint(items: { Item }): { Item }
+	local hair = if next(IsHairTinted) ~= nil then findHair(items) else nil
+	if not hair then
+		return items
+	end
+	local out: { Item }? = nil
+	for index, item in items do
+		local tintedItem = if IsHairTinted[item.DefinitionId] then dye(item, hair) else item
+		if tintedItem ~= item then
+			local tintedItems: { Item } = out or table.clone(items)
+			tintedItems[index] = tintedItem
+			out = tintedItems
+		end
+	end
+	if not out then
+		return items
+	end
+	table.freeze(out)
+	return out
+end
+
+local function tintIdentity(identity: Identity): Identity
+	local items = tint(identity.Appearance.Items)
+	if items == identity.Appearance.Items then
+		return identity
+	end
+	local appearance: Appearance = table.clone(identity.Appearance)
+	appearance.Items = items
+	table.freeze(appearance)
+	local out = table.clone(identity)
+	out.Appearance = appearance
+	table.freeze(out)
+	return out
+end
+
 -- what's worn of the shared items is what the source wears of them, the rest stays where it was. where the switch of
--- a game has the colors apart a head of hair comes in the color of the hair it's worn in the place of. the very list
--- comes back when there's nothing to take over, so a scene doesn't dress its rig again
+-- a game has the colors apart a head of hair comes in the color of the hair it's worn in the place of, + so does what
+-- takes its color. the very list comes back when there's nothing to take over, so a scene doesn't dress its rig again
 local function getItems(sourceItems: { Item }, items: { Item }, isColorMatched: boolean): { Item }
 	local hair: Item? = if IsColorLinked and not isColorMatched then findHair(items) else nil
 	local sourceItemsById: { [string]: Item } = {}
 	for _, item in sourceItems do
 		if IsItemShared[item.DefinitionId] then
-			sourceItemsById[item.DefinitionId] = if hair and IsHairColored[item.DefinitionId]
-				then dye(item, hair)
-				else item
+			local isDyed = IsHairColored[item.DefinitionId] or IsHairTinted[item.DefinitionId]
+			sourceItemsById[item.DefinitionId] = if hair and isDyed then dye(item, hair) else item
 		end
 	end
 	local out: { Item } = {}
@@ -199,6 +237,19 @@ end
 local Util = {}
 
 indexPage(CharacterEditorDefinition.DEFINITION)
+-- where a head of hair has a color to pick, whatever else is shared + made of hair goes by it
+if next(IsHairColored) ~= nil then
+	for definitionId in IsItemShared do
+		local itemDefRes = ItemAppearanceDefinition.get(definitionId)
+		if
+			not IsHairColored[definitionId]
+			and itemDefRes.IsOk
+			and table.find(itemDefRes.Value.TextureGroups, HAIR_TEXTURE_GROUP_KEY) ~= nil
+		then
+			IsHairTinted[definitionId] = true
+		end
+	end
+end
 
 -- nothing here does anything in a game where this is false
 Util.IS_ANY = next(IsItemShared) ~= nil or IsBackstoryShared or IsColorLinked or IsSkinShared
@@ -233,16 +284,30 @@ function Util.getIfColorMatched(character: Character): boolean
 	return true
 end
 
+-- an item that takes the color of a head of hair, in the color of the one among those items. any other item comes
+-- back as it is, + so does one that's worn with no hair
+function Util.tint(items: { Item }, item: Item): Item
+	if not IsHairTinted[item.DefinitionId] then
+		return item
+	end
+	local hair = findHair(items)
+	return if hair then dye(item, hair) else item
+end
+
 -- the character with what's shared of that identity taken over by every other one of its identities. where the game
 -- has the switch the skin + the hair color only go along while it has them matched, each identity keeps its own
--- otherwise
+-- otherwise. what takes the color of the hair it's worn with is in it on every one of them
 function Util.apply(character: Character, sourceKey: IdentityKey, isColorMatched: boolean?): Character
-	local source = character.Identities[sourceKey]
-	if not Util.IS_ANY or not source then
+	local untintedSource = character.Identities[sourceKey]
+	if not Util.IS_ANY or not untintedSource then
 		return character
 	end
 	local isMatched = IsColorLinked and isColorMatched == true
 	local out = character
+	local source = tintIdentity(untintedSource)
+	if source ~= untintedSource then
+		out = StateUtil.setIdentity(out, sourceKey, source)
+	end
 	for identityKey, identity in character.Identities do
 		if identityKey == sourceKey or not identity then
 			continue

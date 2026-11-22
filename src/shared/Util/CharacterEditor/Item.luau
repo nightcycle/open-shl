@@ -8,6 +8,7 @@ local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Defini
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local PageUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Page")
+local ShareUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Share")
 local StateUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/State")
 local TextureGroupConstructor =
 	require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item/TextureGroup")
@@ -113,15 +114,17 @@ local function carry(item: Item, itemDef: ItemDefinition, previousItem: Item): I
 end
 
 -- an item nobody wore yet: the way it was made, or the way the game has what's worn already start it out. where a
--- game keeps a look it comes in the one of what it's about to take the place of
+-- game keeps a look it comes in the one of what it's about to take the place of. a beard comes in the color of the
+-- hair it's about to be worn with, where that's what a beard goes by
 local function newItem(state: EditorState, definitionId: string): Item
-	local item = WornUtil.newItem(StateUtil.getIdentity(state).Appearance, definitionId)
+	local appearance = StateUtil.getIdentity(state).Appearance
+	local item = WornUtil.newItem(appearance, definitionId)
 	local replacedItem = if IS_LOOK_KEPT then findReplaced(state, definitionId) else nil
-	if not replacedItem then
-		return item
-	end
 	local itemDefRes = ItemAppearanceDefinition.get(definitionId)
-	return if itemDefRes.IsOk then carry(item, itemDefRes.Value, replacedItem) else item
+	if replacedItem and itemDefRes.IsOk then
+		item = carry(item, itemDefRes.Value, replacedItem)
+	end
+	return ShareUtil.tint(appearance.Items, item)
 end
 
 -- the worn item when it's worn, the one that's tried on otherwise
