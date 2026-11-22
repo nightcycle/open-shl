@@ -95,6 +95,10 @@ local function play(self: EmoteService, pose: PoseDefinition): Result<AnimationT
 			end
 			newTrack.Priority = Enum.AnimationPriority.Action
 			newTrack.Looped = pose.IsLooped
+			-- played before its clip was there it was over at once: whoever is still cuffed is posed now that it is
+			if self._PoseTrack == newTrack and not newTrack.IsPlaying then
+				newTrack:Play()
+			end
 		end)
 	end
 	track.Priority = Enum.AnimationPriority.Action
