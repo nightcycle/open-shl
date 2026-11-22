@@ -43,10 +43,12 @@ export type SwatchInfo = {
 	Folders: { string }?,
 	Group: TextureGroupKey?, -- the first color of the item otherwise
 }
--- a button that's one picture while its tag is off + another while it's on
+-- a button that's one picture while its tag is off + another while it's on. the picture is a square with the button
+-- drawn across part of it: only that part takes a press, the rest of the square may lie over something else
 export type ToggleInfo = {
 	Page: string,
 	Box: Box,
+	HitBox: Box, -- where on the picture the button is drawn, in widths of the picture
 	Image: string,
 	SelectedImage: string,
 }

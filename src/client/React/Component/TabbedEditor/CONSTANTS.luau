@@ -85,6 +85,8 @@ local TABS: { TabInfo } = {
 			{
 				Page = "Hair/Matching",
 				Box = box(0.3722, 0.8093, 0.2546, 0.2546),
+				-- the top of the square lies over the last rows of the list, the pill is drawn below that
+				HitBox = box(0.05, 0.25, 0.9, 0.445),
 				Image = ART["matching-separate.png"],
 				SelectedImage = ART["matching-combine.png"],
 			},

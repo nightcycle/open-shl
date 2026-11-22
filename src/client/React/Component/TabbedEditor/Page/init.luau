@@ -232,6 +232,30 @@ local function pictureButton(props: {
 	})
 end
 
+-- a picture with its button over the part of it that's drawn on. the rest of the picture takes no press, so what
+-- lies under it is still pressed
+local function toggleButton(props: {
+	Info: ToggleInfo,
+	Image: string,
+	OnClick: () -> (),
+})
+	return e("ImageLabel", {
+		BackgroundTransparency = 1,
+		Image = props.Image,
+		Position = props.Info.Box.Position,
+		Size = props.Info.Box.Size,
+		ZIndex = 4,
+	}, {
+		Button = e("ImageButton", {
+			BackgroundTransparency = 1,
+			ImageTransparency = 1,
+			Position = props.Info.HitBox.Position,
+			Size = props.Info.HitBox.Size,
+			[React.Event.Activated] = props.OnClick,
+		}),
+	})
+end
+
 local function bars(props: {
 	Info: BarsInfo,
 	State: EditorState,
@@ -598,8 +622,8 @@ return function(props: Properties): React.ReactNode
 		local toggleField = field
 		local value = CharacterEditorUtil.read(state, toggleField)
 		local isSelected = value.Type == "Toggle" and value.IsSelected
-		children[`Toggle-{index}`] = e(pictureButton, {
-			Box = toggle.Box,
+		children[`Toggle-{index}`] = e(toggleButton, {
+			Info = toggle,
 			Image = if isSelected then toggle.SelectedImage else toggle.Image,
 			OnClick = function()
 				fieldCallback(toggleField, {
