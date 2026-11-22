@@ -1,0 +1,55 @@
+{
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "TextureGroup": {
+          "String": "Secondary"
+        }
+      }
+    },
+    "CFrame": {
+      "CFrame": {
+        "orientation": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "position": [
+          0.249786,
+          0.041459,
+          2e-6
+        ]
+      }
+    },
+    "Color": {
+      "Color3": [
+        0.8039215803146362,
+        0.8039215803146362,
+        0.8039215803146362
+      ]
+    },
+    "Material": {
+      "Enum": 272
+    },
+    "Size": {
+      "Vector3": [
+        0.5,
+        0.434461,
+        1
+      ]
+    }
+  }
+}

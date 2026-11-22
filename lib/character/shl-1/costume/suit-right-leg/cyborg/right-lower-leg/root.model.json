@@ -1,0 +1,28 @@
+{
+  "Children": [
+    {
+      "ClassName": "Attachment",
+      "Name": "RightLowerLeg"
+    }
+  ],
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Id": {
+          "String": "shl1/costume/suit-right-leg/cyborg/right-lower-leg/root"
+        }
+      }
+    },
+    "Size": {
+      "Vector3": [
+        1,
+        1.19309,
+        1
+      ]
+    },
+    "Transparency": {
+      "Float32": 1
+    }
+  }
+}

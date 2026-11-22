@@ -1,0 +1,28 @@
+{
+  "Children": [
+    {
+      "ClassName": "Attachment",
+      "Name": "LeftUpperArm"
+    }
+  ],
+  "ClassName": "Part",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Id": {
+          "String": "shl1/costume/suit-left-arm/mutant-5/left-upper-arm/root"
+        }
+      }
+    },
+    "Size": {
+      "Vector3": [
+        1,
+        1.16867,
+        1
+      ]
+    },
+    "Transparency": {
+      "Float32": 1
+    }
+  }
+}

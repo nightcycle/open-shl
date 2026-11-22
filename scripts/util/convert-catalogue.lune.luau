@@ -3,7 +3,10 @@
 -- tables a game keeps beside them: what an entry was called in a legacy save, what it cost + who started with it.
 -- the place is only ever read. an entry the library of SHL2 already has is borrowed instead of written a second time.
 -- a catalogue that was fitted to another body than the one its items are worn on is stood onto that one, where a
--- shell that reaches across a joint is cut on it so each half moves with its own part of the limb
+-- shell that reaches across a joint is cut on it so each half moves with its own part of the limb. a brick comes apart
+-- into two bricks right here. a wedge or a cylinder on its side doesn't, only studio can cut one: --cut-jobs writes a
+-- place of those parts with scripts/util/cut-parts.luau in it, --take-cuts takes the pieces out of that place once
+-- studio cut + saved it. they're kept beside the library + worn in place of their part from then on
 -- Services
 local fs = require("@lune/fs")
 local process = require("@lune/process")
@@ -239,6 +242,18 @@ type PatternRow = {
 	Material: string?,
 }
 type Output = { path: string, contents: string }
+-- the pieces studio cut a part into, from the top down, + the part they were cut from
+type CutRow = {
+	Part: string,
+	Pieces: { string },
+}
+-- a part only studio can cut + the heights to cut it on, against the middle of its limb
+type CutJob = {
+	Id: string,
+	Part: string,
+	Shape: Shape,
+	Heights: { number },
+}
 type Context = {
 	rules: GameRules,
 	game: string,
@@ -259,6 +274,11 @@ type Context = {
 	empties: { EntryRow },
 	-- what became of every part that reaches across a joint
 	joints: { string },
+	-- the pieces studio cut, by the id of their part
+	cuts: { [string]: CutRow },
+	-- how many parts of a piece needed studio so far, the next one is told apart by it
+	cutCounts: { [string]: number },
+	cutJobs: { CutJob },
 	notes: { string },
 	failures: { string },
 	-- per category of the library, for the summary
@@ -267,8 +287,8 @@ type Context = {
 	rigMeshIds: { [string]: boolean },
 }
 -- Constants
-local USAGE =
-	"Usage: lune run scripts/util/convert-catalogue.lune.luau <game> <place.rbxl> [--out <dir>] [--force | -f]"
+local USAGE = "Usage: lune run scripts/util/convert-catalogue.lune.luau <game> <place.rbxl> [--out <dir>] [--force | -f]"
+	.. " [--cut-jobs <jobs.rbxl>] [--take-cuts <cut.rbxl>]"
 local PATH_DELIMITER = "/"
 local ID_DELIMITER = "_"
 -- the library of SHL2, an entry it has already is borrowed from there
@@ -287,6 +307,18 @@ local CFRAME_PRECISION = 1e6
 local SIZE_TOLERANCE = 1e-3
 local LIST_KEYS = { "Entries", "Extras", "Empty", "ItemIds", "TextureGroups" }
 local UNION_EXTENSION = ".rbxm"
+-- the pieces studio cut sit beside the library they're worn in, a folder the game is never built from
+local CUTS_SUFFIX = ".cuts"
+local CUTS_INDEX_NAME = "index.tsv"
+local CUTS_INDEX_HEADER = "id\tpart\tpieces"
+local CUTS_COLUMN_DELIMITER = "\t"
+local CUTS_PIECE_DELIMITER = ","
+-- what studio runs over the place of --cut-jobs, the place carries it along
+local CUT_SCRIPT_PATH = "scripts/util/cut-parts.luau"
+local CUT_SCRIPT_NAME = "CutParts"
+local CUT_JOBS_NAME = "Jobs"
+local CUT_PIECES_PATH = "Workspace/Cuts"
+local CUT_HEIGHT_DELIMITER = ","
 -- a part can't be thinner than this, so nothing is cut off a shell that reaches less far across a joint
 local JOINT_TOLERANCE = 1e-3
 -- how far off an axis a part may be turned + still count as standing square to it
@@ -672,10 +704,12 @@ local RULES: { [string]: GameRules } = {
 local CFrame = (roblox :: any).CFrame
 local Vector3 = (roblox :: any).Vector3
 -- Private Functions
-local function parseArgs(args: { string }): (string, string, string, boolean)
+local function parseArgs(args: { string }): (string, string, string, boolean, string?, string?)
 	local values: { string } = {}
 	local outPath = "."
 	local isForced = false
+	local cutJobsPath: string? = nil
+	local takeCutsPath: string? = nil
 	local index = 1
 	while index <= #args do
 		local arg = args[index]
@@ -684,6 +718,12 @@ local function parseArgs(args: { string }): (string, string, string, boolean)
 		elseif arg == "--out" then
 			index += 1
 			outPath = (assert(args[index], `Expected a directory after --out\n{USAGE}`):gsub("\\", "/"))
+		elseif arg == "--cut-jobs" then
+			index += 1
+			cutJobsPath = (assert(args[index], `Expected a place to write after --cut-jobs\n{USAGE}`):gsub("\\", "/"))
+		elseif arg == "--take-cuts" then
+			index += 1
+			takeCutsPath = (assert(args[index], `Expected a place after --take-cuts\n{USAGE}`):gsub("\\", "/"))
 		else
 			assert(arg:sub(1, 1) ~= "-", `Unknown flag: {arg}\n{USAGE}`)
 			table.insert(values, (arg:gsub("\\", "/")))
@@ -691,7 +731,7 @@ local function parseArgs(args: { string }): (string, string, string, boolean)
 		index += 1
 	end
 	assert(#values == 2, `Expected a game and a place\n{USAGE}`)
-	return values[1], values[2], outPath, isForced
+	return values[1], values[2], outPath, isForced, cutJobsPath, takeCutsPath
 end
 
 local function read(inst: roblox.Instance, name: string): any
@@ -1947,8 +1987,26 @@ local function describe(shape: Shape): string
 	)
 end
 
--- the parts of a limb a shape ends up on. one that lies across a joint is cut on it when that leaves whole parts, or
--- goes whole to the part that holds most of it + is listed for somebody to fix by hand
+-- a part only studio can cut is named after its piece + how many of those came before it, which stays the same from one
+-- run to the next
+local function getCutId(context: Context, piecePath: string): string
+	local names: { string } = string.split(piecePath, PATH_DELIMITER)
+	local key = `{toKebab(names[#names - 1])}-{toKebab(names[#names])}`
+	local count = (context.cutCounts[key] or 0) + 1
+	context.cutCounts[key] = count
+	return `{key}-{count}`
+end
+
+local function readCut(context: Context, fileName: string): roblox.Instance
+	local path = `{context.libraryPath}{CUTS_SUFFIX}/{fileName}`
+	assert(fs.isFile(path), `"{path}" is listed among the pieces studio cut, it isn't there`)
+	local union = roblox.deserializeModel(fs.readFile(path))[1]
+	assert(union and union.ClassName == "UnionOperation", `"{path}" doesn't hold a union`)
+	return union
+end
+
+-- the parts of a limb a shape ends up on. one that lies across a joint is cut on it when that leaves whole parts, is
+-- worn as the pieces studio cut it into, or goes whole to the part that holds most of it + is listed for studio to cut
 local function split(context: Context, limb: BodyLimbRule, shape: Shape): { { Shape: Shape, Index: number } }
 	local low, high = getHeights(limb, shape)
 	local crossed = getCrossed(limb, low, high)
@@ -1961,15 +2019,10 @@ local function split(context: Context, limb: BodyLimbRule, shape: Shape): { { Sh
 	end
 	-- two parts of a piece can share a name + a size, where it sat on the limb tells them apart
 	local position: Vector3Value = shape.CFrame.Position
-	local across = string.format(
-		"%s %s at %.3f, %.3f, %.3f: across the %s",
-		shape.Path:match("^(.*)/[^/]+$") or shape.Path,
-		describe(shape),
-		position.X,
-		position.Y,
-		position.Z,
-		table.concat(jointNames, " + ")
-	)
+	local piecePath = shape.Path:match("^(.*)/[^/]+$") or shape.Path
+	local part =
+		string.format("%s %s at %.3f, %.3f, %.3f", piecePath, describe(shape), position.X, position.Y, position.Z)
+	local across = `{part}: across the {table.concat(jointNames, " + ")}`
 	local halves = cut(limb, shape, crossed)
 	if halves then
 		local placed: { { Shape: Shape, Index: number } } = {}
@@ -1983,6 +2036,37 @@ local function split(context: Context, limb: BodyLimbRule, shape: Shape): { { Sh
 		table.insert(context.joints, `{across}, cut: {table.concat(parts, " + ")}`)
 		return placed
 	end
+	-- what's left is for studio to cut. the pieces it cut before are worn in place of the part
+	local id = getCutId(context, piecePath)
+	local heights: { number } = {}
+	for _, joint in crossed do
+		table.insert(heights, joint.Height - limb.Position[2])
+	end
+	table.insert(context.cutJobs, { Id = id, Part = part, Shape = shape, Heights = heights })
+	local row = context.cuts[id]
+	if row then
+		-- a catalogue that changed since studio cut it would wear the pieces of another part
+		assert(row.Part == part, `the pieces of "{id}" were cut from {row.Part}, it's {part} now: cut them again`)
+		assert(#row.Pieces == #crossed + 1, `"{id}" lies across {#crossed} joint(s), it was cut into {#row.Pieces}`)
+		local placed: { { Shape: Shape, Index: number } } = {}
+		local parts: { string } = {}
+		for _, fileName in row.Pieces do
+			local union = readCut(context, fileName)
+			union.Name = shape.Part.Name
+			local piece: Shape = {
+				Path = shape.Path,
+				Part = union,
+				Kind = "Carried",
+				Size = read(union, "Size"),
+				CFrame = read(union, "CFrame"),
+			}
+			local index = getSegmentIndex(limb, limb.Position[2] + piece.CFrame.Position.Y)
+			table.insert(placed, { Shape = piece, Index = index })
+			table.insert(parts, limb.Segments[index].Part)
+		end
+		table.insert(context.joints, `{across}, cut by studio: {table.concat(parts, " + ")}`)
+		return placed
+	end
 	local shares = getShares(limb, shape)
 	local best = 1
 	for index, share in shares do
@@ -1993,7 +2077,7 @@ local function split(context: Context, limb: BodyLimbRule, shape: Shape): { { Sh
 	table.insert(
 		context.joints,
 		string.format(
-			"%s, whole on %s which holds %d%% of it: TO FIX BY HAND",
+			"%s, whole on %s which holds %d%% of it: TO CUT IN STUDIO (--cut-jobs)",
 			across,
 			limb.Segments[best].Part,
 			math.round(shares[best] * 100)
@@ -2035,6 +2119,67 @@ local function writeItemFolder(
 	end
 	for _, file in files do
 		table.insert(context.outputs, { path = `{itemPath}/{file.path}`, contents = file.contents })
+	end
+	return id
+end
+
+-- the item of a limb that wears a union: a folder of its pieces, where a piece that holds one is a folder of its parts
+-- in turn + every other piece stays the one text file it would have been a part of
+local function writeLimbFolder(
+	context: Context,
+	group: string,
+	category: string,
+	key: string,
+	item: rojo.ModelJSON,
+	files: { [string]: { Output } }
+): string
+	local id = getItemId(group, category, key)
+	local libraryCategory = `{group}/{category}`
+	local itemPath = `{context.libraryPath}/{libraryCategory}/{key}`
+	context.itemCounts[libraryCategory] = (context.itemCounts[libraryCategory] or 0) + 1
+	-- an item of one piece is that piece, there'd be no folder of pieces to put the union of one into
+	assert(item.ClassName == "Folder", `{id} is a single piece, a union of it has nowhere to go`)
+	local meta: rojo.MetaJSON = { className = item.ClassName, properties = item.Properties }
+	table.insert(context.outputs, {
+		path = `{itemPath}/init.meta.json`,
+		contents = rojoValue.encode(meta :: any),
+	})
+	local pieces: { rojo.ModelNode } = item.Children or {}
+	for _, piece in pieces do
+		local pieceFiles = files[piece.Name]
+		if pieceFiles == nil then
+			local model: rojo.ModelJSON = {
+				ClassName = piece.ClassName,
+				Properties = piece.Properties,
+				Children = piece.Children,
+			}
+			table.insert(context.outputs, {
+				path = `{itemPath}/{piece.Name}.model.json`,
+				contents = rojoValue.encode(model :: any),
+			})
+			continue
+		end
+		local piecePath = `{itemPath}/{piece.Name}`
+		local pieceMeta: rojo.MetaJSON = { className = piece.ClassName, properties = piece.Properties }
+		table.insert(context.outputs, {
+			path = `{piecePath}/init.meta.json`,
+			contents = rojoValue.encode(pieceMeta :: any),
+		})
+		local children: { rojo.ModelNode } = piece.Children or {}
+		for _, child in children do
+			local model: rojo.ModelJSON = {
+				ClassName = child.ClassName,
+				Properties = child.Properties,
+				Children = child.Children,
+			}
+			table.insert(context.outputs, {
+				path = `{piecePath}/{child.Name}.model.json`,
+				contents = rojoValue.encode(model :: any),
+			})
+		end
+		for _, file in pieceFiles do
+			table.insert(context.outputs, { path = `{piecePath}/{file.path}`, contents = file.contents })
+		end
 	end
 	return id
 end
@@ -2104,6 +2249,9 @@ local function convertSplitEntry(
 		local limb = assert(body[modelRule.Limb], `the body has no "{modelRule.Limb}"`)
 		local origin: CFrameValue = read(standIn, "CFrame")
 		local nodes: { { rojo.ModelNode } } = {}
+		-- the pieces studio cut, by the part of the limb they're worn on: a union can't be written into a model file
+		local files: { [string]: { Output } } = {}
+		local isAnyFile = false
 		local getNames: { (name: string) -> string } = {}
 		for index in limb.Segments do
 			nodes[index] = {}
@@ -2121,16 +2269,17 @@ local function convertSplitEntry(
 			end
 			for _, placed in split(context, limb, shape) do
 				local index = placed.Index
-				table.insert(
-					nodes[index],
-					newShapeNode(
-						context,
-						placed.Shape,
-						getNames[index](toKebab(shape.Part.Name)),
-						getOffset(limb, limb.Segments[index]) * placed.Shape.CFrame,
-						textureGroup
-					)
-				)
+				local name = getNames[index](toKebab(shape.Part.Name))
+				local cframe: CFrameValue = getOffset(limb, limb.Segments[index]) * placed.Shape.CFrame
+				if placed.Shape.Part.ClassName == "UnionOperation" then
+					local pieceName = toKebab(limb.Segments[index].Part)
+					local pieceFiles = files[pieceName] or {}
+					files[pieceName] = pieceFiles
+					table.insert(pieceFiles, newUnionOutput(context, placed.Shape, name, cframe, textureGroup))
+					isAnyFile = true
+				else
+					table.insert(nodes[index], newShapeNode(context, placed.Shape, name, cframe, textureGroup))
+				end
 			end
 		end
 		-- what another item sits on stays a part of its own, so the attachment isn't taken for the one of the root
@@ -2180,7 +2329,10 @@ local function convertSplitEntry(
 		if rules.IsBodyHidden then
 			attributes.IsBodyHidden = true
 		end
-		local id = writeItem(context, rule.Group, modelRule.Category, key, newItemNode(pieces, attributes, {}))
+		local item = newItemNode(pieces, attributes, {})
+		local id = if isAnyFile
+			then writeLimbFolder(context, rule.Group, modelRule.Category, key, item, files)
+			else writeItem(context, rule.Group, modelRule.Category, key, item)
 		limbItemIds[modelRule.Name] = id
 		table.insert(row.ItemIds, id)
 	end
@@ -2501,6 +2653,147 @@ local function encodeRows(value: rojo.JSONValue): string
 	return json
 end
 
+-- the pieces studio cut that are kept beside a library, by the id of the part each set was cut from
+local function readCuts(libraryPath: string): { [string]: CutRow }
+	local rows: { [string]: CutRow } = {}
+	local path = `{libraryPath}{CUTS_SUFFIX}/{CUTS_INDEX_NAME}`
+	if not fs.isFile(path) then
+		return rows
+	end
+	local lines = fs.readFile(path):gsub("\r", ""):split("\n")
+	assert(lines[1] == CUTS_INDEX_HEADER, `"{path}" doesn't start with its header`)
+	for index = 2, #lines do
+		local line = lines[index]
+		if line == "" then
+			continue
+		end
+		local columns = line:split(CUTS_COLUMN_DELIMITER)
+		assert(#columns == 3, `"{path}" line {index} doesn't have its 3 columns`)
+		rows[columns[1]] = { Part = columns[2], Pieces = columns[3]:split(CUTS_PIECE_DELIMITER) }
+	end
+	return rows
+end
+
+-- the pieces of the place studio cut + saved are put beside the library, with what each was cut from. they replace
+-- whatever was cut before
+local function takeCuts(libraryPath: string, placePath: string)
+	assert(fs.isFile(placePath), `No place file found at "{placePath}"`)
+	local place = roblox.deserializePlace(fs.readFile(placePath))
+	local folder = Place.findInstance(place, CUT_PIECES_PATH)
+	local rows: { [string]: CutRow } = {}
+	local ids: { string } = {}
+	local outputs: { Output } = {}
+	for _, piece in getSortedChildren(folder) do
+		assert(piece.ClassName == "UnionOperation", `"{piece.Name}" of the cut place is no union`)
+		local id, order, part = piece:GetAttribute("Id"), piece:GetAttribute("Order"), piece:GetAttribute("Part")
+		assert(
+			typeof(id) == "string" and typeof(order) == "number" and typeof(part) == "string",
+			`"{piece.Name}" of the cut place doesn't say what it was cut from`
+		)
+		local row = rows[id]
+		if row == nil then
+			row = { Part = part, Pieces = {} }
+			rows[id] = row
+			table.insert(ids, id)
+		end
+		local fileName = `{id}-{order}{UNION_EXTENSION}`
+		row.Pieces[order] = fileName
+		-- what told the pieces apart in the place is said by the file + the index from here on
+		for _, name in { "Id", "Order", "Part" } do
+			piece:SetAttribute(name, nil)
+		end
+		table.insert(outputs, { path = fileName, contents = (Place.serialize(piece)) })
+	end
+	assert(#ids > 0, `"{placePath}" holds no cut pieces: run {CUT_SCRIPT_NAME} in studio + save it first`)
+	table.sort(ids)
+	local lines = { CUTS_INDEX_HEADER }
+	for _, id in ids do
+		local row = rows[id]
+		table.insert(
+			lines,
+			table.concat({ id, row.Part, table.concat(row.Pieces, CUTS_PIECE_DELIMITER) }, CUTS_COLUMN_DELIMITER)
+		)
+	end
+	local directory = `{libraryPath}{CUTS_SUFFIX}`
+	if fs.isDir(directory) then
+		fs.removeDir(directory)
+	end
+	fs.writeDir(directory)
+	for _, output in outputs do
+		fs.writeFile(`{directory}/{output.path}`, output.contents)
+	end
+	fs.writeFile(`{directory}/{CUTS_INDEX_NAME}`, table.concat(lines, "\n") .. "\n")
+	print(`took {#outputs} pieces of {#ids} parts into "{directory}"`)
+end
+
+-- a place of every part only studio can cut, each where it sits against the middle of its limb + saying how high to
+-- cut it, with the script that does it
+local function writeCutJobs(context: Context, path: string)
+	local place = roblox.Instance.new("DataModel")
+	local jobs = roblox.Instance.new("Folder")
+	jobs.Name = CUT_JOBS_NAME
+	jobs.Parent = place:GetService("Workspace")
+	for _, job in context.cutJobs do
+		local shape = job.Shape
+		local part: roblox.Instance
+		local stretch = 1
+		-- lune's Instance typedef leaves out dynamic property indexing
+		local properties: any
+		if shape.Kind == "Wedge" then
+			part = roblox.Instance.new("WedgePart")
+			properties = part
+			properties.Size = shape.Size
+			properties.CFrame = shape.CFrame
+		else
+			assert(shape.Kind == "Cylinder", `{job.Part} is neither a wedge nor a cylinder, nothing says how to cut it`)
+			-- the cylinder of a mesh stands along the y of its part + is as wide each way as the part is. the one a
+			-- part can be lies along its x + is round: it's handed over round, as wide as it's high where it lies, +
+			-- says how much wider it gets once it's cut
+			local cframe: CFrameValue = shape.CFrame
+			local _, _, _, _, _, _, upX, _, upZ = cframe:GetComponents()
+			local isXUp = math.abs(math.abs(upX) - 1) < AXIS_TOLERANCE
+			assert(
+				isXUp or math.abs(math.abs(upZ) - 1) < AXIS_TOLERANCE,
+				`{job.Part} doesn't lie square on its side, nothing says how to cut it`
+			)
+			local high = if isXUp then shape.Size.X else shape.Size.Z
+			local wide = if isXUp then shape.Size.Z else shape.Size.X
+			part = roblox.Instance.new("Part")
+			properties = part
+			properties.Shape = (roblox :: any).Enum.PartType.Cylinder
+			properties.Size = Vector3.new(shape.Size.Y, high, high)
+			properties.CFrame =
+				CFrame.fromMatrix(cframe.Position, cframe.YVector, if isXUp then cframe.XVector else cframe.ZVector)
+			stretch = wide / high
+		end
+		part.Name = job.Id
+		properties.Anchored = true
+		for _, name in { "Color", "Material", "Transparency", "Reflectance" } do
+			properties[name] = read(shape.Part, name)
+		end
+		local heights: { string } = {}
+		for _, height in job.Heights do
+			table.insert(heights, string.format("%.6f", height))
+		end
+		part:SetAttribute("Id", job.Id)
+		part:SetAttribute("Part", job.Part)
+		part:SetAttribute("Heights", table.concat(heights, CUT_HEIGHT_DELIMITER))
+		part:SetAttribute("Stretch", stretch)
+		part.Parent = jobs
+	end
+	local module = roblox.Instance.new("ModuleScript")
+	module.Name = CUT_SCRIPT_NAME;
+	(module :: any).Source = fs.readFile(CUT_SCRIPT_PATH)
+	module.Parent = place:GetService("ServerStorage")
+	local directory = assert(path:match("^(.*)/[^/]+$"), `"{path}" names no folder to write a place into`)
+	fs.writeDir(directory)
+	fs.writeFile(path, roblox.serializePlace(place))
+	print(
+		`\n{#context.cutJobs} parts for studio to cut are in "{path}": open it, run `
+			.. `require(game.ServerStorage.{CUT_SCRIPT_NAME})() from the command bar, save, then --take-cuts`
+	)
+end
+
 local function printList(title: string, lines: { string })
 	print(`\n{title} ({#lines})`)
 	for _, line in lines do
@@ -2509,7 +2802,7 @@ local function printList(title: string, lines: { string })
 end
 -- Class
 do
-	local gameId, placePath, outPath, isForced = parseArgs(process.args)
+	local gameId, placePath, outPath, isForced, cutJobsPath, takeCutsPath = parseArgs(process.args)
 	local rules = assert(RULES[gameId], `No rules for the catalogue of "{gameId}"`)
 	assert(fs.isFile(placePath), `No place file found at "{placePath}"`)
 	-- a game is written into the folders it's built from
@@ -2522,6 +2815,10 @@ do
 			-- both are written whole, an item fixed by hand would be gone without a word
 			assert(isForced, `"{fullPath}" already exists, pass --force to replace it`)
 		end
+	end
+
+	if takeCutsPath then
+		takeCuts(libraryPath, takeCutsPath)
 	end
 
 	local place = roblox.deserializePlace(fs.readFile(placePath))
@@ -2544,6 +2841,9 @@ do
 		borrows = {},
 		empties = {},
 		joints = {},
+		cuts = readCuts(libraryPath),
+		cutCounts = {},
+		cutJobs = {},
 		notes = {},
 		failures = {},
 		itemCounts = {},
@@ -2683,4 +2983,7 @@ do
 	end
 	print(`{itemCount} new items, {#patterns} patterns, {#context.outputs} files written under "{outPath}"`)
 	print(`{contentMeshCount} mesh ids carried, {rigMeshCount} mesh ids of the rig used for the painted layers`)
+	if cutJobsPath then
+		writeCutJobs(context, cutJobsPath)
+	end
 end

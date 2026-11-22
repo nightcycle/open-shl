@@ -1,0 +1,99 @@
+{
+  "Children": [
+    {
+      "Children": [
+        {
+          "ClassName": "Attachment",
+          "Name": "LeftHand"
+        }
+      ],
+      "ClassName": "Part",
+      "Name": "root",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "Rojo_Id": {
+              "String": "shl1/costume/suit-left-arm/mutant-3/left-hand/root"
+            }
+          }
+        },
+        "Size": {
+          "Vector3": [
+            1,
+            0.30003,
+            1
+          ]
+        },
+        "Transparency": {
+          "Float32": 1
+        }
+      }
+    },
+    {
+      "ClassName": "Part",
+      "Name": "secondary",
+      "Properties": {
+        "Attributes": {
+          "Attributes": {
+            "TextureGroup": {
+              "String": "Secondary"
+            }
+          }
+        },
+        "CFrame": {
+          "CFrame": {
+            "orientation": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "position": [
+              -0.000137,
+              -0.012371,
+              2e-6
+            ]
+          }
+        },
+        "Color": {
+          "Color3": [
+            0.8039215803146362,
+            0.8039215803146362,
+            0.8039215803146362
+          ]
+        },
+        "Material": {
+          "Enum": 272
+        },
+        "Size": {
+          "Vector3": [
+            1,
+            0.274842,
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "ClassName": "Model",
+  "Properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl1/costume/suit-left-arm/mutant-3/left-hand/root"
+        }
+      }
+    }
+  }
+}

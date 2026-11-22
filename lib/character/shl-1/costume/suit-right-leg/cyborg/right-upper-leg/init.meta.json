@@ -1,0 +1,12 @@
+{
+  "className": "Model",
+  "properties": {
+    "Attributes": {
+      "Attributes": {
+        "Rojo_Target_PrimaryPart": {
+          "String": "shl1/costume/suit-right-leg/cyborg/right-upper-leg/root"
+        }
+      }
+    }
+  }
+}

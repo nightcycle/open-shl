@@ -1,0 +1,21 @@
+id	part	pieces
+cyborg-leg-1-1	Bodies/Cyborg/Leg1 "Primary" (wedge 0.6 x 0.2 x 0.6) at -0.000, -0.100, -0.400	cyborg-leg-1-1-1.rbxm,cyborg-leg-1-1-2.rbxm
+cyborg-leg-1-2	Bodies/Cyborg/Leg1 "Primary" (wedge 0.2 x 0.2 x 0.4) at -0.200, -0.600, -0.400	cyborg-leg-1-2-1.rbxm,cyborg-leg-1-2-2.rbxm
+cyborg-leg-1-3	Bodies/Cyborg/Leg1 "Primary" (wedge 0.2 x 0.2 x 0.4) at 0.200, -0.600, -0.400	cyborg-leg-1-3-1.rbxm,cyborg-leg-1-3-2.rbxm
+cyborg-leg-1-4	Bodies/Cyborg/Leg1 "Secondary" (cylinder 0.6 x 0.16 x 0.6) at -0.000, 0.300, -0.000	cyborg-leg-1-4-1.rbxm,cyborg-leg-1-4-2.rbxm
+cyborg-leg-1-5	Bodies/Cyborg/Leg1 "Tertiary" (cylinder 0.6 x 0.32 x 1) at -0.300, 0.300, -0.000	cyborg-leg-1-5-1.rbxm,cyborg-leg-1-5-2.rbxm
+cyborg-leg-1-6	Bodies/Cyborg/Leg1 "Tertiary" (cylinder 0.6 x 0.32 x 1) at 0.300, 0.300, -0.000	cyborg-leg-1-6-1.rbxm,cyborg-leg-1-6-2.rbxm
+cyborg-leg-2-1	Bodies/Cyborg/Leg2 "Primary" (wedge 0.6 x 0.2 x 0.6) at -0.000, -0.100, -0.400	cyborg-leg-2-1-1.rbxm,cyborg-leg-2-1-2.rbxm
+cyborg-leg-2-2	Bodies/Cyborg/Leg2 "Primary" (wedge 0.2 x 0.2 x 0.4) at -0.200, -0.600, -0.400	cyborg-leg-2-2-1.rbxm,cyborg-leg-2-2-2.rbxm
+cyborg-leg-2-3	Bodies/Cyborg/Leg2 "Primary" (wedge 0.2 x 0.2 x 0.4) at 0.200, -0.600, -0.400	cyborg-leg-2-3-1.rbxm,cyborg-leg-2-3-2.rbxm
+cyborg-leg-2-4	Bodies/Cyborg/Leg2 "Secondary" (cylinder 0.6 x 0.16 x 0.6) at -0.000, 0.300, -0.000	cyborg-leg-2-4-1.rbxm,cyborg-leg-2-4-2.rbxm
+cyborg-leg-2-5	Bodies/Cyborg/Leg2 "Tertiary" (cylinder 0.6 x 0.32 x 1) at -0.300, 0.300, -0.000	cyborg-leg-2-5-1.rbxm,cyborg-leg-2-5-2.rbxm
+cyborg-leg-2-6	Bodies/Cyborg/Leg2 "Tertiary" (cylinder 0.6 x 0.32 x 1) at 0.300, 0.300, -0.000	cyborg-leg-2-6-1.rbxm,cyborg-leg-2-6-2.rbxm
+mutant-3-arm-1-1	Bodies/Mutant3/Arm1 "Primary" (wedge 1 x 0.5 x 0.8) at 0.250, 0.000, -0.000	mutant-3-arm-1-1-1.rbxm,mutant-3-arm-1-1-2.rbxm
+mutant-3-arm-1-2	Bodies/Mutant3/Arm1 "Secondary" (wedge 1 x 0.5 x 0.8) at 0.250, 0.000, -0.000	mutant-3-arm-1-2-1.rbxm,mutant-3-arm-1-2-2.rbxm
+mutant-3-arm-2-1	Bodies/Mutant3/Arm2 "Primary" (wedge 1 x 0.5 x 0.8) at -0.250, 0.000, -0.000	mutant-3-arm-2-1-1.rbxm,mutant-3-arm-2-1-2.rbxm
+mutant-3-arm-2-2	Bodies/Mutant3/Arm2 "Secondary" (wedge 1 x 0.5 x 0.8) at -0.250, 0.000, -0.000	mutant-3-arm-2-2-1.rbxm,mutant-3-arm-2-2-2.rbxm
+mutant-5-arm-1-1	Bodies/Mutant5/Arm1 "Primary" (wedge 1 x 0.5 x 0.8) at -0.250, 0.000, 0.000	mutant-5-arm-1-1-1.rbxm,mutant-5-arm-1-1-2.rbxm
+mutant-5-arm-1-2	Bodies/Mutant5/Arm1 "Secondary" (wedge 1 x 0.5 x 0.8) at -0.250, 0.000, 0.000	mutant-5-arm-1-2-1.rbxm,mutant-5-arm-1-2-2.rbxm
+mutant-5-arm-2-1	Bodies/Mutant5/Arm2 "Primary" (wedge 1 x 0.5 x 0.8) at 0.250, 0.000, 0.000	mutant-5-arm-2-1-1.rbxm,mutant-5-arm-2-1-2.rbxm
+mutant-5-arm-2-2	Bodies/Mutant5/Arm2 "Secondary" (wedge 1 x 0.5 x 0.8) at 0.250, 0.000, 0.000	mutant-5-arm-2-2-1.rbxm,mutant-5-arm-2-2-2.rbxm
