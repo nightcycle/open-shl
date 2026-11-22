@@ -17,11 +17,11 @@ local DEFINITIONS: { PropDefinition } = {
 		Name = "Keycard",
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["keycard.png"]),
 	},
+	-- a bite takes as long as it keeps the next one off
+	{ Id = "cheeseburger", Name = "Cheeseburger", Use = { Duration = 0.8 } },
 }
 -- a row moves up into the list above once both halves of its prop are in the game's set
 local UPCOMING: { PropDefinition } = {
-	-- a bite takes as long as it keeps the next one off
-	{ Id = "cheeseburger", Name = "Cheeseburger", Use = { Duration = 0.8 } },
 	{ Id = "acoustic-guitar", Name = "Acoustic Guitar" },
 	{ Id = "electric-guitar", Name = "Electric Guitar" },
 	{ Id = "pizza-box", Name = "Pizza Box" },
