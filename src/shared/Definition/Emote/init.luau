@@ -5,70 +5,37 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
-local Animation = require("@game/ReplicatedStorage/Generated/Animation")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
 export type EmoteId = RoleplayType.EmoteId
 export type EmoteDefinition = RoleplayType.EmoteDefinition
 export type PoseDefinition = RoleplayType.PoseDefinition
+type EmoteCatalogue = RoleplayType.EmoteCatalogue
 -- Constants
--- animations are owned by the old place
-local DEFINITIONS: { EmoteDefinition } = {
-	{
-		Id = "HandsBehindBack",
-		Name = "Hands Behind Back",
-		AnimationId = Animation["shl-2"].emote["hands-behind-back.rbxm"],
-		IsLooped = true,
-		IsRooting = true,
-	},
-	{
-		Id = "HeroicPose",
-		Name = "Heroic Pose",
-		AnimationId = Animation["shl-2"].emote["heroic-pose.rbxm"],
-		IsLooped = true,
-		IsRooting = true,
-	},
-	{
-		Id = "Kneel",
-		Name = "Kneel",
-		AnimationId = Animation["shl-2"].emote["kneel.rbxm"],
-		IsLooped = true,
-		IsRooting = true,
-	},
-	{
-		Id = "Laugh",
-		Name = "Laugh",
-		AnimationId = Animation["shl-2"].emote["laugh.rbxm"],
-		IsLooped = true,
-		IsRooting = true,
-	},
-	{
-		Id = "Point",
-		Name = "Point",
-		AnimationId = Animation["shl-2"].emote["point.rbxm"],
-		IsLooped = true,
-		IsRooting = true,
-	},
-}
-TableUtil.deepFreeze(DEFINITIONS)
--- not an emote, a cuffed character can still walk around
-local HANDCUFFS: PoseDefinition = table.freeze({
-	Name = "Handcuffs",
-	AnimationId = Animation["shl-2"].emote["handcuffs.rbxm"],
-	IsLooped = true,
-	IsRooting = false,
+-- what there is to act out is the game's own, the rows of another game are never required. the arms of whoever is
+-- cuffed come with them, so a game without rows can't be asked for either
+local CATALOGUE: EmoteCatalogue = GameDefinition.pick({
+	shl1 = function(): EmoteCatalogue
+		error(`shl1 has no emotes yet`)
+	end,
+	shl2 = function(): EmoteCatalogue
+		return require("@self/SHL2")
+	end,
+	shl3 = function(): EmoteCatalogue
+		error(`shl3 has no emotes yet`)
+	end,
 })
+assert(RoleplayType.EmoteCatalogue(CATALOGUE))
+TableUtil.deepFreeze(CATALOGUE)
+local DEFINITIONS = CATALOGUE.Definitions
+local HANDCUFFS = CATALOGUE.Handcuffs
 -- Variables
 -- References
 -- Private Functions
 -- Class
 local Module = {}
-
-for _, DEFINITION in DEFINITIONS do
-	assert(RoleplayType.EmoteDefinition(DEFINITION))
-end
-assert(RoleplayType.PoseDefinition(HANDCUFFS))
 
 Module.HANDCUFFS = HANDCUFFS
 

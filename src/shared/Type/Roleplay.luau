@@ -111,4 +111,14 @@ Types.EmoteDefinition = Type.strictInterface({
 	IsRooting = Type.boolean,
 })
 
+-- what a game's players can act out, + what holds the arms of whoever is cuffed there
+export type EmoteCatalogue = {
+	Definitions: { EmoteDefinition },
+	Handcuffs: PoseDefinition,
+}
+Types.EmoteCatalogue = Type.strictInterface({
+	Definitions = Type.array(Types.EmoteDefinition),
+	Handcuffs = Types.PoseDefinition,
+})
+
 return Types
