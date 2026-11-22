@@ -12,6 +12,7 @@ local RigUtil = require("@game/ReplicatedStorage/Shared/Util/Rig")
 -- Components
 -- Hooks
 local useAppearance = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useAppearance")
+local useFraming = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useFraming")
 local useScene = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useScene")
 -- Contexts
 local AppTopInsetContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/TopInset")
@@ -27,6 +28,12 @@ local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React
 local EMPTY_APPEARANCE = AppearanceConstructor.new()
 -- a body that was never sized is the plain one
 local DEFAULT_HEIGHT = 1
+-- the stage is come to with the camera where it belongs, it only moves for a body that's sized under it
+local FRAMING: useFraming.Rule = table.freeze({
+	TargetOffset = CONSTANTS.CAMERA_TARGET_OFFSET,
+	Follow = CONSTANTS.CAMERA_FOLLOW,
+	Duration = CONSTANTS.CAMERA_DURATION,
+})
 local TURN_SPEED_DEG = CONSTANTS.TURN_STEP_DEG / CONSTANTS.TURN_DURATION
 -- Variables
 -- References
@@ -47,16 +54,6 @@ end
 
 local function getRig(scene: useScene.Scene?): Model?
 	return if scene and scene.IsAlive and scene.Rig.IsDone then scene.Rig.Value else nil
-end
-
--- from where + at what a body of that height is looked at. both keep to the spot the body stands on, so its feet
--- stay where they are in the picture however far the camera is off them
-local function getFraming(mount: Vector3, anchor: CFrame, height: number): CFrame
-	local reach = 1 + CONSTANTS.CAMERA_FOLLOW * (height - DEFAULT_HEIGHT)
-	return CFrame.lookAt(
-		mount + (mount - anchor.Position) * (reach - 1),
-		anchor:PointToWorldSpace(CONSTANTS.CAMERA_TARGET_OFFSET * reach)
-	)
 end
 
 local function turnButton(props: {
@@ -91,8 +88,6 @@ return function(_: Properties): React.ReactNode
 	local viewportRef: { current: ViewportFrame? } = React.useRef(nil :: ViewportFrame?)
 	local worldModelRef: { current: WorldModel? } = React.useRef(nil :: WorldModel?)
 	local cameraRef: { current: Camera? } = React.useRef(nil :: Camera?)
-	-- whether the camera was put anywhere yet
-	local isFramedRef = React.useRef(false)
 	-- how far the pair was asked to turn + how far it has so far, which trails behind
 	local turnDegRef = React.useRef(0)
 	local shownDegRef = React.useRef(0)
@@ -118,32 +113,7 @@ return function(_: Properties): React.ReactNode
 		return function() end
 	end, {})
 
-	React.useEffect(function()
-		local camera = cameraRef.current
-		if not camera or not cameraMount or not frontAnchor then
-			return function() end
-		end
-		local to = getFraming(cameraMount.Position, frontAnchor.CFrame, height)
-		-- the stage is come to with the camera where it belongs, it only moves for a body that's sized under it
-		if not isFramedRef.current then
-			isFramedRef.current = true
-			camera.CFrame = to
-			return function() end
-		end
-		local from = camera.CFrame
-		local startClock = os.clock()
-		local connection: RBXScriptConnection
-		connection = RunService.RenderStepped:Connect(function()
-			local alpha = math.min((os.clock() - startClock) / CONSTANTS.CAMERA_DURATION, 1)
-			camera.CFrame = from:Lerp(to, alpha)
-			if alpha == 1 then
-				connection:Disconnect()
-			end
-		end)
-		return function()
-			connection:Disconnect()
-		end
-	end, { cameraMount :: any, frontAnchor, height })
+	useFraming(cameraRef, cameraMount, frontAnchor, height, FRAMING)
 
 	-- a rig that's dressed in another size is left standing where its old body stood, so the pair is put on its spots
 	-- every frame rather than only when one of them moves
