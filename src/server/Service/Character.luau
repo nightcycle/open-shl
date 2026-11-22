@@ -373,8 +373,13 @@ local function selectCharacter(player: Player, characterId: string): Result<true
 		return saveRes
 	end
 	-- a selected character is always worn as the identity the game has one come in as (its super identity, unless
-	-- the game says another), the one that's worn already included
-	return SessionService:SetActiveIdentity(player, SpawnDefinition.START_IDENTITY_KEY)
+	-- the game says another), the one that's worn already included. whoever the server put in a costume stays who it
+	-- says
+	local costumeOpt = if AvatarService.IsInitialized then AvatarService:GetCostume(player) else Option.none()
+	local identityKey: IdentityKey = if costumeOpt.IsSome
+		then costumeOpt.Value.IdentityKey
+		else SpawnDefinition.START_IDENTITY_KEY
+	return SessionService:SetActiveIdentity(player, identityKey)
 end
 
 -- the client plays the animation of the transformation + asks once, the server picks the moment the costume
@@ -389,6 +394,10 @@ local function swapIdentity(self: CharacterService, player: Player): Result<Iden
 	end
 	if self._IsSwapping[player] then
 		return Result.err(`a swap is already underway`)
+	end
+	-- whoever the server put in a costume is who it says, there's nobody else to become
+	if AvatarService.IsInitialized and AvatarService:GetCostume(player).IsSome then
+		return Result.err(`there's nobody to swap to in a costume`)
 	end
 	local character = characterOpt.Value
 	local identityKey: IdentityKey = sessionOpt.Value.ActiveIdentityKey
