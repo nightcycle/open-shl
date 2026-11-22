@@ -11,7 +11,7 @@ local Result = TypeUnionLib.Result
 -- Modules
 local BaseUtil = require("@game/ReplicatedStorage/Shared/Util/Base")
 local FurnitureDefinition = require("@game/ReplicatedStorage/Shared/Definition/Furniture")
-local PlacementGizmo = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/PlacementGizmo")
+local PlacementGizmo = require("@self/PlacementGizmo")
 local Residence = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/Residence")
 -- Types
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
