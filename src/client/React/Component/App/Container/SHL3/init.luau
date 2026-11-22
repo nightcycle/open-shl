@@ -16,6 +16,7 @@ local FlyIn = require("@self/FlyIn")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
 local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
+local PlayerBoard = require("@self/PlayerBoard")
 local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
 -- Hooks
@@ -39,6 +40,8 @@ local REGISTRY: Registry = {
 		CharacterEditor = CharacterEditor,
 	},
 	PANELS = {
+		-- the list of who's in the game is what the shell calls a database, its hud has the button for it
+		Database = PlayerBoard,
 		Shop = Shop,
 	},
 	OVERLAYS = {
