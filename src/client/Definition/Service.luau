@@ -88,8 +88,10 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the emotes of the actions menu + the arms of whoever is cuffed: a game without either has nobody to pose
 	{
 		Name = "Emote",
+		IsFeatured = FEATURES.Roleplay,
 		Load = function(): Service
 			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Emote")
 			assert(not service.IsInitialized, `the emote service is already initialized`)
