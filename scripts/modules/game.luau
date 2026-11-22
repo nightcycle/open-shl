@@ -56,7 +56,7 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 		DataPath = "data/shl-2",
 		ScenePath = "lib/scene/shl-2",
 		BasePath = "lib/base/shl-2",
-		PropPath = "lib/prop",
+		PropPath = "lib/prop/core",
 		CharacterPath = BORROW_PATH,
 		-- it's the game every shared setting was tuned for
 		Properties = {},
@@ -64,6 +64,8 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 	shl3 = table.freeze({
 		DataPath = "data/shl-3",
 		ScenePath = "lib/scene/shl-3",
+		-- the cuffs its villains are held in
+		PropPath = "lib/prop/core",
 		CharacterPath = "lib/character/shl-3",
 		BorrowListPath = "lib/character/shl-3/borrow.txt",
 		-- what the legacy place was set to
