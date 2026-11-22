@@ -5,6 +5,7 @@ local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 -- Types
 type Result<V, E> = TypeUnionLib.Result<V, E>
@@ -13,33 +14,20 @@ local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
 type FaceSlot = AppearanceType.FaceSlot
 export type ExpressionId = RoleplayType.ExpressionId
 export type ExpressionDefinition = RoleplayType.ExpressionDefinition
-type Face = {
-	Id: ExpressionId,
-	Name: string,
-	Eyebrows: string,
-	Eyes: string,
-	Mouth: string,
-}
+type ExpressionFace = RoleplayType.ExpressionFace
 -- Constants
--- each slot holds the key of its face image
-local FACES: { Face } = {
-	{ Id = "Angry", Name = "Angry", Eyebrows = "angry", Eyes = "angry", Mouth = "angry" },
-	{ Id = "Sinister", Name = "Sinister", Eyebrows = "angry", Eyes = "angry", Mouth = "happy" },
-	{ Id = "Hateful", Name = "Hateful", Eyebrows = "angry", Eyes = "angry", Mouth = "neutral" },
-	{ Id = "Skeptical", Name = "Skeptical", Eyebrows = "angry", Eyes = "angry", Mouth = "sad" },
-	{ Id = "Cringing", Name = "Cringing", Eyebrows = "happy", Eyes = "neutral", Mouth = "angry" },
-	{ Id = "Happy", Name = "Happy", Eyebrows = "happy", Eyes = "neutral", Mouth = "happy" },
-	{ Id = "Nervous", Name = "Nervous", Eyebrows = "happy", Eyes = "neutral", Mouth = "neutral" },
-	{ Id = "Guilty", Name = "Guilty", Eyebrows = "happy", Eyes = "neutral", Mouth = "sad" },
-	{ Id = "Awestruck", Name = "Awestruck", Eyebrows = "happy", Eyes = "neutral", Mouth = "surprised" },
-	{ Id = "Neutral", Name = "Neutral", Eyebrows = "neutral", Eyes = "neutral", Mouth = "neutral" },
-	{ Id = "Hurt", Name = "Hurt", Eyebrows = "neutral", Eyes = "neutral", Mouth = "sad" },
-	{ Id = "Depressed", Name = "Depressed", Eyebrows = "worried", Eyes = "sad", Mouth = "angry" },
-	{ Id = "Weary", Name = "Weary", Eyebrows = "worried", Eyes = "sad", Mouth = "happy" },
-	{ Id = "Sad", Name = "Sad", Eyebrows = "worried", Eyes = "sad", Mouth = "sad" },
-	{ Id = "Traumatized", Name = "Traumatized", Eyebrows = "surprised", Eyes = "surprised", Mouth = "neutral" },
-	{ Id = "Surprised", Name = "Surprised", Eyebrows = "surprised", Eyes = "surprised", Mouth = "surprised" },
-}
+-- the faces a player can pull are the game's own, the rows of another game are never required
+local FACES: { ExpressionFace } = GameDefinition.pick({
+	shl1 = function(): { ExpressionFace }
+		return require("@self/SHL1")
+	end,
+	shl2 = function(): { ExpressionFace }
+		return require("@self/SHL2")
+	end,
+	shl3 = function(): { ExpressionFace }
+		return require("@self/SHL3")
+	end,
+})
 TableUtil.deepFreeze(FACES)
 -- Variables
 local Definitions: { ExpressionDefinition } = {}
@@ -51,7 +39,7 @@ local function getFaceId(slot: FaceSlot, key: string): string
 	return id
 end
 
-local function newDefinition(face: Face): ExpressionDefinition
+local function newDefinition(face: ExpressionFace): ExpressionDefinition
 	local out: ExpressionDefinition = {
 		Id = face.Id,
 		Name = face.Name,
@@ -70,6 +58,7 @@ end
 local Module = {}
 
 for _, FACE in FACES do
+	assert(RoleplayType.ExpressionFace(FACE))
 	table.insert(Definitions, newDefinition(FACE))
 end
 table.freeze(Definitions)
