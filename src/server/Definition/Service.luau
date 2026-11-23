@@ -4,6 +4,7 @@
 local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
+local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 -- Types
 local ServiceType = require("@game/ReplicatedStorage/Shared/Type/Service")
@@ -281,6 +282,17 @@ local ENTRIES: { Entry } = {
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/ServerId")
 			assert(not service.IsInitialized, `the server id service is already initialized`)
+			return service
+		end,
+	},
+	-- what an agent drives the game through, in a place that was built for it: it requires the services it drives, so
+	-- it starts once they're all up. no other place has the module, let alone requires it
+	{
+		Name = "Harness",
+		IsFeatured = BUILD_CONFIG.HARNESS_ENABLED,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Harness")
+			assert(not service.IsInitialized, `the harness service is already initialized`)
 			return service
 		end,
 	},
