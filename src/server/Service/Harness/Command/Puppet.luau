@@ -178,6 +178,13 @@ Module.list = function(context: Context): { Command }
 					rootPart.Anchored = args.IsAnchored == true
 				end
 				rig.Parent = Workspace
+				-- the server keeps it. a rig that's left to the engine goes to the nearest client, which runs its
+				-- humanoid from then on: the server never hears that one died
+				if rootPart and rootPart:IsA("BasePart") and not rootPart.Anchored then
+					pcall(function()
+						rootPart:SetNetworkOwner(nil)
+					end)
+				end
 				local body = context.Bodies:Add(rig)
 
 				local dressF = Future.timeout(

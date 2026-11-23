@@ -9,6 +9,7 @@ local Attack = require("@game/ServerScriptService/Server/VFX/Library/Attack")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local Harness = require("@game/ReplicatedStorage/Shared/Harness")
+local TakeDownUtil = require("@game/ServerScriptService/Server/Util/TakeDown")
 local VFXService = require("@game/ServerScriptService/Server/Service/VFX")
 -- Types
 local HarnessTypes = require("@game/ServerScriptService/Server/Service/Harness/Types")
@@ -54,6 +55,11 @@ Module.list = function(context: Context): { Command }
 					return toRes
 				end
 				local from, to = fromRes.Value, toRes.Value
+				-- the effect takes a hit from anybody: it's the ability service that leaves a body that's down
+				-- without a power to fire one. a puppet has no such service, so it's said here
+				if not TakeDownUtil.getIfAlive(from.Character) then
+					return Result.err(`{from.Name} is down: no power hits from a body that's down`)
+				end
 				local priorHealth = AttributeDefinition.get(to.Character, AttributeDefinition.Health)
 				-- what the rule says of the two before anything is taken: a hit that doesn't land is one of these two
 				local isHostile = CombatDefinition.getIfHostile(from.Character, to.Character)

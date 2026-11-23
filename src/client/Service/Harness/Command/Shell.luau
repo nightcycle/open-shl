@@ -19,6 +19,8 @@ type Command = Harness.Command
 local APP_NAME = "App"
 local LAYER_NAMES = table.freeze({ "Panels", "Screens", "Overlays", "BootPhases", "TopOverlays" })
 local HUD_NAME = "HUD"
+-- what the app is given to draw what the shell was just told, before it's read off its instances
+local SETTLE_DURATION = 0.1
 -- the checker has the list for one of its own literals, which is no list of strings to it
 local MENU_IDS: { string } = PseudoEnum.getEnumItems("MenuId") :: { any }
 local MENU_ID = Harness.newArgument(
@@ -36,6 +38,22 @@ local WHAT = Harness.newArgument(
 -- Variables
 -- References
 -- Private Functions
+-- why a button of that id can't be pressed in this game, nil for one that can: the flow of a game may hold the row
+-- of a button its hud doesn't have, which the shell would follow into a menu nothing draws
+local function getRefusal(menuId: PseudoEnum.MenuId): string?
+	local action = Flow.Menu[menuId]
+	if not action then
+		return `the "{menuId}" button leads nowhere in this game`
+	end
+	if action.Type == "Panel" and not Registry.PANELS[action.PanelId] then
+		return `this game has no "{action.PanelId}" panel for the "{menuId}" button to open`
+	end
+	if action.Type == "Screen" and not Registry.SCREENS[action.Screen.Type] then
+		return `this game has no "{action.Screen.Type}" screen for the "{menuId}" button to open`
+	end
+	return nil
+end
+
 local function listKeys(dict: { [any]: any }): { string }
 	local keys: { string } = {}
 	for key in dict do
@@ -111,13 +129,20 @@ Module.list = function(): { Command }
 				}
 				state.Stops = Flow.Stops
 				state.FirstScreen = Flow.FirstScreen
-				state.Menu = Flow.Menu
+				local menu: { [string]: any } = {}
+				for menuId, action in Flow.Menu do
+					-- the checker widens a key it walks to a string
+					if not getRefusal(menuId :: any) then
+						menu[menuId] = action
+					end
+				end
+				state.Menu = menu
 				return Result.ok(state)
 			end
 		),
 		Harness.newCommand(
 			"shell.press",
-			"presses a button of the hud by its id, through the shell the way the hud's own click does. answers with where that left the client",
+			"presses a button of the hud by its id, through the shell the way the hud's own click does. answers with where that left the client: a press the shell turns down (the select of an avatar that's in a fight or down) leaves it where it was",
 			{ MENU_ID },
 			function(args: { [string]: any }): Result<any, string>
 				assert(ShellService.IsInitialized, `the shell service isn't initialized`)
@@ -127,10 +152,12 @@ Module.list = function(): { Command }
 						`the hud isn't up ({ShellService:GetBootPhase()}, {ShellService:GetScreen().Type}): no button to press`
 					)
 				end
-				if not Flow.Menu[args.MenuId] then
-					return Result.err(`the "{args.MenuId}" button leads nowhere in this game, shell.get has its Menu`)
+				local refusal = getRefusal(args.MenuId)
+				if refusal then
+					return Result.err(`{refusal}, shell.get has the Menu of it`)
 				end
 				ShellService:PressMenuButton(args.MenuId)
+				task.wait(SETTLE_DURATION)
 				return Result.ok(getState())
 			end
 		),
@@ -140,6 +167,9 @@ Module.list = function(): { Command }
 			{ Harness.optional(WHAT) },
 			function(args: { [string]: any }): Result<any, string>
 				assert(ShellService.IsInitialized, `the shell service isn't initialized`)
+				if args.What == nil and ShellService:GetPanel() == nil and ShellService:GetScreen().Type == "None" then
+					return Result.err(`neither a panel nor a screen is open`)
+				end
 				local what: string = args.What or if ShellService:GetPanel() ~= nil then "Panel" else "Screen"
 				if what == "Panel" then
 					if ShellService:GetPanel() == nil then
@@ -152,6 +182,7 @@ Module.list = function(): { Command }
 					end
 					ShellService:CloseScreen()
 				end
+				task.wait(SETTLE_DURATION)
 				return Result.ok(getState())
 			end
 		),
