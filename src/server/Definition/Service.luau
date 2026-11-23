@@ -289,7 +289,8 @@ local ENTRIES: { Entry } = {
 	-- it starts once they're all up. no other place has the module, let alone requires it
 	{
 		Name = "Harness",
-		IsFeatured = BUILD_CONFIG.HARNESS_ENABLED,
+		-- a config that was generated before there was such a switch has no word on it, which is a no
+		IsFeatured = BUILD_CONFIG.HARNESS_ENABLED == true,
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Harness")
 			assert(not service.IsInitialized, `the harness service is already initialized`)
