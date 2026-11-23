@@ -445,6 +445,13 @@ function Residence:Destroy()
 end
 
 return {
+	-- the residence something is that's only known for what's behind a door, nil if it's built of something else
+	from = function(interior: unknown): Residence?
+		if type(interior) ~= "table" or getmetatable(interior :: any) ~= Residence then
+			return nil
+		end
+		return interior :: any
+	end,
 	new = function(anchor: CFrame, state: ResidenceState, parent: Instance): Result<Residence, string>
 		local inst = Instance.new("Model")
 		inst.Name = INSTANCE_NAME

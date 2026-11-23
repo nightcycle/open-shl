@@ -10,6 +10,7 @@ local Result = TypeUnionLib.Result
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local Placement = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/Placement")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
+local Residence = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/Residence")
 local ResidenceService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Residence")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Types
@@ -90,7 +91,8 @@ end
 local function startBuilding(self: BuildService): Result<true, string>
 	assert(ResidenceService.IsInitialized, `the residence service isn't initialized`)
 	if not self._Placement then
-		local residence = ResidenceService:GetInterior()
+		-- the service only knows what's behind a door for an interior, build mode needs the residence it is
+		local residence = Residence.from(ResidenceService:GetInterior())
 		if not residence or not residence.IsAlive then
 			return Result.err(`can't build outside of a residence`)
 		end
