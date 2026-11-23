@@ -47,7 +47,8 @@ local MODE_STAGE = Vector2.new(0.5, 0.45)
 -- each of these leaves him pointing at the thing he talks about
 local SWAP_BUTTON_SPOT = Vector2.new(0.82, 0.45)
 local CHARACTERS_BUTTON_SPOT = Vector2.new(0.82, 0.55)
-local BUILD_BUTTON_SPOT = Vector2.new(0.15, 0.75)
+-- as far from the button as he stands from the ones on the right: any closer + a press on it is a press on him
+local BUILD_BUTTON_SPOT = Vector2.new(0.24, 0.75)
 local EDITOR_EXPLORER_SPOT = Vector2.new(0.4, 0.4)
 local PVP_CONDITIONS: { Condition } = { "PvpEnabled" }
 local QUEST_CONDITIONS: { Condition } = { "QuestsEnabled" }
