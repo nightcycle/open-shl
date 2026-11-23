@@ -178,13 +178,6 @@ Module.list = function(context: Context): { Command }
 					rootPart.Anchored = args.IsAnchored == true
 				end
 				rig.Parent = Workspace
-				-- the server keeps it. a rig that's left to the engine goes to the nearest client, which runs its
-				-- humanoid from then on: the server never hears that one died
-				if rootPart and rootPart:IsA("BasePart") and not rootPart.Anchored then
-					pcall(function()
-						rootPart:SetNetworkOwner(nil)
-					end)
-				end
 				local body = context.Bodies:Add(rig)
 
 				local dressF = Future.timeout(
@@ -197,6 +190,16 @@ Module.list = function(context: Context): { Command }
 				elseif dressF.Value.IsErr then
 					dressErrors = dressF.Value.Value
 				end
+				-- the server keeps it, once the dress has left it the body it stays in: a rig that's left to the
+				-- engine goes to the nearest client, whose machine is then what moves it
+				local newRootPart = rig:FindFirstChild("HumanoidRootPart")
+				if newRootPart and newRootPart:IsA("BasePart") and not newRootPart.Anchored then
+					pcall(function()
+						newRootPart:SetNetworkOwner(nil)
+					end)
+				end
+				-- a humanoid that hasn't run a step yet takes a hit to 0 without ever dying of it
+				task.wait()
 				local description = describe(body)
 				description.DressErrors = dressErrors
 				return Result.ok(description)
