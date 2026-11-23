@@ -277,6 +277,8 @@ local function onCharacter(self: AvatarService, player: Player, character: Model
 		-- npc humanoids don't get a stock tag on this player's screen either
 		humanoid.NameDisplayDistance = 0
 		humanoid.HealthDisplayDistance = HEALTH_DISPLAY_DISTANCE or 0
+		-- a body that falls apart as it dies has nothing left to act its death out with
+		humanoid.BreakJointsOnDeath = false
 	end
 	local isInMenu = SessionService:GetIfInMenu(player)
 	self._HeldAvatars[player] = if isInMenu then character else nil
