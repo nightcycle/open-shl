@@ -15,6 +15,9 @@
 #
 # what's built here goes without the stories + the specs of the code, nobody opens one in a place that's live. a place
 # that wants them all the same has STORIES_ENABLED: true in its `env`
+#
+# the harness an agent drives a place through in studio is never built here: HARNESS_ENABLED is off for every place
+# of this file whatever its `env` says, which leaves its modules out as well
 universes:
   shl2:
     universe_id: 197125125

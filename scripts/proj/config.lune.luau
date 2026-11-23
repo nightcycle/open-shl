@@ -23,6 +23,8 @@ local CONTENT = game.getContent(GAME)
 local STORY_GLOBS = { "src/**/*.story.luau", "src/**/*.storybook.luau" }
 -- a spec that has a walk per game is a folder of that name
 local SPEC_GLOBS = { "src/**/*.spec.luau", "src/**/*.spec", "src/**/*.spec/**" }
+-- what an agent drives a running game through is a folder of that name on each side, with all that's its own
+local HARNESS_GLOBS = { "src/**/Harness", "src/**/Harness/**" }
 -- Variables
 -- References
 -- Private Functions
@@ -163,11 +165,21 @@ do -- write in a do block now to make it easier to copy to other things later / 
 	-- ui labs reads the stories + a server that's told to runs the specs, neither is there for a player. a build has
 	-- both unless it says otherwise, which the pipeline does for what it publishes. a server that runs its specs
 	-- keeps them either way
-	if not getFlag("STORIES_ENABLED", true) then
-		local globs = table.clone(STORY_GLOBS)
+	local isStoried = getFlag("STORIES_ENABLED", true)
+	local globs: { string } = {}
+	if not isStoried then
+		table.move(STORY_GLOBS, 1, #STORY_GLOBS, #globs + 1, globs)
 		if not getFlag("TESTS_ENABLED", false) then
 			table.move(SPEC_GLOBS, 1, #SPEC_GLOBS, #globs + 1, globs)
 		end
+	end
+	-- the harness is no more there for a player than a story is, so it goes where the stories go: the checker + a
+	-- terminal see it, nothing requires it. a build that asks for it by name keeps + starts it, one that turns it
+	-- down by name is rid of it whatever else it keeps, which is what the pipeline does to all it publishes
+	if not getFlag("HARNESS_ENABLED", isStoried) then
+		table.move(HARNESS_GLOBS, 1, #HARNESS_GLOBS, #globs + 1, globs)
+	end
+	if #globs > 0 then
 		project.globIgnorePaths = globs
 	end
 

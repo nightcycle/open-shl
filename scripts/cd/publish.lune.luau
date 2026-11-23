@@ -25,6 +25,9 @@ local DEFAULT_VERSION_TYPE = "published"
 -- nobody opens a story in a place that's live, so what's built here goes without them. a place that wants them all the
 -- same says so in the env of its config
 local DEFAULT_STORIES_ENABLED = "false"
+-- the harness answers whoever is in the place it runs in, which can only ever be an agent in studio. no place of the
+-- config gets a say in this one
+local HARNESS_ENABLED = "false"
 -- Variables
 -- References
 -- Private Functions
@@ -78,6 +81,7 @@ do
 			local env = deploy.getBuildEnv(universe, place)
 			env.PROJECT = projectPath
 			env.STORIES_ENABLED = env.STORIES_ENABLED or DEFAULT_STORIES_ENABLED
+			env.HARNESS_ENABLED = HARNESS_ENABLED
 
 			print(`\nbuilding {universeName}/{placeName}`)
 			fs.writeDir(`{BUILD_PATH}/{universeName}`)

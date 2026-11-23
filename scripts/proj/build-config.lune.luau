@@ -65,6 +65,8 @@ do
 	end
 	-- off in every mode: the server runs its specs before it starts, only a terminal ever asks it to
 	table.insert(lines, `	TESTS_ENABLED = {getFlag("TESTS_ENABLED", false)},`)
+	-- off in every mode as well: what lets an agent drive the game from inside of it, only a build that asks has it
+	table.insert(lines, `	HARNESS_ENABLED = {getFlag("HARNESS_ENABLED", false)},`)
 	table.insert(lines, `	UNIVERSE_ID = {getId("UNIVERSE_ID")},`)
 	table.insert(lines, `	ROLEPLAY_PLACE_ID = {getId("ROLEPLAY_PLACE_ID")},`)
 	table.insert(lines, `	PRIVATE_SERVER_PLACE_ID = {getId("PRIVATE_SERVER_PLACE_ID")},`)
