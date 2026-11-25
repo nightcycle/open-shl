@@ -111,7 +111,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		PlayerMode = false,
 		-- what a player has to spend was read off the list of players in its old place, + nowhere else
 		Leaderstats = true,
-		Environment = false,
+		-- the clock, the weather + the seasons of valor city: its server says them, every client draws them
+		Environment = true,
 		Crime = false,
 		Npcs = false,
 		Telepads = false,
