@@ -5,6 +5,7 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
+local CoverUtil = require("@game/ServerScriptService/Server/Util/Cover")
 local Damage = require("@game/ServerScriptService/Server/VFX/Library/Damage")
 local ServerVFX = require("@game/ServerScriptService/Server/VFX")
 local Shove = require("@game/ServerScriptService/Server/VFX/Library/Shove")
@@ -34,6 +35,11 @@ return ServerVFX.newEvent("Attack", isProperties, function(props: Properties, sc
 	local target = props.Target
 	local amount = CombatDefinition.getDamage(character, target, props.Amount)
 	if not amount then
+		return false
+	end
+	-- what somebody carries between the two takes it, whatever the client that claims the hit made of its way there
+	local origin = props.Origin
+	if origin and CoverUtil.getIfBetween(origin, target, character) then
 		return false
 	end
 	local isLanded = scope.fire(Damage, {
