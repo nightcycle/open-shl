@@ -47,6 +47,17 @@ local isReach = function(value: unknown): (boolean, string?)
 end
 -- studs a line through the world runs at most, nothing an ability lets go gets further
 local MAX_LENGTH = 1000
+-- a way something points: whatever its length, it has to point somewhere
+local isDirection = function(value: unknown): (boolean, string?)
+	local success, msg = isFiniteVector3(value)
+	if not success then
+		return false, msg
+	end
+	if (value :: Vector3).Magnitude <= 0 then
+		return false, `a direction that points somewhere expected`
+	end
+	return true
+end
 
 -- held on the avatar until it's stopped
 export type Animation = {
@@ -403,6 +414,16 @@ Types.Ripple = Type.strictInterface({
 	Velocity = Type.optional(isFiniteVector3),
 })
 
+-- how a line through the world is broken up: every viewer rolls the turns of their own
+export type BeamJitter = {
+	Step: number, -- studs along the way from one turn to the next
+	Spread: number, -- whole studs a turn is off the straight line at most, either way on every axis of the world
+}
+Types.BeamJitter = Type.strictInterface({
+	Step = Type.numberConstrained(1, 100),
+	Spread = Type.numberConstrained(1, MAX_SIZE),
+})
+
 -- a straight line between two spots of the world that's there for a moment
 export type Beam = {
 	Origin: Vector3,
@@ -413,6 +434,7 @@ export type Beam = {
 	Transparency: number?, -- solid without
 	Lifetime: number, -- seconds until it's gone
 	IsFading: boolean?, -- it thins out over its life, it's there + then it isn't without
+	Jitter: BeamJitter?, -- it's drawn as a jagged line that ends where it would have, straight without
 	-- one that's drawn under the key of another of its character takes the place of that one + is gone when it would
 	-- have been: how a beam the server found to end somewhere else is put right
 	Key: string?,
@@ -426,6 +448,7 @@ local isBeam = Type.strictInterface({
 	Transparency = Type.optional(Type.numberConstrained(0, 1)),
 	Lifetime = Type.numberConstrained(0.05, 5),
 	IsFading = Type.optional(Type.boolean),
+	Jitter = Type.optional(Types.BeamJitter),
 	Key = Type.optional(Type.string),
 })
 Types.Beam = function(value: unknown): (boolean, string?)
@@ -440,6 +463,42 @@ Types.Beam = function(value: unknown): (boolean, string?)
 	end
 	return true
 end
+
+-- a spot on a limb of the avatar gives off particles for a moment
+export type Flare = {
+	Limb: string, -- the name of the part of the avatar they come from
+	Offset: Vector3?, -- of the spot off the middle of the limb, in the space of the limb
+	Particle: ParticleKey,
+	Duration: number, -- seconds it gives them off for, what's in the air by then lives out its life
+}
+Types.Flare = Type.strictInterface({
+	Limb = Type.string,
+	Offset = Type.optional(isReach),
+	Particle = VFXAssetDefinition.ParticleKey,
+	Duration = Type.numberConstrained(0.05, 2),
+})
+
+-- what's left sticking in whatever is at a spot of the world: it goes where that goes until its time is up
+export type Shaft = {
+	Position: Vector3, -- where the middle of it is
+	Direction: Vector3, -- the way it points, the way whatever left it there flew
+	Size: Vector3,
+	Color: Color3,
+	Mesh: MeshKey?,
+	MeshScale: Vector3?,
+	MeshOffset: Vector3?, -- studs the mesh sits off the middle of the part
+	Lifetime: number, -- seconds until it's gone
+}
+Types.Shaft = Type.strictInterface({
+	Position = isFiniteVector3,
+	Direction = isDirection,
+	Size = isSize,
+	Color = Type.Color3,
+	Mesh = Type.optional(VFXAssetDefinition.MeshKey),
+	MeshScale = Type.optional(isSize),
+	MeshOffset = Type.optional(isFiniteVector3),
+	Lifetime = Type.numberConstrained(0.05, 30),
+})
 
 -- limbs of the avatar let bolts fly for as long as it's on, a round of one each at a time
 export type Spray = {
