@@ -6,6 +6,8 @@ local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local Attack = require("@game/ServerScriptService/Server/VFX/Library/Attack")
 local BodyUtil = require("@game/ReplicatedStorage/Shared/Util/Body")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
+local Heal = require("@game/ServerScriptService/Server/VFX/Library/Heal")
 local Hitscan = require("@game/ReplicatedStorage/Shared/VFX/Library/Hitscan")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local RayFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Ray")
@@ -15,6 +17,7 @@ local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VF
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
+local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ServerContext = AbilityType.ServerContext
 -- what the server makes of a ray its client let go
 type Answer = {
@@ -39,6 +42,10 @@ local SOUND_RANGE = 150
 local CAST_TIME_KEY = "CastTime"
 -- how many rays that cast let go so far
 local COUNT_KEY = "RayCount"
+-- when the next cast of an ability that's held is due
+local NEXT_CAST_TIME_KEY = "NextCastTime"
+-- casts left in the clip, full without. the count that counts
+local ROUNDS_KEY = "Rounds"
 -- Variables
 -- References
 -- Private Functions
@@ -53,10 +60,11 @@ local Module = {}
 -- the server half of a ray ability: a cast costs energy + lets go of as many rays as it has, each from where the
 -- server has the avatar. who a ray lands on is the server's to say: the target its client names has to be on its way
 -- with nothing of the world before them. everybody else is shown the ray as far as the server has it go, its own
--- player only if that's not where they had it end
+-- player only if that's not where they had it end. what a ray that landed sets off besides is the ability's to say:
+-- true from it has whatever it set off hold the caster up, for an ability that can be
 Module.new = function(
 	ability: RayFactory.Ability,
-	onLanded: ((context: ServerContext, target: Model, fire: RayFactory.Fire) -> ())?
+	onLanded: ((context: ServerContext, target: Model, fire: RayFactory.Fire) -> boolean?)?
 ): AbilityBuilder.ServerBuilder
 	local layout = ability.Layout
 	local bindings = layout.Bindings
@@ -65,8 +73,19 @@ Module.new = function(
 	assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 	local power = powerRes.Value
 	local rayCount = RayFactory.getCount(shared)
+	local clip = shared.Clip
+	local heal = shared.Heal
+	local stall = bindings.Stall
 	-- a spot off the middle of the limb is that much further out to begin with
-	local originRange = ORIGIN_RANGE + (if shared.Offset then shared.Offset.Magnitude else 0)
+	local originRange = ORIGIN_RANGE
+	for index = 1, if shared.Offsets then #shared.Offsets else 1 do
+		local offset = RayFactory.getOffset(shared, index)
+		originRange = math.max(originRange, ORIGIN_RANGE + (if offset then offset.Magnitude else 0))
+	end
+
+	local function getRounds(context: ServerContext): number
+		return if clip then (context.Record[ROUNDS_KEY] or clip.Size) :: number else math.huge
+	end
 
 	local function getAnswer(context: ServerContext, fire: RayFactory.Fire): Answer
 		local direction = fire.Direction.Unit
@@ -99,15 +118,38 @@ Module.new = function(
 		}
 	end
 
-	local builder = AbilityBuilder
-		.newServer(layout)
-		:Guard(bindings.Cast, function(context: ServerContext): boolean
-			return context.VFX.fire(SpendEnergy, { Amount = power.EnergyCost })
-		end)
-		:On(bindings.Cast, function(context: ServerContext)
-			context.Record[CAST_TIME_KEY] = os.clock()
-			context.Record[COUNT_KEY] = 0
-		end)
+	local builder = AbilityBuilder.newServer(layout)
+	for _, cast in RayFactory.getCasts(ability) do
+		if shared.IsHeld then
+			-- the machine doesn't hold one that's held to its pace: the server is ahead of a wait this short + the
+			-- next cast is its client's to call. a cast may be as early as a ray may, what it's early by isn't kept
+			builder = builder:Guard(cast, function(context: ServerContext): boolean
+				return os.clock() + RELEASE_TOLERANCE >= ((context.Record[NEXT_CAST_TIME_KEY] or 0) :: number)
+			end)
+		end
+		if clip then
+			builder = builder:Guard(cast, function(context: ServerContext): boolean
+				return getRounds(context) >= 1
+			end)
+		end
+		builder = builder
+			:Guard(cast, function(context: ServerContext): boolean
+				return context.VFX.fire(SpendEnergy, { Amount = power.EnergyCost })
+			end)
+			:On(cast, function(context: ServerContext)
+				local now = os.clock()
+				context.Record[CAST_TIME_KEY] = now
+				context.Record[COUNT_KEY] = 0
+				if shared.IsHeld then
+					local nextCastTime = (context.Record[NEXT_CAST_TIME_KEY] or 0) :: number
+					context.Record[NEXT_CAST_TIME_KEY] = math.max(nextCastTime, now) + shared.Duration
+				end
+				if clip then
+					context.Record[ROUNDS_KEY] = getRounds(context) - 1
+				end
+			end)
+	end
+	builder = builder
 		-- a cast lets go of the rays it has + no more, none ahead of its turn, from where the server has its avatar
 		:Guard(
 			bindings.Fire,
@@ -128,19 +170,42 @@ Module.new = function(
 			if not fire then
 				return
 			end
-			context.Record[COUNT_KEY] = ((context.Record[COUNT_KEY] or 0) :: number) + 1
+			local index = ((context.Record[COUNT_KEY] or 0) :: number) + 1
+			context.Record[COUNT_KEY] = index
 			local answer = getAnswer(context, fire)
 			-- the player's own machine showed them their ray right away, this is for everybody else. it's theirs as
 			-- well once it ended sooner than they had it: under the key of the beam they drew it takes its place
+			local audience: VFXType.Audience = if answer.IsCut then "All" else "Others"
 			for _, beam in RayFactory.getBeams(ability, fire, answer.Distance, context.Color, context.SecondaryColor) do
 				context.VFX.fireClient(ClientVFXDefinition.Beam, beam, {
-					Audience = if answer.IsCut then "All" else "Others",
+					Audience = audience,
 					Range = shared.Range,
 				})
 			end
+			local shaft = RayFactory.getShaft(ability, fire, answer.Distance, context.Color, context.SecondaryColor)
+			if shaft then
+				context.VFX.fireClient(ClientVFXDefinition.Shaft, shaft, { Audience = audience, Range = shared.Range })
+			end
+			local flare = RayFactory.getFlare(shared, index)
+			if flare then
+				context.VFX.fireClient(ClientVFXDefinition.Flare, flare, { Audience = "Others", Range = SOUND_RANGE })
+			end
 			local target = answer.Target
-			if target and context.VFX.fire(Attack, { Target = target, Amount = power.Damage }) and onLanded then
-				onLanded(context, target, fire)
+			if not target then
+				return
+			end
+			local isLanded: boolean
+			if heal then
+				-- the same question a hit asks: who can't be hurt by them can't be helped by them either
+				isLanded = CombatDefinition.getIfHostile(context.Character, target)
+					and context.VFX.fire(Heal, { Target = target, Amount = heal })
+			elseif shared.IsHarmless then
+				isLanded = true
+			else
+				isLanded = context.VFX.fire(Attack, { Target = target, Amount = power.Damage, Origin = fire.Origin })
+			end
+			if isLanded and onLanded and onLanded(context, target, fire) and stall then
+				context.raise(stall, nil)
 			end
 		end)
 
@@ -156,12 +221,40 @@ Module.new = function(
 		)
 	end
 
+	local plumes: { ClientVFXType.Plume } = shared.Plumes or {}
+	for _, plume in plumes do
+		builder = builder:RunClient(bindings.Hold, ClientVFXDefinition.Plume, function(): ClientVFXType.Plume
+			return plume
+		end, { Audience = "Others" })
+	end
+
 	-- not every ray is heard as it leaves
 	local fireSound = shared.FireSound
 	if fireSound then
 		builder = builder:FireClient(bindings.Fire, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
 			return { Sound = fireSound :: VFXAssetDefinition.SoundKey }
 		end, { Audience = "Others", Range = SOUND_RANGE })
+	end
+
+	local held = bindings.Held
+	local heldSound = shared.HeldSound
+	if held and heldSound then
+		builder = builder:RunClient(held, ClientVFXDefinition.SoundLoop, function(): ClientVFXType.SoundLoop
+			return { Sound = heldSound :: VFXAssetDefinition.SoundKey }
+		end, { Audience = "Others", Range = SOUND_RANGE })
+	end
+
+	-- the clip is the server's: it's only filled when it's short + it's full once that took its time
+	local reload = bindings.Reload
+	local reloaded = bindings.Reloaded
+	if clip and reload and reloaded then
+		builder = builder
+			:Guard(reload, function(context: ServerContext): boolean
+				return getRounds(context) < clip.Size
+			end)
+			:On(reloaded, function(context: ServerContext)
+				context.Record[ROUNDS_KEY] = clip.Size
+			end)
 	end
 
 	return builder
