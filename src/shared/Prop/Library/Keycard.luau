@@ -2,11 +2,9 @@
 -- Services
 -- Packages
 -- Modules
-local PropDefinition = require("@game/ReplicatedStorage/Shared/Definition/Prop")
-local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
+local HeldFactory = require("@game/ReplicatedStorage/Shared/Prop/Factory/Held")
 -- Types
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
-type AnimationKey = VFXAssetDefinition.AnimationKey
 -- Constants
 local ID = "keycard"
 -- a bare blue card stood up in the hand, the way the old tool gripped it
@@ -17,19 +15,9 @@ local CARD: ClientVFXType.Prop = {
 	Color = Color3.fromRGB(13, 105, 172),
 	Material = Enum.Material.SmoothPlastic,
 }
-table.freeze(CARD)
--- the arm out in front, what a hand that holds anything used to do by itself
-local HOLD_ANIMATION: AnimationKey = "GunHolding"
 -- Variables
 -- References
 -- Private Functions
 -- Class
-local definitionRes = PropDefinition.get(ID)
-assert(definitionRes.IsOk, `no prop is registered as "{ID}"`)
-
 -- the card of the prison. there's nothing to it but being held: whoever runs the gates asks the server who holds one
-return table.freeze({
-	Prop = definitionRes.Value,
-	Card = CARD,
-	HoldAnimation = HOLD_ANIMATION,
-})
+return HeldFactory.new(ID, CARD)
