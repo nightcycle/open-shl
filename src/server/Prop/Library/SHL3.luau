@@ -3,6 +3,7 @@
 -- Packages
 -- Modules
 local AcousticGuitar = require("@game/ServerScriptService/Server/Prop/Library/AcousticGuitar")
+local Bloxiade = require("@game/ServerScriptService/Server/Prop/Library/Bloxiade")
 local BloxyCola = require("@game/ServerScriptService/Server/Prop/Library/BloxyCola")
 local Cheeseburger = require("@game/ServerScriptService/Server/Prop/Library/Cheeseburger")
 local ElectricGuitar = require("@game/ServerScriptService/Server/Prop/Library/ElectricGuitar")
@@ -30,6 +31,7 @@ local DEFINITIONS: { ServerDefinition } = {
 	Watermelon,
 	BloxyCola,
 	Latte,
+	Bloxiade,
 }
 
 return table.freeze(DEFINITIONS)

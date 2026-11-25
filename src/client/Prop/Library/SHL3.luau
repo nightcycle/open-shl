@@ -3,6 +3,7 @@
 -- Packages
 -- Modules
 local AcousticGuitar = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/AcousticGuitar")
+local Bloxiade = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Bloxiade")
 local BloxyCola = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/BloxyCola")
 local Cheeseburger = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Cheeseburger")
 local ElectricGuitar = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/ElectricGuitar")
@@ -30,6 +31,7 @@ local DEFINITIONS: { ClientDefinition } = {
 	Watermelon,
 	BloxyCola,
 	Latte,
+	Bloxiade,
 }
 
 return table.freeze(DEFINITIONS)
