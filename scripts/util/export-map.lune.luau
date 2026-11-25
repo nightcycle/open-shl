@@ -39,6 +39,10 @@ type Rule = {
 	-- the address an image or a mesh is loaded from, by the name of the property it's kept in. this, the move + the
 	-- turn are about what the path found itself, wrapped or not
 	contents: { [string]: string }?,
+	-- the contents that are loaded from the upload of the file the repo holds of them, by the name of the property.
+	-- the id table says which file a legacy id became + the lock of asphalt what that file went up as. one that has no
+	-- upload yet stays as the place has it, one whose upload was refused shows nothing
+	repoint: { string }?,
 	move: { number }?, -- how far a part is shifted from where the place has it, in studs along the axes of the world
 	turn: { number }?, -- how far it's turned on the spot it has, in degrees around the axes of the world
 	-- a part that's only there to say where something is: nothing runs into it, touches it or is clicked on through it
@@ -82,11 +86,30 @@ type Options = {
 	reportPath: string?,
 	-- everything is written below this directory instead, to hold an export against the files that are tracked
 	outDir: string?,
+	-- the lock + the id table a repoint goes by, the ones of the repo unless a trial of it brings its own
+	lockPath: string,
+	idsPath: string,
 	isDryRun: boolean,
+}
+-- what the id table says became of a legacy upload: the file the repo holds of it, or why it holds none
+type LegacyRow = { target: string, note: string }
+-- the rows of the id table by legacy id + what asphalt uploaded a file as, by the blake3 of the file
+type Uploads = {
+	rows: { [string]: LegacyRow },
+	lockedIds: { [string]: string },
+}
+-- what became of every content a repoint looked at
+type Repoints = {
+	repointedCount: number,
+	legacyCount: number,
+	otherCount: number,
+	-- the ones the table lists a file for that isn't there: a batch that was meant to be landed
+	missing: { string },
+	blanks: { string },
 }
 -- Constants
 local USAGE = "Usage: lune run scripts/util/export-map.lune.luau <map.export.yml> [--report <stripped.tsv>] "
-	.. "[--out <directory>] [--dry-run]"
+	.. "[--out <directory>] [--lock <asphalt.lock.toml>] [--ids <legacy-ids.tsv>] [--dry-run]"
 local WILDCARD = "*"
 local DEEP_WILDCARD = "**"
 -- a key that's spelled wrong would be a config that quietly does less than it says
@@ -107,6 +130,7 @@ local RULE_KEYS = {
 	"tags",
 	"persistent",
 	"contents",
+	"repoint",
 	"move",
 	"turn",
 	"untouchable",
@@ -114,7 +138,17 @@ local RULE_KEYS = {
 local WHERE_KEYS = { "class", "is_a", "has_child" }
 local DEFAULT_ADDED_CLASS = "Part"
 -- the flags that are followed by a path of their own
-local VALUE_FLAGS = { "--report", "--out" }
+local VALUE_FLAGS = { "--report", "--out", "--lock", "--ids" }
+local DEFAULT_LOCK_PATH = "asphalt.lock.toml"
+local DEFAULT_IDS_PATH = "asset/legacy-ids.tsv"
+local IDS_HEADER = "id\tgames\ttype\ttarget\tsha256\tbatch\tnote"
+local COLUMN_DELIMITER = "\t"
+-- what the id table has for a target of an upload the repo holds no file of + how its note starts when the upload
+-- was turned down
+local DROPPED_TARGET = "dropped"
+local REFUSED_PREFIX = "refused:"
+-- the ways a place spells the address of an upload
+local ASSET_ID_PATTERNS = { "^rbxassetid://(%d+)$", "^https?://www%.roblox%.com/asset/?%?id=(%d+)$" }
 local Instance = roblox.Instance
 local Vector3 = (roblox :: any).Vector3
 local CFrame = (roblox :: any).CFrame
@@ -147,6 +181,8 @@ local function parseArgs(args: { string }): Options
 		configPath = assert(configPath, USAGE),
 		reportPath = values["--report"],
 		outDir = values["--out"],
+		lockPath = values["--lock"] or DEFAULT_LOCK_PATH,
+		idsPath = values["--ids"] or DEFAULT_IDS_PATH,
 		isDryRun = isDryRun,
 	}
 end
@@ -286,6 +322,7 @@ local function readConfig(path: string): Config
 		assert(rule.name_attribute == nil or type(rule.name_attribute) == "string", `{at}: name_attribute`)
 		assert(rule.persistent == nil or type(rule.persistent) == "boolean", `{at}: persistent`)
 		assert(rule.contents == nil or getIfContents(rule.contents), `{at} has contents that aren't addresses`)
+		assert(rule.repoint == nil or getIfStringList(rule.repoint), `{at} has a repoint that isn't a list of names`)
 		assert(rule.move == nil or getIfOffset(rule.move), `{at} has a move that isn't 3 numbers`)
 		assert(rule.turn == nil or getIfOffset(rule.turn), `{at} has a turn that isn't 3 numbers`)
 		assert(rule.untouchable == nil or type(rule.untouchable) == "boolean", `{at}: untouchable`)
@@ -455,6 +492,94 @@ local function apply(rule: Rule, inst: roblox.Instance, order: number, wrappers:
 	return target
 end
 
+-- the upload an address names, nil for a file of the engine's own + for nothing at all
+local function getAssetId(uri: string?): string?
+	local text = (uri or ""):lower():match("^%s*(.-)%s*$") or ""
+	for _, pattern in ASSET_ID_PATTERNS do
+		local id = text:match(pattern)
+		if id then
+			return id
+		end
+	end
+	return nil
+end
+
+local function readUploads(options: Options): Uploads
+	local idsPath = options.idsPath
+	assert(fs.isFile(idsPath), `no id table at "{idsPath}", is this the root of the repo?`)
+	local lines = fs.readFile(idsPath):gsub("\r", ""):split("\n")
+	assert(lines[1] == IDS_HEADER, `"{idsPath}" starts with a header this tool doesn't know`)
+	local rows: { [string]: LegacyRow } = {}
+	for index, line in lines do
+		if index == 1 or line == "" then
+			continue
+		end
+		local cells = line:split(COLUMN_DELIMITER)
+		assert(#cells == 7, `line {index} of "{idsPath}" has {#cells} columns`)
+		rows[cells[1]] = { target = cells[4], note = cells[7] }
+	end
+	-- asphalt keys an upload by the blake3 of the file it made it of
+	assert(fs.isFile(options.lockPath), `no lock of asphalt at "{options.lockPath}"`)
+	local lockedIds: { [string]: string } = {}
+	local lock = serde.decode("toml", fs.readFile(options.lockPath))
+	local inputs = if type(lock) == "table" then lock.inputs else nil
+	local images = if type(inputs) == "table" then inputs.Image else nil
+	if type(images) == "table" then
+		for hash, entry in images do
+			lockedIds[hash] = string.format("%d", entry.asset_id)
+		end
+	end
+	return { rows = rows, lockedIds = lockedIds }
+end
+
+-- a content that isn't re-pointed is never written, so what an export holds of it is what the place does to the byte
+local function repoint(rule: Rule, inst: roblox.Instance, path: string, uploads: Uploads, repoints: Repoints)
+	local names: { string } = rule.repoint or {}
+	for _, name in names do
+		local properties = inst :: any
+		local isRead, uri = pcall(function(): string?
+			return properties[name].Uri
+		end)
+		assert(isRead, `"{rule.at}": a {inst.ClassName} has no content named "{name}"`)
+		local id = getAssetId(uri)
+		local row = if id then uploads.rows[id] else nil
+		if row == nil then
+			repoints.otherCount += 1
+		elseif row.target == DROPPED_TARGET and row.note:sub(1, #REFUSED_PREFIX) == REFUSED_PREFIX then
+			properties[name] = Content.fromUri("")
+			table.insert(repoints.blanks, `{path}.{name}`)
+		else
+			local isLanded = fs.isFile(row.target)
+			local lockedId = if isLanded then uploads.lockedIds[serde.hash("blake3", fs.readFile(row.target))] else nil
+			if lockedId then
+				properties[name] = Content.fromUri(`rbxassetid://{lockedId}`)
+				repoints.repointedCount += 1
+			else
+				repoints.legacyCount += 1
+				-- a target that's a path is a file the repo was going to hold
+				if not isLanded and row.target:find(Place.PATH_DELIMITER, 1, true) then
+					table.insert(repoints.missing, `{path}.{name} ("{row.target}")`)
+				end
+			end
+		end
+	end
+end
+
+local function printRepoints(repoints: Repoints)
+	local count = repoints.repointedCount + repoints.legacyCount + repoints.otherCount + #repoints.blanks
+	print(
+		`{count} picture(s) looked at: {repoints.repointedCount} re-pointed, {repoints.legacyCount} still on their `
+			.. `legacy upload ({#repoints.missing} of them listed with no file), {repoints.otherCount} not a legacy `
+			.. `image, {#repoints.blanks} blank`
+	)
+	for _, missing in repoints.missing do
+		print(`  listed, no file: {missing}`)
+	end
+	for _, blank in repoints.blanks do
+		print(`  blank, its upload was refused: {blank}`)
+	end
+end
+
 local function add(place: roblox.DataModel, added: Add)
 	local parent = Place.findInstance(place, added.to)
 	assert(parent:FindFirstChild(added.name) == nil, `"{added.to}" already has a "{added.name}"`)
@@ -574,9 +699,19 @@ do
 	-- an instance that a rule replaced is what the ones after it are about
 	local replaced: { [roblox.Instance]: roblox.Instance } = {}
 	local wrappers: Wrappers = {}
+	-- the tables of the uploads are only read for a config that goes by them
+	local hasRepoint = false
+	for _, rule in rules do
+		hasRepoint = hasRepoint or rule.repoint ~= nil
+	end
+	local uploads: Uploads = if hasRepoint then readUploads(options) else { rows = {}, lockedIds = {} }
+	local repoints: Repoints = { repointedCount = 0, legacyCount = 0, otherCount = 0, missing = {}, blanks = {} }
 	for index, rule in rules do
 		for order, inst in found[index] do
 			local current = replaced[inst] or inst
+			if rule.repoint then
+				repoint(rule, current, Place.getPath(place, current), uploads, repoints)
+			end
 			local target = apply(rule, current, order, wrappers)
 			if not rule.wrap and target ~= current then
 				replaced[inst] = target
@@ -587,6 +722,9 @@ do
 			end
 		end
 		print(`{#found[index]} x "{rule.at}"`)
+	end
+	if hasRepoint then
+		printRepoints(repoints)
 	end
 	local adds: { Add } = config.adds or {}
 	for _, added in adds do

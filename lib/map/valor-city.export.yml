@@ -97,6 +97,12 @@ rules:
   - at: Workspace/Map/WaterPlate
     count: 1
     tags: [Water, SeasonWater]
+  # the sea is one small part with a mesh that's scaled out to the horizon, so a client would only be sent it near
+  # its middle. in a model of its own it's there wherever an avatar stands
+  - at: Workspace/Map/WaterPlate
+    count: 1
+    wrap: WaterPlate
+    persistent: true
 
   # --- seasons
   # the ground takes the color + the material of the season
@@ -123,9 +129,11 @@ rules:
   - at: Workspace/Map/Buildings/Apartment/RoomAnchors
     count: 1
     persistent: true
+  # a room is built at the anchor of its slot. the 24 share a name, so each is told apart by its place among them
   - at: Workspace/Map/Buildings/Apartment/RoomAnchors/Anchor
     count: 24
     tags: [ApartmentAnchor]
+    numbered_attributes: { ResidenceId: apartment- }
   # the pad in the lobby that takes an owner up + the spot they're put on when they come back down
   - at: Workspace/Map/Buildings/Apartment/Telepad
     count: 1
@@ -157,6 +165,22 @@ rules:
     count: 10
     tags: [LaserBeam]
     attributes: { SweepDuration: 2.5 }
+  # a vault is shut by two halves that part: the legacy client slid the upper one 7.45 studs up + the lower one 6.45
+  # down. each half is a model that pivots on its PrimaryPart
+  - at: Workspace/Map/Buildings/Bank/BankMechanics/Doors/*/TopDoor
+    count: 3
+    tags: [VaultDoor]
+    attributes: { Slide: 7.45 }
+  - at: Workspace/Map/Buildings/Bank/BankMechanics/Doors/*/BottomDoor
+    count: 3
+    tags: [VaultDoor]
+    attributes: { Slide: -6.45 }
+  # what the bank is run through is found under it by name, there's nothing to mark. this only keeps count: the
+  # button of each vault + the pad its money is handed out on
+  - at: Workspace/Map/Buildings/Bank/BankMechanics/Doors/*/Button/Trigger
+    count: 3
+  - at: Workspace/Map/Buildings/Bank/BankMechanics/MoneyGivers/*/MoneyPad
+    count: 3
 
   # --- jail
   # SpawnPoint is where a jailed villain is put, Gate what keeps them in
@@ -274,6 +298,14 @@ rules:
   - at: Workspace/Map/**
     count: 1002
     where: { class: Seat }
+
+  # --- pictures
+  # every picture of the map that the repo holds a file of is loaded from the upload of that file. none of them has
+  # one yet, so each still names what the legacy game uploaded
+  - at: Workspace/Map/**
+    count: 26
+    where: { class: Decal }
+    repoint: [TextureContent]
 
   # --- clean up
   # what a studio plugin left on the school
