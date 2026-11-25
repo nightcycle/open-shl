@@ -101,6 +101,8 @@ Module.IsHandcuffed = new("Character", "IsHandcuffed", Type.boolean, false) :: A
 Module.IsInvulnerable = new("Character", "IsInvulnerable", Type.boolean, false) :: Attribute<boolean>
 -- nobody plays it: what a disaster is made of, what rises from the graves. nil on an avatar
 Module.IsNonPlayer = new("Character", "IsNonPlayer", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
+-- it's held where it stands: its own client keeps it from walking + jumping for as long
+Module.IsFrozen = new("Character", "IsFrozen", Type.boolean, false) :: Attribute<boolean>
 -- nobody is shown who it is
 Module.IsNameHidden = new("Character", "IsNameHidden", Type.boolean, false) :: Attribute<boolean>
 Module.ExpressionId =
