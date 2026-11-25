@@ -12,10 +12,13 @@ local ResidenceDefinition = require("@game/ReplicatedStorage/Shared/Definition/R
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
+local EnvironmentType = require("@game/ReplicatedStorage/Shared/Type/Environment")
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
 type IdentityKey = CharacterType.IdentityKey
 type TeamId = CombatType.TeamId
 type EntitlementKey = EconomyType.EntitlementKey
+type Season = EnvironmentType.Season
+type Weather = EnvironmentType.Weather
 type ExpressionId = RoleplayType.ExpressionId
 export type Validator = (value: unknown) -> (boolean, string?)
 export type Owner = "Player" | "Character" | "Workspace"
@@ -148,6 +151,18 @@ Module.ResidenceId =
 Module.IsPVP = new("Workspace", "IsPVP", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
 -- somebody owns this server, as the engine has it
 Module.IsPrivateServer = new("Workspace", "IsPrivateServer", Type.boolean, false) :: Attribute<boolean>
+-- the day of a game that has weather, as its server has it. all four are nil in a game without any
+-- when the clock read the hour it starts at, on the clock of the server: the hour is worked out from it, never sent
+Module.ClockStartedAt = new("Workspace", "ClockStartedAt", Type.optional(Type.number), nil) :: Attribute<number?>
+Module.Season = new("Workspace", "Season", Type.optional(EnvironmentType.Season), nil) :: Attribute<Season?>
+Module.Weather = new("Workspace", "Weather", Type.optional(EnvironmentType.Weather), nil) :: Attribute<Weather?>
+-- how many seasons are over. a map is left the way it was built until the first of them is
+Module.SeasonsPassed = new(
+	"Workspace",
+	"SeasonsPassed",
+	Type.optional(Type.intersection(Type.integer, Type.numberMin(0))),
+	nil
+) :: Attribute<number?>
 
 Module.list = function(owner: Owner?): { Attribute<any> }
 	local out: { Attribute<any> } = {}
