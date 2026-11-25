@@ -135,13 +135,17 @@ Module.IsModeChosen = new("Player", "IsModeChosen", Type.boolean, false) :: Attr
 -- the server asked, which it only does in a game whose characters wear them
 Module.ShirtAssetId = new("Player", "ShirtAssetId", Type.optional(ASSET_ID), nil) :: Attribute<number?>
 Module.PantsAssetId = new("Player", "PantsAssetId", Type.optional(ASSET_ID), nil) :: Attribute<number?>
+-- the server is theirs. a client is told, it never works it out
+Module.IsServerOwner = new("Player", "IsServerOwner", Type.boolean, false) :: Attribute<boolean>
 -- nil for as long as the player has no residence
 Module.ResidenceId = new("Player", "ResidenceId", Type.optional(BaseType.ResidenceId), nil) :: Attribute<ResidenceId?>
 
 -- on the workspace
 -- if a private server lets its players fight, which is up to whoever set it up. nil until its server knows + on
--- every place that's built for one mode
+-- every place that's built for one mode, but for those of a game whose private servers have a toggle
 Module.IsPVP = new("Workspace", "IsPVP", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
+-- somebody owns this server, as the engine has it
+Module.IsPrivateServer = new("Workspace", "IsPrivateServer", Type.boolean, false) :: Attribute<boolean>
 
 Module.list = function(owner: Owner?): { Attribute<any> }
 	local out: { Attribute<any> } = {}
