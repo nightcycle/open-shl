@@ -103,7 +103,14 @@ local NEEDED_TAGS: { [game.GameId]: { string } } = {
 local GAME_LIBRARY_PATHS: { [game.GameId]: { string } } = {
 	shl1 = {},
 	shl2 = {},
-	shl3 = { "ReplicatedStorage/lib/apartment", "ServerStorage/lib/npc" },
+	shl3 = {
+		"ReplicatedStorage/lib/apartment",
+		"ServerStorage/lib/npc",
+		-- the skies, the grades + what falls: a weather that names one that's gone only warns on a client
+		"Lighting/Skyboxes",
+		"Lighting/Atmospheres",
+		"Lighting/Precipitation",
+	},
 }
 -- where a game lists the halves of its abilities, each side in a module that goes by the name of the game. the two
 -- lists are kept by hand + neither side can see the other's, so only a read of both tells that they agree
