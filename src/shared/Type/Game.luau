@@ -46,6 +46,7 @@ export type Features = {
 	Chat: boolean, -- a log that names who speaks by who they play
 	Mask: boolean, -- a mask goes on + off without the rest of roleplay
 	Movement: boolean, -- a second jump + a body that goes limp
+	CameraMode: boolean, -- a camera a player flies free of their avatar, off a button of the hud
 }
 Types.Features = Type.strictInterface({
 	Residences = Type.boolean,
@@ -78,6 +79,7 @@ Types.Features = Type.strictInterface({
 	Chat = Type.boolean,
 	Mask = Type.boolean,
 	Movement = Type.boolean,
+	CameraMode = Type.boolean,
 })
 
 -- a way to get a value for every game. only the one of the game that's built is ever called, so what another's needs

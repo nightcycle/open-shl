@@ -51,6 +51,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Chat = false,
 		Mask = false,
 		Movement = false,
+		CameraMode = false,
 	}),
 	-- the game all of it was written for: what's on is what ran before there was a second one
 	shl2 = table.freeze({
@@ -84,6 +85,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Chat = false,
 		Mask = false,
 		Movement = false,
+		CameraMode = true,
 	}),
 	-- what it boots with so far, the rest goes on as each of them is built for it
 	shl3 = table.freeze({
@@ -122,6 +124,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Chat = false,
 		Mask = false,
 		Movement = false,
+		-- its flow has the action, its hud has no button for it
+		CameraMode = false,
 	}),
 })
 -- Variables
