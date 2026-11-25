@@ -89,6 +89,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the flips + rolls a player throws their own avatar into: nothing of them is the server's to hear of
+	{
+		Name = "Acrobatics",
+		IsFeatured = FEATURES.Acrobatics,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Acrobatics")
+			assert(not service.IsInitialized, `the acrobatics service is already initialized`)
+			return service
+		end,
+	},
 	-- the emotes of the actions menu + the arms of whoever is cuffed: a game without either has nobody to pose, one
 	-- that holds its villains has their arms to
 	{
