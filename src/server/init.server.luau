@@ -17,13 +17,17 @@ local Services: { Service } = {}
 local DestroyCallbacks: { () -> () } = {}
 -- References
 local Server = IndexUtil.waitForPath("game/ServerScriptService/Server")
+local Shared = IndexUtil.waitForPath("game/ReplicatedStorage/Shared")
 -- Private Functions
 -- yields. a spec is a module named after what it tests + ".spec", in the folder of what it tests. each sets up + takes
--- down the services it needs, which is why they run before the server has any of its own up
+-- down the services it needs, which is why they run before the server has any of its own up. what both sides share
+-- is held to its specs here as well
 local function test()
 	local tests: { [string]: SimpleTest.Test } = {}
 	local passCount, failCount = 0, 0
-	for _, module in Server:GetDescendants() do
+	local modules = Server:GetDescendants()
+	table.move(Shared:GetDescendants(), 1, #Shared:GetDescendants(), #modules + 1, modules)
+	for _, module in modules do
 		if not module:IsA("ModuleScript") or not string.match(module.Name, "%.spec$") then
 			continue
 		end
