@@ -130,6 +130,17 @@ Module.get = function(id: string): Result<PowerDefinition, string>
 	return Result.err(`no power "{id}"`)
 end
 
+-- whether it's a power that's still on its way. nothing answers for one, what's written down of it ahead of its
+-- ability is held to this
+Module.getIfUpcoming = function(id: string): boolean
+	for _, definition in UPCOMING do
+		if definition.Id == id then
+			return true
+		end
+	end
+	return false
+end
+
 Module.list = function(group: PowerGroup?): { PowerDefinition }
 	if group == nil then
 		return DEFINITIONS
