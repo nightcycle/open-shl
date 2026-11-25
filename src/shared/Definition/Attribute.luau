@@ -64,7 +64,8 @@ Module.MAX_HEALTH = MAX_HEALTH
 Module.MAX_ENERGY = MAX_ENERGY
 
 -- on the character
-Module.Health = new("Character", "Health", Type.numberConstrained(0, MAX_HEALTH), MAX_HEALTH) :: Attribute<number>
+-- the most is what an avatar has, a body nobody plays may come with more of it
+Module.Health = new("Character", "Health", Type.numberMin(0), MAX_HEALTH) :: Attribute<number>
 Module.Energy = new("Character", "Energy", Type.numberConstrained(0, MAX_ENERGY), MAX_ENERGY) :: Attribute<number>
 Module.IsDead = new("Character", "IsDead", Type.boolean, false) :: Attribute<boolean>
 -- "" falls back to the user name
@@ -99,6 +100,8 @@ Module.IsMasked = new("Character", "IsMasked", Type.boolean, true) :: Attribute<
 Module.IsHandcuffed = new("Character", "IsHandcuffed", Type.boolean, false) :: Attribute<boolean>
 -- nothing takes health off it
 Module.IsInvulnerable = new("Character", "IsInvulnerable", Type.boolean, false) :: Attribute<boolean>
+-- nobody plays it: what a disaster is made of, what rises from the graves. nil on an avatar
+Module.IsNonPlayer = new("Character", "IsNonPlayer", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
 -- nobody is shown who it is
 Module.IsNameHidden = new("Character", "IsNameHidden", Type.boolean, false) :: Attribute<boolean>
 Module.ExpressionId =
