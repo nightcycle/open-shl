@@ -3,6 +3,7 @@
 -- Packages
 -- Modules
 -- Components
+local Acrobatics = require("@self/Acrobatics")
 local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
 local CharacterSelect =
@@ -40,6 +41,8 @@ local REGISTRY: Registry = {
 		Shop = Shop,
 	},
 	OVERLAYS = {
+		-- the panel of flips, up with the hud while the hero is out
+		Acrobatics = Acrobatics,
 		-- it has no bar for its health: the flash of a hit is how a player sees one land
 		CombatFeedback = CombatFeedback,
 		NameTag = NameTag,
