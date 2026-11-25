@@ -1,6 +1,5 @@
 --!strict
 -- Services
-local Players = game:GetService("Players")
 -- Packages
 local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 -- Modules
@@ -8,6 +7,7 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local MapDefinition = require("@game/ServerScriptService/Server/Definition/Map")
 local PropDefinition = require("@game/ReplicatedStorage/Shared/Definition/Prop")
 local PropService = require("@game/ServerScriptService/Server/Service/Prop")
+local TouchUtil = require("@game/ServerScriptService/Server/Util/Touch")
 -- Types
 -- a part of the map that hands out one prop
 type Pad = {
@@ -35,25 +35,9 @@ export type PickupService = typeof(setmetatable(
 -- Constants
 -- seconds a pad takes between two tries to hand its prop out, whoever they're for
 local ATTEMPT_INTERVAL = 1
--- studs past its own corners a pad still takes an avatar to be on it. a touch is whatever the client of an avatar
--- says it is, where the avatar stands is at least the server's own reading
-local TOUCH_REACH = 10
 -- Variables
 -- References
 -- Private Functions
--- whose avatar the part belongs to: a hat or something held touches for whoever wears it
-local function getToucher(hit: BasePart): (Player?, Model?)
-	local model = hit:FindFirstAncestorOfClass("Model")
-	while model do
-		local player = Players:GetPlayerFromCharacter(model)
-		if player then
-			return player, model
-		end
-		model = model:FindFirstAncestorOfClass("Model")
-	end
-	return nil, nil
-end
-
 -- back in stock: it shows again the way the map made it
 local function restock(pad: Pad)
 	pad.RestockThread = nil
@@ -64,7 +48,7 @@ end
 local function onTouched(pad: Pad, hit: BasePart)
 	assert(PropService.IsInitialized, `the prop service isn't initialized`)
 	-- whatever else runs into it doesn't cost it its second
-	local player, character = getToucher(hit)
+	local player, character = TouchUtil.getToucher(hit)
 	if not player or not character then
 		return
 	end
@@ -75,8 +59,7 @@ local function onTouched(pad: Pad, hit: BasePart)
 		return
 	end
 	local part = pad.Part
-	local rootPart = character.PrimaryPart
-	if not rootPart or (rootPart.Position - part.Position).Magnitude > part.Size.Magnitude / 2 + TOUCH_REACH then
+	if not TouchUtil.getIfNear(character, part, TouchUtil.REACH) then
 		return
 	end
 	-- somebody who carries one already has nothing to take, so their touch doesn't cost the pad its second either: a

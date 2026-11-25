@@ -17,6 +17,7 @@ local RoleplayService = require("@game/ServerScriptService/Server/Service/Rolepl
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local TakeDownUtil = require("@game/ServerScriptService/Server/Util/TakeDown")
 local TeamService = require("@game/ServerScriptService/Server/Service/Team")
+local TouchUtil = require("@game/ServerScriptService/Server/Util/Touch")
 -- Types
 local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 type TeamId = CombatType.TeamId
@@ -57,33 +58,12 @@ export type JailService = typeof(setmetatable(
 ))
 -- Constants
 local SPOT_NAME = "SpawnPoint"
--- studs past its own corners a part still takes an avatar to be at it. a touch is whatever the client of an avatar
--- says it is, where the avatar stands is at least the server's own reading
-local TOUCH_REACH = 10
 local GATE = JailDefinition.GATE
 -- what the held are put in, the same for every one of them
 local COSTUME = CustodyUtil.newCostume(JailDefinition.IDENTITY_KEY, JailDefinition.ITEM_IDS, JailDefinition.COLOR)
 -- Variables
 -- References
 -- Private Functions
--- whose avatar the part belongs to: a hat or something held touches for whoever wears it
-local function getToucher(hit: BasePart): (Player?, Model?)
-	local model = hit:FindFirstAncestorOfClass("Model")
-	while model do
-		local player = Players:GetPlayerFromCharacter(model)
-		if player then
-			return player, model
-		end
-		model = model:FindFirstAncestorOfClass("Model")
-	end
-	return nil, nil
-end
-
-local function getIfNear(character: Model, part: BasePart): boolean
-	local rootPart = character.PrimaryPart
-	return rootPart ~= nil and (rootPart.Position - part.Position).Magnitude <= part.Size.Magnitude / 2 + TOUCH_REACH
-end
-
 -- how many each cell holds
 local function getOccupancy(self: JailService): { number }
 	local occupancy = table.create(#self._Spots, 0)
@@ -212,14 +192,14 @@ local function onGateTouched(gate: Gate, hit: BasePart)
 	if gate.Thread then
 		return
 	end
-	local player, character = getToucher(hit)
+	local player, character = TouchUtil.getToucher(hit)
 	if not player or not character then
 		return
 	end
 	if
 		AttributeDefinition.get(character, AttributeDefinition.IsDead)
 		or AttributeDefinition.get(character, AttributeDefinition.IsInMenu)
-		or not getIfNear(character, gate.Part)
+		or not TouchUtil.getIfNear(character, gate.Part, TouchUtil.REACH)
 	then
 		return
 	end
@@ -235,12 +215,12 @@ end
 
 -- whoever is held + touches one of these made trouble: they're fair game for as long as that avatar lives
 local function onTroubleTouched(self: JailService, part: BasePart, hit: BasePart)
-	local player, character = getToucher(hit)
+	local player, character = TouchUtil.getToucher(hit)
 	if not player or not character then
 		return
 	end
 	local prisoner = self._Prisoners[player]
-	if not prisoner or prisoner.Avatar ~= character or not getIfNear(character, part) then
+	if not prisoner or prisoner.Avatar ~= character or not TouchUtil.getIfNear(character, part, TouchUtil.REACH) then
 		return
 	end
 	if not AttributeDefinition.get(character, AttributeDefinition.IsTroublesome) then
