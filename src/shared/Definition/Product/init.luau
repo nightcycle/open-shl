@@ -45,6 +45,13 @@ local DAILY_REWARD = if CATALOGUE.DailyReward
 		INTERVAL = CATALOGUE.DailyReward.Interval,
 	})
 	else nil
+local ALLOWANCE = if CATALOGUE.Allowance
+	then table.freeze({
+		CURRENCY = CATALOGUE.Allowance.Currency,
+		AMOUNT = CATALOGUE.Allowance.Amount,
+		INTERVAL = CATALOGUE.Allowance.Interval,
+	})
+	else nil
 -- Variables
 -- References
 -- Private Functions
@@ -71,6 +78,7 @@ end
 
 Module.STARTING_BALANCES = STARTING_BALANCES
 Module.DAILY_REWARD = DAILY_REWARD
+Module.ALLOWANCE = ALLOWANCE
 
 Module.getCurrencyName = function(currency: PseudoEnum.Currency): string
 	return CURRENCY_NAMES[currency]

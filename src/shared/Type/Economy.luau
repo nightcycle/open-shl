@@ -114,9 +114,21 @@ Types.DailyReward = Type.strictInterface({
 	Interval = Type.numberPositive,
 })
 
+-- what a player is handed for being in a server, the interval is the seconds between two of them
+export type Allowance = {
+	Currency: Currency,
+	Amount: number,
+	Interval: number,
+}
+Types.Allowance = Type.strictInterface({
+	Currency = Types.Currency,
+	Amount = Type.intersection(Type.integer, Type.numberPositive),
+	Interval = Type.numberPositive,
+})
+
 -- what a game sells + what it gives away: its products, what its currencies go by, how many characters a player keeps
 -- without the pass + how many more with it, what a new player starts on. a game that hands nothing out for coming back
--- has no daily reward
+-- has no daily reward, one that hands nothing out for staying has no allowance
 export type ProductCatalogue = {
 	Definitions: { ProductDefinition },
 	Upcoming: { ProductDefinition }?, -- the ones that aren't sold yet, nobody is asked whether they own one
@@ -125,6 +137,7 @@ export type ProductCatalogue = {
 	ExtraCharacterSlotCount: number,
 	StartingBalances: Balances,
 	DailyReward: DailyReward?,
+	Allowance: Allowance?,
 }
 Types.ProductCatalogue = Type.strictInterface({
 	Definitions = Type.array(Types.ProductDefinition),
@@ -134,6 +147,7 @@ Types.ProductCatalogue = Type.strictInterface({
 	ExtraCharacterSlotCount = Type.intersection(Type.integer, Type.numberMin(0)),
 	StartingBalances = Types.Balances,
 	DailyReward = Type.optional(Types.DailyReward),
+	Allowance = Type.optional(Types.Allowance),
 })
 
 -- what opens something that isn't sold for a currency: a pass of the game, or having been seen in its group

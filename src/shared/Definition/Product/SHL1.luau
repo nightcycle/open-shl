@@ -5,6 +5,7 @@
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
+type Allowance = EconomyType.Allowance
 type Balances = EconomyType.Balances
 type ProductCatalogue = EconomyType.ProductCatalogue
 type ProductDefinition = EconomyType.ProductDefinition
@@ -39,6 +40,13 @@ local EXTRA_CHARACTER_SLOT_COUNT = 0
 local STARTING_BALANCES: Balances = table.freeze({
 	Credits = 0,
 	Gems = 0,
+})
+-- the drip of its old place: one more for everybody who's in a server every 45 seconds, 80 an hour, in the creator +
+-- standing still alike. it had one beat for the whole server, here every visit has its own
+local ALLOWANCE: Allowance = table.freeze({
+	Currency = PseudoEnum.Currency.Credits,
+	Amount = 1,
+	Interval = 45,
 })
 -- the price text is what a card shows until the live price is known, the old shop spelt both out: "5 R$ = 50 C$"
 local DEFINITIONS: { ProductDefinition } = {
@@ -150,6 +158,7 @@ local CATALOGUE: ProductCatalogue = {
 	DefaultCharacterSlotCount = DEFAULT_CHARACTER_SLOT_COUNT,
 	ExtraCharacterSlotCount = EXTRA_CHARACTER_SLOT_COUNT,
 	StartingBalances = STARTING_BALANCES,
+	Allowance = ALLOWANCE,
 }
 -- Variables
 -- References
