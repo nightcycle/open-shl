@@ -316,7 +316,9 @@ end
 
 function ShellService:SetCameraMode(isCameraMode: boolean): Result<true, string>
 	if isCameraMode then
-		if not self._IsCameraModeAvailable then
+		if not GameDefinition.FEATURES.CameraMode then
+			return Result.err(`the game has no camera mode`)
+		elseif not self._IsCameraModeAvailable then
 			return Result.err(`camera mode needs a keyboard`)
 		elseif not self._State.IsGameplayHudVisible then
 			return Result.err(`can't enter camera mode without the hud`)
