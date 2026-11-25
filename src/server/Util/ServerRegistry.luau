@@ -7,7 +7,9 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 local Option = TypeUnionLib.Option
 -- Modules
+local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local ServerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Server")
+local StoreDefinition = require("@game/ServerScriptService/Server/Definition/Store")
 -- Types
 local RegistryType = require("@game/ServerScriptService/Server/Type/Registry")
 local ServerType = require("@game/ReplicatedStorage/Shared/Type/Server")
@@ -33,6 +35,13 @@ local function call(fn: () -> unknown): Result<unknown, string>
 	-- it has nothing for a place that isn't published, asking would only fill the output
 	if game.GameId == 0 then
 		return Result.err(`the place isn't published`)
+	end
+	-- a memory store belongs to a universe the way a data store does. in one this place wasn't built for every
+	-- record is another game's: none of them is read, where they'd send a player is no place of this game, + none
+	-- of this one's is written among them
+	local universeProblem = StoreDefinition.getUniverseProblem(BUILD_CONFIG.UNIVERSE_ID, game.GameId)
+	if universeProblem then
+		return Result.err(universeProblem)
 	end
 	local success, res = pcall(fn)
 	if not success then
