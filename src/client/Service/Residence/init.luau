@@ -11,12 +11,9 @@ local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 -- Types
-local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local ResidenceType = require("@self/Types")
-local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Signal<T...> = Signal.Signal<T...>
-type ResidenceId = BaseType.ResidenceId
-export type ResidenceState = SessionType.ResidenceState
+export type ResidenceState = ResidenceType.State
 export type Interior = ResidenceType.Interior
 type Door = ResidenceType.Door
 type Walk = ResidenceType.Walk
@@ -87,7 +84,7 @@ local function getLanding(exit: BasePart, behind: BasePart): CFrame
 end
 
 -- the server says who lives where through an attribute on every player
-local function getOwner(residenceId: ResidenceId): Player?
+local function getOwner(residenceId: string): Player?
 	for _, player in Players:GetPlayers() do
 		if AttributeDefinition.get(player, AttributeDefinition.ResidenceId) == residenceId then
 			return player
@@ -239,7 +236,7 @@ local function walkIn(self: ResidenceService, door: Door)
 	if not owner then
 		return
 	end
-	if owner ~= Players.LocalPlayer and AttributeDefinition.get(owner, AttributeDefinition.IsApartmentLocked) then
+	if owner ~= Players.LocalPlayer and RULE.GetIfShut(owner) then
 		return
 	end
 	local avatar = Players.LocalPlayer.Character

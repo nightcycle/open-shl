@@ -13,13 +13,11 @@ local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remo
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local StateUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/State")
 -- Types
-local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local ResidenceType = require("@game/ServerScriptService/Server/Type/Residence")
-local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
+local SharedResidenceType = require("@game/ReplicatedStorage/Shared/Type/Residence")
 type Result<V, E> = TypeUnionLib.Result<V, E>
-type ResidenceId = BaseType.ResidenceId
 type Session = SessionService.Session
-type ResidenceState = SessionType.ResidenceState
+type ResidenceState = SharedResidenceType.State
 type Slot = ResidenceType.Slot
 type Rooms = ResidenceType.Rooms
 type Rule = ResidenceType.Rule
@@ -30,7 +28,7 @@ export type ResidenceService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
 		_Slots: { Slot }, -- in the order they're handed out
-		_Owners: { [ResidenceId]: Player },
+		_Owners: { [string]: Player }, -- by the id of their slot
 		_Hosts: { [Player]: Player }, -- whose residence a player is inside of, their own included
 		_States: { [Player]: ResidenceState }, -- by owner: what the players inside were told last
 		_Connections: { RBXScriptConnection },
@@ -137,7 +135,7 @@ local function rehouse(self: ResidenceService, player: Player)
 end
 
 -- the lock only keeps the door shut, a visitor who's already inside stays
-local function enter(self: ResidenceService, player: Player, residenceId: ResidenceId): Result<ResidenceState, string>
+local function enter(self: ResidenceService, player: Player, residenceId: string): Result<ResidenceState, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	if SessionService:Get(player).IsNone then
 		return Result.err(`{player.Name} has no session`)
@@ -180,7 +178,7 @@ return ServiceLocker(function(): ResidenceService
 
 	NetworkService:Handle(
 		RemoteDefinition.EnterResidence,
-		function(player: Player, residenceId: ResidenceId): Result<ResidenceState, string>
+		function(player: Player, residenceId: string): Result<ResidenceState, string>
 			return enter(self, player, residenceId)
 		end
 	)

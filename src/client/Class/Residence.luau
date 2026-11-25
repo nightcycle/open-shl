@@ -18,11 +18,11 @@ local ThemeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Theme
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
-local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
+local ResidenceType = require("@game/ReplicatedStorage/Shared/Type/Residence")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Signal<T...> = Signal.Signal<T...>
 type Appearance = AppearanceType.Appearance
-type ResidenceState = SessionType.ResidenceState
+type ResidenceState = ResidenceType.SHL2State
 export type PlacedFurniture = BaseType.PlacedFurniture
 export type ZoneId = BaseType.ZoneId
 -- a way from one floor of the residence to the other

@@ -4,6 +4,7 @@
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
+local ResidenceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Residence")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
@@ -22,12 +23,11 @@ type MenuRefusal = CombatType.MenuRefusal
 type TeamId = CombatType.TeamId
 type BaseInventory = BaseType.BaseInventory
 type PlacedFurniture = BaseType.PlacedFurniture
-type ResidenceId = BaseType.ResidenceId
 type PublicProfile = ProfileType.PublicProfile
 type QuestState = QuestType.QuestState
 type ExpressionId = RoleplayType.ExpressionId
 type Snapshot = SessionType.Snapshot
-type ResidenceState = SessionType.ResidenceState
+type ResidenceState = ResidenceDefinition.State
 type FurniturePlacement = SessionType.FurniturePlacement
 type FurnitureMove = SessionType.FurnitureMove
 type DailyReward = SessionType.DailyReward
@@ -237,12 +237,12 @@ Module.DailyRewardGranted = newServerEvent("DailyRewardGranted", SessionType.Dai
 -- every change until they say they left
 Module.EnterResidence = newClientFunction(
 	"EnterResidence",
-	BaseType.ResidenceId,
-	SessionType.ResidenceState,
+	ResidenceDefinition.ResidenceId,
+	ResidenceDefinition.State,
 	REQUEST_LIMIT
-) :: ClientFunction<ResidenceState, ResidenceId>
+) :: ClientFunction<ResidenceState, string>
 Module.LeaveResidence = newClientEvent("LeaveResidence", Type.none, INPUT_LIMIT) :: ClientEvent<nil>
-Module.ResidenceChanged = newServerEvent("ResidenceChanged", SessionType.ResidenceState) :: ServerEvent<ResidenceState>
+Module.ResidenceChanged = newServerEvent("ResidenceChanged", ResidenceDefinition.State) :: ServerEvent<ResidenceState>
 -- the base of a residence, only its owner builds on it
 Module.PlaceFurniture =
 	newClientFunction("PlaceFurniture", isPlacement, isPlaced, REQUEST_LIMIT) :: ClientFunction<PlacedFurniture, FurniturePlacement>

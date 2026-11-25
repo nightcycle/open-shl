@@ -17,8 +17,9 @@ local useSignalState = require("@game/StarterPlayer/StarterPlayerScripts/Client/
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
 -- Types
+local ResidenceType = require("@game/ReplicatedStorage/Shared/Type/Residence")
 type ClientFunction<V, T> = RemoteDefinition.ClientFunction<V, T>
-type ResidenceState = ResidenceService.ResidenceState
+type ResidenceState = ResidenceType.SHL2State
 type Refusal = BuildMenu.Refusal
 export type Properties = {}
 -- Constants
@@ -36,9 +37,10 @@ return function(): React.ReactNode
 	local selectedFurnitureId: string? = useSignalState(BuildService.FurnitureIdChanged, function(): string?
 		return BuildService:GetFurnitureId()
 	end)
-	-- the menu is only up inside of the player's own residence
+	-- the menu is only up inside of the player's own residence. the service only knows whose one is, a residence of
+	-- this game also says how it's laid out
 	local state: ResidenceState? = useSignalState(ResidenceService.StateChanged, function(): ResidenceState?
-		return ResidenceService:GetState()
+		return ResidenceService:GetState() :: any
 	end)
 	local pendingId: string?, setPendingId: (string?) -> () = React.useState(nil :: string?)
 	local refusal: Refusal?, setRefusal: (Refusal?) -> () = useTimedState(REFUSAL_DURATION)

@@ -7,13 +7,12 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
+local ResidenceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Residence")
 -- Types
-local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local RoleplayType = require("@game/ReplicatedStorage/Shared/Type/Roleplay")
-type ResidenceId = BaseType.ResidenceId
 type IdentityKey = CharacterType.IdentityKey
 type TeamId = CombatType.TeamId
 type EntitlementKey = EconomyType.EntitlementKey
@@ -138,7 +137,8 @@ Module.PantsAssetId = new("Player", "PantsAssetId", Type.optional(ASSET_ID), nil
 -- the server is theirs. a client is told, it never works it out
 Module.IsServerOwner = new("Player", "IsServerOwner", Type.boolean, false) :: Attribute<boolean>
 -- nil for as long as the player has no residence
-Module.ResidenceId = new("Player", "ResidenceId", Type.optional(BaseType.ResidenceId), nil) :: Attribute<ResidenceId?>
+Module.ResidenceId =
+	new("Player", "ResidenceId", Type.optional(ResidenceDefinition.ResidenceId), nil) :: Attribute<string?>
 
 -- on the workspace
 -- if a private server lets its players fight, which is up to whoever set it up. nil until its server knows + on

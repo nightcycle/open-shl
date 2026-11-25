@@ -7,23 +7,21 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Components
 -- Hooks
 -- Types
-local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
+local ResidenceType = require("@game/ReplicatedStorage/Shared/Type/Residence")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
-local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type PlayerSave = SaveType.PlayerSave
-type ResidenceId = BaseType.ResidenceId
-type ResidenceState = SessionType.ResidenceState
+type State = ResidenceType.State
 
 local Types = {}
 
--- one residence of a map, there to be handed to a player
+-- one residence of a map, there to be handed to a player. what names it is the game's to say
 export type Slot = {
-	Id: ResidenceId,
+	Id: string,
 	-- whatever the map shows of who lives there, nil once nobody does
 	SetOwner: (player: Player?) -> (),
 }
 Types.Slot = Type.strictInterface({
-	Id = BaseType.ResidenceId,
+	Id = Type.string,
 	SetOwner = Type.callback,
 })
 
@@ -50,8 +48,9 @@ export type Rule = {
 	GetIfHoused: (save: PlayerSave) -> boolean,
 	-- if the door of an owner with this save stays shut for everybody else
 	GetIfLocked: (save: PlayerSave) -> boolean,
-	-- what a client builds the residence from. a state that's equal to the last one isn't sent again
-	NewState: (residenceId: ResidenceId, owner: Player, save: PlayerSave) -> ResidenceState,
+	-- what a client builds the residence from, the way this game has it. a state that's equal to the last one isn't
+	-- sent again
+	NewState: (residenceId: string, owner: Player, save: PlayerSave) -> State,
 	-- runs as the service starts, for the requests only this game takes. what it hands back undoes it
 	Start: (rooms: Rooms) -> (() -> ())?,
 }

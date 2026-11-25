@@ -6,15 +6,14 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Future = TypeUnionLib.Future
 local Result = TypeUnionLib.Result
 -- Modules
+local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local Residence = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/Residence")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Types
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local ResidenceType = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Residence/Types")
-local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Result<V, E> = TypeUnionLib.Result<V, E>
-type ResidenceId = BaseType.ResidenceId
-type ResidenceState = SessionType.ResidenceState
+type ResidenceState = ResidenceType.State
 type Door = ResidenceType.Door
 type Interior = ResidenceType.Interior
 type Walk = ResidenceType.Walk
@@ -114,7 +113,7 @@ local function bindDoors(
 			continue
 		end
 		local door: Door = {
-			ResidenceId = inst.Name :: ResidenceId,
+			ResidenceId = inst.Name,
 			Doorstep = getDoorstep(triggerRes.Value, plateRes.Value),
 			Anchor = anchorRes.Value.CFrame,
 			Parent = anchorRes.Value.Parent or anchors,
@@ -178,8 +177,13 @@ local Rule: Rule = {
 			table.clear(connections)
 		end
 	end,
+	-- an owner locks their door, the lock is theirs to show
+	GetIfShut = function(owner: Player): boolean
+		return AttributeDefinition.get(owner, AttributeDefinition.IsApartmentLocked)
+	end,
+	-- the remote the state came by only lets one of this game through, what a residence is built from is all in it
 	NewInterior = function(anchor: CFrame, state: ResidenceState, parent: Instance): Result<Interior, string>
-		return Residence.new(anchor, state, parent) :: any
+		return Residence.new(anchor, state :: any, parent) :: any
 	end,
 	GetBounds = function(interior: Interior): (CFrame, Vector3)
 		local residence = Residence.from(interior)

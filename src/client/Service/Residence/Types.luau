@@ -4,24 +4,24 @@
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 -- Modules
+local ResidenceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Residence")
 -- Types
-local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
-local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Result<V, E> = TypeUnionLib.Result<V, E>
-type ResidenceId = BaseType.ResidenceId
-type ResidenceState = SessionType.ResidenceState
+-- what every game's residence says of itself, what it's built from on top of that is the game's own
+export type State = ResidenceDefinition.State
+type ResidenceState = State
 
 local Types = {}
 
 -- a way into one residence, whoever lives there
 export type Door = {
-	ResidenceId: ResidenceId,
+	ResidenceId: string, -- what names a residence is the game's to say
 	Doorstep: CFrame, -- where the avatar is put as it leaves, its back to the door
 	Anchor: CFrame, -- where the residence is built
 	Parent: Instance, -- what the residence is put under
 }
 Types.Door = Type.strictInterface({
-	ResidenceId = BaseType.ResidenceId,
+	ResidenceId = ResidenceDefinition.ResidenceId,
 	Doorstep = Type.CFrame,
 	Anchor = Type.CFrame,
 	Parent = Type.instanceIsA("Instance"),
@@ -44,7 +44,7 @@ export type Interior =
 -- of one that's alive
 Types.Interior = Type.interface({
 	IsAlive = Type.literal(true),
-	State = SessionType.ResidenceState,
+	State = ResidenceDefinition.State,
 	Entrance = Type.instanceIsA("BasePart"),
 	Exit = Type.instanceIsA("BasePart"),
 	SetState = Type.callback,
@@ -72,6 +72,8 @@ Types.Walk = Type.strictInterface({
 export type Rule = {
 	-- binds every way into a residence, `enter` takes the door the avatar stands at. what it hands back unbinds them
 	Bind: (walk: Walk, enter: (door: Door) -> ()) -> () -> (),
+	-- if the door of somebody else is known to stay shut before the server is asked. it's never about the player's own
+	GetIfShut: (owner: Player) -> boolean,
 	-- what's built at the anchor of a door the server opened
 	NewInterior: (anchor: CFrame, state: ResidenceState, parent: Instance) -> Result<Interior, string>,
 	-- the box an avatar that's inside stays in
@@ -81,6 +83,7 @@ export type Rule = {
 }
 Types.Rule = Type.strictInterface({
 	Bind = Type.callback,
+	GetIfShut = Type.callback,
 	NewInterior = Type.callback,
 	GetBounds = Type.callback,
 	Entered = Type.callback,

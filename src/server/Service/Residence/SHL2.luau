@@ -24,15 +24,16 @@ local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local ResidenceType = require("@game/ServerScriptService/Server/Type/Residence")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
+local SharedResidenceType = require("@game/ReplicatedStorage/Shared/Type/Residence")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Appearance = AppearanceType.Appearance
 type BaseInventory = BaseType.BaseInventory
 type BaseLayout = BaseType.BaseLayout
 type PlacedFurniture = BaseType.PlacedFurniture
-type ResidenceId = BaseType.ResidenceId
 type Character = CharacterType.Character
 type PlayerSave = SaveType.PlayerSave
-type ResidenceState = SessionType.ResidenceState
+type ResidenceState = SharedResidenceType.SHL2State
+type State = SharedResidenceType.State
 type FurniturePlacement = SessionType.FurniturePlacement
 type FurnitureMove = SessionType.FurnitureMove
 type Slot = ResidenceType.Slot
@@ -67,7 +68,7 @@ local function getSlots(): { Slot }
 		end
 		local label: TextLabel = plate
 		table.insert(out, {
-			Id = door.Name :: ResidenceId,
+			Id = door.Name,
 			-- the plate next to the door in the lobby reads who lives behind it
 			SetOwner = function(player: Player?)
 				label.Text = if player then player.Name else VACANT_TEXT
@@ -130,7 +131,7 @@ local function newCostume(appearance: Appearance): Appearance
 	end)
 end
 
-local function newState(residenceId: ResidenceId, owner: Player, save: PlayerSave): ResidenceState
+local function newState(residenceId: string, owner: Player, save: PlayerSave): ResidenceState
 	local costumes: { [string]: Appearance } = {}
 	local layout = getLayout(save)
 	for _, placed in layout.Furniture do
@@ -413,7 +414,10 @@ local Rule: Rule = table.freeze({
 	GetIfLocked = function(save: PlayerSave): boolean
 		return save.IsApartmentLocked == true
 	end,
-	NewState = newState,
+	-- the shared half reads which residence it is + whose, the rest of it is for a client of this game
+	NewState = function(residenceId: string, owner: Player, save: PlayerSave): State
+		return newState(residenceId, owner, save)
+	end,
 	Start = start,
 })
 
