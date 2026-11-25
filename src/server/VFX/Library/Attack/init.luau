@@ -14,11 +14,15 @@ type ServerScope = VFXType.ServerScope
 export type Properties = {
 	Target: Model,
 	Amount: number,
+	Origin: Vector3?, -- where what hit them left from: a cover between there + them takes it
+	IsStill: boolean?, -- it doesn't send them off
 }
 -- Constants
 local isProperties = Type.strictInterface({
 	Target = Type.instanceIsA("Model"),
 	Amount = Type.numberMin(0),
+	Origin = Type.optional(Type.Vector3),
+	IsStill = Type.optional(Type.boolean),
 })
 -- Variables
 -- References
@@ -49,7 +53,7 @@ return ServerVFX.newEvent("Attack", isProperties, function(props: Properties, sc
 	end
 	-- only a hit that got through sends them off: whatever keeps the health of somebody keeps them where they are
 	local knockback = CombatDefinition.KNOCKBACK
-	if isLanded and knockback and character then
+	if isLanded and knockback and character and not props.IsStill then
 		local velocity = CombatDefinition.getKnockback(character:GetPivot().Position, target:GetPivot().Position)
 		if velocity then
 			scope.fire(Shove, {
