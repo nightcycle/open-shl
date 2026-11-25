@@ -26,6 +26,7 @@ return ClientVFX.state(ClientVFXDefinition.ScreenFilter, function(props: Propert
 	colorCorrection.Brightness = props.Brightness
 	colorCorrection.Contrast = props.Contrast
 	colorCorrection.Saturation = props.Saturation
+	colorCorrection.TintColor = props.TintColor or colorCorrection.TintColor
 	colorCorrection.Parent = camera
 	local blur = Instance.new("BlurEffect")
 	blur.Name = BLUR_NAME

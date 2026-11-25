@@ -260,12 +260,31 @@ export type ScreenFilter = {
 	Contrast: number,
 	Saturation: number,
 	Blur: number,
+	TintColor: Color3?, -- what all of it is tinted in, nothing without
 }
 Types.ScreenFilter = Type.strictInterface({
 	Brightness = Type.numberConstrained(-1, 1),
-	Contrast = Type.numberConstrained(-1, 1),
+	-- past what the engine says it takes: a power of the third game is written that way
+	Contrast = Type.numberConstrained(-1, 2),
 	Saturation = Type.numberConstrained(-1, 1),
 	Blur = Type.numberConstrained(0, 56),
+	TintColor = Type.optional(Type.Color3),
+})
+
+-- what's around the camera of whoever shows it is seen through, a layer a look
+export type SeeThrough = {
+	Range: number, -- studs a look reaches from where it starts
+	Start: number?, -- studs from the camera a look starts at, at the camera without
+	Transparency: number, -- what a part that's seen through is shown at
+	RayCount: number, -- the spots of the screen a look goes out through, as many of them as make a square grid
+	PassCount: number, -- looks a turn, each gets a layer further than the one before
+}
+Types.SeeThrough = Type.strictInterface({
+	Range = Type.numberConstrained(1, 500),
+	Start = Type.optional(Type.numberConstrained(0, 500)),
+	Transparency = Type.numberConstrained(0, 1),
+	RayCount = Type.intersection(Type.integer, Type.numberConstrained(1, 2500)),
+	PassCount = Type.intersection(Type.integer, Type.numberConstrained(1, 10)),
 })
 
 -- how wide the camera of whoever shows it takes the world in
@@ -544,6 +563,33 @@ Types.Tumble = Type.strictInterface({
 	Phases = Type.array(AcrobaticsType.Phase),
 	IsTurned = Type.boolean,
 	OnEnded = Type.optional(Type.callback),
+})
+
+-- one piece of the ice
+export type FrostBlock = {
+	Size: Vector3, -- what it grows to
+	Offset: CFrame, -- of its middle from the spot, turned as it likes
+	GrowDuration: number, -- seconds it takes to get there from nothing
+	Color: Color3,
+}
+Types.FrostBlock = Type.strictInterface({
+	Size = isSize,
+	Offset = Type.CFrame,
+	GrowDuration = Type.numberConstrained(0, 10),
+	Color = Type.Color3,
+})
+-- ice that grows somewhere in the world, stays + goes
+export type Frost = {
+	CFrame: CFrame, -- the spot
+	Blocks: { FrostBlock },
+	Lifetime: number, -- seconds until all of it is gone
+	ShrinkDuration: number?, -- the last seconds of that it shrinks away for, gone at once without
+}
+Types.Frost = Type.strictInterface({
+	CFrame = Type.CFrame,
+	Blocks = Type.array(Types.FrostBlock),
+	Lifetime = Type.numberConstrained(0.05, 30),
+	ShrinkDuration = Type.optional(Type.numberConstrained(0, 30)),
 })
 
 return Types
