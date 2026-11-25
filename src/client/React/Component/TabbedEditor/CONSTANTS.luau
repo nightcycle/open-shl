@@ -367,6 +367,11 @@ return {
 	ROW_ART_HEIGHT = 7,
 	ROW_TEXT_SIZE = UDim2.fromScale(0.85, 0.6),
 	ROW_TEXT_COLOR = Color3.fromRGB(122, 122, 122),
+	-- a row of what has to be bought first: its pill is green + it says what it costs
+	UNOWNED_ROW_COLOR = Color3.fromRGB(0, 255, 0),
+	PRICE_FONT = Font.fromEnum(Enum.Font.SourceSans),
+	PRICE_SIZE = UDim2.fromScale(0.8, 0.8),
+	PRICE_TEXT_COLOR = Color3.fromRGB(122, 122, 122),
 	-- the rows clear the scroll bar, which rides on a track drawn at the left of the list
 	LIST_PADDING = 0.13,
 	LIST_SCROLL_BAR_WIDTH = 0.05,
@@ -404,6 +409,12 @@ return {
 	RANDOMIZE_SIZE = UDim2.fromOffset(150, 40),
 	RANDOMIZE_TEXT_COLOR = Color3.fromRGB(131, 131, 131),
 	BUTTON_ART = COMMON_ART["button-template.png"],
+	-- the button that buys what's looked at, over the stage
+	PURCHASE_ANCHOR_POINT = Vector2.new(0.5, 0),
+	PURCHASE_POSITION = UDim2.new(0.575, 20, 0.05, 0),
+	PURCHASE_SIZE = UDim2.fromOffset(271, 72),
+	PURCHASE_TEXT_COLOR = Color3.fromRGB(171, 171, 171),
+	PURCHASE_TEXT_SIZE = 30,
 	-- a save that's turned down is said over the roll button, the old editor had no words for it
 	ERROR_ANCHOR_POINT = Vector2.new(0.5, 1),
 	ERROR_POSITION = UDim2.new(0.575, 20, 1, -70),

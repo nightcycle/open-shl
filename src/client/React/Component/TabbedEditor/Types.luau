@@ -97,6 +97,11 @@ export type TabInfo = {
 	Application: ApplicationInfo?,
 	Logo: ArtInfo?,
 }
+-- what's looked at before it's bought: an item is tried on for it, a power is only named
+export type Preview = {
+	Id: string,
+	IsTriedOn: boolean,
+}
 -- the color a picker is open for: an item's page or a page of its own, and the texture group on it
 export type Focus = {
 	Path: string,

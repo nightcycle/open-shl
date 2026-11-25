@@ -6,6 +6,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local CharacterEditorConstructor = require("@game/ReplicatedStorage/Shared/Constructor/CharacterEditor")
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
+local StateUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/State")
 -- Components
 -- Hooks
 -- Contexts
@@ -32,6 +33,7 @@ local SetIsHeroFocusContext =
 local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
 -- Types
 local EditorTypes = require("./Types")
+type Character = CharacterEditorUtil.Character
 type EditorState = CharacterEditorStateContext.EditorState
 type Entitlements = CharacterEditorConstructor.Entitlements
 type FieldDefinition = CharacterEditorFieldCallback.FieldDefinition
@@ -41,6 +43,7 @@ type EntitlementKey = SessionEntitlementsContext.EntitlementKey
 type TextFilter = EditorTypes.TextFilter
 type FilteredText = EditorTypes.FilteredText
 export type Properties = {
+	Draft: Character?, -- takes the place of the draft each time another one is handed in
 	FilteredText: FilteredText?,
 	OnFilterText: (filter: TextFilter) -> (),
 	children: { [string]: React.ReactNode }?,
@@ -158,6 +161,14 @@ return function(props: Properties): React.ReactNode
 		end
 		return function() end
 	end, { filteredText })
+	-- whoever dealt the draft anew hands it in here. what was tried on was tried on somebody else
+	local draft = props.Draft
+	React.useEffect(function()
+		if draft then
+			setEditorState(StateUtil.setCharacter(CharacterEditorUtil.setPath(stateRef.current, ""), draft))
+		end
+		return function() end
+	end, { draft })
 
 	return e(CharacterContext.Provider, {
 		value = state.Character,

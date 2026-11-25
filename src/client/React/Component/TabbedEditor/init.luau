@@ -5,6 +5,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
+local AccessDefinition = require("@game/ReplicatedStorage/Shared/Definition/Access")
 -- Components
 local EditableCharacterProvider =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor/EditableCharacterProvider")
@@ -16,6 +17,9 @@ local Tabs = require("@self/Tabs")
 local useTween = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTween")
 -- Contexts
 local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
+local CharacterEditorStateContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/State")
+local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
 local SetIsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetIsHeroFocus")
 local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
@@ -26,6 +30,7 @@ local EditorTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/Rea
 local Types = require("@self/Types")
 type Character = CharacterType.Character
 type Focus = Types.Focus
+type Preview = Types.Preview
 type TabInfo = Types.TabInfo
 type TextFilter = EditorTypes.TextFilter
 export type FilteredText = EditorTypes.FilteredText
@@ -62,10 +67,13 @@ local function editor(props: {
 	IsSaving: boolean?,
 	IsRandomizable: boolean?,
 	OnSave: (character: Character) -> (),
-	OnRandomize: () -> (),
+	OnRandomize: (character: Character) -> (),
+	OnPurchase: (id: string) -> (),
 })
 	local style = React.useContext(StyleContext)
 	local character = React.useContext(CharacterContext)
+	local state = React.useContext(CharacterEditorStateContext)
+	local owned = React.useContext(SessionOwnedContext)
 	local setIsHeroFocus = React.useContext(SetIsHeroFocusContext)
 	local setPath = React.useContext(SetPathContext)
 	local tabKey, setTabKey = React.useState(TABS[1].Key)
@@ -73,6 +81,26 @@ local function editor(props: {
 	local focus: Focus?, setFocus: (Focus?) -> () = React.useState(nil :: Focus?)
 	local limbIndex, setLimbIndex = React.useState(1)
 	local lockedUntilRef = React.useRef(0)
+	-- what has to be bought + is looked at. an item is only looked at for as long as it's tried on: whatever takes
+	-- it off the mannequin ends that
+	local preview: Preview?, setPreview: (Preview?) -> () = React.useState(nil :: Preview?)
+	local pendingItem = if state then state.PendingItem else nil
+	local previewId: string? = if preview
+			and (not preview.IsTriedOn or (pendingItem ~= nil and pendingItem.DefinitionId == preview.Id))
+		then preview.Id
+		else nil
+	-- once it's theirs there's nothing left to buy: the button goes, + what was tried on comes off, it isn't worn
+	-- for having been paid for
+	local isBought = preview ~= nil and AccessDefinition.getIfOwned(owned, preview.Id)
+	React.useEffect(function()
+		if isBought then
+			setPreview(nil)
+			if setPath then
+				setPath("")
+			end
+		end
+		return function() end
+	end, { isBought })
 
 	-- the editor opens on the everyday identity
 	React.useEffect(function()
@@ -120,6 +148,7 @@ local function editor(props: {
 					OnLimbStep = function()
 						setLimbIndex(limbIndex + 1)
 					end,
+					OnPreview = setPreview,
 				} :: Page.Properties
 			),
 		})
@@ -147,6 +176,7 @@ local function editor(props: {
 						setPath(pickedTab.Path or "")
 					end
 					setFocus(nil)
+					setPreview(nil)
 					setTabKey(pickedTab.Key)
 				end,
 				OnDone = function()
@@ -174,7 +204,9 @@ local function editor(props: {
 			ImageTransparency = 1,
 			Position = CONSTANTS.RANDOMIZE_POSITION,
 			Size = CONSTANTS.RANDOMIZE_SIZE,
-			[React.Event.Activated] = props.OnRandomize,
+			[React.Event.Activated] = function()
+				props.OnRandomize(character)
+			end,
 		}, {
 			-- the pill is the middle band of a square as wide as the button
 			Art = e("ImageLabel", {
@@ -193,6 +225,35 @@ local function editor(props: {
 				TextColor3 = CONSTANTS.RANDOMIZE_TEXT_COLOR,
 				TextSize = style.TextSizes.Button,
 				TextWrapped = true,
+				ZIndex = 2,
+			}),
+		}),
+		Purchase = previewId and e("ImageButton", {
+			AnchorPoint = CONSTANTS.PURCHASE_ANCHOR_POINT,
+			BackgroundTransparency = 1,
+			ImageTransparency = 1,
+			Position = CONSTANTS.PURCHASE_POSITION,
+			Size = CONSTANTS.PURCHASE_SIZE,
+			[React.Event.Activated] = function()
+				props.OnPurchase(previewId)
+			end,
+		}, {
+			-- the pill is the middle band of a square as wide as the button
+			Art = e("ImageLabel", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = CONSTANTS.BUTTON_ART,
+				Position = UDim2.fromScale(0.5, 0.5),
+				Size = UDim2.fromScale(1, 1),
+				SizeConstraint = Enum.SizeConstraint.RelativeXX,
+			}),
+			TextLabel = e("TextLabel", {
+				BackgroundTransparency = 1,
+				FontFace = style.Fonts.Body,
+				Size = UDim2.fromScale(1, 1),
+				Text = "Purchase",
+				TextColor3 = CONSTANTS.PURCHASE_TEXT_COLOR,
+				TextSize = CONSTANTS.PURCHASE_TEXT_SIZE,
 				ZIndex = 2,
 			}),
 		}),
@@ -218,6 +279,7 @@ return function(props: Properties): React.ReactNode
 	local editors: { [string]: React.ReactNode } = {}
 	-- keyed by the character, so another one starts over with a draft of its own
 	editors[`Editor-{character.Id}`] = e(EditableCharacterProvider, {
+		Draft = props.Draft,
 		FilteredText = props.FilteredText,
 		OnFilterText = function(filter: TextFilter)
 			props.OnAction({
@@ -237,9 +299,16 @@ return function(props: Properties): React.ReactNode
 					Character = draft,
 				})
 			end,
-			OnRandomize = function()
+			OnRandomize = function(draft: Character)
 				props.OnAction({
 					Type = "Randomize",
+					Character = draft,
+				})
+			end,
+			OnPurchase = function(id: string)
+				props.OnAction({
+					Type = "Purchase",
+					Id = id,
 				})
 			end,
 		}),

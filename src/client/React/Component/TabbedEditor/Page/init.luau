@@ -5,6 +5,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
+local AccessDefinition = require("@game/ReplicatedStorage/Shared/Definition/Access")
 local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
@@ -19,6 +20,7 @@ local CharacterEditorStateContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/State")
 local CharacterEditorTextFilterCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/TextFilterCallback")
+local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
 local SetIsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetIsHeroFocus")
 local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
@@ -37,6 +39,8 @@ type FieldEdit = CharacterEditorType.FieldEdit
 type Focus = Types.Focus
 type IconDefinition = MiscType.IconDefinition
 type ListInfo = Types.ListInfo
+type Owned = SessionOwnedContext.Owned
+type Preview = Types.Preview
 type RowInfo = AssetList.RowInfo
 type SlotsInfo = Types.SlotsInfo
 type SwatchInfo = Types.SwatchInfo
@@ -65,6 +69,7 @@ export type Properties = RobloxComponents.FrameProperties & {
 	LimbIndex: number,
 	OnFocus: (focus: Focus) -> (),
 	OnLimbStep: () -> (),
+	OnPreview: (preview: Preview?) -> (), -- what has to be bought was pressed to be looked at, or that's over
 }
 -- Constants
 local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/TabbedEditor/CONSTANTS")
@@ -175,6 +180,34 @@ local function listPowers(state: EditorState, path: string, list: ListInfo): { P
 		end
 	end
 	return out
+end
+
+-- what an item or a power costs its player while it has to be bought. what the draft already holds is the slot's to
+-- keep, so it's listed as theirs until it's put down
+local function getPrice(owned: Owned, id: string, isHeld: boolean): number?
+	local access = AccessDefinition.getAccess(id)
+	if isHeld or access.Type ~= "Price" or AccessDefinition.getIfOwned(owned, id) then
+		return nil
+	end
+	return access.Amount
+end
+
+-- what's theirs in the order it's listed in, then what has to be bought from the cheapest up
+local function sortRows(rows: { RowInfo }): { RowInfo }
+	local out: { RowInfo } = {}
+	local priced: { RowInfo } = {}
+	local order: { [RowInfo]: number } = {}
+	for index, row in rows do
+		order[row] = index
+		table.insert(if row.Price then priced else out, row)
+	end
+	table.sort(priced, function(a: RowInfo, b: RowInfo): boolean
+		if a.Price ~= b.Price then
+			return (a.Price or 0) < (b.Price or 0)
+		end
+		return order[a] < order[b]
+	end)
+	return table.move(priced, 1, #priced, #out + 1, out)
 end
 
 -- the item a swatch colors: the one whose page is open, the first one that's worn otherwise
@@ -469,6 +502,7 @@ return function(props: Properties): React.ReactNode
 	local state = React.useContext(CharacterEditorStateContext)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
 	local setPath = React.useContext(SetPathContext)
+	local owned = React.useContext(SessionOwnedContext)
 	local tab = props.Tab
 	if not state or not fieldCallback or not setPath then
 		return nil
@@ -551,23 +585,46 @@ return function(props: Properties): React.ReactNode
 		end
 		if folders then
 			for _, item in listItems(state, tags, folders) do
+				local price = getPrice(owned, item.DefinitionId, item.IsWorn)
 				table.insert(rows, {
 					Key = item.DefinitionId,
 					Text = getItemName(item.DefinitionId),
 					IsSelected = item.IsWorn,
+					Price = price,
 					OnClick = function()
-						pressItem(item)
+						if not price then
+							props.OnPreview(nil)
+							pressItem(item)
+							return
+						end
+						-- its page tries it on: the mannequin wears it, the draft doesn't
+						setPath(item.Path)
+						props.OnPreview({
+							Id = item.DefinitionId,
+							IsTriedOn = true,
+						})
 					end,
 				})
 			end
 		elseif tab.Path then
 			for _, power in listPowers(state, tab.Path, list) do
+				local price = getPrice(owned, power.Id, power.IsSelected)
 				table.insert(powers, power)
 				table.insert(rows, {
 					Key = power.Id,
 					Text = power.Text,
 					IsSelected = power.IsSelected,
+					Price = price,
 					OnClick = function()
+						if price then
+							-- there's nothing of a power to try on
+							props.OnPreview({
+								Id = power.Id,
+								IsTriedOn = false,
+							})
+							return
+						end
+						props.OnPreview(nil)
 						fieldCallback(power.Field, {
 							Type = "Power",
 							Id = power.Id,
@@ -584,7 +641,7 @@ return function(props: Properties): React.ReactNode
 				Position = list.Box.Position,
 				Size = list.Box.Size,
 				ZIndex = 3,
-				Rows = rows,
+				Rows = sortRows(rows),
 			} :: AssetList.Properties
 		)
 	end

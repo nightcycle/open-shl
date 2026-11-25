@@ -14,6 +14,7 @@ export type RowInfo = {
 	Key: string,
 	Text: string,
 	IsSelected: boolean,
+	Price: number?, -- what it costs while it has to be bought, nil for what's the player's or anybody's
 	OnClick: () -> (),
 }
 export type Properties = RobloxComponents.ScrollingFrameProperties & {
@@ -26,13 +27,19 @@ local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React
 -- Private Functions
 local e = React.createElement
 
--- a pill with a name on it: the pill is tinted while what it names is worn or picked
+-- a pill with a name on it: the pill is tinted while what it names is worn or picked, + green with a price on it
+-- while it has to be bought
 local function row(props: {
 	LayoutOrder: number,
 	Row: RowInfo,
 })
 	local style = React.useContext(StyleContext)
 	local isSelected = props.Row.IsSelected
+	local price = props.Row.Price
+	local artColor = if isSelected
+		then style.Palette.Accent
+		elseif price then CONSTANTS.UNOWNED_ROW_COLOR
+		else Color3.new(1, 1, 1)
 	return e("Frame", {
 		BackgroundTransparency = 1,
 		LayoutOrder = props.LayoutOrder,
@@ -42,7 +49,7 @@ local function row(props: {
 			AnchorPoint = Vector2.new(0, 0.5),
 			BackgroundTransparency = 1,
 			Image = CONSTANTS.ROW_ART,
-			ImageColor3 = if isSelected then style.Palette.Accent else Color3.new(1, 1, 1),
+			ImageColor3 = artColor,
 			Position = UDim2.fromScale(0, 0.5),
 			Size = UDim2.fromScale(1, CONSTANTS.ROW_ART_HEIGHT),
 		}),
@@ -59,6 +66,18 @@ local function row(props: {
 			TextXAlignment = Enum.TextXAlignment.Left,
 			ZIndex = 2,
 			[React.Event.Activated] = props.Row.OnClick,
+		}),
+		PriceLabel = price and e("TextLabel", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			FontFace = CONSTANTS.PRICE_FONT,
+			Position = UDim2.fromScale(0.5, 0.5),
+			Size = CONSTANTS.PRICE_SIZE,
+			Text = `${price}`,
+			TextColor3 = CONSTANTS.PRICE_TEXT_COLOR,
+			TextScaled = true,
+			TextXAlignment = Enum.TextXAlignment.Right,
+			ZIndex = 4,
 		}),
 	})
 end

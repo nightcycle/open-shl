@@ -37,6 +37,11 @@ export type ActionInfo =
 	}
 	| {
 		Type: "Randomize", -- asks for the draft to be rolled all over again
+		Character: Character, -- the draft as it is, what a roll leaves alone is taken from it
+	}
+	| {
+		Type: "Purchase", -- asks to buy what an item or a power of the game is sold as
+		Id: string,
 	}
 	| {
 		Type: "SetPeaceful", -- asks for the player to sit fights out or not, in a game where that's a player's pick
@@ -47,6 +52,7 @@ export type Properties = RobloxComponents.FrameProperties & {
 	ErrorMessage: string?,
 	IsSaving: boolean?,
 	IsRandomizable: boolean?, -- a layout with a button for it only shows it when there's something to roll the draft
+	Draft: Character?, -- what the layout is to go on editing in place of its draft, each time it's handed another
 	IsPeaceful: boolean?, -- set while the player sits fights out, for a layout that asks whether they do
 	FilteredText: FilteredText?,
 	OnAction: (ActionInfo) -> (),
