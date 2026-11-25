@@ -17,7 +17,6 @@ local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/C
 local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
 local PlayerBoard = require("@self/PlayerBoard")
-local ServerId = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ServerId")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
 local StockHealth = require("@self/StockHealth")
 local TeamChange = require("@self/TeamChange")
@@ -52,7 +51,6 @@ local REGISTRY: Registry = {
 		CurrencyPopup = CurrencyPopup,
 		NameTag = NameTag,
 		CombatFeedback = CombatFeedback,
-		ServerId = ServerId,
 		-- it draws nothing: the health bar is the engine's, this keeps it on what the game says is left
 		StockHealth = StockHealth,
 	},
