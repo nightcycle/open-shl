@@ -54,7 +54,17 @@ local TAG_PATTERN = 'newTag%(%s*"([^"]+)"%s*,%s*"([^"]+)"%s*%)'
 -- the tags the map of a game can't go without. one that lost them all still builds + boots, whatever they ran is just
 -- not there
 local NEEDED_TAGS: { [game.GameId]: { string } } = {
-	shl1 = { "Spawn", "PlayArea", "NightWindows" },
+	shl1 = {
+		"Spawn",
+		"PlayArea",
+		"NightWindows",
+		"Telepad",
+		"TelepadExit",
+		"ClickDoor",
+		"ImageCycle",
+		"FaceSwap",
+		"Spin",
+	},
 	shl2 = { "StreetLamp", "NightWindows", "Uniform", "Hazard", "Beacon", "Gate", "Reactor", "Colorizer", "Rebuilt" },
 	shl3 = {
 		"Beacon",
@@ -68,6 +78,24 @@ local NEEDED_TAGS: { [game.GameId]: { string } } = {
 		"Road",
 		"HeroGate",
 		"Troublesome",
+		"NightWindows",
+		"SeasonGround",
+		"SeasonWater",
+		"Foliage",
+		"Fountain",
+		"Spout",
+		"Bank",
+		"LaserBeam",
+		"VaultDoor",
+		"LaserGate",
+		"DisasterTarget",
+		"ZombieSpawn",
+		"ApartmentAnchor",
+		"ApartmentEntrance",
+		"ApartmentSalesman",
+		"JobPad",
+		"Telepad",
+		"TelepadExit",
 	},
 }
 -- the libraries only some of the games are built with, by the game that is. a place holds the ones of its game +
