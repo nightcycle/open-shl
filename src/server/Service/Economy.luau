@@ -269,9 +269,9 @@ local function grantDailyReward(player: Player)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
 	local now = os.time()
-	-- a game without one hands nothing out
+	-- a game without one hands nothing out, + keeps no time of the last one
 	local reward = DAILY_REWARD
-	if reward == nil or sessionOpt.IsNone or now - sessionOpt.Value.Save.LastDailyRewardAt < reward.INTERVAL then
+	if reward == nil or sessionOpt.IsNone or now - (sessionOpt.Value.Save.LastDailyRewardAt or 0) < reward.INTERVAL then
 		return
 	end
 	local grantRes = update(player, function(save: PlayerSave): PlayerSave?
