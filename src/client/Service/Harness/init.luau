@@ -6,6 +6,7 @@ local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 -- Modules
 local EventCommand = require("@game/ReplicatedStorage/Shared/Harness/Command/Event")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local Harness = require("@game/ReplicatedStorage/Shared/Harness")
 local Log = require("@game/ReplicatedStorage/Shared/Harness/Log")
 local Watch = require("@self/Watch")
@@ -35,6 +36,7 @@ export type HarnessService = typeof(setmetatable(
 ))
 -- Constants
 local LOG_CAPACITY = 2048
+local FEATURES = GameDefinition.FEATURES
 -- one module per area, each beside the service it drives + gated the way that service is in the list of services
 local AREAS: { Area } = table.freeze({
 	{
@@ -59,6 +61,13 @@ local AREAS: { Area } = table.freeze({
 		Name = "Remote",
 		Load = function()
 			return require("@self/Command/Remote")
+		end,
+	},
+	{
+		Name = "Acrobatics",
+		IsFeatured = FEATURES.Acrobatics,
+		Load = function()
+			return require("@self/Command/Acrobatics")
 		end,
 	},
 })
