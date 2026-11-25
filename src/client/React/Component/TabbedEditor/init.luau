@@ -205,6 +205,9 @@ local function editor(props: {
 			Position = CONSTANTS.RANDOMIZE_POSITION,
 			Size = CONSTANTS.RANDOMIZE_SIZE,
 			[React.Event.Activated] = function()
+				-- what's being colored or looked at is somebody else's once the roll is in
+				setFocus(nil)
+				setPreview(nil)
 				props.OnRandomize(character)
 			end,
 		}, {
