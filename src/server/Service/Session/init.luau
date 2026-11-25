@@ -39,6 +39,7 @@ type QuestState = QuestType.QuestState
 type PlayerSave = SaveType.PlayerSave
 type SavePatch = LegacyImportService.SavePatch
 type SessionSection = SessionSectionType.SessionSection
+type Owned = EconomyType.Owned
 type Sessions = SessionSectionType.Sessions
 type Snapshot = SessionType.Snapshot
 -- everything the server holds for a player. the save is what's kept between visits, the rest starts over with each
@@ -55,6 +56,8 @@ type SessionServiceImpl = {
 	GetActiveCharacter: (self: SessionService, player: Player) -> Option<Character>,
 	GetIfInMenu: (self: SessionService, player: Player) -> boolean,
 	GetEntitlements: (self: SessionService, player: Player) -> { EntitlementKey },
+	GetOwned: (self: SessionService, player: Player) -> Owned,
+	GetOwnedOf: (self: SessionService, save: PlayerSave) -> Owned?,
 	Update: (
 		self: SessionService,
 		player: Player,
@@ -158,6 +161,9 @@ local function newSnapshot(session: Session): Snapshot
 	if SECTION.Snapshot then
 		SECTION.Snapshot(out, save)
 	end
+	if SECTION.GetOwned then
+		out.Owned = SECTION.GetOwned(save)
+	end
 	return out
 end
 
@@ -185,6 +191,12 @@ local function replicate(player: Player, save: PlayerSave, priorSave: PlayerSave
 	end
 	if SECTION.Replicate then
 		SECTION.Replicate(player, save, priorSave)
+	end
+	if SECTION.GetOwned then
+		local owned = SECTION.GetOwned(save)
+		if not getIfEqual(owned, SECTION.GetOwned(priorSave)) then
+			NetworkService:Fire(RemoteDefinition.OwnedChanged, player, owned)
+		end
 	end
 end
 
@@ -354,6 +366,27 @@ function SessionService:GetEntitlements(player: Player): { EntitlementKey }
 			table.insert(out, key)
 		end
 	end
+	table.freeze(out)
+	return out
+end
+
+-- what a save says its player has of what the game holds back, nil in a game that keeps none of it. the lists are
+-- the save's own: whoever sells something puts it into one of them while the save is open for the update
+function SessionService:GetOwnedOf(save: PlayerSave): Owned?
+	return if SECTION.GetOwned then SECTION.GetOwned(save) else nil
+end
+
+-- everything a player has of what the game holds back: what their save says + what opens a lock, the game passes of
+-- the visit among it
+function SessionService:GetOwned(player: Player): Owned
+	local session = self._Sessions[player]
+	local saved = if session then self:GetOwnedOf(session.Save) else nil
+	local out: Owned = {
+		ItemIds = if saved then saved.ItemIds else {},
+		PowerIds = if saved then saved.PowerIds else {},
+		Entitlements = self:GetEntitlements(player),
+		HasGroupPerk = if saved then saved.HasGroupPerk else nil,
+	}
 	table.freeze(out)
 	return out
 end

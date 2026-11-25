@@ -11,11 +11,13 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
 local ResidenceType = require("@game/ReplicatedStorage/Shared/Type/Residence")
 type Character = CharacterType.Character
 type IdentityKey = CharacterType.IdentityKey
 type BaseInventory = BaseType.BaseInventory
+type Owned = EconomyType.Owned
 type ZoneId = BaseType.ZoneId
 type QuestState = QuestType.QuestState
 
@@ -32,6 +34,7 @@ export type Snapshot = {
 	ActiveCharacterId: string,
 	ActiveIdentityKey: IdentityKey,
 	Inventory: BaseInventory?, -- the furniture + themes the player owns, only in a game that has them
+	Owned: Owned?, -- what the player has of what the game holds back, only in a game that keeps any
 	Quest: QuestState?, -- only while a quest is running
 }
 Types.Snapshot = Type.strictInterface({
@@ -39,6 +42,7 @@ Types.Snapshot = Type.strictInterface({
 	ActiveCharacterId = Type.string,
 	ActiveIdentityKey = CharacterType.IdentityKey,
 	Inventory = Type.optional(BaseType.BaseInventory),
+	Owned = Type.optional(EconomyType.Owned),
 	Quest = Type.optional(QuestType.QuestState),
 })
 

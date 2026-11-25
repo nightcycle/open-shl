@@ -30,6 +30,7 @@ local function newPlayerSave(): PlayerSave
 		LegacyImportVersion = 0,
 		SHL3 = {
 			OwnedItemIds = {},
+			OwnedPowerIds = {},
 			ApartmentTier = 0,
 			RedeemedCodeIds = {},
 		},

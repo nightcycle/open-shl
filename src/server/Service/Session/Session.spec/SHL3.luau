@@ -141,7 +141,10 @@ local function walk(destroyCallbacks: { () -> () })
 	assert(SpecUtil.getIfEqual(save.Balances, ProductDefinition.STARTING_BALANCES), `the starting balances are off`)
 	-- what only this game keeps starts out in a section of its own
 	assert(
-		SpecUtil.getIfEqual(save.SHL3, { OwnedItemIds = {}, ApartmentTier = 0, RedeemedCodeIds = {} }),
+		SpecUtil.getIfEqual(
+			save.SHL3,
+			{ OwnedItemIds = {}, OwnedPowerIds = {}, ApartmentTier = 0, RedeemedCodeIds = {} }
+		),
 		`a new save doesn't start out with the section of the game`
 	)
 	-- a menu of this game shelters, whoever joins is in one before their client can say so
@@ -168,7 +171,10 @@ local function walk(destroyCallbacks: { () -> () })
 	save = awaitSession(player).Save
 	assert(save.ActiveCharacterId == nextCharacterId, `the session didn't follow its update`)
 	assert(
-		SpecUtil.getIfEqual(save.SHL3, { OwnedItemIds = {}, ApartmentTier = 1, RedeemedCodeIds = { "a-code" } }),
+		SpecUtil.getIfEqual(
+			save.SHL3,
+			{ OwnedItemIds = {}, OwnedPowerIds = {}, ApartmentTier = 1, RedeemedCodeIds = { "a-code" } }
+		),
 		`the section didn't follow its update`
 	)
 	-- what isn't a section of this game's doesn't get into its save
@@ -220,6 +226,7 @@ return {
 			Balances = { Credits = 7, Gems = 0 },
 			SHL3 = {
 				OwnedItemIds = { "an-item" },
+				OwnedPowerIds = { "a-power" },
 				ApartmentTier = 2,
 			},
 		}
@@ -232,8 +239,19 @@ return {
 		assert(SpecUtil.getIfEqual(save.Balances, { Credits = 7, Gems = 0 }), `the balances didn't come over`)
 		-- a field of the section that the patch doesn't hold stays as it was
 		assert(
-			SpecUtil.getIfEqual(save.SHL3, { OwnedItemIds = { "an-item" }, ApartmentTier = 2, RedeemedCodeIds = {} }),
+			SpecUtil.getIfEqual(save.SHL3, {
+				OwnedItemIds = { "an-item" },
+				OwnedPowerIds = { "a-power" },
+				ApartmentTier = 2,
+				RedeemedCodeIds = {},
+			}),
 			`the section didn't come over`
+		)
+		-- what a client is told its player has is what the save holds, by the lists themselves
+		local owned = assert(SessionSection.GetOwned, `the section doesn't say what's owned`)(save)
+		assert(
+			owned.ItemIds == (save.SHL3 :: any).OwnedItemIds and owned.PowerIds == (save.SHL3 :: any).OwnedPowerIds,
+			`what's owned isn't read off the save`
 		)
 		assert(
 			save.LegacyImportVersion == fresh.LegacyImportVersion,

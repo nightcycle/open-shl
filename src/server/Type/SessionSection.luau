@@ -12,6 +12,8 @@ local LegacyImportType = require("@game/ServerScriptService/Server/Type/LegacyIm
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Result<V, E> = TypeUnionLib.Result<V, E>
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
+type Owned = EconomyType.Owned
 type PlayerSave = SaveType.PlayerSave
 type SavePatch = LegacyImportType.SavePatch
 type Snapshot = SessionType.Snapshot
@@ -29,7 +31,7 @@ Types.Sessions = Type.strictInterface({
 
 -- the part of a session that's one game's own: what only it keeps of a player is only its to bring over, to hand to
 -- a client + to take requests for. the session service does what every game shares + hands the rest to the one of
--- its game. a game names the last four only where it has something of its own to say
+-- its game. a game names the last five only where it has something of its own to say
 export type SessionSection = {
 	-- what the importer of the game may hand over: a patch that isn't one is turned down before any of it is in a save
 	Patch: (value: unknown) -> (boolean, string?),
@@ -44,6 +46,9 @@ export type SessionSection = {
 	Replicate: ((player: Player, save: PlayerSave, priorSave: PlayerSave) -> ())?,
 	-- runs as the service starts, for the requests only this game takes. what it hands back undoes it
 	Start: ((sessions: Sessions) -> (() -> ())?)?,
+	-- what a save says its player has of what the game holds back. the lists are the save's own: what's put into
+	-- one of them while the save is open for an update is kept. only in a game that keeps any
+	GetOwned: ((save: PlayerSave) -> Owned)?,
 }
 Types.SessionSection = Type.strictInterface({
 	Patch = Type.callback,
@@ -52,6 +57,7 @@ Types.SessionSection = Type.strictInterface({
 	SetAttributes = Type.optional(Type.callback),
 	Replicate = Type.optional(Type.callback),
 	Start = Type.optional(Type.callback),
+	GetOwned = Type.optional(Type.callback),
 })
 
 return Types

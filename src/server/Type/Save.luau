@@ -44,11 +44,13 @@ Types.SHL1Section = Type.strictInterface({
 -- what only superhero life 3 keeps of a player
 export type SHL3Section = {
 	OwnedItemIds: { string }, -- what the player bought of its catalogue, a starter is anybody's
+	OwnedPowerIds: { string }, -- the powers they bought, the ones every player starts out with aren't in it
 	ApartmentTier: number, -- 0 until the first flat is bought
 	RedeemedCodeIds: { string }, -- the codes that were paid out, each is only ever good once
 }
 Types.SHL3Section = Type.strictInterface({
 	OwnedItemIds = Type.array(Type.string),
+	OwnedPowerIds = Type.array(Type.string),
 	ApartmentTier = Type.intersection(Type.integer, Type.numberMin(0)),
 	RedeemedCodeIds = Type.array(Type.string),
 })

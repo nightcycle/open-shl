@@ -30,11 +30,13 @@ Types.SHL1Patch = Type.strictInterface({
 -- what superhero life 3 brings over for the section of its save, a field for a field
 export type SHL3Patch = {
 	OwnedItemIds: { string }?,
+	OwnedPowerIds: { string }?,
 	ApartmentTier: number?,
 	RedeemedCodeIds: { string }?,
 }
 Types.SHL3Patch = Type.strictInterface({
 	OwnedItemIds = Type.optional(Type.array(Type.string)),
+	OwnedPowerIds = Type.optional(Type.array(Type.string)),
 	ApartmentTier = Type.optional(Type.intersection(Type.integer, Type.numberMin(0))),
 	RedeemedCodeIds = Type.optional(Type.array(Type.string)),
 })
