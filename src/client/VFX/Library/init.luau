@@ -35,6 +35,7 @@ local IMPLEMENTATIONS: { Implementation } = {
 	require("@self/Spray"),
 	require("@self/Streak"),
 	require("@self/Thrust"),
+	require("@self/Tumble"),
 	require("@self/Wake"),
 	require("@self/WalkSpeed"),
 	require("@self/Warp"),

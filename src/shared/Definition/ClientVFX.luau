@@ -82,6 +82,7 @@ Module.Beam = newEvent("Beam", ClientVFXType.Beam) :: ClientEvent<ClientVFXType.
 Module.Streak = newState("Streak", ClientVFXType.Streak) :: ClientState<ClientVFXType.Streak>
 Module.Wake = newState("Wake", ClientVFXType.Wake) :: ClientState<ClientVFXType.Wake>
 Module.FieldOfView = newState("FieldOfView", ClientVFXType.FieldOfView) :: ClientState<ClientVFXType.FieldOfView>
+Module.Tumble = newState("Tumble", ClientVFXType.Tumble) :: ClientState<ClientVFXType.Tumble>
 
 Module.get = function(name: string): Result<VFX, string>
 	local vfx = VFXsByName[name]

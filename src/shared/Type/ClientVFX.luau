@@ -9,6 +9,7 @@ local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VF
 -- Hooks
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
+local AcrobaticsType = require("@game/ReplicatedStorage/Shared/Type/Acrobatics")
 type SoundKey = VFXAssetDefinition.SoundKey
 type AnimationKey = VFXAssetDefinition.AnimationKey
 type MeshKey = VFXAssetDefinition.MeshKey
@@ -468,6 +469,22 @@ Types.Spray = Type.strictInterface({
 	Mesh = Type.optional(VFXAssetDefinition.MeshKey),
 	MeshScale = Type.optional(isSize),
 	OnHit = Type.optional(Type.callback),
+})
+
+-- throws the avatar + turns it over on its way a step at a time, then lets go of it
+export type Tumble = {
+	Up: number, -- studs a second it's thrown straight up at
+	Forward: number, -- studs a second along where it looks as it starts, below 0 it's thrown backwards
+	Phases: { AcrobaticsType.Phase }, -- what turns it, in order
+	IsTurned: boolean, -- false: it's only thrown, for as long as its turn would have taken
+	OnEnded: (() -> ())?, -- it ran out by itself. only ever set by the machine of the avatar
+}
+Types.Tumble = Type.strictInterface({
+	Up = Type.numberConstrained(0, 200),
+	Forward = Type.numberConstrained(-200, 200),
+	Phases = Type.array(AcrobaticsType.Phase),
+	IsTurned = Type.boolean,
+	OnEnded = Type.optional(Type.callback),
 })
 
 return Types
