@@ -133,7 +133,9 @@ Module.getDamage = function(attacker: Model?, victim: Model, amount: number): nu
 	if not Module.getIfHostile(attacker, victim) then
 		return nil
 	end
-	return amount * RULE.PlayerScale
+	-- what a game adds to a hit it adds on an avatar, a body nobody plays takes what the power says
+	local isNonPlayer = AttributeDefinition.get(victim, AttributeDefinition.IsNonPlayer) == true
+	return amount * (if isNonPlayer then 1 else RULE.PlayerScale)
 end
 
 -- what whoever downs that character is paid: the price on the head of its side, + as much again for everybody it
