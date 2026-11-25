@@ -73,8 +73,10 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the free camera, where the hud of a game has the button for it
 	{
 		Name = "CameraMode",
+		IsFeatured = FEATURES.CameraMode,
 		Load = function(): Service
 			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/CameraMode")
 			assert(not service.IsInitialized, `the camera mode service is already initialized`)
