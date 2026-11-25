@@ -96,6 +96,35 @@ function Util.set(
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
 
+-- a picture that's no item of the game over what the slot shows, in its own colors. it's only drawn: the next set of
+-- the slot has what's worn back
+function Util.override(rig: Model, slot: FaceSlot, image: string): Result<true, string>
+	local fakeHead = rig:FindFirstChild(RigUtil.FAKE_HEAD_NAME)
+	if not fakeHead or not fakeHead:IsA("BasePart") then
+		return Result.err(`rig "{rig.Name}" has no "{RigUtil.FAKE_HEAD_NAME}" to draw a face on`)
+	end
+	local zIndex = table.find(SLOTS, slot)
+	if not zIndex then
+		return Result.err(`the game draws no "{slot}" on a face`)
+	end
+	-- the one decal the slot keeps, so what's worn is drawn back over this + not beside it
+	local priorDecal = fakeHead:FindFirstChild(slot)
+	if priorDecal and priorDecal:IsA("Decal") then
+		priorDecal.Texture = image
+		priorDecal.Color3 = Color3.new(1, 1, 1)
+		return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
+	elseif priorDecal then
+		priorDecal:Destroy()
+	end
+	local decal = Instance.new("Decal")
+	decal.Name = slot
+	decal.Face = Enum.NormalId.Front
+	decal.ZIndex = zIndex
+	decal.Texture = image
+	decal.Parent = fakeHead
+	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
+end
+
 function Util.apply(rig: Model, appearance: Appearance): Result<true, string>
 	local definitionIds: { [FaceSlot]: string? } = {}
 	local colors: { [FaceSlot]: Color3? } = {}
