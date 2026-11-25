@@ -136,6 +136,106 @@ Types.ProductCatalogue = Type.strictInterface({
 	DailyReward = Type.optional(Types.DailyReward),
 })
 
+-- what opens something that isn't sold for a currency: a pass of the game, or having been seen in its group
+export type Lock =
+	{
+		Type: "Entitlement",
+		Key: EntitlementKey,
+	}
+	| {
+		Type: "GroupPerk",
+	}
+Types.Lock = Type.union(
+	Type.strictInterface({
+		Type = Type.literal("Entitlement"),
+		Key = Types.EntitlementKey,
+	}),
+	Type.strictInterface({
+		Type = Type.literal("GroupPerk"),
+	})
+)
+
+-- what stands between a player + an item or a power: nothing, a price that's paid once, or a lock
+export type Access = {
+	Type: "Free",
+} | {
+	Type: "Price",
+	Currency: Currency,
+	Amount: number,
+} | Lock
+Types.Access = Type.union(
+	Type.strictInterface({
+		Type = Type.literal("Free"),
+	}),
+	Type.strictInterface({
+		Type = Type.literal("Price"),
+		Currency = Types.Currency,
+		Amount = Types.Balance,
+	}),
+	Types.Lock
+)
+
+-- something a game holds back from whoever didn't get it yet, handed over as a whole: the items of one entry of its
+-- catalogue (a suit is one for each limb) or one power. it's sold at its cost, which the game adjusts as one, or
+-- it's behind a lock
+export type Listing = {
+	Id: string,
+	Name: string,
+	ItemIds: { string }?,
+	PowerId: string?,
+	Cost: number?, -- as the old game stored it, before its adjustment
+	Lock: Lock?,
+}
+do -- Types.Listing
+	local isShape = Type.strictInterface({
+		Id = Type.string,
+		Name = Type.string,
+		ItemIds = Type.optional(Type.array(Type.string)),
+		PowerId = Type.optional(Type.string),
+		Cost = Type.optional(Types.Balance),
+		Lock = Type.optional(Types.Lock),
+	})
+	-- it hands over items or a power, never both, + it's held back one way
+	local function isWhole(value: Listing): (boolean, string?)
+		local itemIds = value.ItemIds
+		if (itemIds ~= nil) == (value.PowerId ~= nil) or (itemIds and #itemIds == 0) then
+			return false, `"{value.Id}" is to hand over the items of an entry or one power`
+		end
+		if (value.Cost ~= nil) == (value.Lock ~= nil) then
+			return false, `"{value.Id}" is to have a cost or a lock`
+		end
+		return true
+	end
+	Types.Listing = Type.intersection(isShape, isWhole)
+end
+
+-- everything a game holds back. a price is the cost times the adjustment, rounded up to a whole hundred
+export type AccessCatalogue = {
+	PriceAdjust: number,
+	Currency: Currency,
+	Listings: { Listing },
+}
+Types.AccessCatalogue = Type.strictInterface({
+	PriceAdjust = Type.numberPositive,
+	Currency = Types.Currency,
+	Listings = Type.array(Types.Listing),
+})
+
+-- what a player has of what their game holds back: what they bought, by the ids that were handed over, + what opens
+-- its locks. a game only fills in what it has listings for
+export type Owned = {
+	ItemIds: { string },
+	PowerIds: { string },
+	Entitlements: { EntitlementKey }?,
+	HasGroupPerk: boolean?,
+}
+Types.Owned = Type.strictInterface({
+	ItemIds = Type.array(Type.string),
+	PowerIds = Type.array(Type.string),
+	Entitlements = Type.optional(Type.array(Types.EntitlementKey)),
+	HasGroupPerk = Type.optional(Type.boolean),
+})
+
 -- what the engine hands the server once a developer product is paid for, only the fields that are read
 export type Receipt = {
 	PurchaseId: string,
