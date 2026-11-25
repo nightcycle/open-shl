@@ -10,6 +10,7 @@ local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
@@ -22,6 +23,7 @@ type IdentityKey = CharacterType.IdentityKey
 type MenuRefusal = CombatType.MenuRefusal
 type TeamId = CombatType.TeamId
 type BaseInventory = BaseType.BaseInventory
+type Owned = EconomyType.Owned
 type PlacedFurniture = BaseType.PlacedFurniture
 type PublicProfile = ProfileType.PublicProfile
 type QuestState = QuestType.QuestState
@@ -198,6 +200,10 @@ Module.SwapIdentity =
 -- the filter yields in the middle of a save, a second one would work on the slot the first is about to replace
 Module.SaveCharacter =
 	newClientFunction("SaveCharacter", isEditedCharacter, isCharacter, REQUEST_LIMIT, true) :: ClientFunction<Character, Character>
+-- a character dealt anew for the slot whose id it's asked with. nothing is stored: it's a draft, what becomes of it
+-- is up to a save
+Module.RollCharacter =
+	newClientFunction("RollCharacter", Type.string, isCharacter, REQUEST_LIMIT, true) :: ClientFunction<Character, string>
 Module.FilterText =
 	newClientFunction("FilterText", Type.string, Type.string, FILTER_LIMIT) :: ClientFunction<string, string>
 Module.CharacterChanged = newServerEvent("CharacterChanged", isCharacter) :: ServerEvent<Character>
@@ -230,6 +236,11 @@ Module.PurchaseFurniture =
 Module.PurchaseTheme =
 	newClientFunction("PurchaseTheme", Type.string, Type.literal(true), REQUEST_LIMIT) :: ClientFunction<true, string>
 Module.InventoryChanged = newServerEvent("InventoryChanged", BaseType.BaseInventory) :: ServerEvent<BaseInventory>
+-- an item or a power the game holds back at a price. the server finds what it's sold as, takes the price + hands
+-- over everything that comes with it; an error is the line whoever asked is shown
+Module.PurchaseItem =
+	newClientFunction("PurchaseItem", Type.string, Type.literal(true), REQUEST_LIMIT, true) :: ClientFunction<true, string>
+Module.OwnedChanged = newServerEvent("OwnedChanged", EconomyType.Owned) :: ServerEvent<Owned>
 Module.DailyRewardGranted = newServerEvent("DailyRewardGranted", SessionType.DailyReward) :: ServerEvent<DailyReward>
 
 -- residences
