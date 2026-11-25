@@ -199,6 +199,30 @@ local Tests: TestMap = {
 		assert(getHealth(avatar) == AttributeDefinition.MAX_HEALTH, `a bite went past what an avatar has at most`)
 		half:Destroy()
 	end),
+
+	-- the latte: a sip is over in three seconds + keeps the next one off for a minute more. it gives nothing, + the
+	-- minute isn't the hand's either
+	Minute = SpecUtil.newScenario(function()
+		local definitionRes = PropDefinition.get("latte")
+		assert(definitionRes.IsOk, definitionRes.Value)
+		local rule = definitionRes.Value.Use
+		assert(rule and rule.Duration == 3 and rule.Lockout == 63, `a sip of the latte isn't 3 s + a minute more`)
+		local avatar = newAvatar()
+		local asks: { Ask } = {}
+		local half = HalfUtil.new("latte", avatar, nil, newScope(avatar, asks))
+		half:Draw()
+		assert(count(asks, "fireClient", "Sound") == 0, `the latte is heard as it's got out`)
+		assert(half:Use(nil), `a sip doesn't start`)
+		assert(count(asks, "fireClient", "Sound") == 1, `nobody hears the sip`)
+		task.wait(rule.Duration + MARGIN)
+		assert(not half.IsUsing, `a sip is still on after {rule.Duration} s`)
+		assert(count(asks, "fire") == 0 and getHealth(avatar) == START_HEALTH, `a sip gave something`)
+		assert(not half:Use(nil), `the next sip starts as the first is over`)
+		half:Stow()
+		half:Draw()
+		assert(not half:Use(nil), `getting it back out brought the next sip closer`)
+		half:Destroy()
+	end),
 }
 
 return Tests

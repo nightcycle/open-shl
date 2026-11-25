@@ -7,6 +7,7 @@ local BloxyCola = require("@game/ServerScriptService/Server/Prop/Library/BloxyCo
 local Cheeseburger = require("@game/ServerScriptService/Server/Prop/Library/Cheeseburger")
 local ElectricGuitar = require("@game/ServerScriptService/Server/Prop/Library/ElectricGuitar")
 local Keycard = require("@game/ServerScriptService/Server/Prop/Library/Keycard")
+local Latte = require("@game/ServerScriptService/Server/Prop/Library/Latte")
 local Pizza = require("@game/ServerScriptService/Server/Prop/Library/Pizza")
 local PizzaBox = require("@game/ServerScriptService/Server/Prop/Library/PizzaBox")
 local Watermelon = require("@game/ServerScriptService/Server/Prop/Library/Watermelon")
@@ -28,6 +29,7 @@ local DEFINITIONS: { ServerDefinition } = {
 	Pizza,
 	Watermelon,
 	BloxyCola,
+	Latte,
 }
 
 return table.freeze(DEFINITIONS)

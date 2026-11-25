@@ -28,11 +28,11 @@ local DEFINITIONS: { PropDefinition } = {
 	{ Id = "watermelon", Name = "Watermelon", Use = { Duration = 0.8 } },
 	-- a drink is for show, it gives nothing
 	{ Id = "bloxy-cola", Name = "Bloxy Cola", Use = { Duration = 3 } },
+	-- a sip, then a minute before the next
+	{ Id = "latte", Name = "Latte", Use = { Duration = 3, Lockout = 63 } },
 }
 -- a row moves up into the list above once both halves of its prop are in the game's set
 local UPCOMING: { PropDefinition } = {
-	-- a sip, then a minute before the next
-	{ Id = "latte", Name = "Latte", Use = { Duration = 3, Lockout = 63 } },
 	{ Id = "bloxiade", Name = "Bloxiade", Use = { Duration = 3, Lockout = 63 } },
 	{ Id = "fidget-spinner", Name = "Fidget Spinner", Use = { Duration = 1 } },
 	{ Id = "moneybag", Name = "Moneybag", Use = { Duration = 0.8 } },
