@@ -147,6 +147,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- what everybody is handed for being in a server. it pays through the economy
+	{
+		Name = "Allowance",
+		IsFeatured = FEATURES.Allowance,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Allowance")
+			assert(not service.IsInitialized, `the allowance service is already initialized`)
+			return service
+		end,
+	},
 	-- who's on which side, where players take one, + the jail the avatars of one of them come in at. downing somebody
 	-- pays, so the sides start once there's something to pay with
 	{
@@ -281,6 +291,26 @@ local ENTRIES: { Entry } = {
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Uniform")
 			assert(not service.IsInitialized, `the uniform service is already initialized`)
+			return service
+		end,
+	},
+	-- the pads of the map that set whoever steps on one down somewhere else
+	{
+		Name = "Telepad",
+		IsFeatured = FEATURES.Telepads,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Telepad")
+			assert(not service.IsInitialized, `the telepad service is already initialized`)
+			return service
+		end,
+	},
+	-- what a map has to play with that everybody sees the same: a door that's clicked open, a screen, a seat
+	{
+		Name = "Scenery",
+		IsFeatured = FEATURES.Scenery,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Scenery")
+			assert(not service.IsInitialized, `the scenery service is already initialized`)
 			return service
 		end,
 	},

@@ -74,6 +74,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the parts of a map that only turn, each client turns the ones it has
+	{
+		Name = "Scenery",
+		IsFeatured = FEATURES.Scenery,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Scenery")
+			assert(not service.IsInitialized, `the scenery service is already initialized`)
+			return service
+		end,
+	},
 	{
 		Name = "Music",
 		IsFeatured = FEATURES.Music,
