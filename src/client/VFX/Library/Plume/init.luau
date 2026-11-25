@@ -35,6 +35,9 @@ return ClientVFX.state(ClientVFXDefinition.Plume, function(props: Properties, sc
 	emitter.LightEmission = definition.LightEmission
 	emitter.LockedToPart = definition.IsLockedToPart
 	emitter.VelocityInheritance = definition.VelocityInheritance or 0
+	if definition.LightInfluence then
+		emitter.LightInfluence = definition.LightInfluence
+	end
 	if definition.Color then
 		emitter.Color = definition.Color
 	end
