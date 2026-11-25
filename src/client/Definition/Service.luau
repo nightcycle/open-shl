@@ -56,6 +56,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the sky, the season + the hour of a game with weather: its server says them, this client draws them for itself
+	{
+		Name = "Environment",
+		IsFeatured = FEATURES.Environment,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Environment")
+			assert(not service.IsInitialized, `the environment service is already initialized`)
+			return service
+		end,
+	},
 	{
 		Name = "Shell",
 		Load = function(): Service
