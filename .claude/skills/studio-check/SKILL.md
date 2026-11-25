@@ -171,6 +171,7 @@ Client:
 | `boot.play` | "get me into play" with no click: finishes every boot phase of this game, then the character select through the real `SelectCharacter` request; answers where it ended and the steps it took |
 | `player.get` | the local player's attributes, its avatar's, the workspace's, and the client's copy of the session |
 | `remote.fire`, `remote.invoke` | any client event / function through the client's real network service |
+| `acrobatics.get`, `acrobatics.play`, `acrobatics.fix` | where the game has the flips (shl1): a move by its id through the service the panel's buttons call (an error says why it was turned down), and what Fix Character does |
 | `event.read`, `event.wait` | the client's event log |
 
 ### Getting into play without a mouse

@@ -47,6 +47,7 @@ return game:GetService("HttpService"):JSONEncode(answer)
 ## Client commands
 
 `shell.get`, `shell.press { MenuId }`, `shell.close`, `boot.play`, `player.get`, `remote.fire`, `remote.invoke`, `event.read`, `event.wait`.
+In shl1 also `acrobatics.get`, `acrobatics.play { MoveId }`, `acrobatics.fix`.
 
 ## Recipes
 
