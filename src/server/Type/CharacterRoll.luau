@@ -187,14 +187,17 @@ Types.Entry = Type.strictInterface({
 	IsOwned = Type.boolean,
 })
 
--- everything a roll draws from
+-- everything a roll draws from: the tables of the game, its catalogue with what of it is owned + the powers that
+-- may be dealt
 export type Source = {
 	Tables: Tables,
 	Entries: { Entry },
+	PowerIds: { string },
 }
 Types.Source = Type.strictInterface({
 	Tables = Types.Tables,
 	Entries = Type.array(Types.Entry),
+	PowerIds = Type.array(Type.string),
 })
 
 return Types

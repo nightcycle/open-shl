@@ -2,12 +2,15 @@
 -- Services
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
+local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
+local Result = TypeUnionLib.Result
 -- Modules
 local CharacterConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character")
 local LegacyDataMigration = require("@game/ServerScriptService/Server/Util/LegacyDataMigration")
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 type Character = CharacterType.Character
+type Result<V, E> = TypeUnionLib.Result<V, E>
 -- Constants
 local STARTER_SUIT_COUNT = 10
 -- Variables
@@ -34,9 +37,14 @@ local function list(): { Character }
 	end
 	return out
 end
+-- its starters are suits somebody made, there's no table to deal another from
+local function roll(): Result<Character, string>
+	return Result.err(`this game deals no characters`)
+end
 -- Class
 return table.freeze({
 	List = list,
 	-- a slot that's added later is an empty one
 	New = CharacterConstructor.new,
+	Roll = roll,
 })

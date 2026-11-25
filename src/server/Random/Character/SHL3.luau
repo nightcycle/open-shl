@@ -246,12 +246,12 @@ local function getKind(tables: Tables, powerId: string): PowerKind?
 	return nil
 end
 
--- so many of each kind out of what a new player may be dealt, each of them once. a kind that's short gives what it has
-local function newPowers(rng: Random, tables: Tables): { Power }
+-- so many of each kind out of what may be dealt, each of them once. a kind that's short gives what it has
+local function newPowers(rng: Random, tables: Tables, powerIds: { string }): { Power }
 	local powers: { Power } = {}
 	for _, kind in tables.PowerKinds do
 		local choices: { string } = {}
-		for _, powerId in tables.StarterPowerIds do
+		for _, powerId in powerIds do
 			if getKind(tables, powerId) == kind and not table.find(choices, powerId) then
 				table.insert(choices, powerId)
 			end
@@ -353,7 +353,7 @@ Module.Character = function(source: Source, seed: number?): Character
 	if getIfDrawn(rng, chances.Emblem) then
 		insertItem(mainItems, draw(rng, source, shelves, EMBLEM_CATEGORY), EMBLEM_CATEGORY, suitColors)
 	end
-	local powers = newPowers(rng, tables)
+	local powers = newPowers(rng, tables, source.PowerIds)
 	if getIfDrawn(rng, chances.Cape) then
 		local cape = insertItem(
 			mainItems,

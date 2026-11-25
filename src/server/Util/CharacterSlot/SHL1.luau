@@ -1,6 +1,8 @@
 --!strict
 -- Services
 -- Packages
+local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
+local Result = TypeUnionLib.Result
 -- Modules
 local CharacterConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
@@ -10,6 +12,7 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 type Character = CharacterType.Character
+type Result<V, E> = TypeUnionLib.Result<V, E>
 -- Constants
 -- the grey of the mannequin the old creator stood everybody on, medium stone grey. a skin that's off the grid of the
 -- game would be another color by the first save
@@ -44,8 +47,13 @@ local function list(): { Character }
 	end
 	return out
 end
+-- nobody was ever dealt a character here: every one of them was put together by hand
+local function roll(): Result<Character, string>
+	return Result.err(`this game deals no characters`)
+end
 -- Class
 return table.freeze({
 	List = list,
 	New = new,
+	Roll = roll,
 })
