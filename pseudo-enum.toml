@@ -28,6 +28,7 @@ MenuId = [
 	"Swap",
 	"Characters",
 	"Team",
+	"Mode",
 ]
 QuestType = ["Find", "Survive", "Target"]
 Rarity = ["VeryCommon", "Common", "Uncommon", "Rare", "Legendary"]

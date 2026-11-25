@@ -25,6 +25,9 @@ export type Screen =
 	| {
 		Type: "ArtifactMenu",
 	}
+	| {
+		Type: "JobMenu",
+	}
 Types.Screen = Type.union(
 	Type.strictInterface({
 		Type = Type.literal("None"),
@@ -38,13 +41,17 @@ Types.Screen = Type.union(
 	}),
 	Type.strictInterface({
 		Type = Type.literal("ArtifactMenu"),
+	}),
+	Type.strictInterface({
+		Type = Type.literal("JobMenu"),
 	})
 )
-export type ScreenType = "None" | "CharacterSelect" | "CharacterEditor" | "ArtifactMenu"
-Types.ScreenType = Type.literal("None", "CharacterSelect", "CharacterEditor", "ArtifactMenu")
+export type ScreenType = "None" | "CharacterSelect" | "CharacterEditor" | "ArtifactMenu" | "JobMenu"
+Types.ScreenType = Type.literal("None", "CharacterSelect", "CharacterEditor", "ArtifactMenu", "JobMenu")
 -- a menu over the gameplay hud, one at most is open
-export type PanelId = "Music" | "Actions" | "Database" | "Shop" | "Build" | "TeamChange"
-Types.PanelId = Type.literal("Music", "Actions", "Database", "Shop", "Build", "TeamChange")
+export type PanelId = "Music" | "Actions" | "Database" | "Shop" | "Build" | "TeamChange" | "ApartmentSale" | "ModeChanger"
+Types.PanelId =
+	Type.literal("Music", "Actions", "Database", "Shop", "Build", "TeamChange", "ApartmentSale", "ModeChanger")
 -- a phase a game goes through on the way in. the browser isn't one, it's a side room of the mode screen, + what
 -- follows the last one is the game itself
 export type Stop = "Loading" | "ModeSelect" | "Intro"
