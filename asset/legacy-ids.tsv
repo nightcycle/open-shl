@@ -74,7 +74,7 @@ id	games	type	target	sha256	batch	note
 11387922	shl1	Audio	legacy			
 11419729	shl3,shl3-big-map	Mesh	legacy			
 11442510	shl1,shl3,shl3-big-map	Mesh	legacy			
-11442524	shl1,shl3,shl3-big-map	Image	asset/image/core/mesh/katana.png	bb2d5805d50266b7e2d2b32450a668ae08ba814e355913900e79e68a75147bce	mesh	
+11442524	shl1,shl3,shl3-big-map	Image	asset/image/shl-1/mesh/katana.png	bb2d5805d50266b7e2d2b32450a668ae08ba814e355913900e79e68a75147bce	mesh	staged under core/mesh: it moves there in the change that has the katanas of shl3 wear it
 11944350	shl1	Audio	legacy			
 11945266	shl1	Audio	legacy			
 12212520	shl1,shl3,shl3-big-map	Mesh	legacy			
@@ -84,7 +84,7 @@ id	games	type	target	sha256	batch	note
 12259089	shl1,shl3,shl3-big-map	Mesh	legacy			
 12259117	shl1,shl3,shl3-big-map	Mesh	legacy			
 12259127	shl3-big-map	Mesh	legacy			
-12592745	shl1	Image	asset/image/shl-2/mesh/hammer.png	cafd16cb56979c09c767937ff2413149323f899067a6d83d833b9fa25d685b71		byte-identical to the file already in the repo
+12592745	shl1	Image	asset/image/core/mesh/hammer.png	cafd16cb56979c09c767937ff2413149323f899067a6d83d833b9fa25d685b71		byte-identical to the file already in the repo
 12592754	shl1	Mesh	legacy			
 12722518	shl1	Audio	legacy			
 13070796	shl1,shl3-big-map	Mesh	legacy			
@@ -125,7 +125,7 @@ id	games	type	target	sha256	batch	note
 17230185	shl3	Image	asset/image/shl-3/mesh/bloxiade.png	a4252ea144bdfd32bfedbbbedaba36e1c6c98bb051dee6ea6e382b87b669196b	shl3-mesh	
 17230208	shl3	Mesh	legacy			
 18478970	shl3	Audio	legacy			
-19287687	shl1	Image	asset/image/shl-2/mesh/icicle.png	eb5a76a68cd802a5afb192180349122aa15dbed77fc04b3423fafe9bd7fb2682		byte-identical to the file already in the repo
+19287687	shl1	Image	asset/image/core/mesh/icicle.png	eb5a76a68cd802a5afb192180349122aa15dbed77fc04b3423fafe9bd7fb2682		byte-identical to the file already in the repo
 19380683	shl3-big-map	Mesh	legacy			
 19999424	shl1,shl3,shl3-big-map	Mesh	legacy			
 20518365	shl1	Mesh	legacy			
@@ -498,8 +498,8 @@ id	games	type	target	sha256	batch	note
 279195955	shl1	SolidModel	legacy			
 279214342	shl1	SolidModel	legacy			
 279745305	shl1	SolidModel	legacy			
-280294638	shl1	Image	asset/image/shl-2/fx/lightning-right.png	ca222fc1034d917a32ac1b332291e15abe9f87ec46e98ce02c8e8edb39fd9f58		same pixels as the file already in the repo, encoded differently
-280294650	shl1	Image	asset/image/shl-2/fx/lightning-left.png	46777631883471f2263b60573e9a38b3a35c933ac8d430f781f94619f3746b03		same pixels as the file already in the repo, encoded differently
+280294638	shl1	Image	asset/image/core/fx/lightning-right.png	ca222fc1034d917a32ac1b332291e15abe9f87ec46e98ce02c8e8edb39fd9f58		same pixels as the file already in the repo, encoded differently
+280294650	shl1	Image	asset/image/core/fx/lightning-left.png	46777631883471f2263b60573e9a38b3a35c933ac8d430f781f94619f3746b03		same pixels as the file already in the repo, encoded differently
 283714534	shl1,shl3,shl3-big-map	Mesh	legacy			
 290556384	shl3,shl3-big-map	Image	asset/image/shl-3/fx/fire.png	55ca47a3f4c416605c0e62132f6f466d68bbd826add7bf0028dca3a6fb832668	shl3-fx	
 296981321	shl3	Image	asset/image/shl-3/map/fountain-water.png	1951b09e8a56417258b3f3cb7ec04f2cb5637794fa92ca84be09745aac09cc45	shl3-map	
@@ -1037,6 +1037,10 @@ id	games	type	target	sha256	batch	note
 2536871073	shl3,shl3-big-map	Mesh	legacy			
 2550123330	shl3-big-map	Mesh	legacy			
 2550123785	shl3-big-map	Mesh	legacy			
+2552017955	shl3	Animation	legacy			a bare number in the emote bar, the study never probed it
+2552077550	shl3	Animation	legacy			a bare number in the emote bar, the study never probed it
+2552078285	shl3	Animation	legacy			a bare number in the emote bar, the study never probed it
+2552088156	shl3	Animation	legacy			a bare number in the emote bar, the study never probed it
 2552118581	shl3,shl3-big-map	Animation	legacy			
 2555322724	shl3,shl3-big-map	Mesh	legacy			
 2555322952	shl3,shl3-big-map	Mesh	legacy			
