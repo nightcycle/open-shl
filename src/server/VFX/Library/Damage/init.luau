@@ -7,6 +7,7 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local ServerVFX = require("@game/ServerScriptService/Server/VFX")
+local TallyUtil = require("@game/ServerScriptService/Server/Util/Tally")
 -- Types
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ServerScope = VFXType.ServerScope
@@ -37,6 +38,11 @@ return ServerVFX.newEvent("Damage", isProperties, function(props: Properties, sc
 	local priorHealth = AttributeDefinition.get(target, AttributeDefinition.Health)
 	local health = math.max(0, priorHealth - props.Amount)
 	AttributeDefinition.set(target, AttributeDefinition.Health, health)
+	-- what a player took off a body somebody keeps count on, which is never more than it had left
+	local taken = priorHealth - health
+	if taken > 0 and scope.Player then
+		TallyUtil.add(target, scope.Player, taken)
+	end
 	local isDown = health <= 0
 	if isDown then
 		AttributeDefinition.set(target, AttributeDefinition.IsDead, true)
