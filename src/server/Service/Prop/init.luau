@@ -6,22 +6,18 @@ local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local AbilityService = require("@game/ServerScriptService/Server/Service/Ability")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
+local HalfUtil = require("@self/Half")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local PropDefinition = require("@game/ReplicatedStorage/Shared/Definition/Prop")
-local PropLibrary = require("@game/ServerScriptService/Server/Prop/Library")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local Runner = require("@game/ReplicatedStorage/Shared/Prop/Runner")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local ToolUtil = require("@game/ServerScriptService/Server/Util/Tool")
 local VFXService = require("@game/ServerScriptService/Server/Service/VFX")
 -- Types
-local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
 type Runner = Runner.Runner
-type Aim = AbilityType.Aim
-type Memory = AbilityType.Memory
 type Report = PropType.Report
-type ServerContext = PropType.ServerContext
 -- one prop an avatar carries: its slot of the hotbar + the half the server runs of it
 type Entry = {
 	Tool: Tool,
@@ -58,8 +54,6 @@ export type PropService = typeof(setmetatable(
 	{} :: PropServiceImpl
 ))
 -- Constants
--- seconds the server is ahead of what a use waits for, the same a machine is given
-local LENIENCY = 0.15
 -- Variables
 -- References
 -- Private Functions
@@ -224,21 +218,7 @@ function PropService:Grant(player: Player, id: string): boolean
 		return false
 	end
 	local tool = ToolUtil.new(definition.Name, definition.Icon, PropDefinition.TOOL_ID_ATTRIBUTE, id)
-	local scope = VFXService:NewScope(player, character)
-	local runner = Runner.new(PropLibrary.get(id), {
-		Leniency = LENIENCY,
-		NewContext = function(aim: Aim?, memory: Memory, record: Memory): ServerContext
-			return table.freeze({
-				PropId = id,
-				Character = character,
-				Player = player,
-				Aim = aim,
-				Memory = memory,
-				Record = record,
-				VFX = scope,
-			})
-		end,
-	})
+	local runner = HalfUtil.new(id, character, player, VFXService:NewScope(player, character))
 	carry.Entries[id] = {
 		Tool = tool,
 		Runner = runner,
