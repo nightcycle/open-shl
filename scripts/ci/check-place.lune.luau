@@ -70,6 +70,13 @@ local NEEDED_TAGS: { [game.GameId]: { string } } = {
 		"Troublesome",
 	},
 }
+-- the libraries only some of the games are built with, by the game that is. a place holds the ones of its game +
+-- none of another's: what waits on one that's missing never starts, + nothing says so
+local GAME_LIBRARY_PATHS: { [game.GameId]: { string } } = {
+	shl1 = {},
+	shl2 = {},
+	shl3 = { "ReplicatedStorage/lib/apartment", "ServerStorage/lib/npc" },
+}
 -- where a game lists the halves of its abilities, each side in a module that goes by the name of the game. the two
 -- lists are kept by hand + neither side can see the other's, so only a read of both tells that they agree
 local ABILITY_SET_PATHS = {
@@ -236,6 +243,31 @@ local function getTagFailures(place: roblox.DataModel): { string }
 	return failures
 end
 
+local function getLibraryFailures(place: roblox.DataModel): { string }
+	local gameId = getGameId(place)
+	local failures: { string } = {}
+	local ownPaths: { string } = {}
+	for id, paths in GAME_LIBRARY_PATHS do
+		if id == gameId then
+			ownPaths = paths
+		end
+	end
+	for id, paths in GAME_LIBRARY_PATHS do
+		for _, path in paths do
+			local current: roblox.Instance? = place
+			for _, name in path:split(PATH_DELIMITER) do
+				current = if current then current:FindFirstChild(name) else nil
+			end
+			if id == gameId and current == nil then
+				table.insert(failures, `{id} is built with the library "{path}", which isn't there`)
+			elseif current ~= nil and table.find(ownPaths, path) == nil then
+				table.insert(failures, `"{path}" is a library of {id}, this is a place of {gameId or "no game"}`)
+			end
+		end
+	end
+	return failures
+end
+
 -- an ability is two halves + a power to be handed out as. a half that only one side lists leaves the other with a
 -- tool that does nothing, and a power nothing is built for is offered all the same: neither stops a boot
 local function getAbilityFailures(place: roblox.DataModel): { string }
@@ -307,6 +339,7 @@ do
 		getScriptFailures(place),
 		getMapFailures(place),
 		getTagFailures(place),
+		getLibraryFailures(place),
 		getAbilityFailures(place),
 	}
 	for _, failures in checks do
