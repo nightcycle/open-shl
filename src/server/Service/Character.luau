@@ -8,12 +8,14 @@ local Result = TypeUnionLib.Result
 local Option = TypeUnionLib.Option
 local Future = TypeUnionLib.Future
 -- Modules
+local AccessDefinition = require("@game/ReplicatedStorage/Shared/Definition/Access")
 local AppearanceConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance")
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterShareUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Share")
 local CharacterSlotUtil = require("@game/ServerScriptService/Server/Util/CharacterSlot")
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
+local EconomyService = require("@game/ServerScriptService/Server/Service/Economy")
 local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
@@ -49,8 +51,14 @@ type Profile = {
 	Backstory: string,
 	Alignment: PseudoEnum.Alignment,
 }
+-- the texts of both identities once they're through the filter
+type Profiles = {
+	Main: Profile,
+	Secret: Profile,
+}
 type CharacterServiceImpl = {
 	__index: CharacterServiceImpl,
+	Sanitise: (self: CharacterService, player: Player, edited: Character) -> Result<Character, string>,
 }
 export type CharacterService = typeof(setmetatable(
 	{} :: {
@@ -73,6 +81,8 @@ local NAME_DEFAULTS = CharacterEditorDefinition.NAME_DEFAULTS
 -- the sizes a body can have are the game's own, nil in a game where every body is the size it comes in
 local SCALE = CharacterEditorDefinition.SCALE
 local SCALE_EPSILON = CharacterEditorDefinition.SCALE_EPSILON
+-- a game that holds nothing back has nothing to ask about what a character wears
+local HAS_LISTINGS = #AccessDefinition.list() > 0
 -- Variables
 -- References
 -- Private Functions
@@ -279,8 +289,8 @@ local function newIdentity(
 	})
 end
 
--- yields. nothing a client hands in is stored as it came, the slot keeps its id + takes what's left of the rest
-local function saveCharacter(player: Player, edited: Character): Result<Character, string>
+-- yields. the text goes first: the filter yields, everything after it reads the session the way it is by then
+local function filterProfiles(player: Player, edited: Character): Result<Profiles, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local priorSessionOpt = SessionService:Get(player)
 	local prior = if priorSessionOpt.IsSome then getCharacter(priorSessionOpt.Value.Save, edited.Id) else nil
@@ -289,7 +299,6 @@ local function saveCharacter(player: Player, edited: Character): Result<Characte
 	if not prior or not secret or not priorSecret then
 		return Result.err(`no slot holds the character`)
 	end
-	-- the text goes first: the filter yields, everything after it reads the session the way it is by then
 	local mainProfileRes = filterProfile(player, "Main", main.Profile, prior.Identities.Main.Profile)
 	if mainProfileRes.IsErr then
 		return mainProfileRes
@@ -298,8 +307,68 @@ local function saveCharacter(player: Player, edited: Character): Result<Characte
 	if secretProfileRes.IsErr then
 		return secretProfileRes
 	end
+	return Result.ok({
+		Main = mainProfileRes.Value,
+		Secret = secretProfileRes.Value,
+	})
+end
+
+-- what's left of a character a client handed in once it's held to the game: the powers it may hold, each look down
+-- to what the game has + what both identities have the same. it can't yield
+local function newSanitised(player: Player, edited: Character, profiles: Profiles): Result<Character, string>
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local main, secret = edited.Identities.Main, edited.Identities.Secret
+	if not secret then
+		return Result.err(`no slot holds the character`)
+	end
+	local entitlements = SessionService:GetEntitlements(player)
+	local powersRes = getPowers(edited, ProductDefinition.getPowerLimit(entitlements))
+	if powersRes.IsErr then
+		return powersRes
+	end
+	local mainRes = newIdentity(main, profiles.Main, powersRes.Value, entitlements)
+	if mainRes.IsErr then
+		return mainRes
+	end
+	local secretRes = newIdentity(secret, profiles.Secret, powersRes.Value, entitlements)
+	if secretRes.IsErr then
+		return secretRes
+	end
+	-- whatever the client made of it, what the identities of the game have the same is the hero's
+	return Result.ok(CharacterShareUtil.apply({
+		Id = edited.Id,
+		Powers = powersRes.Value,
+		Identities = {
+			Main = mainRes.Value,
+			Secret = secretRes.Value,
+		},
+	}, "Main"))
+end
+
+-- what a character holds that its player doesn't have, as the line they're turned down with. whatever the slot held
+-- before may stay where it was: what a pad dressed it in, what came over from the old game + what was saved before
+-- anything was held back. once it's off it has to be got the way everybody gets it to go back on
+local function getAccessError(player: Player, character: Character, prior: Character): string?
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	if not HAS_LISTINGS then
+		return nil
+	end
+	local unowned =
+		AccessDefinition.getUnowned(character, SessionService:GetOwned(player), AccessDefinition.getKept(prior))
+	local listing = unowned[1]
+	return if listing then `"{listing.Name}" isn't owned` else nil
+end
+
+-- yields. nothing a client hands in is stored as it came, the slot keeps its id + takes what's left of the rest
+local function saveCharacter(player: Player, edited: Character): Result<Character, string>
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local profilesRes = filterProfiles(player, edited)
+	if profilesRes.IsErr then
+		return profilesRes
+	end
 	local sessionOpt = if SessionService.IsInitialized then SessionService:Get(player) else Option.none()
-	if sessionOpt.IsNone then
+	local prior = if sessionOpt.IsSome then getCharacter(sessionOpt.Value.Save, edited.Id) else nil
+	if sessionOpt.IsNone or not prior then
 		return Result.err(`no slot holds the character`)
 	end
 	-- the character that's out changes on the avatar as it's saved: its look + its powers. for whoever is in a
@@ -308,28 +377,15 @@ local function saveCharacter(player: Player, edited: Character): Result<Characte
 	if fightError then
 		return Result.err(fightError)
 	end
-	local entitlements = SessionService:GetEntitlements(player)
-	local powersRes = getPowers(edited, ProductDefinition.getPowerLimit(entitlements))
-	if powersRes.IsErr then
-		return powersRes
+	local characterRes = newSanitised(player, edited, profilesRes.Value)
+	if characterRes.IsErr then
+		return characterRes
 	end
-	local mainRes = newIdentity(main, mainProfileRes.Value, powersRes.Value, entitlements)
-	if mainRes.IsErr then
-		return mainRes
+	local character = characterRes.Value
+	local accessError = getAccessError(player, character, prior)
+	if accessError then
+		return Result.err(accessError)
 	end
-	local secretRes = newIdentity(secret, secretProfileRes.Value, powersRes.Value, entitlements)
-	if secretRes.IsErr then
-		return secretRes
-	end
-	-- whatever the client made of it, what the identities of the game have the same is the hero's
-	local character: Character = CharacterShareUtil.apply({
-		Id = edited.Id,
-		Powers = powersRes.Value,
-		Identities = {
-			Main = mainRes.Value,
-			Secret = secretRes.Value,
-		},
-	}, "Main")
 	local saveRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
 		for index, other in t.Characters do
 			if other.Id == character.Id then
@@ -346,6 +402,54 @@ local function saveCharacter(player: Player, edited: Character): Result<Characte
 		return Result.err(`no slot holds the character`)
 	end
 	return Result.ok(saved)
+end
+
+-- what a player asks to own of what the game holds back at a price, by one of its items or its power. the price +
+-- everything it hands over are the listing's, nothing of either is the client's to say
+local function purchaseItem(player: Player, id: string): Result<true, string>
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local listing = AccessDefinition.getOf(id)
+	local access = if listing then AccessDefinition.getListingAccess(listing) else nil
+	if not listing or not access or access.Type ~= "Price" then
+		return Result.err(`"{id}" isn't sold`)
+	end
+	local powerId = listing.PowerId
+	-- a power is listed ahead of its ability, nobody pays for one they couldn't hold
+	if powerId and PowerDefinition.get(powerId).IsErr then
+		return Result.err(`"{listing.Name}" isn't out yet`)
+	end
+	if not EconomyService.IsInitialized then
+		return Result.err(`nothing is sold yet`)
+	end
+	return EconomyService:Purchase(player, {
+		Id = listing.Id,
+		Name = listing.Name,
+		Price = access.Amount,
+		Currency = access.Currency,
+	}, function(save: PlayerSave): { string }
+		assert(SessionService.IsInitialized, `the session service isn't initialized`)
+		local owned = SessionService:GetOwnedOf(save)
+		assert(owned, `a game that sells something keeps what was bought`)
+		return if powerId then owned.PowerIds else owned.ItemIds
+	end, listing.ItemIds or { powerId :: string })
+end
+
+-- a character dealt anew out of what the player has, under the id of the slot it was asked for. nothing is stored:
+-- it's a draft, it only becomes the character by a save, which holds it to everything a save is held to
+local function rollCharacter(player: Player, characterId: string): Result<Character, string>
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local sessionOpt = SessionService:Get(player)
+	if sessionOpt.IsNone or not getCharacter(sessionOpt.Value.Save, characterId) then
+		return Result.err(`no slot holds the character`)
+	end
+	local rollRes = CharacterSlotUtil.roll(SessionService:GetOwned(player))
+	if rollRes.IsErr then
+		return rollRes
+	end
+	return Result.ok(FreezeUtil.delta(rollRes.Value, function(t: Character): Character
+		t.Id = characterId
+		return t
+	end))
 end
 
 local function selectCharacter(player: Player, characterId: string): Result<true, string>
@@ -449,9 +553,11 @@ local function fillSlots(player: Player)
 	if #sessionOpt.Value.Save.Characters >= slotCount then
 		return
 	end
+	-- a slot that's added later is filled out of what its player has by then
+	local owned = SessionService:GetOwned(player)
 	local saveRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
 		for _ = #t.Characters + 1, slotCount do
-			table.insert(t.Characters, CharacterSlotUtil.newBlank())
+			table.insert(t.Characters, CharacterSlotUtil.newBlank(owned))
 		end
 		return t
 	end)
@@ -462,6 +568,20 @@ end
 -- Class
 local CharacterService = {} :: CharacterServiceImpl
 CharacterService.__index = CharacterService
+
+-- yields. a character a client handed in the way a save would store it: its texts through the filter, its powers +
+-- its looks held to the game. nothing is written, + what its player has isn't asked about: both are up to whoever
+-- stores it
+function CharacterService:Sanitise(player: Player, edited: Character): Result<Character, string>
+	local profilesRes = filterProfiles(player, edited)
+	if profilesRes.IsErr then
+		return profilesRes
+	end
+	if not self.IsInitialized or not SessionService.IsInitialized or SessionService:Get(player).IsNone then
+		return Result.err(`no slot holds the character`)
+	end
+	return newSanitised(player, edited, profilesRes.Value)
+end
 
 return ServiceLocker(function(): CharacterService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
@@ -489,6 +609,18 @@ return ServiceLocker(function(): CharacterService
 			return saveCharacter(player, character)
 		end
 	)
+	NetworkService:Handle(
+		RemoteDefinition.RollCharacter,
+		function(player: Player, characterId: string): Result<Character, string>
+			return rollCharacter(player, characterId)
+		end
+	)
+	-- only a game that holds something back has anything to sell here
+	if HAS_LISTINGS then
+		NetworkService:Handle(RemoteDefinition.PurchaseItem, function(player: Player, id: string): Result<true, string>
+			return purchaseItem(player, id)
+		end)
+	end
 	NetworkService:Handle(RemoteDefinition.FilterText, function(player: Player, text: string): Result<string, string>
 		local clippedText = clip(text, MAX_FILTERED_LENGTH)
 		if not clippedText then
