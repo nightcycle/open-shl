@@ -3,6 +3,7 @@
 -- Packages
 -- Modules
 local Cheeseburger = require("@game/ServerScriptService/Server/Prop/Library/Cheeseburger")
+local ElectricGuitar = require("@game/ServerScriptService/Server/Prop/Library/ElectricGuitar")
 local Keycard = require("@game/ServerScriptService/Server/Prop/Library/Keycard")
 -- Types
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
@@ -16,6 +17,7 @@ type ServerDefinition = PropType.ServerDefinition
 local DEFINITIONS: { ServerDefinition } = {
 	Keycard,
 	Cheeseburger,
+	ElectricGuitar,
 }
 
 return table.freeze(DEFINITIONS)

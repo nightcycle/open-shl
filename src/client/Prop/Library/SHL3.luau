@@ -3,6 +3,7 @@
 -- Packages
 -- Modules
 local Cheeseburger = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Cheeseburger")
+local ElectricGuitar = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/ElectricGuitar")
 local Keycard = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Keycard")
 -- Types
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
@@ -16,6 +17,7 @@ type ClientDefinition = PropType.ClientDefinition
 local DEFINITIONS: { ClientDefinition } = {
 	Keycard,
 	Cheeseburger,
+	ElectricGuitar,
 }
 
 return table.freeze(DEFINITIONS)
