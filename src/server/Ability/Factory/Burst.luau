@@ -4,6 +4,7 @@
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local Attack = require("@game/ServerScriptService/Server/VFX/Library/Attack")
+local BodyUtil = require("@game/ReplicatedStorage/Shared/Util/Body")
 local BurstFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Burst")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
@@ -104,7 +105,7 @@ Module.new = function(
 				return false
 			end
 			local isInReach = context.VFX.fire(Reach, {
-				Position = target:GetPivot().Position,
+				Position = BodyUtil.getAimPosition(target, context.Character:GetPivot().Position),
 				Range = shared.Reach + REACH_TOLERANCE,
 			})
 			if not isInReach then

@@ -4,6 +4,7 @@ local Workspace = game:GetService("Workspace")
 -- Packages
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
+local BodyUtil = require("@game/ReplicatedStorage/Shared/Util/Body")
 local SharedVFX = require("@game/ReplicatedStorage/Shared/VFX")
 -- Types
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
@@ -31,7 +32,8 @@ local function getCharacter(part: BasePart): Model?
 end
 -- Class
 -- every other character around the one the effect belongs to. each is held to its middle, the way a reach is: one
--- that only sticks a limb into range isn't in it, so whoever is found here is within the same reach on the server
+-- that only sticks a limb into range isn't in it, so whoever is found here is within the same reach on the server.
+-- a body nobody plays is held to the closest of it, the way the server holds a claim on one
 return SharedVFX.newEvent("Nearby", isProperties, function(props: Properties, scope: SharedScope): { Model }
 	local character = scope.Character
 	if not character then
@@ -49,7 +51,7 @@ return SharedVFX.newEvent("Nearby", isProperties, function(props: Properties, sc
 			continue
 		end
 		found[target] = true
-		if (target:GetPivot().Position - position).Magnitude <= props.Range then
+		if (BodyUtil.getAimPosition(target, position) - position).Magnitude <= props.Range then
 			table.insert(targets, target)
 		end
 	end

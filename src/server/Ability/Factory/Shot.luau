@@ -4,6 +4,7 @@
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local Attack = require("@game/ServerScriptService/Server/VFX/Library/Attack")
+local BodyUtil = require("@game/ReplicatedStorage/Shared/Util/Body")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local Reach = require("@game/ReplicatedStorage/Shared/VFX/Library/Reach")
@@ -80,6 +81,14 @@ local function getStretchDistance(origin: Vector3, direction: Vector3, length: n
 	return (origin + direction * along - position).Magnitude
 end
 
+-- where a shot of that age is, if nothing was in its way
+local function getFlightPosition(shot: Shot, speed: number, age: number, gravity: number?): Vector3
+	if not gravity then
+		return shot.Origin + shot.Direction * speed * age
+	end
+	return shot.Origin + shot.Direction * speed * age - Vector3.yAxis * gravity * age ^ 2 / 2
+end
+
 -- how far a spot is off the stretch of its path a shot of that age has behind it
 local function getPathDistance(shot: Shot, position: Vector3, speed: number, age: number, gravity: number?): number
 	if not gravity then
@@ -90,7 +99,7 @@ local function getPathDistance(shot: Shot, position: Vector3, speed: number, age
 	local from = shot.Origin
 	for index = 1, math.ceil(age / ARC_INTERVAL) do
 		local time = math.min(index * ARC_INTERVAL, age)
-		local to = shot.Origin + shot.Direction * speed * time - Vector3.yAxis * gravity * time ^ 2 / 2
+		local to = getFlightPosition(shot, speed, time, gravity)
 		local stretch = to - from
 		if stretch.Magnitude > 0 then
 			distance = math.min(distance, getStretchDistance(from, stretch.Unit, stretch.Magnitude, position))
@@ -175,9 +184,14 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 			if target == context.Character or not target:FindFirstChildWhichIsA("Humanoid") then
 				return false
 			end
-			local age = math.min(os.clock() - shot.LaunchTime + FLIGHT_TOLERANCE, shared.Lifetime)
-			return getPathDistance(shot, target:GetPivot().Position, shared.Speed, age, shared.Gravity)
-				<= PATH_TOLERANCE
+			local flightTime = os.clock() - shot.LaunchTime
+			local age = math.min(flightTime + FLIGHT_TOLERANCE, shared.Lifetime)
+			-- a body nobody plays is held to the closest of it to where the server has the shot by now, not to a middle
+			-- that's far off
+			local flightPosition =
+				getFlightPosition(shot, shared.Speed, math.min(flightTime, shared.Lifetime), shared.Gravity)
+			local aimPosition = BodyUtil.getAimPosition(target, flightPosition)
+			return getPathDistance(shot, aimPosition, shared.Speed, age, shared.Gravity) <= PATH_TOLERANCE
 		end)
 		-- a shot is spent on whoever it ran into first
 		:On(bindings.Hit, function(context: ServerContext)

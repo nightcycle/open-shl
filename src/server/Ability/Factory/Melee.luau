@@ -4,6 +4,7 @@
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local Attack = require("@game/ServerScriptService/Server/VFX/Library/Attack")
+local BodyUtil = require("@game/ReplicatedStorage/Shared/Util/Body")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local MeleeFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Melee")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
@@ -58,7 +59,7 @@ Module.new = function(ability: MeleeFactory.Ability): AbilityBuilder.ServerBuild
 			end
 			targets[hit.Target] = true
 			return context.VFX.fire(Reach, {
-				Position = hit.Target:GetPivot().Position,
+				Position = BodyUtil.getAimPosition(hit.Target, context.Character:GetPivot().Position),
 				Range = shared.Reach + REACH_TOLERANCE,
 			})
 		end)

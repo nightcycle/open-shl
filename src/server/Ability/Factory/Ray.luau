@@ -4,6 +4,7 @@
 -- Modules
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local Attack = require("@game/ServerScriptService/Server/VFX/Library/Attack")
+local BodyUtil = require("@game/ReplicatedStorage/Shared/Util/Body")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local Hitscan = require("@game/ReplicatedStorage/Shared/VFX/Library/Hitscan")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
@@ -88,7 +89,9 @@ Module.new = function(
 			return { Distance = distance, IsCut = false }
 		end
 		local length = math.min(distance + PATH_TOLERANCE, shared.Range)
-		local offPath = getStretchDistance(fire.Origin, direction, length, target:GetPivot().Position)
+		-- a body nobody plays is held to the closest of it to where the ray ended, not to a middle that's far off
+		local aimPosition = BodyUtil.getAimPosition(target, fire.Origin + direction * distance)
+		local offPath = getStretchDistance(fire.Origin, direction, length, aimPosition)
 		return {
 			Distance = distance,
 			Target = if offPath <= PATH_TOLERANCE then target else nil,
