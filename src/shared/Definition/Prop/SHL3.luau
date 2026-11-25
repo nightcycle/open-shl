@@ -21,10 +21,10 @@ local DEFINITIONS: { PropDefinition } = {
 	{ Id = "cheeseburger", Name = "Cheeseburger", Use = { Duration = 0.8 } },
 	-- carried + nothing more: a click with one of these is nothing
 	{ Id = "electric-guitar", Name = "Electric Guitar" },
+	{ Id = "acoustic-guitar", Name = "Acoustic Guitar" },
 }
 -- a row moves up into the list above once both halves of its prop are in the game's set
 local UPCOMING: { PropDefinition } = {
-	{ Id = "acoustic-guitar", Name = "Acoustic Guitar" },
 	{ Id = "pizza-box", Name = "Pizza Box" },
 	{ Id = "pizza", Name = "Pizza", Use = { Duration = 0.8 } },
 	{ Id = "watermelon", Name = "Watermelon", Use = { Duration = 0.8 } },

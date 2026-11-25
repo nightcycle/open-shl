@@ -2,6 +2,7 @@
 -- Services
 -- Packages
 -- Modules
+local AcousticGuitar = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/AcousticGuitar")
 local Cheeseburger = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Cheeseburger")
 local ElectricGuitar = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/ElectricGuitar")
 local Keycard = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Keycard")
@@ -18,6 +19,7 @@ local DEFINITIONS: { ClientDefinition } = {
 	Keycard,
 	Cheeseburger,
 	ElectricGuitar,
+	AcousticGuitar,
 }
 
 return table.freeze(DEFINITIONS)

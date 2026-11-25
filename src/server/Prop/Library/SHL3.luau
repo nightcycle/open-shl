@@ -2,6 +2,7 @@
 -- Services
 -- Packages
 -- Modules
+local AcousticGuitar = require("@game/ServerScriptService/Server/Prop/Library/AcousticGuitar")
 local Cheeseburger = require("@game/ServerScriptService/Server/Prop/Library/Cheeseburger")
 local ElectricGuitar = require("@game/ServerScriptService/Server/Prop/Library/ElectricGuitar")
 local Keycard = require("@game/ServerScriptService/Server/Prop/Library/Keycard")
@@ -18,6 +19,7 @@ local DEFINITIONS: { ServerDefinition } = {
 	Keycard,
 	Cheeseburger,
 	ElectricGuitar,
+	AcousticGuitar,
 }
 
 return table.freeze(DEFINITIONS)
