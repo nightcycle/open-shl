@@ -66,7 +66,11 @@ Module.new = function(ability: MeleeFactory.Ability): AbilityBuilder.ServerBuild
 		:On(bindings.Hit, function(context: ServerContext)
 			local hit = context.read(bindings.Hit)
 			if hit then
-				context.VFX.fire(Attack, { Target = hit.Target, Amount = power.Damage })
+				context.VFX.fire(Attack, {
+					Target = hit.Target,
+					Amount = power.Damage,
+					Origin = context.Character:GetPivot().Position,
+				})
 			end
 		end)
 
