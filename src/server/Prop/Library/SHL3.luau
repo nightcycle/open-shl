@@ -6,6 +6,7 @@ local AcousticGuitar = require("@game/ServerScriptService/Server/Prop/Library/Ac
 local Cheeseburger = require("@game/ServerScriptService/Server/Prop/Library/Cheeseburger")
 local ElectricGuitar = require("@game/ServerScriptService/Server/Prop/Library/ElectricGuitar")
 local Keycard = require("@game/ServerScriptService/Server/Prop/Library/Keycard")
+local Pizza = require("@game/ServerScriptService/Server/Prop/Library/Pizza")
 local PizzaBox = require("@game/ServerScriptService/Server/Prop/Library/PizzaBox")
 -- Types
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
@@ -22,6 +23,7 @@ local DEFINITIONS: { ServerDefinition } = {
 	ElectricGuitar,
 	AcousticGuitar,
 	PizzaBox,
+	Pizza,
 }
 
 return table.freeze(DEFINITIONS)
