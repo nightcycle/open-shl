@@ -14,6 +14,7 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local BUILD_CONFIG = require("@game/ReplicatedStorage/Generated/BUILD_CONFIG")
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local Flow = require("@self/Flow")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 -- Types
@@ -420,7 +421,8 @@ return ServiceLocker(function(): ShellService
 		SwapRequested = Signal.new(),
 		TutorialTriggered = Signal.new(),
 		_State = state,
-		_IsCameraModeAvailable = UserInputService.KeyboardEnabled,
+		-- only where the game has the free camera: its service is what flies it + what ends it
+		_IsCameraModeAvailable = GameDefinition.FEATURES.CameraMode and UserInputService.KeyboardEnabled,
 		_IsBackpackEnabled = false,
 		_IsHudCoreGuiEnabled = false,
 		_HasHudShown = false,
