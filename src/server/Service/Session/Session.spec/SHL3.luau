@@ -249,7 +249,7 @@ return {
 
 		-- only what the game keeps is taken from its importer
 		local refused: { [string]: unknown } = {
-			["a patch with what only another game keeps"] = { Inventory = fresh.Inventory },
+			["a patch with what only another game keeps"] = { Inventory = { FurnitureIds = {}, ThemeIds = {} } },
 			["a patch with the section of another game"] = { SHL1 = {} },
 			["a patch with a field its section doesn't have"] = { SHL3 = { Rank = 1 } },
 			["a patch with a flat below the ground"] = { SHL3 = { ApartmentTier = -1 } },

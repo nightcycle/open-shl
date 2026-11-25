@@ -44,12 +44,19 @@ type PlayerStore = {
 	SectionKey: string?,
 	-- where the saves of the other games hold theirs
 	OtherSectionKeys: { string },
+	-- what a save of this game keeps beside what every game does without a section around it, + what the saves of
+	-- the other games keep that way
+	OwnKeys: { string },
+	OtherKeys: { string },
 }
 -- Constants
 local MATERIALS = table.freeze({ Enum.Material.Plastic, Enum.Material.Neon, Enum.Material.Wood })
 local POSITION_LIMIT = Vector3.new(1000, 1000, 1000)
 local ROUND_TRIP_ITERATIONS = 64
 -- the name + the key of the store every save of a game sits in, a server that asks under another one finds nothing
+-- superhero life 2 was the only game there was when these went in, they stay where its saves have them
+local SHL2_KEYS =
+	table.freeze({ "Inventory", "BaseLayout", "IsApartmentLocked", "IsTutorialEnabled", "LastDailyRewardAt" })
 local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 	-- it's still at its first version, a save of today is one
 	shl1 = function(): PlayerStore
@@ -60,6 +67,8 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 			Earlier = {},
 			SectionKey = "SHL1",
 			OtherSectionKeys = { "SHL3" },
+			OwnKeys = {},
+			OtherKeys = SHL2_KEYS,
 		}
 	end,
 	shl2 = function(): PlayerStore
@@ -91,6 +100,8 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 				document.IsLegacyImported = true
 			end,
 			OtherSectionKeys = { "SHL1", "SHL3" },
+			OwnKeys = SHL2_KEYS,
+			OtherKeys = {},
 		}
 	end,
 	-- it's still at its first version, a save of today is one
@@ -102,6 +113,8 @@ local PLAYER_STORE: PlayerStore = GameDefinition.pick({
 			Earlier = {},
 			SectionKey = "SHL3",
 			OtherSectionKeys = { "SHL1" },
+			OwnKeys = {},
+			OtherKeys = SHL2_KEYS,
 		}
 	end,
 })
@@ -495,6 +508,21 @@ return {
 			local theirs = TableUtil.deepCopy(data)
 			theirs[otherKey] = {}
 			assert(StoreDefinition.decode(store, theirs).IsErr, `a save with the "{otherKey}" section was decoded`)
+		end
+		-- the same goes for what a game keeps without a section around it
+		for _, ownKey in PLAYER_STORE.OwnKeys do
+			local short = TableUtil.deepCopy(data)
+			short[ownKey] = nil
+			assert(StoreDefinition.decode(store, short).IsErr, `a save without its "{ownKey}" was decoded`)
+		end
+		for _, otherKey in PLAYER_STORE.OtherKeys do
+			assert(data[otherKey] == nil, `a new save holds the "{otherKey}" of another game`)
+			local theirs = TableUtil.deepCopy(data)
+			theirs[otherKey] = 0
+			assert(
+				StoreDefinition.decode(store, theirs).IsErr,
+				`a save with the "{otherKey}" of another game was decoded`
+			)
 		end
 	end),
 

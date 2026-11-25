@@ -67,14 +67,13 @@ export type PlayerSave = {
 	-- the version of the importer whose pass the save had, 0 for none. an importer that's ahead of it is still due: one
 	-- that came after the save did, or one that came back fixed
 	LegacyImportVersion: number,
-	-- what superhero life 2 keeps. it was the only game there was when these went in, they stay where its saves have
-	-- them. the services that read them are shared, so until those are split every game carries them the way they
-	-- start out
-	Inventory: BaseInventory, -- the furniture + themes the player owns
-	BaseLayout: BaseLayout,
-	IsApartmentLocked: boolean,
-	IsTutorialEnabled: boolean,
-	LastDailyRewardAt: number, -- unix seconds, 0 until the first one
+	-- what only superhero life 2 keeps. it was the only game there was when these went in, they stay where its saves
+	-- have them instead of in a section. each is there in a save of that game + nowhere else
+	Inventory: BaseInventory?, -- the furniture + themes the player owns
+	BaseLayout: BaseLayout?,
+	IsApartmentLocked: boolean?,
+	IsTutorialEnabled: boolean?,
+	LastDailyRewardAt: number?, -- unix seconds, 0 until the first one
 	-- the sections. each is there in a save of its game + nowhere else
 	SHL1: SHL1Section?,
 	SHL3: SHL3Section?,
@@ -100,11 +99,11 @@ do -- Types.SHL1PlayerSave, Types.SHL2PlayerSave, Types.SHL3PlayerSave
 		return true
 	end
 	-- the save of one game: a save of another one or of another version doesn't pass for it, + neither does one
-	-- that's short of its section or holds the section of another game
+	-- that's short of what only its game keeps or holds what only another one does
 	local function newValidator(
 		gameId: GameId,
 		version: number,
-		section: { [string]: (value: unknown) -> (boolean, string?) }
+		own: { [string]: (value: unknown) -> (boolean, string?) }
 	): (value: unknown) -> (boolean, string?)
 		local shape: { [string]: (value: unknown) -> (boolean, string?) } = {
 			Version = Type.literal(version),
@@ -112,22 +111,23 @@ do -- Types.SHL1PlayerSave, Types.SHL2PlayerSave, Types.SHL3PlayerSave
 			Characters = Type.array(CharacterType.Character),
 			ActiveCharacterId = Type.string,
 			Balances = EconomyType.Balances,
-			Inventory = BaseType.BaseInventory,
 			Entitlements = Type.array(EconomyType.EntitlementKey),
-			BaseLayout = BaseType.BaseLayout,
-			IsApartmentLocked = Type.boolean,
-			IsTutorialEnabled = Type.boolean,
-			LastDailyRewardAt = Type.intersection(Type.integer, Type.numberMin(0)),
 			PurchaseIds = Type.array(Type.string),
 			LegacyImportVersion = Type.intersection(Type.integer, Type.numberMin(0)),
 		}
-		for key, isSection in section do
-			shape[key] = isSection
+		for key, isOwn in own do
+			shape[key] = isOwn
 		end
 		return Type.intersection(Type.strictInterface(shape), isLinked)
 	end
 	Types.SHL1PlayerSave = newValidator("shl1", Types.SHL1_VERSION, { SHL1 = Types.SHL1Section })
-	Types.SHL2PlayerSave = newValidator("shl2", Types.SHL2_VERSION, {})
+	Types.SHL2PlayerSave = newValidator("shl2", Types.SHL2_VERSION, {
+		Inventory = BaseType.BaseInventory,
+		BaseLayout = BaseType.BaseLayout,
+		IsApartmentLocked = Type.boolean,
+		IsTutorialEnabled = Type.boolean,
+		LastDailyRewardAt = Type.intersection(Type.integer, Type.numberMin(0)),
+	})
 	Types.SHL3PlayerSave = newValidator("shl3", Types.SHL3_VERSION, { SHL3 = Types.SHL3Section })
 end
 

@@ -39,6 +39,7 @@ type QuestState = QuestType.QuestState
 type PlayerSave = SaveType.PlayerSave
 type SavePatch = LegacyImportService.SavePatch
 type SessionSection = SessionSectionType.SessionSection
+type Sessions = SessionSectionType.Sessions
 type Snapshot = SessionType.Snapshot
 -- everything the server holds for a player. the save is what's kept between visits, the rest starts over with each
 export type Session = {
@@ -92,7 +93,8 @@ local isEntitlements = Type.array(EconomyType.EntitlementKey)
 -- who a character is worn as until its player turns into somebody else
 local START_IDENTITY_KEY: IdentityKey = SpawnDefinition.START_IDENTITY_KEY
 -- what only one game keeps of a player is only its to bring over: which fields of a patch are its own + how they get
--- into a save. the section of another game is never required
+-- into a save, what of them a client is handed + which requests are taken for them. the section of another game is
+-- never required
 local SECTION: SessionSection = GameDefinition.pick({
 	shl1 = function(): SessionSection
 		return require("@self/SHL1")
@@ -147,16 +149,20 @@ end
 
 local function newSnapshot(session: Session): Snapshot
 	local save = session.Save
-	return {
+	local out: Snapshot = {
 		Characters = save.Characters,
 		ActiveCharacterId = save.ActiveCharacterId,
 		ActiveIdentityKey = session.ActiveIdentityKey,
-		Inventory = save.Inventory,
 		Quest = session.Quest,
 	}
+	if SECTION.Snapshot then
+		SECTION.Snapshot(out, save)
+	end
+	return out
 end
 
--- every scalar of the save a client reads, nothing else writes these attributes
+-- every scalar of the save a client reads, nothing else writes these attributes. the ones only one game keeps are
+-- its section's to write
 local function setAttributes(player: Player, save: PlayerSave, entitlements: { EntitlementKey })
 	AttributeDefinition.set(player, AttributeDefinition.ActiveCharacterId, save.ActiveCharacterId)
 	for _, currency: PseudoEnum.Currency in PseudoEnum.getEnumItems("Currency") do
@@ -164,8 +170,9 @@ local function setAttributes(player: Player, save: PlayerSave, entitlements: { E
 	end
 	AttributeDefinition.setEntitlements(player, entitlements)
 	AttributeDefinition.set(player, AttributeDefinition.PowerLimit, ProductDefinition.getPowerLimit(entitlements))
-	AttributeDefinition.set(player, AttributeDefinition.IsTutorialEnabled, save.IsTutorialEnabled)
-	AttributeDefinition.set(player, AttributeDefinition.IsApartmentLocked, save.IsApartmentLocked)
+	if SECTION.SetAttributes then
+		SECTION.SetAttributes(player, save)
+	end
 end
 
 -- the tables a client was handed with its snapshot follow the save from here, whoever changed it
@@ -176,8 +183,8 @@ local function replicate(player: Player, save: PlayerSave, priorSave: PlayerSave
 			NetworkService:Fire(RemoteDefinition.CharacterChanged, player, character)
 		end
 	end
-	if not getIfEqual(save.Inventory, priorSave.Inventory) then
-		NetworkService:Fire(RemoteDefinition.InventoryChanged, player, save.Inventory)
+	if SECTION.Replicate then
+		SECTION.Replicate(player, save, priorSave)
 	end
 end
 
@@ -488,21 +495,18 @@ return ServiceLocker(function(): SessionService
 			self.InMenuChanged:Fire(player, isInMenu)
 		end)
 	)
-	table.insert(
-		self._Connections,
-		NetworkService:Connect(RemoteDefinition.SetTutorialEnabled, function(player: Player, isEnabled: boolean)
-			local saveRes = self:Update(player, function(save: PlayerSave): PlayerSave?
-				if save.IsTutorialEnabled == isEnabled then
-					return nil
-				end
-				save.IsTutorialEnabled = isEnabled
-				return save
-			end)
-			if saveRes.IsErr then
-				warn(`tutorial err: {saveRes.Value}`)
-			end
-		end)
-	)
+	-- the game's own part writes to a save through this, it's never handed the service
+	if SECTION.Start then
+		local sessions: Sessions = table.freeze({
+			Update = function(player: Player, fn: (save: PlayerSave) -> PlayerSave?): Result<PlayerSave, string>
+				return self:Update(player, fn)
+			end,
+		})
+		local stop = SECTION.Start(sessions)
+		if stop then
+			table.insert(self._CleanUpCallbacks, stop)
+		end
+	end
 
 	table.insert(
 		self._Connections,

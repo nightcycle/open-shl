@@ -34,14 +34,14 @@ export type Snapshot = {
 	Characters: { Character }, -- every slot, in slot order
 	ActiveCharacterId: string,
 	ActiveIdentityKey: IdentityKey,
-	Inventory: BaseInventory, -- the furniture + themes the player owns
+	Inventory: BaseInventory?, -- the furniture + themes the player owns, only in a game that has them
 	Quest: QuestState?, -- only while a quest is running
 }
 Types.Snapshot = Type.strictInterface({
 	Characters = Type.array(CharacterType.Character),
 	ActiveCharacterId = Type.string,
 	ActiveIdentityKey = CharacterType.IdentityKey,
-	Inventory = BaseType.BaseInventory,
+	Inventory = Type.optional(BaseType.BaseInventory),
 	Quest = Type.optional(QuestType.QuestState),
 })
 

@@ -26,6 +26,7 @@ local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Appearance = AppearanceType.Appearance
+type BaseInventory = BaseType.BaseInventory
 type BaseLayout = BaseType.BaseLayout
 type PlacedFurniture = BaseType.PlacedFurniture
 type ResidenceId = BaseType.ResidenceId
@@ -93,6 +94,15 @@ local function getCharacter(save: PlayerSave, characterId: string): Character?
 	return nil
 end
 
+-- a save of this game holds a base + what's owned for it. the save of another one holds neither, + never gets here
+local function getLayout(save: PlayerSave): BaseLayout
+	return assert(save.BaseLayout, `a save of this game has its base`)
+end
+
+local function getInventory(save: PlayerSave): BaseInventory
+	return assert(save.Inventory, `a save of this game has its inventory`)
+end
+
 local function getIndex(layout: BaseLayout, placedId: string): number?
 	for index, placed in layout.Furniture do
 		if placed.Id == placedId then
@@ -122,7 +132,8 @@ end
 
 local function newState(residenceId: ResidenceId, owner: Player, save: PlayerSave): ResidenceState
 	local costumes: { [string]: Appearance } = {}
-	for _, placed in save.BaseLayout.Furniture do
+	local layout = getLayout(save)
+	for _, placed in layout.Furniture do
 		local characterId = placed.CharacterId
 		if not characterId or costumes[characterId] then
 			continue
@@ -137,7 +148,7 @@ local function newState(residenceId: ResidenceId, owner: Player, save: PlayerSav
 	local out: ResidenceState = {
 		ResidenceId = residenceId,
 		OwnerUserId = owner.UserId,
-		Layout = save.BaseLayout,
+		Layout = layout,
 		Costumes = costumes,
 	}
 	table.freeze(out)
@@ -203,10 +214,10 @@ local function place(rooms: Rooms, player: Player, placement: FurniturePlacement
 	end
 	local definition = definitionRes.Value
 	-- owning a piece of furniture allows any number of it to be placed
-	if not table.find(save.Inventory.FurnitureIds, definition.Id) then
+	if not table.find(getInventory(save).FurnitureIds, definition.Id) then
 		return Result.err(`"{definition.Name}" isn't owned`)
 	end
-	if #save.BaseLayout.Furniture >= PLACEMENT.MAX_PLACED then
+	if #getLayout(save).Furniture >= PLACEMENT.MAX_PLACED then
 		return Result.err(`a base holds up to {PLACEMENT.MAX_PLACED} pieces`)
 	end
 	local cframeRes = newCFrame(definition.Id, placement.X, placement.Z, placement.RotationDeg)
@@ -223,7 +234,7 @@ local function place(rooms: Rooms, player: Player, placement: FurniturePlacement
 		ArtifactId = if table.find(PEDESTAL_IDS, definition.Id) then getArtifactId(player) else nil,
 	}
 	local updateRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
-		table.insert(t.BaseLayout.Furniture, placed)
+		table.insert(getLayout(t).Furniture, placed)
 		return t
 	end)
 	if updateRes.IsErr then
@@ -238,7 +249,7 @@ local function move(rooms: Rooms, player: Player, furnitureMove: FurnitureMove):
 	if saveRes.IsErr then
 		return saveRes
 	end
-	local layout = saveRes.Value.BaseLayout
+	local layout = getLayout(saveRes.Value)
 	local index = getIndex(layout, furnitureMove.Id)
 	if not index then
 		return Result.err(`no piece "{furnitureMove.Id}" is placed`)
@@ -252,7 +263,7 @@ local function move(rooms: Rooms, player: Player, furnitureMove: FurnitureMove):
 	placed.ZoneId = furnitureMove.ZoneId
 	placed.CFrame = cframeRes.Value
 	local updateRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
-		t.BaseLayout.Furniture[index] = placed
+		getLayout(t).Furniture[index] = placed
 		return t
 	end)
 	if updateRes.IsErr then
@@ -267,12 +278,12 @@ local function remove(rooms: Rooms, player: Player, placedId: string): Result<tr
 	if saveRes.IsErr then
 		return saveRes
 	end
-	local index = getIndex(saveRes.Value.BaseLayout, placedId)
+	local index = getIndex(getLayout(saveRes.Value), placedId)
 	if not index then
 		return Result.err(`no piece "{placedId}" is placed`)
 	end
 	local updateRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
-		table.remove(t.BaseLayout.Furniture, index)
+		table.remove(getLayout(t).Furniture, index)
 		return t
 	end)
 	if updateRes.IsErr then
@@ -292,14 +303,15 @@ local function setTheme(rooms: Rooms, player: Player, themeId: string): Result<t
 		return definitionRes
 	end
 	local definition = definitionRes.Value
-	if not table.find(saveRes.Value.Inventory.ThemeIds, definition.Id) then
+	if not table.find(getInventory(saveRes.Value).ThemeIds, definition.Id) then
 		return Result.err(`"{definition.Name}" isn't owned`)
 	end
 	local updateRes = SessionService:Update(player, function(t: PlayerSave): PlayerSave?
-		if t.BaseLayout.ThemeId == definition.Id then
+		local layout = getLayout(t)
+		if layout.ThemeId == definition.Id then
 			return nil
 		end
-		t.BaseLayout.ThemeId = definition.Id
+		layout.ThemeId = definition.Id
 		return t
 	end)
 	if updateRes.IsErr then
@@ -315,7 +327,7 @@ local function purchaseFurniture(player: Player, furnitureId: string): Result<tr
 		return definitionRes
 	end
 	return EconomyService:Purchase(player, definitionRes.Value, function(save: PlayerSave): { string }
-		return save.Inventory.FurnitureIds
+		return getInventory(save).FurnitureIds
 	end)
 end
 
@@ -326,7 +338,7 @@ local function purchaseTheme(player: Player, themeId: string): Result<true, stri
 		return definitionRes
 	end
 	return EconomyService:Purchase(player, definitionRes.Value, function(save: PlayerSave): { string }
-		return save.Inventory.ThemeIds
+		return getInventory(save).ThemeIds
 	end)
 end
 
@@ -399,7 +411,7 @@ local Rule: Rule = table.freeze({
 		return true
 	end,
 	GetIfLocked = function(save: PlayerSave): boolean
-		return save.IsApartmentLocked
+		return save.IsApartmentLocked == true
 	end,
 	NewState = newState,
 	Start = start,

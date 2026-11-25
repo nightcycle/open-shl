@@ -3,8 +3,6 @@
 -- Packages
 local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
-local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BaseConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Base")
 local CharacterSlotUtil = require("@game/ServerScriptService/Server/Util/CharacterSlot")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 -- Types
@@ -19,9 +17,8 @@ local MIGRATIONS: { (document: { [string]: any }) -> { [string]: any } } = table
 -- Variables
 -- References
 -- Private Functions
--- every row the old game saved to, empty, + nothing to spend. what the game has no use for (a base, its furniture, the
--- tutorial, a daily reward) is kept the way it starts out. whoever is new fights: the old game had everybody start
--- out that way, sitting fights out was a pick
+-- every row the old game saved to, empty, + nothing to spend. whoever is new fights: the old game had everybody
+-- start out that way, sitting fights out was a pick
 local function newPlayerSave(): PlayerSave
 	local characters = CharacterSlotUtil.newStarters()
 	local out: PlayerSave = {
@@ -30,12 +27,7 @@ local function newPlayerSave(): PlayerSave
 		Characters = characters,
 		ActiveCharacterId = characters[1].Id,
 		Balances = ProductDefinition.STARTING_BALANCES,
-		Inventory = BaseConstructor.newInventory(),
 		Entitlements = {},
-		BaseLayout = BaseConstructor.new(),
-		IsApartmentLocked = AttributeDefinition.IsApartmentLocked.Default,
-		IsTutorialEnabled = AttributeDefinition.IsTutorialEnabled.Default,
-		LastDailyRewardAt = 0,
 		PurchaseIds = {},
 		LegacyImportVersion = 0,
 		SHL1 = {

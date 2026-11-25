@@ -218,8 +218,10 @@ local function walk(destroyCallbacks: { () -> () })
 	assert(appearance.Items[#appearance.Items].DefinitionId == artifact.Id, `the hero doesn't wear the artifact`)
 	assert(SpecUtil.getIfEqual(appearance.HiddenTags, { "Mask" }), `the artifact hides the wrong items`)
 	assert(SpecUtil.getIfEqual(save.Balances, { Credits = CREDITS, Gems = 0 }), `the old balances are off`)
-	assert(table.find(save.Inventory.FurnitureIds, furniture.Id), `the old furniture isn't owned`)
-	assert(save.BaseLayout.ThemeId == theme.Id and #save.BaseLayout.Furniture == 1, `the old base is off`)
+	local inventory, layout = save.Inventory, save.BaseLayout
+	assert(inventory and layout, `the save has no base`)
+	assert(table.find(inventory.FurnitureIds, furniture.Id), `the old furniture isn't owned`)
+	assert(layout.ThemeId == theme.Id and #layout.Furniture == 1, `the old base is off`)
 	assert(not save.IsTutorialEnabled and save.LastDailyRewardAt == DAILY_REWARD_AT, `the old settings are off`)
 	assert(session.ActiveIdentityKey == "Main" and not session.IsInMenu, `the session didn't start out fresh`)
 	assert(
@@ -303,6 +305,7 @@ return {
 		assert(furniture, `the game has no furniture`)
 		local fresh = STORE.Default()
 		local other = STORE.Default()
+		assert(other.Inventory, `a new save has no inventory`)
 		local inventory = TableUtil.deepCopy(other.Inventory)
 		table.insert(inventory.FurnitureIds, furniture.Id)
 		local patch: SavePatch = {
@@ -324,7 +327,10 @@ return {
 		)
 		assert(save.ActiveCharacterId == other.Characters[2].Id, `the active character didn't come over`)
 		assert(SpecUtil.getIfEqual(save.Balances, { Credits = CREDITS, Gems = 3 }), `the balances didn't come over`)
-		assert(table.find(save.Inventory.FurnitureIds, furniture.Id), `the furniture didn't come over`)
+		assert(
+			save.Inventory and table.find(save.Inventory.FurnitureIds, furniture.Id),
+			`the furniture didn't come over`
+		)
 		assert(save.IsTutorialEnabled ~= fresh.IsTutorialEnabled, `the tutorial setting didn't come over`)
 		assert(save.LastDailyRewardAt == DAILY_REWARD_AT, `the daily reward didn't come over`)
 		assert(save.IsApartmentLocked == fresh.IsApartmentLocked, `what no patch holds was changed`)

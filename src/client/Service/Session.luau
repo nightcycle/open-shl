@@ -8,7 +8,6 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Option = TypeUnionLib.Option
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BaseConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Base")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
@@ -134,7 +133,10 @@ local function setSnapshot(self: SessionService, snapshot: Snapshot)
 	self._IsLoaded = true
 	setCharacters(self, snapshot.Characters)
 	setActive(self, snapshot.ActiveCharacterId, snapshot.ActiveIdentityKey)
-	setInventory(self, snapshot.Inventory)
+	-- a game without furniture hands none over, nothing is owned there for good
+	if snapshot.Inventory then
+		setInventory(self, snapshot.Inventory)
+	end
 	setQuest(self, snapshot.Quest)
 	self.Loaded:Fire()
 end
@@ -242,7 +244,8 @@ return ServiceLocker(function(): SessionService
 		_Characters = table.freeze({}),
 		_ActiveCharacterId = AttributeDefinition.get(player, AttributeDefinition.ActiveCharacterId),
 		_ActiveIdentityKey = AttributeDefinition.get(player.Character, AttributeDefinition.IdentityKey),
-		_Inventory = BaseConstructor.newInventory(),
+		-- nothing is owned until the server says so
+		_Inventory = table.freeze({ FurnitureIds = table.freeze({}), ThemeIds = table.freeze({}) }),
 		_Quest = nil :: QuestState?,
 		_Profiles = table.freeze({}),
 		_DailyReward = nil :: DailyReward?,

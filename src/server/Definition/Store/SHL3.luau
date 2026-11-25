@@ -3,8 +3,6 @@
 -- Packages
 local TableUtil = require("@game/ReplicatedStorage/Packages/TableUtil")
 -- Modules
-local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local BaseConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Base")
 local CharacterSlotUtil = require("@game/ServerScriptService/Server/Util/CharacterSlot")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
 -- Types
@@ -19,7 +17,6 @@ local MIGRATIONS: { (document: { [string]: any }) -> { [string]: any } } = table
 -- Variables
 -- References
 -- Private Functions
--- what the game has no use for yet (a base, its furniture, the tutorial, a daily reward) is kept the way it starts out
 local function newPlayerSave(): PlayerSave
 	local characters = CharacterSlotUtil.newStarters()
 	local out: PlayerSave = {
@@ -28,12 +25,7 @@ local function newPlayerSave(): PlayerSave
 		Characters = characters,
 		ActiveCharacterId = characters[1].Id,
 		Balances = ProductDefinition.STARTING_BALANCES,
-		Inventory = BaseConstructor.newInventory(),
 		Entitlements = {},
-		BaseLayout = BaseConstructor.new(),
-		IsApartmentLocked = AttributeDefinition.IsApartmentLocked.Default,
-		IsTutorialEnabled = AttributeDefinition.IsTutorialEnabled.Default,
-		LastDailyRewardAt = 0,
 		PurchaseIds = {},
 		LegacyImportVersion = 0,
 		SHL3 = {

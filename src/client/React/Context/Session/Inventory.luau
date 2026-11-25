@@ -3,7 +3,6 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
-local BaseConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Base")
 -- Types
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 export type BaseInventory = BaseType.BaseInventory
@@ -12,5 +11,7 @@ export type BaseInventory = BaseType.BaseInventory
 -- References
 -- Private Functions
 -- Class
--- the furniture + themes the player owns
-return React.createContext(BaseConstructor.newInventory())
+-- the furniture + themes the player owns, none until the session says so
+local DEFAULT: BaseInventory = table.freeze({ FurnitureIds = table.freeze({}), ThemeIds = table.freeze({}) })
+
+return React.createContext(DEFAULT)
