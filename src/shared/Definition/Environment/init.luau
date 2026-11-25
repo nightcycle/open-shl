@@ -100,13 +100,14 @@ Module.rollWeather = function(season: Season, rng: Random): Weather
 		ticketCount += odds.Tickets
 	end
 	local ticket = rng:NextInteger(1, ticketCount)
+	local left = ticket
 	for _, odds in CLIMATE.Odds[season] do
-		if ticket <= odds.Tickets then
+		if left <= odds.Tickets then
 			return odds.Weather
 		end
-		ticket -= odds.Tickets
+		left -= odds.Tickets
 	end
-	error(`no weather of the "{season}" has ticket {ticket}`)
+	error(`no weather of the "{season}" has ticket {ticket} of {ticketCount}`)
 end
 
 Module.getWeatherLook = function(weather: Weather): WeatherLook
