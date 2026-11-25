@@ -8,6 +8,7 @@ local ElectricGuitar = require("@game/StarterPlayer/StarterPlayerScripts/Client/
 local Keycard = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Keycard")
 local Pizza = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Pizza")
 local PizzaBox = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/PizzaBox")
+local Watermelon = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Watermelon")
 -- Types
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
 type ClientDefinition = PropType.ClientDefinition
@@ -24,6 +25,7 @@ local DEFINITIONS: { ClientDefinition } = {
 	AcousticGuitar,
 	PizzaBox,
 	Pizza,
+	Watermelon,
 }
 
 return table.freeze(DEFINITIONS)

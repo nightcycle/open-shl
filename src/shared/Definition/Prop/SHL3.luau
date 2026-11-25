@@ -25,10 +25,10 @@ local DEFINITIONS: { PropDefinition } = {
 	{ Id = "pizza-box", Name = "Pizza Box" },
 	-- eaten a bite at a time, the way the burger is
 	{ Id = "pizza", Name = "Pizza", Use = { Duration = 0.8 } },
+	{ Id = "watermelon", Name = "Watermelon", Use = { Duration = 0.8 } },
 }
 -- a row moves up into the list above once both halves of its prop are in the game's set
 local UPCOMING: { PropDefinition } = {
-	{ Id = "watermelon", Name = "Watermelon", Use = { Duration = 0.8 } },
 	{ Id = "bloxy-cola", Name = "Bloxy Cola", Use = { Duration = 3 } },
 	-- a sip, then a minute before the next
 	{ Id = "latte", Name = "Latte", Use = { Duration = 3, Lockout = 63 } },
