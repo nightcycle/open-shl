@@ -23,6 +23,7 @@ local SessionEntitlementsContext =
 local SessionGemsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Gems")
 local SessionInventoryContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Inventory")
+local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
 local SessionPowerLimitContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/PowerLimit")
 -- Types
@@ -30,6 +31,7 @@ type Character = SessionService.Character
 type IdentityKey = SessionService.IdentityKey
 type BaseInventory = SessionService.BaseInventory
 type EntitlementKey = SessionEntitlementsContext.EntitlementKey
+type Owned = SessionService.Owned
 export type Properties = {
 	children: { [string]: React.ReactNode }?,
 }
@@ -52,6 +54,9 @@ return function(props: Properties): React.ReactNode
 	end)
 	local inventory = useSignalState(SessionService.InventoryChanged, function(): BaseInventory
 		return SessionService:GetInventory()
+	end)
+	local owned = useSignalState(SessionService.OwnedChanged, function(): Owned
+		return SessionService:GetOwned()
 	end)
 
 	local credits = usePlayerAttribute(AttributeDefinition.Credits)
@@ -107,7 +112,11 @@ return function(props: Properties): React.ReactNode
 							}, {
 								Entitlements = e(SessionEntitlementsContext.Provider, {
 									value = entitlements,
-								}, props.children),
+								}, {
+									Owned = e(SessionOwnedContext.Provider, {
+										value = owned,
+									}, props.children),
+								}),
 							}),
 						}),
 					}),

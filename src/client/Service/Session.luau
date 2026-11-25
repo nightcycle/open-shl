@@ -15,6 +15,7 @@ local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remo
 local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
 local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
@@ -25,6 +26,7 @@ type Snapshot = SessionType.Snapshot
 export type Character = CharacterType.Character
 export type IdentityKey = CharacterType.IdentityKey
 export type BaseInventory = BaseType.BaseInventory
+export type Owned = EconomyType.Owned
 export type QuestState = QuestType.QuestState
 export type PublicProfile = ProfileType.PublicProfile
 export type DailyReward = SessionType.DailyReward
@@ -38,12 +40,15 @@ type SessionServiceImpl = {
 	GetActiveIdentityKey: (self: SessionService) -> IdentityKey,
 	GetActiveCharacter: (self: SessionService) -> Option<Character>,
 	GetInventory: (self: SessionService) -> BaseInventory,
+	GetOwned: (self: SessionService) -> Owned,
 	GetQuest: (self: SessionService) -> QuestState?,
 	GetProfiles: (self: SessionService) -> { PublicProfile },
 	GetDailyReward: (self: SessionService) -> DailyReward?,
 	SelectCharacter: (self: SessionService, id: string) -> Result<true, string>,
 	SwapIdentity: (self: SessionService) -> Result<IdentityKey, string>,
 	SaveCharacter: (self: SessionService, character: Character) -> Result<Character, string>,
+	RollCharacter: (self: SessionService, id: string) -> Result<Character, string>,
+	PurchaseItem: (self: SessionService, id: string) -> Result<true, string>,
 	FilterText: (self: SessionService, text: string) -> Result<string, string>,
 	SetInMenu: (self: SessionService, isInMenu: boolean) -> (),
 }
@@ -54,6 +59,7 @@ export type SessionService = typeof(setmetatable(
 		CharactersChanged: Signal<{ Character }>,
 		ActiveCharacterChanged: Signal<string, IdentityKey>, -- the slot or the identity changed
 		InventoryChanged: Signal<BaseInventory>,
+		OwnedChanged: Signal<Owned>,
 		QuestChanged: Signal<QuestState?>,
 		ProfilesChanged: Signal<{ PublicProfile }>,
 		DailyRewardGranted: Signal<DailyReward>,
@@ -63,6 +69,7 @@ export type SessionService = typeof(setmetatable(
 		_ActiveCharacterId: string,
 		_ActiveIdentityKey: IdentityKey,
 		_Inventory: BaseInventory,
+		_Owned: Owned,
 		_Quest: QuestState?,
 		_Profiles: { PublicProfile },
 		_DailyReward: DailyReward?,
@@ -118,6 +125,11 @@ local function setInventory(self: SessionService, inventory: BaseInventory)
 	self.InventoryChanged:Fire(inventory)
 end
 
+local function setOwned(self: SessionService, owned: Owned)
+	self._Owned = owned
+	self.OwnedChanged:Fire(owned)
+end
+
 local function setQuest(self: SessionService, quest: QuestState?)
 	self._Quest = quest
 	self.QuestChanged:Fire(quest)
@@ -136,6 +148,10 @@ local function setSnapshot(self: SessionService, snapshot: Snapshot)
 	-- a game without furniture hands none over, nothing is owned there for good
 	if snapshot.Inventory then
 		setInventory(self, snapshot.Inventory)
+	end
+	-- a game that holds nothing back has nothing to say of it
+	if snapshot.Owned then
+		setOwned(self, snapshot.Owned)
 	end
 	setQuest(self, snapshot.Quest)
 	self.Loaded:Fire()
@@ -178,6 +194,11 @@ function SessionService:GetInventory(): BaseInventory
 	return self._Inventory
 end
 
+-- what the player has of what the game holds back at a price, nothing in a game that sells none of it
+function SessionService:GetOwned(): Owned
+	return self._Owned
+end
+
 function SessionService:GetQuest(): QuestState?
 	return self._Quest
 end
@@ -216,6 +237,18 @@ function SessionService:SaveCharacter(character: Character): Result<Character, s
 	return res
 end
 
+-- answers with a character dealt anew for the slot. it's a draft: nothing of the session changes by it
+function SessionService:RollCharacter(id: string): Result<Character, string>
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	return NetworkService:Invoke(RemoteDefinition.RollCharacter, id)
+end
+
+-- asks to buy what an item or a power is sold as. what's owned follows by the server's own word
+function SessionService:PurchaseItem(id: string): Result<true, string>
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	return NetworkService:Invoke(RemoteDefinition.PurchaseItem, id)
+end
+
 function SessionService:FilterText(text: string): Result<string, string>
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	return NetworkService:Invoke(RemoteDefinition.FilterText, text)
@@ -236,6 +269,7 @@ return ServiceLocker(function(): SessionService
 		CharactersChanged = Signal.new(),
 		ActiveCharacterChanged = Signal.new(),
 		InventoryChanged = Signal.new(),
+		OwnedChanged = Signal.new(),
 		QuestChanged = Signal.new(),
 		ProfilesChanged = Signal.new(),
 		DailyRewardGranted = Signal.new(),
@@ -246,6 +280,7 @@ return ServiceLocker(function(): SessionService
 		_ActiveIdentityKey = AttributeDefinition.get(player.Character, AttributeDefinition.IdentityKey),
 		-- nothing is owned until the server says so
 		_Inventory = table.freeze({ FurnitureIds = table.freeze({}), ThemeIds = table.freeze({}) }),
+		_Owned = table.freeze({ ItemIds = table.freeze({}), PowerIds = table.freeze({}) }),
 		_Quest = nil :: QuestState?,
 		_Profiles = table.freeze({}),
 		_DailyReward = nil :: DailyReward?,
@@ -263,6 +298,12 @@ return ServiceLocker(function(): SessionService
 		self._Connections,
 		NetworkService:Connect(RemoteDefinition.InventoryChanged, function(inventory: BaseInventory)
 			setInventory(self, inventory)
+		end)
+	)
+	table.insert(
+		self._Connections,
+		NetworkService:Connect(RemoteDefinition.OwnedChanged, function(owned: Owned)
+			setOwned(self, owned)
 		end)
 	)
 	table.insert(
@@ -380,6 +421,7 @@ end, function(self: SessionService)
 	self.CharactersChanged:Destroy()
 	self.ActiveCharacterChanged:Destroy()
 	self.InventoryChanged:Destroy()
+	self.OwnedChanged:Destroy()
 	self.QuestChanged:Destroy()
 	self.ProfilesChanged:Destroy()
 	self.DailyRewardGranted:Destroy()
