@@ -10,6 +10,7 @@ local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/Abi
 local AbilityLibrary = require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library")
 local Aim = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/Aim")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
 local ConditionStore = require("@game/ReplicatedStorage/Shared/Ability/ConditionStore")
 local Context = require("@game/ReplicatedStorage/Shared/Ability/Context")
 local Machine = require("@game/ReplicatedStorage/Shared/Ability/Machine")
@@ -19,6 +20,7 @@ local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remo
 local VFXService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/VFX")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
+local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ConditionStore = ConditionStore.ConditionStore
 type Machine = Machine.Machine
 type Aim = AbilityType.Aim
@@ -46,6 +48,8 @@ type Loadout = {
 	LeavingTools: { [string]: Tool },
 	-- one of its tools is out or one of its machines isn't where it rests
 	IsEngaged: boolean,
+	-- what keeps the avatar where it stands for as long as the server has it frozen
+	FrozenHold: VFXType.Handle?,
 	Connections: { RBXScriptConnection },
 }
 type AbilityServiceImpl = {
@@ -91,6 +95,10 @@ local function unload(self: AbilityService)
 	end
 	for _, machine in loadout.Machines do
 		machine:Destroy()
+	end
+	if loadout.FrozenHold then
+		loadout.FrozenHold.Stop()
+		loadout.FrozenHold = nil
 	end
 	loadout.Store:Destroy()
 	if loadout.IsEngaged then
@@ -407,6 +415,25 @@ local function load(self: AbilityService, grants: { Grant })
 			end
 		end)
 	)
+	-- the server says when the avatar is frozen, holding it is up to the client that walks it: a pace the server
+	-- wrote would be in the way of every move that sets one
+	assert(VFXService.IsInitialized, `the vfx service isn't initialized`)
+	local scope = VFXService:NewScope(character)
+	local function refreshFrozen()
+		local isFrozen = AttributeDefinition.get(character, AttributeDefinition.IsFrozen)
+		local hold = loadout.FrozenHold
+		if isFrozen and not hold then
+			loadout.FrozenHold = scope.start(ClientVFXDefinition.Root, {})
+		elseif not isFrozen and hold then
+			loadout.FrozenHold = nil
+			hold.Stop()
+		end
+	end
+	table.insert(
+		loadout.Connections,
+		character:GetAttributeChangedSignal(AttributeDefinition.IsFrozen.Name):Connect(refreshFrozen)
+	)
+	refreshFrozen()
 	refreshInputs(self)
 end
 
