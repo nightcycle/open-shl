@@ -31,9 +31,13 @@ Types.Slot = Type.strictInterface({
 export type Rooms = {
 	-- whose residence a player is inside of, their own included
 	GetHost: (player: Player) -> Player?,
+	-- asks again if a player is given a residence, for a save that changed its answer in the middle of a visit: one
+	-- who's due a residence + has none is handed one, one who has one + isn't due it any more gives it up
+	Rehouse: (player: Player) -> (),
 }
 Types.Rooms = Type.strictInterface({
 	GetHost = Type.callback,
+	Rehouse = Type.callback,
 })
 
 -- the part of the residences that's one game's own: where they are in its map, who gets one, what's behind a door +

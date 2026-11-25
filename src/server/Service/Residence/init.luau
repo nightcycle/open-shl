@@ -120,6 +120,22 @@ local function free(self: ResidenceService, player: Player)
 	end
 end
 
+-- a player is housed as their session comes up. where a save can change if its player is, the game asks again
+local function rehouse(self: ResidenceService, player: Player)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local sessionOpt = SessionService:Get(player)
+	if sessionOpt.IsSome and RULE.GetIfHoused(sessionOpt.Value.Save) then
+		assign(self, player)
+		return
+	end
+	for _, owner in self._Owners do
+		if owner == player then
+			free(self, player)
+			return
+		end
+	end
+end
+
 -- the lock only keeps the door shut, a visitor who's already inside stays
 local function enter(self: ResidenceService, player: Player, residenceId: ResidenceId): Result<ResidenceState, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
@@ -178,6 +194,9 @@ return ServiceLocker(function(): ResidenceService
 	local rooms: Rooms = table.freeze({
 		GetHost = function(player: Player): Player?
 			return self._Hosts[player]
+		end,
+		Rehouse = function(player: Player)
+			rehouse(self, player)
 		end,
 	})
 	local stop = RULE.Start(rooms)
