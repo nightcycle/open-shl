@@ -40,7 +40,8 @@ type EconomyServiceImpl = {
 		self: EconomyService,
 		player: Player,
 		purchasable: Purchasable,
-		getOwnedIds: (save: PlayerSave) -> { string }
+		getOwnedIds: (save: PlayerSave) -> { string },
+		ids: { string }?
 	) -> Result<true, string>,
 }
 export type EconomyService = typeof(setmetatable(
@@ -327,11 +328,13 @@ function EconomyService:Grant(player: Player, currency: PseudoEnum.Currency, amo
 end
 
 -- the price is taken + the piece is owned in one write, a save never holds one without the other. where a save keeps
--- what's owned is whoever sells it to say
+-- what's owned is whoever sells it to say. ids are what it hands over where that's more than itself: all of them
+-- for the one price, + it's only owned already once every one of them is
 function EconomyService:Purchase(
 	player: Player,
 	purchasable: Purchasable,
-	getOwnedIds: (save: PlayerSave) -> { string }
+	getOwnedIds: (save: PlayerSave) -> { string },
+	ids: { string }?
 ): Result<true, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
@@ -339,7 +342,13 @@ function EconomyService:Purchase(
 		return Result.err(`{player.Name} has no session`)
 	end
 	local save = sessionOpt.Value.Save
-	if table.find(getOwnedIds(save), purchasable.Id) then
+	local handedIds: { string } = ids or { purchasable.Id }
+	local ownedIds = getOwnedIds(save)
+	local isOwned = true
+	for _, id in handedIds do
+		isOwned = isOwned and table.find(ownedIds, id) ~= nil
+	end
+	if isOwned then
 		return Result.err(`"{purchasable.Name}" is already owned`)
 	end
 	if save.Balances[purchasable.Currency] < purchasable.Price then
@@ -347,7 +356,12 @@ function EconomyService:Purchase(
 	end
 	return update(player, function(t: PlayerSave): PlayerSave?
 		t.Balances[purchasable.Currency] -= purchasable.Price
-		table.insert(getOwnedIds(t), purchasable.Id)
+		local list = getOwnedIds(t)
+		for _, id in handedIds do
+			if not table.find(list, id) then
+				table.insert(list, id)
+			end
+		end
 		return t
 	end)
 end
