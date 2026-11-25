@@ -33,6 +33,19 @@ export type Features = {
 	Fixtures: boolean, -- what a map tags for the server to run: beacons, gates, hazards, a reactor + what's put back up
 	PlayerMode: boolean, -- who fights + who sits fights out is each player's own pick, in one place
 	Leaderstats: boolean, -- what the server tells of a player in the columns of the engine's list of players
+	Environment: boolean, -- a clock, a season + weather of its own that light the place, where it isn't DayNight's lamps
+	Crime: boolean, -- what a villain breaks into + what a disaster sets on the town for its heroes
+	Npcs: boolean, -- bodies nobody plays that walk the map
+	Telepads: boolean, -- pads + lifts that set whoever steps on them down at their other end
+	Codes: boolean, -- a word typed in a box that pays out once
+	Allowance: boolean, -- money for being there, by the clock
+	Rent: boolean, -- what isn't owned is worn for a fee
+	Promo: boolean, -- what being in the group gives
+	Scenery: boolean, -- what a map tags for show: what spins, flickers + swaps its picture
+	Acrobatics: boolean, -- flips + rolls off a panel of their own
+	Chat: boolean, -- a log that names who speaks by who they play
+	Mask: boolean, -- a mask goes on + off without the rest of roleplay
+	Movement: boolean, -- a second jump + a body that goes limp
 }
 Types.Features = Type.strictInterface({
 	Residences = Type.boolean,
@@ -52,6 +65,19 @@ Types.Features = Type.strictInterface({
 	Fixtures = Type.boolean,
 	PlayerMode = Type.boolean,
 	Leaderstats = Type.boolean,
+	Environment = Type.boolean,
+	Crime = Type.boolean,
+	Npcs = Type.boolean,
+	Telepads = Type.boolean,
+	Codes = Type.boolean,
+	Allowance = Type.boolean,
+	Rent = Type.boolean,
+	Promo = Type.boolean,
+	Scenery = Type.boolean,
+	Acrobatics = Type.boolean,
+	Chat = Type.boolean,
+	Mask = Type.boolean,
+	Movement = Type.boolean,
 })
 
 -- a way to get a value for every game. only the one of the game that's built is ever called, so what another's needs
