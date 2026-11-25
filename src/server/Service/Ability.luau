@@ -195,6 +195,24 @@ function settleHand(self: AbilityService, player: Player, loadout: Loadout)
 	end
 end
 
+-- has a loadout send back whatever else comes into the hand of its avatar while one of its abilities is engaged, for
+-- as long as it lasts. only ever in a game that keeps the hand, once for every loadout
+local function watchHand(self: AbilityService, player: Player, loadout: Loadout)
+	table.insert(
+		loadout.Connections,
+		loadout.Character.ChildAdded:Connect(function(child: Instance)
+			-- the engine is still putting it there, it's sent back once it's in
+			if
+				loadout.IsEngaged
+				and child:IsA("Tool")
+				and child:GetAttribute(PowerDefinition.TOOL_ID_ATTRIBUTE) == nil
+			then
+				task.defer(settleHand, self, player, loadout)
+			end
+		end)
+	)
+end
+
 local function onEquipped(self: AbilityService, player: Player, loadout: Loadout, id: string)
 	-- back before it counted as put away: its ability never hears that it left
 	if loadout.LeavingTools[id] then
@@ -441,19 +459,7 @@ function AbilityService:Grant(player: Player, character: Model, grants: { Grant 
 	-- a machine can be off where it rests by the time it's handed over
 	refreshEngaged(self, player, loadout)
 	if self._IsHandKept then
-		table.insert(
-			loadout.Connections,
-			character.ChildAdded:Connect(function(child: Instance)
-				-- the engine is still putting it there, it's sent back once it's in
-				if
-					loadout.IsEngaged
-					and child:IsA("Tool")
-					and child:GetAttribute(PowerDefinition.TOOL_ID_ATTRIBUTE) == nil
-				then
-					task.defer(settleHand, self, player, loadout)
-				end
-			end)
-		)
+		watchHand(self, player, loadout)
 	end
 	table.insert(
 		loadout.Connections,
@@ -491,10 +497,21 @@ function AbilityService:GetIfEngaged(player: Player): boolean
 	return loadout ~= nil and loadout.IsEngaged
 end
 
--- said once as the game starts, before anybody has abilities
+-- said once as the game starts. whoever has their abilities by then is held to it from here on, the same as
+-- everybody who gets theirs later
 function AbilityService:KeepHand()
 	assert(self.IsInitialized, `the ability service isn't initialized`)
+	if self._IsHandKept then
+		return
+	end
 	self._IsHandKept = true
+	for player, loadout in self._Loadouts do
+		watchHand(self, player, loadout)
+		-- whatever else got into a hand an ability already had goes back
+		if loadout.IsEngaged then
+			task.defer(settleHand, self, player, loadout)
+		end
+	end
 end
 
 return ServiceLocker(function(): AbilityService
