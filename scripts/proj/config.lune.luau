@@ -107,8 +107,28 @@ do -- write in a do block now to make it easier to copy to other things later / 
 				["$path"] = CONTENT.PropPath,
 			}
 		end
+		-- a room only exists on the client of whoever is in it, so the rooms are where a client finds them
+		if CONTENT.ApartmentPath then
+			lib["apartment"] = {
+				["$path"] = CONTENT.ApartmentPath,
+			}
+		end
 		node["lib"] = lib
 	end)
+
+	-- what only the server clones is kept where no client is sent it. a game with nothing of the kind has no word on
+	-- the service
+	local npcPath = CONTENT.NpcPath
+	if npcPath then
+		appendService("ServerStorage", function(node: rojo.ProjectNode)
+			node["lib"] = {
+				["$className"] = "Folder",
+				["npc"] = {
+					["$path"] = npcPath,
+				} :: rojo.ProjectNode,
+			}
+		end)
+	end
 
 	appendService("StarterPlayer", function(node: rojo.ProjectNode)
 		-- every avatar is dressed by the game, the look a player joins with would only load in late + cover it

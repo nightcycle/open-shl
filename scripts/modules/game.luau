@@ -20,6 +20,11 @@ export type GameContent = {
 	-- becomes ReplicatedStorage/lib/prop: what an avatar wears that isn't an item of its library. a game that puts
 	-- none on goes without it
 	PropPath: string?,
+	-- becomes ReplicatedStorage/lib/apartment: the rooms a flat is built from. a game without flats goes without it
+	ApartmentPath: string?,
+	-- becomes ServerStorage/lib/npc: the bodies nobody plays, which the server clones. a game without any goes
+	-- without it
+	NpcPath: string?,
 	-- the items of the game, as <group>/<category>/<key>
 	CharacterPath: string,
 	-- the items it wears out of the library of SHL2, one <group>/<category>/<key> per line. a game without a list
@@ -66,6 +71,8 @@ local CONTENTS: { [GameId]: GameContent } = table.freeze({
 		ScenePath = "lib/scene/shl-3",
 		-- the cuffs its villains are held in
 		PropPath = "lib/prop/core",
+		ApartmentPath = "lib/apartment/shl-3",
+		NpcPath = "lib/npc/shl-3",
 		CharacterPath = "lib/character/shl-3",
 		BorrowListPath = "lib/character/shl-3/borrow.txt",
 		-- what the legacy place was set to
@@ -147,6 +154,12 @@ Module.getContent = function(id: GameId): GameContent
 	end
 	if content.PropPath then
 		table.insert(paths, content.PropPath)
+	end
+	if content.ApartmentPath then
+		table.insert(paths, content.ApartmentPath)
+	end
+	if content.NpcPath then
+		table.insert(paths, content.NpcPath)
 	end
 	for _, path in paths do
 		assert(fs.isDir(path), `GAME={id} is built from "{path}", which isn't there`)

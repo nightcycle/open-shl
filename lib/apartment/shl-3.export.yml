@@ -1,0 +1,55 @@
+# how the rooms of the apartments of superhero life 3 come out of its legacy place file. run from the root of the
+# repo:
+#   lune run scripts/util/export-map.lune.luau lib/apartment/shl-3.export.yml
+# the place file is never opened in studio + never edited (it carries backdoor scripts), so whatever a room needs
+# that the place doesn't have is said here + applied again by every export
+#
+# lib/apartment/shl-3 becomes ReplicatedStorage/lib/apartment in a place of the game. a flat is one of the four,
+# built at the anchor of its slot in the tower (the 24 parts of the map that are tagged ApartmentAnchor): the
+# PrimaryPart of each room is its own Anchor, which is put where the one of the slot is. Gate holds the Teleport an
+# owner lands at + the Telepad that takes them back down to the lobby
+place: Superhero Life III.rbxl
+
+# none of the four holds a script. the one that kept everybody but the owner out sat on the anchors of the tower +
+# is on the list of the map
+known_scripts: lib/map/valor-city.scripts.tsv
+
+# rojo names what a file holds after the file, which is how the rooms get the names the code looks for. the legacy
+# game sold them for 250, 1250, 4250 + 10000 credits
+exports:
+  - from: ServerStorage/RoomAssets/LowClass
+    to: lib/apartment/shl-3/low-class.rbxm
+  - from: ServerStorage/RoomAssets/MiddleClass
+    to: lib/apartment/shl-3/middle-class.rbxm
+  - from: ServerStorage/RoomAssets/UpperClass
+    to: lib/apartment/shl-3/upper-class.rbxm
+  - from: ServerStorage/RoomAssets/LuxuryClass
+    to: lib/apartment/shl-3/luxury-class.rbxm
+
+# `at` is a path into the place, `count` is how many it finds today. no rule changes a thing, they keep count of
+# what a room is found by so a place that changed stops the export
+rules:
+  - at: ServerStorage/RoomAssets/*/Anchor
+    count: 4
+    where: { is_a: BasePart }
+  - at: ServerStorage/RoomAssets/LowClass/Gate/*
+    count: 2
+  - at: ServerStorage/RoomAssets/MiddleClass/Gate/*
+    count: 2
+  - at: ServerStorage/RoomAssets/UpperClass/Gate/*
+    count: 2
+  - at: ServerStorage/RoomAssets/LuxuryClass/Gate/*
+    count: 2
+  # every seat is the engine's own + sat on as it is
+  - at: ServerStorage/RoomAssets/LowClass/**
+    count: 2
+    where: { class: Seat }
+  - at: ServerStorage/RoomAssets/MiddleClass/**
+    count: 6
+    where: { class: Seat }
+  - at: ServerStorage/RoomAssets/UpperClass/**
+    count: 18
+    where: { class: Seat }
+  - at: ServerStorage/RoomAssets/LuxuryClass/**
+    count: 29
+    where: { class: Seat }

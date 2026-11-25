@@ -1,0 +1,39 @@
+# how the bodies of superhero life 3 that nobody plays come out of its legacy place file. run from the root of the
+# repo:
+#   lune run scripts/util/export-map.lune.luau lib/npc/shl-3.export.yml
+# the place file is never opened in studio + never edited (it carries backdoor scripts), so whatever a body needs
+# that the place doesn't have is said here + applied again by every export
+#
+# lib/npc/shl-3 becomes ServerStorage/lib/npc in a place of the game: the server clones a body from it, no client
+# is sent the library
+place: Superhero Life III.rbxl
+
+# the zombie came with five scripts: what it hunts, how it moves, what its arms do + how it heals. all of them are
+# left behind, a service runs every body from the outside. the 22 values + animations of its Animate go with that
+# script, the ids they named are in the table next to it
+known_scripts: lib/npc/shl-3.scripts.tsv
+
+# rojo names what a file holds after the file
+exports:
+  # a stock R15 rig of 14 mesh parts under a head that's a Part with a mesh, held together by 15 Motor6Ds. nothing of
+  # it is anchored, HumanoidRootPart is its PrimaryPart + its humanoid goes by the name of Zombie
+  - from: ServerStorage/Zombie
+    to: lib/npc/shl-3/zombie.rbxm
+
+# `at` is a path into the place, `count` is how many it finds today. what a rule can say is listed at the Rule type
+# of the tool
+rules:
+  - at: ServerStorage/Zombie/Zombie
+    count: 1
+    where: { class: Humanoid }
+  - at: ServerStorage/Zombie/HumanoidRootPart
+    count: 1
+  # the 14 parts of the body, the head is the one Part more that's seen
+  - at: ServerStorage/Zombie/*
+    count: 14
+    where: { class: MeshPart }
+  # its face is loaded from the upload of the file the repo holds of it, once there is one
+  - at: ServerStorage/Zombie/Head/Zombie Face
+    count: 1
+    where: { class: Decal }
+    repoint: [TextureContent]
