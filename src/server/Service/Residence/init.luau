@@ -46,7 +46,7 @@ local RULE: Rule = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): Rule
-		error(`shl3 has no apartments yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(ResidenceType.Rule(RULE))
