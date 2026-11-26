@@ -35,11 +35,14 @@ export type TeamService = typeof(setmetatable(
 		IsInitialized: true,
 		-- an avatar came in on a side: it says which, + that it downed nobody yet
 		Deployed: Signal.Signal<Player, Model, TeamId>,
-		-- none in a place where nobody fights: nobody takes a side there
+		-- none for as long as nobody fights: nobody takes a side then
 		_Teams: { [TeamId]: Team },
-		-- none of it is saved: whoever comes back is put where there's room
+		-- none of it is saved: whoever comes back is put where there's room. it's kept while there are no sides, so
+		-- everybody is back on theirs once there are
 		_TeamIds: { [Player]: TeamId },
 		_AvatarConnections: { [Player]: RBXScriptConnection },
+		-- what takes down the part of it that's only up for as long as there are sides
+		_StopCallbacks: { () -> () },
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
 	},
@@ -90,8 +93,9 @@ local function onDowned(victim: Model)
 	end
 end
 
--- an avatar is on the side its player has as it comes in + stays on it for as long as it's in the world
-local function deploy(self: TeamService, player: Player, character: Model)
+-- an avatar is on the side its player has as it comes in + stays on it for as long as it's in the world. one that
+-- stood there as the sides were made around it is on its side as well, but nobody is told it came in: it didn't
+local function deploy(self: TeamService, player: Player, character: Model, isAnnounced: boolean)
 	local teamId: TeamId? = self:GetTeamId(player)
 	if not teamId then
 		return
@@ -115,7 +119,74 @@ local function deploy(self: TeamService, player: Player, character: Model)
 		end
 	end)
 	self._AvatarConnections[player] = connection
-	self.Deployed:Fire(player, character, teamId)
+	if isAnnounced then
+		self.Deployed:Fire(player, character, teamId)
+	end
+end
+
+-- players fight from here on: the sides are made, everybody with a session is on one + every avatar that's up wears
+-- it. whoever had a side before has it back, whoever came in since is put where there's room
+local function start(self: TeamService)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	assert(AvatarService.IsInitialized, `the avatar service isn't initialized`)
+	-- nobody is put anywhere by the engine: it knows who's in, not who has a session
+	for _, side in TeamDefinition.SIDES do
+		local team = Instance.new("Team")
+		team.Name = side.Name
+		team.TeamColor = BrickColor.new(side.BrickColorNumber)
+		team.AutoAssignable = false
+		team.Parent = Teams
+		self._Teams[side.Id] = team
+	end
+	local spawnedConnection = AvatarService.Spawned:Connect(function(player: Player, character: Model)
+		deploy(self, player, character, true)
+	end)
+	table.insert(self._StopCallbacks, function()
+		spawnedConnection:Disconnect()
+	end)
+	for _, player in Players:GetPlayers() do
+		local teamId: TeamId? = self:GetTeamId(player)
+		if not teamId then
+			continue
+		end
+		-- the team of the engine they were on went with the sides
+		assign(self, player, teamId)
+		local character = player.Character
+		if character and TakeDownUtil.getIfAlive(character) then
+			deploy(self, player, character, false)
+		end
+	end
+end
+
+-- no avatar that comes in is put on a side any more, + none that's up is listened to
+local function halt(self: TeamService)
+	for _, callback in self._StopCallbacks do
+		callback()
+	end
+	table.clear(self._StopCallbacks)
+	for _, connection in self._AvatarConnections do
+		connection:Disconnect()
+	end
+	table.clear(self._AvatarConnections)
+end
+
+-- nobody fights from here on: there are no sides, no avatar is on one + nothing is on anybody's head. who was on
+-- which is kept
+local function stop(self: TeamService)
+	halt(self)
+	for _, player in Players:GetPlayers() do
+		(player :: any).Team = nil
+		local character = player.Character
+		if character and TakeDownUtil.getIfAlive(character) then
+			AttributeDefinition.set(character, AttributeDefinition.TeamId, nil)
+			AttributeDefinition.set(character, AttributeDefinition.KillStreak, nil)
+			AttributeDefinition.set(character, AttributeDefinition.DownedBy, nil)
+		end
+	end
+	for _, team in self._Teams do
+		team:Destroy()
+	end
+	table.clear(self._Teams)
 end
 
 local function remove(self: TeamService, player: Player)
@@ -130,7 +201,7 @@ end
 local TeamService = {} :: TeamServiceImpl
 TeamService.__index = TeamService
 
--- nil in a place without sides + for a player without a session. whoever is asked about for the first time is put on
+-- nil while there are no sides + for a player without a session. whoever is asked about for the first time is put on
 -- the side with fewer players
 function TeamService:GetTeamId(player: Player): TeamId?
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
@@ -170,7 +241,9 @@ function TeamService:ChangeTeam(player: Player): Result<TeamId, string>
 end
 
 -- the sides of a place where players fight: who's on which, written onto every avatar as it comes in for the rule
--- of its fights to read, + what downing somebody pays. the one thing a client says is that it wants the other side
+-- of its fights to read, + what downing somebody pays. the one thing a client says is that it wants the other side.
+-- they're there for as long as players fight: a server that changes its mind about that has them made + dissolved
+-- as it does
 return ServiceLocker(function(): TeamService
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
@@ -187,6 +260,7 @@ return ServiceLocker(function(): TeamService
 		_Teams = {} :: { [TeamId]: Team },
 		_TeamIds = {} :: { [Player]: TeamId },
 		_AvatarConnections = {} :: { [Player]: RBXScriptConnection },
+		_StopCallbacks = {} :: { () -> () },
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, TeamService)
@@ -199,44 +273,34 @@ return ServiceLocker(function(): TeamService
 	table.insert(self._CleanUpCallbacks, function()
 		self.Deployed:Destroy()
 	end)
-	-- a place where nobody fights has nobody take a side
-	if not ModeDefinition.getIfPVPEnabled() then
-		return self
-	end
-
-	-- nobody is put anywhere by the engine: it knows who's in, not who has a session
-	for _, side in TeamDefinition.SIDES do
-		local team = Instance.new("Team")
-		team.Name = side.Name
-		team.TeamColor = BrickColor.new(side.BrickColorNumber)
-		team.AutoAssignable = false
-		team.Parent = Teams
-		self._Teams[side.Id] = team
-	end
-
-	local spawnedConnection = AvatarService.Spawned:Connect(function(player: Player, character: Model)
-		deploy(self, player, character)
-	end)
+	-- whoever leaves is forgotten, with or without sides
 	local removingConnection = SessionService.Removing:Connect(function(player: Player)
 		remove(self, player)
 	end)
 	table.insert(self._CleanUpCallbacks, function()
-		spawnedConnection:Disconnect()
 		removingConnection:Disconnect()
-		for _, connection in self._AvatarConnections do
-			connection:Disconnect()
+	end)
+	-- a place where nobody fights has nobody take a side. the avatars that came in before this was up are on theirs
+	-- from here on
+	local isStarted = false
+	local unobserve = ModeDefinition.observe(function(isPVP: boolean)
+		if isPVP == isStarted or not self.IsInitialized then
+			return
 		end
+		isStarted = isPVP
+		if isPVP then
+			start(self)
+		else
+			stop(self)
+		end
+	end)
+	table.insert(self._CleanUpCallbacks, function()
+		unobserve()
+		halt(self)
 		for _, team in self._Teams do
 			team:Destroy()
 		end
 	end)
-	-- the avatars that came in before this was up
-	for _, player in Players:GetPlayers() do
-		local character = player.Character
-		if character and SessionService:Get(player).IsSome then
-			deploy(self, player, character)
-		end
-	end
 
 	return self
 end, function(self: TeamService)
