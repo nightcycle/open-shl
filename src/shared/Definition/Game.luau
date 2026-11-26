@@ -101,7 +101,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		CustomServers = false,
 		-- heroes + villains where a place has its players fight, + the jail a villain comes in at
 		Teams = true,
-		Jobs = false,
+		-- the four pads that take whoever steps on one on for a shift, on either side + in either place
+		Jobs = true,
 		-- what its pads hand out: the two that are built so far, the rest of them lie there
 		Props = true,
 		PrivateServerToggle = false,
