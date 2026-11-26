@@ -56,6 +56,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- who speaks is named by who they play. the engine asks one thing per client about a line, this is who answers
+	{
+		Name = "Chat",
+		IsFeatured = FEATURES.Chat,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Chat")
+			assert(not service.IsInitialized, `the chat service is already initialized`)
+			return service
+		end,
+	},
 	-- the sky, the season + the hour of a game with weather: its server says them, this client draws them for itself
 	{
 		Name = "Environment",
