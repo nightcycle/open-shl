@@ -15,6 +15,7 @@ local DEFINITIONS: { ServerDefinition } = table.freeze({
 	require("@game/ServerScriptService/Server/Ability/Library/Ranged/LaserRay"),
 	require("@game/ServerScriptService/Server/Ability/Library/Ranged/LaserVision"),
 	require("@game/ServerScriptService/Server/Ability/Library/Ranged/MachineGun"),
+	require("@game/ServerScriptService/Server/Ability/Library/Special/HealingRay"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Flight"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/SuperSpeed"),
 })

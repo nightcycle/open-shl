@@ -105,6 +105,16 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 0,
 		ColorGroups = {},
 	},
+	-- it takes nothing off, what it hits gets 20 back
+	{
+		Id = "special_healing-ray",
+		Group = "special",
+		Name = "Healing",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 0,
+		ColorGroups = {},
+	},
 }
 -- a row moves up into the list above once both halves of its ability are in the game's set
 local UPCOMING: { PowerDefinition } = {
@@ -186,16 +196,6 @@ local UPCOMING: { PowerDefinition } = {
 		Id = "special_energy-field",
 		Group = "special",
 		Name = "Energy Field",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 0,
-		ColorGroups = {},
-	},
-	-- it takes nothing off, what it hits gets 20 back
-	{
-		Id = "special_healing-ray",
-		Group = "special",
-		Name = "Healing",
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 0,
