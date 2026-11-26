@@ -2,10 +2,13 @@
 -- Services
 -- Packages
 -- Modules
+local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 -- Types
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local LegacyImportType = require("@game/ServerScriptService/Server/Type/LegacyImport")
 local SaveType = require("@game/ServerScriptService/Server/Type/Save")
 local SessionSectionType = require("@game/ServerScriptService/Server/Type/SessionSection")
+type Owned = EconomyType.Owned
 type PlayerSave = SaveType.PlayerSave
 type SavePatch = LegacyImportType.SavePatch
 type SessionSection = SessionSectionType.SessionSection
@@ -33,10 +36,30 @@ local function import(save: PlayerSave, patch: SavePatch)
 		end
 	end
 end
+
+-- nothing here is bought for good: what a save says of what the game holds back is whether its player was ever seen
+-- in the group. the passes aren't the save's to say
+local function getOwned(save: PlayerSave): Owned
+	local section = save.SHL1
+	assert(section, `a save of this game has its section`)
+	return {
+		ItemIds = {},
+		PowerIds = {},
+		HasGroupPerk = section.IsGroupPerkGranted,
+	}
+end
+
+local function setAttributes(player: Player, save: PlayerSave)
+	local section = save.SHL1
+	assert(section, `a save of this game has its section`)
+	AttributeDefinition.set(player, AttributeDefinition.HasGroupPerk, section.IsGroupPerkGranted)
+end
 -- Class
 local Section: SessionSection = table.freeze({
 	Patch = LegacyImportType.SHL1SavePatch,
 	Import = import,
+	SetAttributes = setAttributes,
+	GetOwned = getOwned,
 })
 
 return Section
