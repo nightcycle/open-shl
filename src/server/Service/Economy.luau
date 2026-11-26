@@ -77,6 +77,14 @@ local PASS_ATTEMPTS = 3
 -- a pass that was only just paid for can take a while to count as owned, it's given longer than a call that failed
 local PURCHASED_PASS_ATTEMPTS = 6
 local PASS_RETRY_DELAY = 2
+-- whether a pass of the game is sold as the asset it was before there were game passes: the engine tells of such a
+-- prompt on a signal of its own, which is only listened to where there's one to hear of
+local HAS_ASSET_PASSES = false
+for _, definition in ProductDefinition.list() do
+	if ProductDefinition.getIfGamePass(definition) and select(2, ProductDefinition.getPassPrompt(definition)) then
+		HAS_ASSET_PASSES = true
+	end
+end
 local isAmount = EconomyType.Balance
 local isReceipt = EconomyType.Receipt
 -- Variables
@@ -112,20 +120,54 @@ local function getIfGone(self: EconomyService, player: Player): boolean
 	return not self.IsInitialized or self._PurchasedPassKeys[player] == nil
 end
 
+-- yields. the engine is asked every way it knows a pass by: as the game pass it is, + one from before there were
+-- game passes as the asset it was sold as, under every id it ever had. owning it one way is owning it, a call that
+-- failed only counts where none of them said yes
+local function getIfPassOwnedNow(player: Player, definition: ProductDefinition): Result<boolean, string>
+	local errors: { string } = {}
+	local function ask(fn: () -> boolean): boolean
+		local success, value = pcall(fn)
+		if not success then
+			table.insert(errors, tostring(value))
+		end
+		return success and value == true
+	end
+	local passId: number? = if definition.IsAsset then definition.PassId else definition.LegacyId
+	local assetIds: { number } = if definition.IsAsset then { definition.LegacyId } else {}
+	if definition.IsAsset and definition.OtherLegacyIds then
+		for _, assetId in definition.OtherLegacyIds do
+			table.insert(assetIds, assetId)
+		end
+	end
+	if
+		passId
+		and ask(function(): boolean
+			return MarketplaceService:UserOwnsGamePassAsync(player.UserId, passId)
+		end)
+	then
+		return Result.ok(true)
+	end
+	for _, assetId in assetIds do
+		if ask(function(): boolean
+			return MarketplaceService:PlayerOwnsAssetAsync(player, assetId)
+		end) then
+			return Result.ok(true)
+		end
+	end
+	return if errors[1] then Result.err(errors[1]) else Result.ok(false)
+end
+
 -- yields. for a pass that was only just paid for a no is asked about again the way a call that failed is
 local function getIfPassOwned(
 	self: EconomyService,
 	player: Player,
-	passId: number,
+	definition: ProductDefinition,
 	isPurchased: boolean
 ): Result<boolean, string>
 	local attempts = if isPurchased then PURCHASED_PASS_ATTEMPTS else PASS_ATTEMPTS
 	local res: Result<boolean, string> = Result.err(`it wasn't asked for`)
 	for attempt = 1, attempts do
-		local success, value = pcall(function(): boolean
-			return MarketplaceService:UserOwnsGamePassAsync(player.UserId, passId)
-		end)
-		res = if success then Result.ok(value) else Result.err(tostring(value))
+		res = getIfPassOwnedNow(player, definition)
 		if (res.IsOk and (res.Value or not isPurchased)) or attempt == attempts then
 			break
 		end
@@ -144,7 +186,7 @@ local function checkPasses(self: EconomyService, player: Player)
 		if grant.Type ~= "Entitlement" then
 			continue
 		end
-		local ownedRes = getIfPassOwned(self, player, definition.LegacyId, false)
+		local ownedRes = getIfPassOwned(self, player, definition, false)
 		if getIfGone(self, player) then
 			return
 		end
@@ -176,7 +218,7 @@ local function checkPurchasedPass(
 		return
 	end
 	table.insert(purchasedKeys, key)
-	local ownedRes = getIfPassOwned(self, player, definition.LegacyId, true)
+	local ownedRes = getIfPassOwned(self, player, definition, true)
 	if getIfGone(self, player) then
 		return
 	end
@@ -433,21 +475,35 @@ return ServiceLocker(function(): EconomyService
 		end
 		return processReceipt(self, receipt)
 	end
+	-- a prompt of a pass ended, as the game pass or as the asset it was prompted as
+	local function finishPassPrompt(player: Player, id: number, isAsset: boolean, isPurchased: boolean)
+		local definitionRes = ProductDefinition.getFromPassPrompt(id, isAsset)
+		if not isPurchased or definitionRes.IsErr then
+			return
+		end
+		local grant = definitionRes.Value.Grant
+		if grant.Type == "Entitlement" then
+			checkPurchasedPass(self, player, definitionRes.Value, grant.Key)
+		end
+	end
 	table.insert(
 		self._Connections,
 		MarketplaceService.PromptGamePassPurchaseFinished:Connect(
 			function(player: Player, passId: number, isPurchased: boolean)
-				local definitionRes = ProductDefinition.getFromLegacyId(passId, true)
-				if not isPurchased or definitionRes.IsErr then
-					return
-				end
-				local grant = definitionRes.Value.Grant
-				if grant.Type == "Entitlement" then
-					checkPurchasedPass(self, player, definitionRes.Value, grant.Key)
-				end
+				finishPassPrompt(player, passId, false, isPurchased)
 			end
 		)
 	)
+	if HAS_ASSET_PASSES then
+		table.insert(
+			self._Connections,
+			MarketplaceService.PromptPurchaseFinished:Connect(
+				function(player: Player, assetId: number, isPurchased: boolean)
+					finishPassPrompt(player, assetId, true, isPurchased)
+				end
+			)
+		)
+	end
 
 	local addedConnection = SessionService.Added:Connect(function(player: Player)
 		add(self, player)
