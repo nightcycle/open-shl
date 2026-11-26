@@ -97,6 +97,16 @@ local ABILITY_LIMIT: RateLimit = table.freeze({ Count = 600, Duration = 10 })
 local FILTER_LIMIT: RateLimit = table.freeze({ Count = 10, Duration = 10 })
 -- a teleport is a web call as well, and every try at a custom server is a guess at its entry code
 local TELEPORT_LIMIT: RateLimit = table.freeze({ Count = 5, Duration = 10 })
+-- a guess at a code costs a call each
+local CODE_LIMIT: RateLimit = table.freeze({ Count = 5, Duration = 10 })
+-- no code is longer, what is never reaches whoever looks one up
+local CODE_LENGTH = 32
+local isCodeText = Type.intersection(Type.string, function(value: any): (boolean, string?)
+	if #value > CODE_LENGTH then
+		return false, `longer than {CODE_LENGTH} characters`
+	end
+	return true
+end)
 -- every change of what a server plays by makes or dissolves its sides
 local TOGGLE_LIMIT: RateLimit = table.freeze({ Count = 5, Duration = 10 })
 local isCharacter = CharacterType.Character
@@ -340,6 +350,11 @@ Module.TeleportFailed = newServerEvent("TeleportFailed", Type.string) :: ServerE
 -- each other. the answer is what the server plays by from then
 Module.SetServerPVP =
 	newClientFunction("SetServerPVP", Type.boolean, Type.boolean, TOGGLE_LIMIT, true) :: ClientFunction<boolean, boolean>
+
+-- codes
+-- what was typed into the box, as it was typed. the answer is what it paid, an error is the line to read instead
+Module.RedeemCode =
+	newClientFunction("RedeemCode", isCodeText, EconomyType.Balance, CODE_LIMIT, true) :: ClientFunction<number, string>
 
 -- alerts
 -- a line the town has for the player: whoever is sent one is shown it, who that is was the server's to pick
