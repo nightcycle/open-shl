@@ -3,6 +3,7 @@
 -- Packages
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
+local ApartmentDefinition = require("@game/ReplicatedStorage/Shared/Definition/Apartment")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local ResidenceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Residence")
 -- Types
@@ -258,6 +259,14 @@ Module.EnterResidence = newClientFunction(
 ) :: ClientFunction<ResidenceState, string>
 Module.LeaveResidence = newClientEvent("LeaveResidence", Type.none, INPUT_LIMIT) :: ClientEvent<nil>
 Module.ResidenceChanged = newServerEvent("ResidenceChanged", ResidenceDefinition.State) :: ServerEvent<ResidenceState>
+-- a flat of the tower, by how good a one: no name + no price crosses. an error is the line whoever asked is shown
+Module.PurchaseApartment = newClientFunction(
+	"PurchaseApartment",
+	ApartmentDefinition.Tier,
+	Type.literal(true),
+	REQUEST_LIMIT,
+	true
+) :: ClientFunction<true, number>
 -- the base of a residence, only its owner builds on it
 Module.PlaceFurniture =
 	newClientFunction("PlaceFurniture", isPlacement, isPlaced, REQUEST_LIMIT) :: ClientFunction<PlacedFurniture, FurniturePlacement>
