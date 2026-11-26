@@ -46,8 +46,9 @@ local Attributes: { Attribute<any> } = {}
 -- References
 -- Private Functions
 local function new(owner: Owner, name: string, validator: Validator, default: any): any
+	-- a player + their avatar may each say the same thing of themselves, under the same name
 	for _, other in Attributes do
-		assert(other.Name ~= name, `duplicate attribute "{name}"`)
+		assert(other.Name ~= name or other.Owner ~= owner, `duplicate attribute "{name}"`)
 	end
 	assert(validator(default))
 	local attribute = table.freeze({
@@ -138,6 +139,12 @@ Module.ActiveCharacterId = new("Player", "ActiveCharacterId", Type.string, "") :
 -- who their avatar was last dressed as: an avatar that's out of range isn't on a client, its player is. "" until the
 -- first dress
 Module.ActivePersonaName = new("Player", "ActivePersonaName", Type.string, "") :: Attribute<string>
+-- which of the two that is, told here for the same reason
+Module.ActiveIdentityKey =
+	new("Player", "ActiveIdentityKey", CharacterType.IdentityKey, "Main") :: Attribute<IdentityKey>
+-- what their avatar says of sitting fights out, for whoever hears them from where it isn't in range. nil until one of
+-- theirs came in + in a game where nobody gets to pick
+Module.IsPlayerPeaceful = new("Player", "IsPeaceful", Type.optional(Type.boolean), nil) :: Attribute<boolean?>
 Module.IsTutorialEnabled = new("Player", "IsTutorialEnabled", Type.boolean, true) :: Attribute<boolean>
 Module.IsApartmentLocked = new("Player", "IsApartmentLocked", Type.boolean, true) :: Attribute<boolean>
 -- whoever was sent to this server by the game picked their mode on the way, they aren't asked again
