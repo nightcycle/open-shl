@@ -15,7 +15,8 @@ local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Id
 type Result<V, E> = TypeUnionLib.Result<V, E>
 type Item = AppearanceType.Item
 type TextureGroupKey = AppearanceType.TextureGroupKey
-export type UniformDefinition = {
+-- the definition asks for this file, so the type is spelt out here
+type UniformDefinition = {
 	Id: string,
 	Items: { Item },
 }
