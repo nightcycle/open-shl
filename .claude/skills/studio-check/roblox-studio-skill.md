@@ -47,7 +47,7 @@ return game:GetService("HttpService"):JSONEncode(answer)
 ## Client commands
 
 `shell.get`, `shell.press { MenuId }`, `shell.close`, `boot.play`, `player.get`, `remote.fire`, `remote.invoke`, `event.read`, `event.wait`.
-In shl1 also `acrobatics.get`, `acrobatics.play { MoveId }`, `acrobatics.fix`.
+In shl1 also `acrobatics.get`, `acrobatics.play { MoveId }`, `acrobatics.fix`. In shl1 + shl3 also `chat.get` (the lines of shl1's own log + whether this player mutes), `chat.mute { IsMuting }`.
 In shl3 also `environment.get`, `environment.grade { Grade }`, `environment.override { Override }`, `environment.clear`.
 
 ## Recipes

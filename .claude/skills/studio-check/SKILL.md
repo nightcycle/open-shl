@@ -175,6 +175,7 @@ Client:
 | `player.get` | the local player's attributes, its avatar's, the workspace's, and the client's copy of the session |
 | `remote.fire`, `remote.invoke` | any client event / function through the client's real network service |
 | `acrobatics.get`, `acrobatics.play`, `acrobatics.fix` | where the game has the flips (shl1): a move by its id through the service the panel's buttons call (an error says why it was turned down), and what Fix Character does |
+| `chat.get`, `chat.mute` | where the game has the chat service (shl1, shl3): the lines of the game's own log, the newest last (shl1; always none in shl3, which reads its chat off the engine's window) + whether this player mutes the other mode, and what the Mute button does (`IsMuting`) |
 | `environment.get`, `environment.grade`, `environment.override`, `environment.clear` | where the game has a day (shl3): what this screen shows of it, one of the six grades, a season / weather / time of this screen's own, and back to the server's |
 | `event.read`, `event.wait` | the client's event log |
 
