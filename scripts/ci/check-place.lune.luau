@@ -98,6 +98,7 @@ local NEEDED_TAGS: { [game.GameId]: { string } } = {
 		"JobPad",
 		"Telepad",
 		"TelepadExit",
+		"Uniform",
 	},
 }
 -- the libraries only some of the games are built with, by the game that is. a place holds the ones of its game +
