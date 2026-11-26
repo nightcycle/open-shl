@@ -11,6 +11,7 @@ local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local MiscType = require("@game/ReplicatedStorage/Shared/Type/Misc")
 type EntitlementKey = EconomyType.EntitlementKey
+type Lock = EconomyType.Lock
 type IconDefinition = MiscType.IconDefinition
 type IdentityKey = CharacterType.IdentityKey
 
@@ -54,17 +55,33 @@ Types.PowerDefinition = Type.strictInterface({
 })
 
 -- one of the places a character has a power in, it holds one of its list at most. a power that isn't built yet is
--- listed where it's going to be
+-- listed where it's going to be. how many of the list from the top are anybody's + what opens the ones past them is
+-- the slot's to say: every one of them is anybody's in a slot that says neither
 export type PowerSlot = {
 	Key: string,
 	Caption: string, -- what the editor calls it
 	PowerIds: { string }, -- in the order the editor walks them
+	StarterCount: number?,
+	Lock: Lock?,
 }
-Types.PowerSlot = Type.strictInterface({
-	Key = Type.string,
-	Caption = Type.string,
-	PowerIds = Type.array(Type.string),
-})
+Types.PowerSlot = Type.intersection(
+	Type.strictInterface({
+		Key = Type.string,
+		Caption = Type.string,
+		PowerIds = Type.array(Type.string),
+		StarterCount = Type.optional(Type.intersection(Type.integer, Type.numberMin(0))),
+		Lock = Type.optional(EconomyType.Lock),
+	}),
+	function(value: PowerSlot): (boolean, string?)
+		if value.StarterCount ~= nil and value.StarterCount > #value.PowerIds then
+			return false, `more starters than the "{value.Key}" slot has powers`
+		end
+		if (value.Lock ~= nil) ~= (value.StarterCount ~= nil) then
+			return false, `the "{value.Key}" slot is to say its starters + the lock past them, or neither`
+		end
+		return true
+	end
+)
 
 -- what a game offers + how many of them a character carries, without the pass + with it, and which entitlement that
 -- pass hands out: a game whose limit no pass raises names none. the groups are in the order the editor lists them

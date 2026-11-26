@@ -11,11 +11,13 @@ local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 type Option<V> = TypeUnionLib.Option<V>
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local PowerType = require("@game/ReplicatedStorage/Shared/Type/Power")
 export type PowerGroup = PowerType.PowerGroup
 export type PowerDefinition = PowerType.PowerDefinition
 export type PowerSlot = PowerType.PowerSlot
 type IdentityKey = CharacterType.IdentityKey
+type Lock = EconomyType.Lock
 type PowerCatalogue = PowerType.PowerCatalogue
 -- Constants
 local ID_DELIMITER = "_"
@@ -49,6 +51,8 @@ local DefinitionsByGroup: { [PowerGroup]: { PowerDefinition } } = {}
 -- the slots of the game, each down to the powers of it that are offered. none in a game without
 local Slots: { PowerSlot } = {}
 local SlotsByPowerId: { [string]: PowerSlot? } = {}
+-- what opens a power its slot holds back. one that's still on its way has its lock ahead of its ability
+local LocksByPowerId: { [string]: Lock? } = {}
 -- References
 -- Private Functions
 -- Class
@@ -90,13 +94,17 @@ do
 		assert(not slotKeys[slot.Key], `duplicate power slot "{slot.Key}"`)
 		slotKeys[slot.Key] = true
 		local offered: PowerSlot = { Key = slot.Key, Caption = slot.Caption, PowerIds = {} }
-		for _, id in slot.PowerIds do
+		for index, id in slot.PowerIds do
 			assert(
 				DefinitionsById[id] ~= nil or upcomingIds[id],
 				`the "{slot.Key}" slot lists "{id}", which is no power`
 			)
 			assert(not slottedIds[id], `"{id}" is in two slots`)
 			slottedIds[id] = true
+			-- what's held back goes by the place on the whole list, a power that isn't built yet has one all the same
+			if slot.Lock and index > (slot.StarterCount or #slot.PowerIds) then
+				LocksByPowerId[id] = slot.Lock
+			end
 			if DefinitionsById[id] then
 				table.insert(offered.PowerIds, id)
 				SlotsByPowerId[id] = offered
@@ -157,6 +165,11 @@ end
 -- nil for a power that's in none, which is every power of a game without slots
 Module.getSlot = function(id: string): PowerSlot?
 	return SlotsByPowerId[id]
+end
+
+-- what opens a power its slot holds back, nil for one that's anybody's
+Module.getLock = function(id: string): Lock?
+	return LocksByPowerId[id]
 end
 
 -- whether an identity has the powers of its character to use
