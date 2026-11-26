@@ -17,6 +17,8 @@ type Properties = ClientVFXType.Warp
 return ClientVFX.event(ClientVFXDefinition.Warp, function(props: Properties, scope: ClientScope)
 	local character = scope.Character
 	if character then
-		character:PivotTo(CFrame.new(props.Position))
+		character:PivotTo(
+			if props.IsHeadingKept then character:GetPivot().Rotation + props.Position else CFrame.new(props.Position)
+		)
 	end
 end)

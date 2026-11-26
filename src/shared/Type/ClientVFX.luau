@@ -322,21 +322,27 @@ Types.FieldOfView = Type.strictInterface({
 -- the camera of whoever shows it follows somebody else, picked with the buttons it comes with
 export type Spectate = {
 	Targets: { Model }?, -- who there is to watch, the avatar of every other player without
+	Index: number?, -- who of them the camera starts on, counted from 1 + wrapped around. nobody without
+	IsBare: boolean?, -- it comes without its buttons
 }
 Types.Spectate = Type.strictInterface({
 	Targets = Type.optional(Type.array(Type.instanceIsA("Model"))),
+	Index = Type.optional(Type.intersection(Type.integer, Type.numberMin(1))),
+	IsBare = Type.optional(Type.boolean),
 })
 
 -- holds the avatar where it stands: it neither walks nor jumps
 export type Root = {}
 Types.Root = Type.strictInterface({})
 
--- puts the avatar somewhere else at once, upright + facing the way the world does
+-- puts the avatar somewhere else at once
 export type Warp = {
 	Position: Vector3, -- where the middle of it ends up
+	IsHeadingKept: boolean?, -- it stays turned the way it was, upright + facing the way the world does without
 }
 Types.Warp = Type.strictInterface({
 	Position = isFiniteVector3,
+	IsHeadingKept = Type.optional(Type.boolean),
 })
 
 -- has the avatar walk at another pace
@@ -610,6 +616,28 @@ Types.Frost = Type.strictInterface({
 	Blocks = Type.array(Types.FrostBlock),
 	Lifetime = Type.numberConstrained(0.05, 30),
 	ShrinkDuration = Type.optional(Type.numberConstrained(0, 30)),
+})
+
+-- a handful of flat things thrown up from a limb of the avatar: they fall where they like, lie there + are gone
+export type Scatter = {
+	Limb: string, -- the name of the part of the avatar they're thrown from
+	Count: number,
+	Size: Vector3,
+	Color: Color3,
+	Decal: VFXAssetDefinition.DecalKey?, -- what's on the top + the bottom of each, they're bare without
+	Reach: number, -- studs out from the limb each one starts at, every one its own way
+	Rise: number, -- studs above the limb they start at
+	Lifetime: number, -- seconds until they're gone
+}
+Types.Scatter = Type.strictInterface({
+	Limb = Type.string,
+	Count = Type.intersection(Type.integer, Type.numberConstrained(1, 15)),
+	Size = isSize,
+	Color = Type.Color3,
+	Decal = Type.optional(VFXAssetDefinition.DecalKey),
+	Reach = Type.numberConstrained(0, 16),
+	Rise = Type.numberConstrained(0, 16),
+	Lifetime = Type.numberConstrained(0.05, 60),
 })
 
 -- the pointer of whoever shows it, for as long as it's on. only the machine of the avatar shows one

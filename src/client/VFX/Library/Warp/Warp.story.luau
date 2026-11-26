@@ -19,11 +19,13 @@ local VFXStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX/St
 return VFXStory.newEventStory({
 	Distance = UILabs.Slider(12, 2, 60, 1),
 	Step = UILabs.Slider(4, 1, 30, 1),
+	IsHeadingKept = UILabs.Boolean(false),
 }, function(stage: VFXStory.Stage, controls)
 	local pivot = stage.User:GetPivot()
 	local offset = stage.Target:GetPivot().Position - pivot.Position
 	local direction = if offset.Magnitude > 0.1 then offset.Unit else pivot.LookVector
 	stage.ClientScope.fire(ClientVFXDefinition.Warp, {
 		Position = pivot.Position + direction * controls.Step,
+		IsHeadingKept = controls.IsHeadingKept,
 	})
 end)

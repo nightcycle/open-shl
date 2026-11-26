@@ -117,8 +117,16 @@ return ClientVFX.state(ClientVFXDefinition.Spectate, function(props: Properties,
 		end
 	end
 
+	-- one that's told who to start on doesn't wait for a button
+	if props.Index then
+		local targets = getTargets(props, character)
+		if #targets > 0 then
+			watch(targets[(props.Index - 1) % #targets + 1])
+		end
+	end
+
 	local unmount: (() -> ())? = nil
-	local guiParent = getGuiParent()
+	local guiParent = if props.IsBare then nil else getGuiParent()
 	if guiParent then
 		local screenGui = Instance.new("ScreenGui")
 		screenGui.Name = GUI_NAME
