@@ -65,6 +65,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 10,
 		ColorGroups = {},
 	},
+	{
+		Id = "ranged_lightning",
+		Group = "ranged",
+		Name = "Lightning",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["lightning.png"]),
+		EnergyCost = 0,
+		Damage = 17,
+		ColorGroups = {},
+	},
 	-- a click is four of these
 	{
 		Id = "ranged_minigun",
@@ -167,15 +176,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["freeze-ray.png"]),
 		EnergyCost = 0,
 		Damage = 20,
-		ColorGroups = {},
-	},
-	{
-		Id = "ranged_lightning",
-		Group = "ranged",
-		Name = "Lightning",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["lightning.png"]),
-		EnergyCost = 0,
-		Damage = 17,
 		ColorGroups = {},
 	},
 	{
