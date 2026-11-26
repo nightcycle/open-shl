@@ -23,7 +23,6 @@ local BUTTONS: Buttons = {
 			Position = 0.6,
 		},
 	},
-	-- the gap is where the mode changer (0.8) goes once it has a menu
 	RIGHT = {
 		{
 			MenuId = PseudoEnum.MenuId.Database,
@@ -40,6 +39,12 @@ local BUTTONS: Buttons = {
 			MenuId = PseudoEnum.MenuId.Shop,
 			Image = Image["shl-3"].ui.shop["open.png"],
 			Position = 0.7,
+		},
+		-- only where there's another place of the game to go to, whatever puts the hud up leaves it out otherwise
+		{
+			MenuId = PseudoEnum.MenuId.Mode,
+			Image = Image["shl-3"].ui["mode-changer"]["open.png"],
+			Position = 0.8,
 		},
 	},
 }

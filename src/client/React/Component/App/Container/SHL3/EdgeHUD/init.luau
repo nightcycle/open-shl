@@ -1,15 +1,20 @@
 --!strict
 --!native
 -- Services
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local ModeCards =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/SHL3/ModeCards")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local EdgeHUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/EdgeHUD")
 local ServerModeToggle = require("@self/ServerModeToggle")
 -- Hooks
+local useAttributeValue = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useAttributeValue")
 local useCharacterAttribute =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useCharacterAttribute")
 local useIsFighting = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsFighting")
@@ -26,6 +31,8 @@ local SWAP_COOLDOWN = 3.5
 local SWAP_FADE = 0.5
 -- how faded the way to the characters is drawn for as long as the avatar is in a fight
 local FIGHTING_FADE = 0.7
+-- where the way to the other places of the game sits on a screen that's touched: the old place moved it up there
+local TOUCH_MODE_POSITION = 0.4
 -- whoever is held has the switch slid out of reach until they got away
 local JAILED_AWAY: { [PseudoEnum.MenuId]: true } = table.freeze({
 	[PseudoEnum.MenuId.Swap] = true :: true,
@@ -35,17 +42,30 @@ local JAILED_AWAY: { [PseudoEnum.MenuId]: true } = table.freeze({
 -- Private Functions
 local e = React.createElement
 
--- the buttons of the game, without the one for changing sides in a place that has none
-local function getButtons(hasSides: boolean): EdgeHUD.Buttons
-	if hasSides then
+-- the buttons of the game, without the one for changing sides in a place that has none + without the one that
+-- leads to its other places where there's none to go to
+local function getButtons(hasSides: boolean, hasModes: boolean, isTouch: boolean): EdgeHUD.Buttons
+	if hasSides and hasModes and not isTouch then
 		return CONSTANTS.BUTTONS
 	end
 	local function list(buttonInfos: { HUDTypes.ButtonInfo }): { HUDTypes.ButtonInfo }
 		local out: { HUDTypes.ButtonInfo } = {}
 		for _, buttonInfo in buttonInfos do
-			if buttonInfo.MenuId ~= PseudoEnum.MenuId.Team then
-				table.insert(out, buttonInfo)
+			local menuId = buttonInfo.MenuId
+			if
+				(menuId == PseudoEnum.MenuId.Team and not hasSides)
+				or (menuId == PseudoEnum.MenuId.Mode and not hasModes)
+			then
+				continue
 			end
+			if menuId == PseudoEnum.MenuId.Mode and isTouch then
+				local moved = table.clone(buttonInfo)
+				moved.Position = TOUCH_MODE_POSITION
+				table.freeze(moved)
+				table.insert(out, moved)
+				continue
+			end
+			table.insert(out, buttonInfo)
 		end
 		table.freeze(out)
 		return out
@@ -73,9 +93,13 @@ return function(props: Properties): React.ReactNode
 	-- a place where nobody fights has no sides, the hud of the old one went without the button there. the button
 	-- goes + comes back with them where the owner of a server changes its mind
 	local hasSides = useIsPVP()
+	-- a server somebody owns plays by what its owner says: nobody is sent off it to play by something else
+	local isPrivateServer = useAttributeValue(Workspace, AttributeDefinition.IsPrivateServer)
+	local hasModes = #ModeCards > 0 and not isPrivateServer
+	local isTouch = UserInputService.TouchEnabled
 	local buttons = React.useMemo(function(): EdgeHUD.Buttons
-		return getButtons(hasSides)
-	end, { hasSides })
+		return getButtons(hasSides, hasModes, isTouch)
+	end, { hasSides, hasModes, isTouch })
 	local fades = React.useMemo(function(): { [PseudoEnum.MenuId]: number }
 		local out: { [PseudoEnum.MenuId]: number } = {}
 		if isSwapCooling then

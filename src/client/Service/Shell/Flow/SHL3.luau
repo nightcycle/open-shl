@@ -55,11 +55,16 @@ local FLOW: Flow = {
 				Type = "ArtifactMenu",
 			},
 		},
-		-- the one menu of its own: the question whether to go over to the other side. its hud only has the button
+		-- a menu of its own: the question whether to go over to the other side. its hud only has the button
 		-- for it in a place with sides
 		[PseudoEnum.MenuId.Team] = {
 			Type = "Panel",
 			PanelId = "TeamChange",
+		},
+		-- + the way to its other places, which its hud only has the button for where there's one to go to
+		[PseudoEnum.MenuId.Mode] = {
+			Type = "Panel",
+			PanelId = "ModeChanger",
 		},
 	},
 	-- it has no bars of its own: how much health is left was always read off the bar of the engine
