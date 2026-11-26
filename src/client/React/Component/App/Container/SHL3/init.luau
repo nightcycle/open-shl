@@ -22,6 +22,7 @@ local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/Reac
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
 local Notice = require("@self/Notice")
 local PlayerBoard = require("@self/PlayerBoard")
+local RoleplayBar = require("@self/RoleplayBar")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
 local StockHealth = require("@self/StockHealth")
 local Tablet = require("@self/Tablet")
@@ -67,6 +68,8 @@ local REGISTRY: Registry = {
 		StockHealth = StockHealth,
 		-- a line from the town, up over whatever else is
 		AlertStrip = AlertStrip,
+		-- the strip along the top of the hud: the emotes, the mask + a sky of one's own
+		RoleplayBar = RoleplayBar,
 		-- a line for this player alone: what a prop does to whoever holds it
 		Notice = Notice,
 		-- the screen of the tablet, for as long as it's in the hand

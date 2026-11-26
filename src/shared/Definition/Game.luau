@@ -129,7 +129,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Acrobatics = false,
 		-- the alias as the speaker in the window of the engine, in the color of its side
 		Chat = true,
-		Mask = false,
+		-- the first button of its roleplay bar
+		Mask = true,
 		Movement = false,
 		-- its flow has the action, its hud has no button for it
 		CameraMode = false,
