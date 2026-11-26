@@ -27,6 +27,7 @@ local DEFINITIONS: { ServerDefinition } = table.freeze({
 	require("@game/ServerScriptService/Server/Ability/Library/Special/Invisibility"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Flight"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Grapple"),
+	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Portals"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/SuperJump"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/SuperSpeed"),
 })

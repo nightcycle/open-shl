@@ -189,6 +189,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "transportation_portals",
+		Group = "transportation",
+		Name = "Portal",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 0,
+		ColorGroups = {},
+	},
+	{
 		Id = "special_energy-field",
 		Group = "special",
 		Name = "Energy Field",
@@ -218,17 +227,7 @@ local DEFINITIONS: { PowerDefinition } = {
 	},
 }
 -- a row moves up into the list above once both halves of its ability are in the game's set
-local UPCOMING: { PowerDefinition } = {
-	{
-		Id = "transportation_portals",
-		Group = "transportation",
-		Name = "Portal",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 0,
-		ColorGroups = {},
-	},
-}
+local UPCOMING: { PowerDefinition } = {}
 -- the three lists of the old creator, each in its order: a hero takes one of each or goes without. what gets the
 -- hero around was a special there, so those sit in a slot that isn't their group. the first of each list were
 -- anybody's, the rest are behind the one pass of the powers: a lock a slot, so each is rented + kept by itself

@@ -24,6 +24,9 @@ local config = Portals.Config
 local powerRes = PowerDefinition.get(layout.Id)
 assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 local energyCost = powerRes.Value.EnergyCost
+local hasShot = config.Shot ~= nil
+-- the cast is heard as the portal opens, or as the shot that carries it leaves
+local heardAt = if hasShot then bindings.Cast else bindings.Open
 -- the client half of the portals: they're the server's to make + to watch, the avatar is the player's own to move
 -- once it's told that it walked into one
 return AbilityBuilder
@@ -40,16 +43,19 @@ return AbilityBuilder
 			return true
 		end
 	)
-	-- no portal opens off the map
-	:Guard(bindings.Cast, function(context: ClientContext): boolean
-		return PlayAreaDefinition.getIfInside((context.Aim or context.getAim()).Position)
-	end)
+	-- no portal opens off the map. a shot finds its own spot, the click it's let fly by may point anywhere
+	:Guard(
+		bindings.Cast,
+		function(context: ClientContext): boolean
+			return hasShot or PlayAreaDefinition.getIfInside((context.Aim or context.getAim()).Position)
+		end
+	)
 	:Fire(bindings.Cast, ClientVFXDefinition.AnimationOnce, function(): ClientVFXType.AnimationOnce
 		return { Animation = "PowerShot" }
 	end)
 	-- the portal itself is the server's to make, what it sounds like doesn't have to wait for it
 	:Fire(
-		bindings.Open,
+		heardAt,
 		ClientVFXDefinition.Sound,
 		function(): ClientVFXType.Sound
 			return { Sound = config.OpenSound }

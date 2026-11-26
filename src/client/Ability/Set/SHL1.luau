@@ -27,6 +27,7 @@ local DEFINITIONS: { ClientDefinition } = table.freeze({
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Special/Invisibility"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Flight"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Grapple"),
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Portals"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/SuperJump"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/SuperSpeed"),
 })
