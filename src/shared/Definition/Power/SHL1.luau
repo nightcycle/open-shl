@@ -59,6 +59,16 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 34,
 		ColorGroups = {},
 	},
+	-- a throw is up to five of these
+	{
+		Id = "ranged_kunai",
+		Group = "ranged",
+		Name = "Kunai",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 25,
+		ColorGroups = {},
+	},
 	{
 		Id = "ranged_laser-ray",
 		Group = "ranged",
@@ -171,16 +181,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 20,
-		ColorGroups = {},
-	},
-	-- a throw is up to five of these
-	{
-		Id = "ranged_kunai",
-		Group = "ranged",
-		Name = "Kunai",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 25,
 		ColorGroups = {},
 	},
 	{
