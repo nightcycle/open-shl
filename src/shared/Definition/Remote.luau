@@ -95,6 +95,8 @@ local ABILITY_LIMIT: RateLimit = table.freeze({ Count = 600, Duration = 10 })
 local FILTER_LIMIT: RateLimit = table.freeze({ Count = 10, Duration = 10 })
 -- a teleport is a web call as well, and every try at a custom server is a guess at its entry code
 local TELEPORT_LIMIT: RateLimit = table.freeze({ Count = 5, Duration = 10 })
+-- every change of what a server plays by makes or dissolves its sides
+local TOGGLE_LIMIT: RateLimit = table.freeze({ Count = 5, Duration = 10 })
 local isCharacter = CharacterType.Character
 -- the character type lets any key into Identities, a client may only hand in the two every character is made of
 local isEditedCharacter = Type.intersection(
@@ -332,6 +334,10 @@ Module.GetServers =
 	newClientFunction("GetServers", Type.none, isServerListings, REQUEST_LIMIT) :: ClientFunction<{ ServerListing }, nil>
 -- a teleport that was let through can still fall over on its way, this is why it did
 Module.TeleportFailed = newServerEvent("TeleportFailed", Type.string) :: ServerEvent<string>
+-- the owner of a private server says if its players fight: what's sent is what's wanted, so two presses can't undo
+-- each other. the answer is what the server plays by from then
+Module.SetServerPVP =
+	newClientFunction("SetServerPVP", Type.boolean, Type.boolean, TOGGLE_LIMIT, true) :: ClientFunction<boolean, boolean>
 
 -- alerts
 -- a line the town has for the player: whoever is sent one is shown it, who that is was the server's to pick
