@@ -100,10 +100,9 @@ local DEFINITIONS: { ProductDefinition } = {
 		LegacyId = LEGACY_DEVELOPER_PRODUCT_IDS.CREDITS_16000,
 		LegacyPriceText = "1000 R$",
 	},
-}
--- the passes aren't sold yet + nobody is asked whether they own one: until what they open is held back from
--- anybody, everything is everybody's. the old place never wrote down what a pass cost
-local UPCOMING: { ProductDefinition } = {
+	-- the five passes of the old place, each the asset it was before there were game passes. what one opens is held
+	-- back from whoever doesn't own it, so each is asked about as a player joins. the old place never wrote down
+	-- what a pass cost
 	{
 		Id = "gamepasses_masks",
 		Tab = "Gamepasses",
@@ -155,7 +154,6 @@ local UPCOMING: { ProductDefinition } = {
 -- nobody is handed anything for coming back, so there's no daily reward
 local CATALOGUE: ProductCatalogue = {
 	Definitions = DEFINITIONS,
-	Upcoming = UPCOMING,
 	CurrencyNames = CURRENCY_NAMES,
 	DefaultCharacterSlotCount = DEFAULT_CHARACTER_SLOT_COUNT,
 	ExtraCharacterSlotCount = EXTRA_CHARACTER_SLOT_COUNT,

@@ -5,9 +5,11 @@
 local Image = require("@game/ReplicatedStorage/Generated/Image")
 -- Types
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 type FaceCatalogue = AppearanceType.FaceCatalogue
 type FaceSlot = AppearanceType.FaceSlot
 type ItemOrder = AppearanceType.ItemOrder
+type Lock = EconomyType.Lock
 -- Constants
 -- a face is one picture
 local FACE_SLOTS: { FaceSlot } = table.freeze({ "Face" :: FaceSlot })
@@ -39,6 +41,17 @@ local FACE_DEFAULTS: { [FaceSlot]: string } = table.freeze({
 })
 -- every face is drawn the way its image is
 local FACE_TINTS: { [FaceSlot]: Color3 } = table.freeze({})
+-- what's past the starters of a list is behind the lock of that list. a pass opens it for good, + its lock says what
+-- a visit with a piece behind it costs whoever goes without. what the group opens is never rented. the five limbs
+-- of a suit share one lock: a suit is rented + kept as one thing, however many of its limbs are on
+local SUIT_LOCK: Lock = { Id = "suit", Type = "Entitlement", Key = "PremiumSuits", RentPrice = 25 }
+local FACE_LOCK: Lock = { Id = "face", Type = "Entitlement", Key = "PremiumFaces", RentPrice = 20 }
+local HAIR_LOCK: Lock = { Id = "hair", Type = "Entitlement", Key = "PremiumHair", RentPrice = 20 }
+local HAT_LOCK: Lock = { Id = "hat", Type = "Entitlement", Key = "PremiumMasks", RentPrice = 25 }
+local EMBLEM_LOCK: Lock = { Id = "emblem", Type = "GroupPerk" }
+for _, lock in { SUIT_LOCK, FACE_LOCK, HAIR_LOCK, HAT_LOCK, EMBLEM_LOCK } do
+	table.freeze(lock)
+end
 -- the nine suits, in the order the old creator walked them. the first three were anybody's on every limb
 local SUIT_ORDER: ItemOrder = table.freeze({
 	Keys = table.freeze({
@@ -53,6 +66,7 @@ local SUIT_ORDER: ItemOrder = table.freeze({
 		"tux",
 	}),
 	StarterCount = 3,
+	Lock = SUIT_LOCK,
 })
 local FACE_ORDER: ItemOrder = table.freeze({
 	Keys = table.freeze({
@@ -70,6 +84,7 @@ local FACE_ORDER: ItemOrder = table.freeze({
 		"head-12",
 	}),
 	StarterCount = 6,
+	Lock = FACE_LOCK,
 })
 -- one hair was on the old list twice, here it's there once
 local HAIR_ORDER: ItemOrder = table.freeze({
@@ -97,6 +112,7 @@ local HAIR_ORDER: ItemOrder = table.freeze({
 		"ultraflash-hair",
 	}),
 	StarterCount = 11,
+	Lock = HAIR_LOCK,
 })
 local HAT_ORDER: ItemOrder = table.freeze({
 	Keys = table.freeze({
@@ -117,10 +133,12 @@ local HAT_ORDER: ItemOrder = table.freeze({
 		"hat-12",
 	}),
 	StarterCount = 6,
+	Lock = HAT_LOCK,
 })
 local EMBLEM_ORDER: ItemOrder = table.freeze({
 	Keys = table.freeze({ "emblem-1", "emblem-2", "emblem-3", "emblem-4", "emblem-5", "emblem-6" }),
 	StarterCount = 3,
+	Lock = EMBLEM_LOCK,
 })
 local CAPE_ORDER: ItemOrder = table.freeze({
 	Keys = table.freeze({ "cape-1", "cape-2", "cape-3" }),

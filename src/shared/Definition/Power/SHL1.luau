@@ -230,11 +230,14 @@ local UPCOMING: { PowerDefinition } = {
 	},
 }
 -- the three lists of the old creator, each in its order: a hero takes one of each or goes without. what gets the
--- hero around was a special there, so those sit in a slot that isn't their group
+-- hero around was a special there, so those sit in a slot that isn't their group. the first of each list were
+-- anybody's, the rest are behind the one pass of the powers: a lock a slot, so each is rented + kept by itself
 local SLOTS: { PowerSlot } = {
 	{
 		Key = "Melee",
 		Caption = "MELEE",
+		StarterCount = 3,
+		Lock = { Id = "melee", Type = "Entitlement", Key = "PremiumPowers", RentPrice = 30 },
 		PowerIds = {
 			"basic-melee_bo-staff",
 			"basic-melee_martial-arts",
@@ -246,6 +249,8 @@ local SLOTS: { PowerSlot } = {
 	{
 		Key = "Ranged",
 		Caption = "RANGED",
+		StarterCount = 5,
+		Lock = { Id = "ranged", Type = "Entitlement", Key = "PremiumPowers", RentPrice = 30 },
 		PowerIds = {
 			"ranged_bow",
 			"ranged_fire-hand",
@@ -261,6 +266,8 @@ local SLOTS: { PowerSlot } = {
 	{
 		Key = "Special",
 		Caption = "SPECIAL",
+		StarterCount = 3,
+		Lock = { Id = "special", Type = "Entitlement", Key = "PremiumPowers", RentPrice = 30 },
 		PowerIds = {
 			"transportation_flight",
 			"transportation_super-speed",

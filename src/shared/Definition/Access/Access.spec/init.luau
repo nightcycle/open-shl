@@ -21,7 +21,7 @@ type TestMap = SimpleTest.TestMap
 -- what a game holds back is its own, so is what its listings are held to. the walk of another game is never required
 local Tests: TestMap = table.clone(GameDefinition.pick({
 	shl1 = function(): TestMap
-		return {}
+		return require("@self/SHL1")
 	end,
 	shl2 = function(): TestMap
 		return {}
