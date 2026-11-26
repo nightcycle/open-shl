@@ -66,13 +66,16 @@ local IS_STUDIO = RunService:IsStudio()
 local e = React.createElement
 
 -- what a button moves on to: the one after what it shows. whoever holds the last of them is given the server's
--- back, the old place had no way back from a sky of one's own but to leave
+-- back, the old place had no way back from a sky of one's own but to leave. a sky that isn't held yet starts at
+-- the first of them that isn't up already: from the one after the server's the ones before it were never got to
 local function getNext<V>(values: { V }, shown: V, isHeld: boolean): V?
 	local index = table.find(values, shown) or 0
-	if isHeld and index == #values then
+	if not isHeld then
+		return if index == 1 then values[2] else values[1]
+	elseif index == #values then
 		return nil
 	end
-	return values[index % #values + 1]
+	return values[index + 1]
 end
 
 local function getOverride(): Override?
@@ -265,10 +268,7 @@ return function(): React.ReactNode
 					hold(if nextWeather then { Weather = nextWeather } :: Override else nil)
 				elseif action.Type == "Grade" then
 					-- the colors go round + round, nothing of the day stands still for them
-					local nextGrade: Grade? = getNext(GRADES, grade, false) :: Grade?
-					if nextGrade then
-						EnvironmentService:SetGrade(nextGrade)
-					end
+					EnvironmentService:SetGrade(GRADES[(table.find(GRADES, grade) or 0) % #GRADES + 1])
 				elseif action.Type == "Names" then
 					ShellService:SetNamesHidden(not areNamesHidden)
 				elseif action.Type == "HideUi" then
