@@ -87,6 +87,16 @@ Module.Freezes = newAttribute("Freezes", Type.optional(Type.boolean)) :: Attribu
 Module.SweepDuration = newAttribute("SweepDuration", Type.numberPositive) :: Attribute<number>
 -- studs a half of a vault door moves up as it opens, the lower half goes down
 Module.Slide = newAttribute("Slide", Type.number) :: Attribute<number>
+-- what the server says of a beam as it starts: the two ends of its sweep + its own roll of the pace
+Module.SweepFrom = newAttribute("SweepFrom", Type.CFrame) :: Attribute<CFrame>
+Module.SweepTo = newAttribute("SweepTo", Type.CFrame) :: Attribute<CFrame>
+Module.SweepPace = newAttribute("SweepPace", Type.numberPositive) :: Attribute<number>
+-- + of a half of a vault door: where it's shut, whether it's open, when that last changed on the clock of the
+-- server + the seconds it slides for
+Module.ClosedPivot = newAttribute("ClosedPivot", Type.CFrame) :: Attribute<CFrame>
+Module.IsOpen = newAttribute("IsOpen", Type.boolean) :: Attribute<boolean>
+Module.ChangedAt = newAttribute("ChangedAt", Type.number) :: Attribute<number>
+Module.SlideDuration = newAttribute("SlideDuration", Type.numberPositive) :: Attribute<number>
 Module.DisasterId = newAttribute("DisasterId", Type.string) :: Attribute<string>
 -- which slot of the block a flat is
 Module.ResidenceId = newAttribute("ResidenceId", Type.string) :: Attribute<string>
@@ -196,6 +206,12 @@ Module.get = function<V>(inst: Instance, attribute: Attribute<V>): Result<V, str
 		return Result.err(`bad "{attribute.Name}" on {inst:GetFullName()}: {msg}`)
 	end
 	return Result.ok(value :: any)
+end
+
+-- what the server says of something marked as it runs it, a client reads it the way it reads what the map says
+Module.set = function<V>(inst: Instance, attribute: Attribute<V>, value: V)
+	assert(attribute.Validator(value))
+	inst:SetAttribute(attribute.Name, value)
 end
 
 return Module

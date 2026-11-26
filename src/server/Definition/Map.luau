@@ -68,6 +68,8 @@ Module.Water = MapDefinition.Water
 Module.IntroCamera = MapDefinition.IntroCamera
 Module.NightWindows = MapDefinition.NightWindows
 Module.DisasterTarget = MapDefinition.DisasterTarget
+Module.LaserBeam = MapDefinition.LaserBeam
+Module.VaultDoor = MapDefinition.VaultDoor
 
 Module.UniformId = newAttribute("UniformId", Type.string) :: Attribute<string>
 Module.GateId = newAttribute("GateId", Type.string) :: Attribute<string>
@@ -95,9 +97,19 @@ Module.ImageFace =
 Module.ImageInterval = newAttribute("ImageInterval", Type.numberPositive) :: Attribute<number>
 Module.ImageDuration = newAttribute("ImageDuration", Type.numberPositive) :: Attribute<number>
 Module.DisasterId = MapDefinition.DisasterId
+Module.SweepDuration = MapDefinition.SweepDuration
+Module.SweepFrom = MapDefinition.SweepFrom
+Module.SweepTo = MapDefinition.SweepTo
+Module.SweepPace = MapDefinition.SweepPace
+Module.Slide = MapDefinition.Slide
+Module.ClosedPivot = MapDefinition.ClosedPivot
+Module.IsOpen = MapDefinition.IsOpen
+Module.ChangedAt = MapDefinition.ChangedAt
+Module.SlideDuration = MapDefinition.SlideDuration
 
 Module.list = MapDefinition.list
 Module.observe = MapDefinition.observe
 Module.get = MapDefinition.get
+Module.set = MapDefinition.set
 
 return Module
