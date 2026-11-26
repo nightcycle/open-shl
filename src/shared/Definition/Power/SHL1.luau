@@ -143,6 +143,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 0,
 		ColorGroups = {},
 	},
+	{
+		Id = "transportation_grapple",
+		Group = "transportation",
+		Name = "Grappling Hook",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 0,
+		ColorGroups = {},
+	},
 	-- it takes nothing off, what it hits gets 20 back
 	{
 		Id = "special_healing-ray",
@@ -181,15 +190,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 25,
-		ColorGroups = {},
-	},
-	{
-		Id = "transportation_grapple",
-		Group = "transportation",
-		Name = "Grappling Hook",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 0,
 		ColorGroups = {},
 	},
 	{

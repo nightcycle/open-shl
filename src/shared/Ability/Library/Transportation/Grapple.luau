@@ -96,6 +96,18 @@ local CONFIG: Config = GameDefinition.tune(table.freeze(DEFAULT_CONFIG), {
 		config.IsSecondary = true
 		return config
 	end),
+	shl1 = FreezeUtil.delta(DEFAULT_CONFIG, function(config: Config): Config
+		-- a slow hook that's a while in the air, the rope pulls a moment later
+		config.Speed = 80
+		config.TightenDelay = 0.4
+		config.Cooldown = 1.5
+		config.IsDroppedEarly = true
+		-- the grey of a part nobody colored
+		config.Color = Color3.fromRGB(163, 162, 165)
+		config.FireSound = "Bow"
+		config.TightenSound = "Latch"
+		return config
+	end),
 })
 -- seconds a hook that ran out of rope is still waited on: word of what it ran into last takes a while to get here
 local LOSE_DELAY = 0.5

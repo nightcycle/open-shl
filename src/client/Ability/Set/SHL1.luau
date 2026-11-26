@@ -21,6 +21,7 @@ local DEFINITIONS: { ClientDefinition } = table.freeze({
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/ReturningStar"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Special/HealingRay"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Flight"),
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Grapple"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/SuperSpeed"),
 })
 -- Variables
