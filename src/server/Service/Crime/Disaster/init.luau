@@ -8,10 +8,12 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local BlastSite = require("@self/Blast")
 local DisasterDefinition = require("@game/ReplicatedStorage/Shared/Definition/Disaster")
 local EconomyService = require("@game/ServerScriptService/Server/Service/Economy")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local MapDefinition = require("@game/ServerScriptService/Server/Definition/Map")
 local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PayoutUtil = require("@self/Payout")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
+local RiseGround = require("@self/Rise")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
 local TallyUtil = require("@game/ServerScriptService/Server/Util/Tally")
 -- Types
@@ -25,6 +27,8 @@ type Target = {
 	Disaster: Disaster,
 	IsAlerted: boolean, -- the town was told of this round
 	IsFallen: boolean,
+	-- what one that stands up again is stood up with: the humanoid a hit is taken off, as it was before the first
+	Humanoid: Humanoid?,
 }
 -- Constants
 local WRECK_FOLDER_NAME = "DisasterWreck"
@@ -57,6 +61,25 @@ local function refill(target: Target)
 	AttributeDefinition.set(target.Model, AttributeDefinition.Health, target.Disaster.MaxHealth)
 	TallyUtil.take(target.Model)
 end
+
+-- a target that fell is whole again + the town may be told of the next round. the humanoid it went down with
+-- stays down for good, it gets the one it had before anything came off
+local function stand(target: Target)
+	local model, humanoid = target.Model, target.Humanoid
+	if not humanoid then
+		return
+	end
+	local spent = model:FindFirstChildWhichIsA("Humanoid")
+	if spent then
+		spent:Destroy()
+	end
+	humanoid:Clone().Parent = model
+	TallyUtil.take(model)
+	AttributeDefinition.set(model, AttributeDefinition.Health, target.Disaster.MaxHealth)
+	AttributeDefinition.set(model, AttributeDefinition.IsDead, false)
+	target.IsAlerted = false
+	target.IsFallen = false
+end
 -- Class
 -- the targets of the map: something that stands for one side + is worn down by the other. a target is a body nobody
 -- plays, so every power hits it the way it hits an avatar + the rules of a hit are the game's own: its side leaves
@@ -70,6 +93,8 @@ return {
 		-- what goes up with its target, by the id of the disaster: kept from the first of them on, the building comes
 		-- back as another instance every time
 		local sites: { [string]: BlastSite.Site } = {}
+		-- the ground that bodies come out of as a target falls, by the target
+		local grounds: { [Model]: RiseGround.Ground } = {}
 		local wreckFolder = Instance.new("Folder")
 		wreckFolder.Name = WRECK_FOLDER_NAME
 		wreckFolder.Parent = Workspace
@@ -84,8 +109,12 @@ return {
 					site.Blow(target.Model)
 				end
 			else
-				-- no target with another end is armed, so none of them falls
-				warn(`disaster err: nothing follows the fall of "{id}" yet`)
+				local ground = grounds[target.Model]
+				if ground then
+					ground.Raise(function()
+						stand(target)
+					end)
+				end
 			end
 		end
 
@@ -109,8 +138,20 @@ return {
 				warn(`{model:GetFullName()} has a primary part, a hit could move it`)
 			end
 
+			-- bodies come out of the ground of a game that has any: without them the target stands for show
+			local isArmed = disaster.IsArmed
+			local humanoid = model:FindFirstChildWhichIsA("Humanoid")
+			if isArmed and consequence.Type == "Rise" then
+				if not GameDefinition.FEATURES.Npcs then
+					isArmed = false
+				elseif not humanoid then
+					warn(`{model:GetFullName()} has no humanoid to stand up again with`)
+					isArmed = false
+				end
+			end
+
 			local building: Model? = nil
-			if disaster.IsArmed and consequence.Type == "Blast" then
+			if isArmed and consequence.Type == "Blast" then
 				local parent = model.Parent
 				if not parent or not parent:IsA("Model") then
 					warn(`{model:GetFullName()} has no building around it to blow up`)
@@ -124,7 +165,7 @@ return {
 			AttributeDefinition.set(model, AttributeDefinition.TeamId, disaster.GuardTeamId)
 			AttributeDefinition.set(model, AttributeDefinition.Health, disaster.MaxHealth)
 			AttributeDefinition.set(model, AttributeDefinition.IsDead, false)
-			if not disaster.IsArmed then
+			if not isArmed then
 				-- the bar over it stays full + nothing comes off
 				AttributeDefinition.set(model, AttributeDefinition.IsInvulnerable, true)
 				return nil
@@ -140,8 +181,12 @@ return {
 				Disaster = disaster,
 				IsAlerted = false,
 				IsFallen = false,
+				Humanoid = if humanoid and consequence.Type == "Rise" then humanoid:Clone() else nil,
 			}
 			targets[model] = target
+			if consequence.Type == "Rise" then
+				grounds[model] = RiseGround.new(consequence)
+			end
 			TallyUtil.open(model)
 			if building then
 				sites[id].Add(building)
@@ -154,7 +199,7 @@ return {
 					AlertService:Announce(disaster.Alert)
 				end
 			end)
-			-- it only ever goes down once: what falls is replaced, not stood up again
+			-- it goes down once a round: what falls is replaced or stood up again by what follows the fall
 			local deadConnection = model:GetAttributeChangedSignal(AttributeDefinition.IsDead.Name):Connect(function()
 				if AttributeDefinition.get(model, AttributeDefinition.IsDead) and not target.IsFallen then
 					fall(target, id)
@@ -166,6 +211,14 @@ return {
 				deadConnection:Disconnect()
 				TallyUtil.close(model)
 				targets[model] = nil
+				local ground = grounds[model]
+				if ground then
+					grounds[model] = nil
+					ground.Destroy()
+				end
+				if target.Humanoid then
+					target.Humanoid:Destroy()
+				end
 				if building then
 					sites[id].Remove(building)
 				end
