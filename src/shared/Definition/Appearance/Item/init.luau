@@ -15,6 +15,7 @@ local TextureGroupConstructor =
 type ToDo<V, Progress...> = TypeUnionLib.ToDo<V, Progress...>
 type Result<V, E> = TypeUnionLib.Result<V, E>
 local AppearanceType = require("@game/ReplicatedStorage/Shared/Type/Character/Identity/Appearance")
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 export type ItemDefinitionIndex = AppearanceType.ItemDefinitionIndex
 export type ItemDefinition = AppearanceType.ItemDefinition
 type ItemGroup = AppearanceType.ItemGroup
@@ -23,6 +24,7 @@ type TextureGroup = AppearanceType.TextureGroup
 type FaceSlot = AppearanceType.FaceSlot
 type FaceCatalogue = AppearanceType.FaceCatalogue
 type ItemOrder = AppearanceType.ItemOrder
+type Lock = EconomyType.Lock
 -- Constants
 local ID_DELIMITER = "_"
 local PATH_DELIMITER = "/"
@@ -116,15 +118,17 @@ local function getFaceName(slot: FaceSlot, id: string, key: string): string
 	return FACE_NAMES[id] or `{key:sub(1, 1):upper()}{key:sub(2)} {slot}`
 end
 
--- where an item is on the list of its category + whether it's anybody's. nil for both in a category the game lists
--- the way the library holds it, an item the list of its category leaves out has no place + is nobody's
-local function getOrder(defIndex: ItemDefinitionIndex): (number?, boolean?)
+-- where an item is on the list of its category, whether it's anybody's + what opens it where it isn't. nil for all
+-- three in a category the game lists the way the library holds it, an item the list of its category leaves out has
+-- no place + is nobody's: nothing opens it
+local function getOrder(defIndex: ItemDefinitionIndex): (number?, boolean?, Lock?)
 	local order = ORDERS[`{defIndex.Group}{PATH_DELIMITER}{defIndex.Category}`]
 	if order == nil then
-		return nil, nil
+		return nil, nil, nil
 	end
 	local index = table.find(order.Keys, defIndex.Key)
-	return index, index ~= nil and index <= (order.StarterCount or #order.Keys)
+	local isStarter = index ~= nil and index <= (order.StarterCount or #order.Keys)
+	return index, isStarter, if index ~= nil and not isStarter then order.Lock else nil
 end
 
 -- the items of one category the way the game lists them: the ones with a place first, in that order, then the rest
@@ -268,7 +272,7 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 	end
 
 	local itemDefinition: ItemDefinition
-	local order, isStarter = getOrder(indexRes.Value)
+	local order, isStarter, lock = getOrder(indexRes.Value)
 	local faceSlot: FaceSlot? = getFaceSlot(indexRes.Value)
 	if faceSlot then
 		local image: string? = FACE_IMAGES[faceSlot][`{indexRes.Value.Key}{FACE_IMAGE_EXTENSION}`]
@@ -285,6 +289,7 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 			Image = image,
 			Order = order,
 			IsStarter = isStarter,
+			Lock = lock,
 		}
 	else
 		local itemDefRes = Module.getTemplate(id)
@@ -303,6 +308,7 @@ Module.get = function(id: string): Result<ItemDefinition, string>
 			ShaveHead = if itemDefRes.Value:GetAttribute(SHAVE_HEAD_ATTRIBUTE) == true then true else nil,
 			Order = order,
 			IsStarter = isStarter,
+			Lock = lock,
 		}
 	end
 	TableUtil.deepFreeze(itemDefinition)
@@ -414,6 +420,31 @@ Module.list = function(group: ItemGroup?, category: string?): { ItemDefinition }
 				end
 			end
 			insertOrdered(out, definitions)
+		end
+	end
+	table.freeze(out)
+	return out
+end
+
+-- the items a list of the game holds back behind a lock, list by list in the order of each. none in a game whose
+-- lists hold nothing back
+Module.listLocked = function(): { ItemDefinition }
+	local paths: { string } = {}
+	for path, order in ORDERS do
+		if order.Lock then
+			table.insert(paths, path)
+		end
+	end
+	-- dictionaries have no order, sorting keeps what's made of the list stable
+	table.sort(paths)
+	local out: { ItemDefinition } = {}
+	for _, path in paths do
+		local keys = path:split(PATH_DELIMITER)
+		for _, key in ORDERS[path].Keys do
+			local itemDefRes = Module.get(table.concat({ keys[1], keys[2], key }, ID_DELIMITER))
+			if itemDefRes.IsOk and itemDefRes.Value.Lock then
+				table.insert(out, itemDefRes.Value)
+			end
 		end
 	end
 	table.freeze(out)

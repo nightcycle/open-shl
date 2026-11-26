@@ -8,6 +8,9 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 -- Hooks
 -- Types
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
+type Lock = EconomyType.Lock
+
 local Types = {}
 
 export type ItemGroup = "clothing" | "costume" | "cosmetics" | "body"
@@ -61,19 +64,25 @@ export type FaceSlot = "Eyebrows" | "Eyes" | "Mouth" | "Face"
 Types.FaceSlot = Type.literal("Eyebrows", "Eyes", "Mouth", "Face")
 
 -- the order a game lists the items of a category in, by key, + how many of them from the top are anybody's. an item
--- that's left out is on no list of the game
+-- that's left out is on no list of the game. what opens the ones past the starters is the lock, without one they're
+-- anybody's as well
 export type ItemOrder = {
 	Keys: { string },
 	StarterCount: number?, -- every one of them is anybody's without
+	Lock: Lock?,
 }
 Types.ItemOrder = Type.intersection(
 	Type.strictInterface({
 		Keys = Type.array(Type.string),
 		StarterCount = Type.optional(Type.intersection(Type.integer, Type.numberMin(0))),
+		Lock = Type.optional(EconomyType.Lock),
 	}),
 	function(value: ItemOrder): (boolean, string?)
 		if value.StarterCount ~= nil and value.StarterCount > #value.Keys then
 			return false, `more starters than there are keys`
+		end
+		if value.Lock ~= nil and value.StarterCount == nil then
+			return false, `a lock with nothing behind it`
 		end
 		return true
 	end
@@ -102,7 +111,8 @@ Types.FaceCatalogue = Type.strictInterface({
 })
 
 -- both variants point at the same list types, otherwise a list read off the union can't be iterated. the order + the
--- starter mark are only there in a game that lists the category of the item in an order of its own
+-- starter mark are only there in a game that lists the category of the item in an order of its own, the lock only on
+-- an item that list holds back
 type ItemDefinitionTextureGroups = { TextureGroupKey }
 type ItemDefinitionTags = { ItemDefinitionTag }
 export type ItemDefinition =
@@ -117,6 +127,7 @@ export type ItemDefinition =
 		ShaveHead: boolean?, -- hair isn't drawn under it
 		Order: number?, -- its place on the list of its category
 		IsStarter: boolean?, -- anybody's
+		Lock: Lock?, -- what opens it
 	}
 	| {
 		Type: "Face",
@@ -129,6 +140,7 @@ export type ItemDefinition =
 		Image: string,
 		Order: number?,
 		IsStarter: boolean?,
+		Lock: Lock?,
 	}
 Types.ItemDefinition = Type.union(
 	Type.strictInterface({
@@ -142,6 +154,7 @@ Types.ItemDefinition = Type.union(
 		ShaveHead = Type.optional(Type.boolean),
 		Order = Type.optional(Type.intersection(Type.integer, Type.numberPositive)),
 		IsStarter = Type.optional(Type.boolean),
+		Lock = Type.optional(EconomyType.Lock),
 	}),
 	Type.strictInterface({
 		Type = Type.literal("Face"),
@@ -154,6 +167,7 @@ Types.ItemDefinition = Type.union(
 		Image = Type.string,
 		Order = Type.optional(Type.intersection(Type.integer, Type.numberPositive)),
 		IsStarter = Type.optional(Type.boolean),
+		Lock = Type.optional(EconomyType.Lock),
 	})
 )
 
