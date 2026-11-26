@@ -80,7 +80,8 @@ Types.ProductGrant = Type.union(
 )
 
 -- a product that grants an entitlement is a gamepass, every other one is a developer product. a pass from before
--- there were game passes is an asset a player owns, which the platform is asked about another way
+-- there were game passes is an asset a player owns, which the platform is asked about another way. the platform gave
+-- every one of those an id of today as well: with it the pass is asked about + sold as a game pass too
 export type ProductDefinition = {
 	Id: string,
 	Tab: ShopTab,
@@ -90,17 +91,29 @@ export type ProductDefinition = {
 	OtherLegacyIds: { number }?, -- what it was sold under before, owning one of those is owning it
 	LegacyPriceText: string,
 	IsAsset: boolean?,
+	PassId: number?, -- the game pass an asset is today
 }
-Types.ProductDefinition = Type.strictInterface({
-	Id = Type.string,
-	Tab = Types.ShopTab,
-	Name = Type.string,
-	Grant = Types.ProductGrant,
-	LegacyId = Type.integer,
-	OtherLegacyIds = Type.optional(Type.array(Type.integer)),
-	LegacyPriceText = Type.string,
-	IsAsset = Type.optional(Type.boolean),
-})
+do -- Types.ProductDefinition
+	local isShape = Type.strictInterface({
+		Id = Type.string,
+		Tab = Types.ShopTab,
+		Name = Type.string,
+		Grant = Types.ProductGrant,
+		LegacyId = Type.integer,
+		OtherLegacyIds = Type.optional(Type.array(Type.integer)),
+		LegacyPriceText = Type.string,
+		IsAsset = Type.optional(Type.boolean),
+		PassId = Type.optional(Type.integer),
+	})
+	-- a pass that isn't an asset is a game pass by the id it has, there's no second one to give it
+	local function isWhole(value: ProductDefinition): (boolean, string?)
+		if value.PassId ~= nil and value.IsAsset ~= true then
+			return false, `"{value.Id}" has a pass id + isn't an asset`
+		end
+		return true
+	end
+	Types.ProductDefinition = Type.intersection(isShape, isWhole)
+end
 
 -- what a player is handed for coming back, the interval is the seconds between two of them
 export type DailyReward = {
@@ -138,6 +151,7 @@ export type ProductCatalogue = {
 	StartingBalances: Balances,
 	DailyReward: DailyReward?,
 	Allowance: Allowance?,
+	GroupId: number?, -- the group whose members are handed something for it, a game without one hands nothing out
 }
 Types.ProductCatalogue = Type.strictInterface({
 	Definitions = Type.array(Types.ProductDefinition),
@@ -148,23 +162,31 @@ Types.ProductCatalogue = Type.strictInterface({
 	StartingBalances = Types.Balances,
 	DailyReward = Type.optional(Types.DailyReward),
 	Allowance = Type.optional(Types.Allowance),
+	GroupId = Type.optional(Type.intersection(Type.integer, Type.numberPositive)),
 })
 
--- what opens something that isn't sold for a currency: a pass of the game, or having been seen in its group
+-- what opens something that isn't sold for a currency: a pass of the game, or having been seen in its group. things
+-- that share a lock go by its id as one: what's worn for a fee without the pass is paid for + kept by the lock
 export type Lock =
 	{
+		Id: string,
 		Type: "Entitlement",
 		Key: EntitlementKey,
+		RentPrice: number?, -- what a visit with something behind it costs, a lock without is never rented
 	}
 	| {
+		Id: string,
 		Type: "GroupPerk",
 	}
 Types.Lock = Type.union(
 	Type.strictInterface({
+		Id = Type.string,
 		Type = Type.literal("Entitlement"),
 		Key = Types.EntitlementKey,
+		RentPrice = Type.optional(Types.Balance),
 	}),
 	Type.strictInterface({
+		Id = Type.string,
 		Type = Type.literal("GroupPerk"),
 	})
 )

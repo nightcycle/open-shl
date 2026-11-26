@@ -33,8 +33,8 @@ local Tests: TestMap = table.clone(GameDefinition.pick({
 
 -- a lock opens to what it names + to nothing else, whatever was bought
 Tests.Locks = SpecUtil.newScenario(function()
-	local pass: Lock = { Type = "Entitlement", Key = "PremiumMasks" }
-	local group: Lock = { Type = "GroupPerk" }
+	local pass: Lock = { Id = "hat", Type = "Entitlement", Key = "PremiumMasks" }
+	local group: Lock = { Id = "emblem", Type = "GroupPerk" }
 	local nothing: Owned = { ItemIds = {}, PowerIds = {} }
 	local other: Owned =
 		{ ItemIds = {}, PowerIds = {}, Entitlements = { "PremiumHair" :: EntitlementKey }, HasGroupPerk = false }
