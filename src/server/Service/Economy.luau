@@ -43,6 +43,13 @@ type EconomyServiceImpl = {
 		getOwnedIds: (save: PlayerSave) -> { string },
 		ids: { string }?
 	) -> Result<true, string>,
+	Spend: (
+		self: EconomyService,
+		player: Player,
+		currency: PseudoEnum.Currency,
+		price: number,
+		write: (save: PlayerSave) -> ()
+	) -> Result<true, string>,
 }
 export type EconomyService = typeof(setmetatable(
 	{} :: {
@@ -363,6 +370,33 @@ function EconomyService:Purchase(
 			end
 		end
 		return t
+	end)
+end
+
+-- for what's sold that isn't an id on a list of the save: the price is taken + what it bought is written in one
+-- write, a save never holds one without the other. whether it may be bought at all is whoever sells it's to say
+function EconomyService:Spend(
+	player: Player,
+	currency: PseudoEnum.Currency,
+	price: number,
+	write: (save: PlayerSave) -> ()
+): Result<true, string>
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local success, msg = isAmount(price)
+	if not success then
+		return Result.err(`bad price: {msg}`)
+	end
+	local sessionOpt = SessionService:Get(player)
+	if sessionOpt.IsNone then
+		return Result.err(`{player.Name} has no session`)
+	end
+	if sessionOpt.Value.Save.Balances[currency] < price then
+		return Result.err(`not enough {ProductDefinition.getCurrencyName(currency)}`)
+	end
+	return update(player, function(save: PlayerSave): PlayerSave?
+		save.Balances[currency] -= price
+		write(save)
+		return save
 	end)
 end
 
