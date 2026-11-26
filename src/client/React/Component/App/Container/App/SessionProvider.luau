@@ -5,6 +5,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local RentDefinition = require("@game/ReplicatedStorage/Shared/Definition/Rent")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
 -- Components
 -- Hooks
@@ -26,6 +27,8 @@ local SessionInventoryContext =
 local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
 local SessionPowerLimitContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/PowerLimit")
+local SessionRentedIdsContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/RentedIds")
 -- Types
 type Character = SessionService.Character
 type IdentityKey = SessionService.IdentityKey
@@ -62,6 +65,11 @@ return function(props: Properties): React.ReactNode
 	local credits = usePlayerAttribute(AttributeDefinition.Credits)
 	local gems = usePlayerAttribute(AttributeDefinition.Gems)
 	local powerLimit = usePlayerAttribute(AttributeDefinition.PowerLimit)
+	-- only ever set on a player of a game that rents
+	local rentedText = usePlayerAttribute(AttributeDefinition.RentedIds)
+	local rentedIds = React.useMemo(function(): { string }
+		return table.freeze(RentDefinition.fromAttribute(rentedText))
+	end, { rentedText })
 	-- the passes of every game are listened for, the ones a game doesn't sell are never set on its players
 	local hasFifthPower = usePlayerAttribute(AttributeDefinition.HasFifthPower)
 	local hasExtraCharacterSlots = usePlayerAttribute(AttributeDefinition.HasExtraCharacterSlots)
@@ -115,7 +123,11 @@ return function(props: Properties): React.ReactNode
 								}, {
 									Owned = e(SessionOwnedContext.Provider, {
 										value = owned,
-									}, props.children),
+									}, {
+										RentedIds = e(SessionRentedIdsContext.Provider, {
+											value = rentedIds,
+										}, props.children),
+									}),
 								}),
 							}),
 						}),
