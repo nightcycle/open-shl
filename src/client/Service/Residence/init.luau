@@ -51,7 +51,7 @@ local RULE: Rule = GameDefinition.pick({
 		return require("@self/SHL2")
 	end,
 	shl3 = function(): Rule
-		error(`shl3 has no apartments yet`)
+		return require("@self/SHL3")
 	end,
 })
 assert(ResidenceType.Rule(RULE))
@@ -218,7 +218,14 @@ local function moveIn(self: ResidenceService, door: Door, state: ResidenceState)
 	self._Door = door
 	self._Residence = residence
 	bindResidence(self, residence)
-	if not residence.IsAlive or not teleport(self, getLanding(residence.Entrance, residence.Exit)) then
+	local getOwnLanding = RULE.GetLanding
+	if
+		not residence.IsAlive
+		or not teleport(
+			self,
+			if getOwnLanding then getOwnLanding(residence) else getLanding(residence.Entrance, residence.Exit)
+		)
+	then
 		leave(self)
 		return
 	end

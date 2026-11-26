@@ -78,6 +78,8 @@ export type Rule = {
 	NewInterior: (anchor: CFrame, state: ResidenceState, parent: Instance) -> Result<Interior, string>,
 	-- the box an avatar that's inside stays in
 	GetBounds: (interior: Interior) -> (CFrame, Vector3),
+	-- where the avatar stands as it comes in. a game that leaves it out has it on the entrance, its back to the exit
+	GetLanding: ((interior: Interior) -> CFrame)?,
 	-- runs once the avatar is inside. what it hands back runs as the avatar is out again
 	Entered: (interior: Interior, isOwn: boolean, walk: Walk) -> (() -> ())?,
 }
@@ -86,6 +88,7 @@ Types.Rule = Type.strictInterface({
 	GetIfShut = Type.callback,
 	NewInterior = Type.callback,
 	GetBounds = Type.callback,
+	GetLanding = Type.optional(Type.callback),
 	Entered = Type.callback,
 })
 
