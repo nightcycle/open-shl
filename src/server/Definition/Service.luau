@@ -167,6 +167,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the words that pay out once for whoever types one. it writes into the save of a session
+	{
+		Name = "Code",
+		IsFeatured = FEATURES.Codes,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Code")
+			assert(not service.IsInitialized, `the code service is already initialized`)
+			return service
+		end,
+	},
 	-- what everybody is handed for being in a server. it pays through the economy
 	{
 		Name = "Allowance",
