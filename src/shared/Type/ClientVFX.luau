@@ -592,4 +592,25 @@ Types.Frost = Type.strictInterface({
 	ShrinkDuration = Type.optional(Type.numberConstrained(0, 30)),
 })
 
+-- the pointer of whoever shows it, for as long as it's on. only the machine of the avatar shows one
+export type Cursor = {
+	Image: VFXAssetDefinition.DecalKey,
+}
+Types.Cursor = Type.strictInterface({
+	Image = VFXAssetDefinition.DecalKey,
+})
+
+-- a count in the corner of the screen of whoever shows it, read anew every frame. only the machine of the avatar
+-- shows one
+export type Gauge = {
+	Caption: string, -- what's counted
+	Max: number, -- what the count is at when it's full
+	Read: () -> (number, string?), -- the count + words to show in its place. only ever set by the machine of the avatar
+}
+Types.Gauge = Type.strictInterface({
+	Caption = Type.string,
+	Max = Type.numberMin(1),
+	Read = Type.callback,
+})
+
 return Types

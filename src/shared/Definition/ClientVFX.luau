@@ -87,6 +87,8 @@ Module.SeeThrough = newState("SeeThrough", ClientVFXType.SeeThrough) :: ClientSt
 Module.Frost = newEvent("Frost", ClientVFXType.Frost) :: ClientEvent<ClientVFXType.Frost>
 Module.Flare = newEvent("Flare", ClientVFXType.Flare) :: ClientEvent<ClientVFXType.Flare>
 Module.Shaft = newEvent("Shaft", ClientVFXType.Shaft) :: ClientEvent<ClientVFXType.Shaft>
+Module.Cursor = newState("Cursor", ClientVFXType.Cursor) :: ClientState<ClientVFXType.Cursor>
+Module.Gauge = newState("Gauge", ClientVFXType.Gauge) :: ClientState<ClientVFXType.Gauge>
 
 Module.get = function(name: string): Result<VFX, string>
 	local vfx = VFXsByName[name]
