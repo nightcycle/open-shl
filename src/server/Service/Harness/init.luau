@@ -128,6 +128,13 @@ local AREAS: { Area } = table.freeze({
 			return require("@self/Command/Npc")
 		end,
 	},
+	{
+		Name = "Crime",
+		IsFeatured = FEATURES.Crime,
+		Load = function()
+			return require("@self/Command/Crime")
+		end,
+	},
 })
 -- Variables
 -- References
