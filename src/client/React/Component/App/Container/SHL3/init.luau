@@ -25,7 +25,7 @@ local Notice = require("@self/Notice")
 local PlayerBoard = require("@self/PlayerBoard")
 local RoleplayBar = require("@self/RoleplayBar")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
-local StockHealth = require("@self/StockHealth")
+local StockHealth = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/StockHealth")
 local Tablet = require("@self/Tablet")
 local TeamChange = require("@self/TeamChange")
 -- Hooks

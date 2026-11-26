@@ -16,6 +16,7 @@ local MenuDrawer = require("@self/MenuDrawer")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
 local Rules = require("@self/Rules")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
+local StockHealth = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/StockHealth")
 local Ticker = require("@self/Ticker")
 -- Hooks
 -- Contexts
@@ -49,6 +50,8 @@ local REGISTRY: Registry = {
 		-- the bar of the engine says
 		CombatFeedback = CombatFeedback,
 		NameTag = NameTag,
+		-- it draws nothing: both of its health bars are the engine's, this keeps them on what the game says is left
+		StockHealth = StockHealth,
 		Ticker = Ticker,
 	},
 	TOP_OVERLAYS = {},
