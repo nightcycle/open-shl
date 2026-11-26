@@ -10,6 +10,7 @@ type ClientDefinition = AbilityType.ClientDefinition
 local DEFINITIONS: { ClientDefinition } = table.freeze({
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/BoStaff"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/Hammer"),
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/Katana"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/MartialArts"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/Bow"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/FireHand"),
