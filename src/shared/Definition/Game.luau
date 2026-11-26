@@ -96,7 +96,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Quests = false,
 		Tutorial = false,
 		Music = false,
-		Uniforms = false,
+		-- the three pads that dress the civilian for a job
+		Uniforms = true,
 		CustomServers = false,
 		-- heroes + villains where a place has its players fight, + the jail a villain comes in at
 		Teams = true,
