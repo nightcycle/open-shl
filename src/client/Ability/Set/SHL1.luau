@@ -12,6 +12,7 @@ local DEFINITIONS: { ClientDefinition } = table.freeze({
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/Hammer"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/Katana"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/MartialArts"),
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/Sai"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/Bow"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/FireHand"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/IceCharge"),

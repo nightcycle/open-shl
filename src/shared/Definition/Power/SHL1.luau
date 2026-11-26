@@ -51,6 +51,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "basic-melee_sai",
+		Group = "basic-melee",
+		Name = "Sai",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 15,
+		ColorGroups = {},
+	},
+	{
 		Id = "basic-melee_hammer",
 		Group = "basic-melee",
 		Name = "Hammer",
@@ -201,15 +210,6 @@ local DEFINITIONS: { PowerDefinition } = {
 }
 -- a row moves up into the list above once both halves of its ability are in the game's set
 local UPCOMING: { PowerDefinition } = {
-	{
-		Id = "basic-melee_sai",
-		Group = "basic-melee",
-		Name = "Sai",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 15,
-		ColorGroups = {},
-	},
 	{
 		Id = "special_energy-field",
 		Group = "special",
