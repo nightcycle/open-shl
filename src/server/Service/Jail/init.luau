@@ -33,8 +33,9 @@ type Prisoner = {
 type Gate = {
 	Part: BasePart,
 	Transparency: number, -- what the map gave it, it's back at it once it's shut again
+	CanCollide: boolean, -- what the map gave it, it's back at it once somebody may be held again
 	Thread: thread?, -- it's on its way open or shut: whoever walks up meanwhile changes nothing
-	Connection: RBXScriptConnection,
+	Connection: RBXScriptConnection?, -- none while nobody is held: it's no wall then
 }
 type JailServiceImpl = {
 	__index: JailServiceImpl,
@@ -47,10 +48,13 @@ export type JailService = typeof(setmetatable(
 		_Prisoners: { [Player]: Prisoner },
 		-- where the held are put, in an order that's the same every time
 		_Spots: { BasePart },
-		_Gates: { [BasePart]: Gate },
+		-- in the order the map lists them
+		_Gates: { Gate },
 		_CenterPosition: Vector3?,
 		_Radius: number,
 		_RoadParams: RaycastParams?,
+		-- what takes down the part of it that's only up for as long as somebody may be held
+		_StopCallbacks: { () -> () },
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
 	},
@@ -235,6 +239,83 @@ local function onDeployed(self: JailService, player: Player, character: Model, t
 		free(self, player)
 	end
 end
+
+-- players fight from here on: the gates are the walls the map made them + whoever is held is watched. nobody who
+-- stands in the world is put in a cell for it, the next avatar of the side that's held comes in held
+local function start(self: JailService)
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	assert(TeamService.IsInitialized, `the team service isn't initialized`)
+	for _, gate in self._Gates do
+		local part = gate.Part
+		part.Transparency = gate.Transparency
+		part.CanCollide = gate.CanCollide
+		gate.Connection = part.Touched:Connect(function(hit: BasePart)
+			onGateTouched(gate, hit)
+		end)
+	end
+	local troubleConnections: { RBXScriptConnection } = {}
+	for _, part in MapDefinition.list(MapDefinition.Troublesome) do
+		table.insert(
+			troubleConnections,
+			part.Touched:Connect(function(hit: BasePart)
+				onTroubleTouched(self, part, hit)
+			end)
+		)
+	end
+	local deployedConnection = TeamService.Deployed:Connect(function(player: Player, character: Model, teamId: TeamId)
+		onDeployed(self, player, character, teamId)
+	end)
+	local removingConnection = SessionService.Removing:Connect(function(player: Player)
+		self._Prisoners[player] = nil
+	end)
+	local checkThread = task.spawn(function()
+		while true do
+			task.wait(JailDefinition.CHECK_INTERVAL)
+			check(self)
+		end
+	end)
+	table.insert(self._StopCallbacks, function()
+		for _, connection in troubleConnections do
+			connection:Disconnect()
+		end
+		deployedConnection:Disconnect()
+		removingConnection:Disconnect()
+		task.cancel(checkThread)
+	end)
+end
+
+-- nothing is watched any more + no gate is on its way anywhere. whoever is held stays held
+local function halt(self: JailService)
+	for _, callback in self._StopCallbacks do
+		callback()
+	end
+	table.clear(self._StopCallbacks)
+	for _, gate in self._Gates do
+		local connection = gate.Connection
+		if connection then
+			connection:Disconnect()
+		end
+		gate.Connection = nil
+		if gate.Thread then
+			task.cancel(gate.Thread)
+			shut(gate)
+		end
+	end
+end
+
+-- nobody fights from here on, so nobody is held: whoever was is let go the way somebody who got away is, + the
+-- gates are no wall to anybody. the old place left them cuffed + without powers behind gates that opened for them
+local function stop(self: JailService)
+	halt(self)
+	for player, prisoner in self._Prisoners do
+		local character = prisoner.Avatar
+		release(self, player, prisoner)
+		AttributeDefinition.set(character, AttributeDefinition.IsTroublesome, nil)
+	end
+	for _, gate in self._Gates do
+		gate.Part.CanCollide = false
+	end
+end
 -- Class
 local JailService = {} :: JailServiceImpl
 JailService.__index = JailService
@@ -245,7 +326,9 @@ function JailService:GetIfJailed(player: Player): boolean
 end
 
 -- the jail of a place where players fight. nobody puts anybody in it: it's where every avatar of one side comes in,
--- + getting away from it is what lets them out. the server alone says who did, a client is told by the avatar
+-- + getting away from it is what lets them out. the server alone says who did, a client is told by the avatar. it
+-- holds for as long as players fight: a server that changes its mind about that has it let everybody go + take the
+-- next ones in as it does
 return ServiceLocker(function(): JailService
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	assert(AvatarService.IsInitialized, `the avatar service isn't initialized`)
@@ -254,22 +337,14 @@ return ServiceLocker(function(): JailService
 		IsInitialized = true :: true,
 		_Prisoners = {} :: { [Player]: Prisoner },
 		_Spots = {} :: { BasePart },
-		_Gates = {} :: { [BasePart]: Gate },
+		_Gates = {} :: { Gate },
 		_CenterPosition = nil :: Vector3?,
 		_Radius = 0,
 		_RoadParams = nil :: RaycastParams?,
+		_StopCallbacks = {} :: { () -> () },
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, JailService)
-
-	local gateParts = MapDefinition.list(MapDefinition.HeroGate)
-	-- a place where nobody fights holds nobody: its gates are no wall to anybody
-	if not ModeDefinition.getIfPVPEnabled() then
-		for _, part in gateParts do
-			part.CanCollide = false
-		end
-		return self
-	end
 
 	-- a map is found by its marks alone: one that lacks some has that much less of a jail, + says so
 	for _, cell in MapDefinition.list(MapDefinition.JailCell) do
@@ -305,58 +380,45 @@ return ServiceLocker(function(): JailService
 		warn(`the map marks no road, nobody gets away by reaching one`)
 	end
 
-	for _, part in gateParts do
-		local gate: Gate
-		gate = {
+	-- what the map gave a gate is read before anything is done to it: a place that starts out with nobody fighting
+	-- has them out of the way from the first moment
+	for _, part in MapDefinition.list(MapDefinition.HeroGate) do
+		local gate: Gate = {
 			Part = part,
 			Transparency = part.Transparency,
+			CanCollide = part.CanCollide,
 			Thread = nil,
-			Connection = part.Touched:Connect(function(hit: BasePart)
-				onGateTouched(gate, hit)
-			end),
+			Connection = nil,
 		}
-		self._Gates[part] = gate
-	end
-	for _, part in MapDefinition.list(MapDefinition.Troublesome) do
-		table.insert(
-			self._Connections,
-			part.Touched:Connect(function(hit: BasePart)
-				onTroubleTouched(self, part, hit)
-			end)
-		)
+		table.insert(self._Gates, gate)
 	end
 
-	local deployedConnection = TeamService.Deployed:Connect(function(player: Player, character: Model, teamId: TeamId)
-		onDeployed(self, player, character, teamId)
-	end)
-	local removingConnection = SessionService.Removing:Connect(function(player: Player)
-		self._Prisoners[player] = nil
-	end)
-	local checkThread = task.spawn(function()
-		while true do
-			task.wait(JailDefinition.CHECK_INTERVAL)
-			check(self)
+	local isStarted: boolean? = nil
+	local unobserve = ModeDefinition.observe(function(isPVP: boolean)
+		if isPVP == isStarted or not self.IsInitialized then
+			return
+		end
+		isStarted = isPVP
+		if isPVP then
+			start(self)
+		else
+			stop(self)
 		end
 	end)
 	table.insert(self._CleanUpCallbacks, function()
-		deployedConnection:Disconnect()
-		removingConnection:Disconnect()
-		task.cancel(checkThread)
-		for _, gate in self._Gates do
-			gate.Connection:Disconnect()
-			if gate.Thread then
-				task.cancel(gate.Thread)
-				shut(gate)
-			end
-		end
+		unobserve()
+		halt(self)
 	end)
-	-- the avatars that came in before this was up were dressed without it
-	for _, player in Players:GetPlayers() do
-		local character = player.Character
-		local teamId = if character then AttributeDefinition.get(character, AttributeDefinition.TeamId) else nil
-		if character and teamId == JailDefinition.TEAM_ID and #self._Spots > 0 then
-			jail(self, player, character)
-			AvatarService:Dress(player)
+	-- the avatars that came in before this was up were dressed without it. it's only ever asked as the service
+	-- starts: whoever stands in the world as a server takes up fighting stays at large
+	if isStarted then
+		for _, player in Players:GetPlayers() do
+			local character = player.Character
+			local teamId = if character then AttributeDefinition.get(character, AttributeDefinition.TeamId) else nil
+			if character and teamId == JailDefinition.TEAM_ID and #self._Spots > 0 then
+				jail(self, player, character)
+				AvatarService:Dress(player)
+			end
 		end
 	end
 
