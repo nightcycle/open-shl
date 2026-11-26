@@ -23,6 +23,8 @@ export type RowSource =
 		Type: "Items", -- the items of a list: what's stepped to is worn at once, in place of the one before
 		Folder: string,
 		HasNone: boolean?, -- past its last item the list has a stop where nothing of it is worn
+		-- the arrows pass over what the game holds back from the player: that goes on through the row it hangs under
+		IsPassingLocked: boolean?,
 	}
 	| {
 		Type: "Sets", -- the sets of a list: every item of the one that's stepped to goes on
@@ -87,6 +89,7 @@ export type PageInfo = {
 	Test: ForwardInfo?, -- the button that shows what the names read like to everybody else
 	Lines: { LineInfo }?,
 	IsSlidingOut: boolean?, -- the page after it comes up from under the screen, it's put there at once otherwise
+	IsGroupAsked: boolean?, -- leaving it has the server look whether the player is in the group of the game
 }
 -- one stop of the walk through the pages
 export type Step = {

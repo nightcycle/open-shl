@@ -12,6 +12,7 @@ local StyleContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/Re
 -- Types
 export type Properties = RobloxComponents.FrameProperties & {
 	Text: string,
+	NameColor3: Color3?, -- what the row is called is written in the white of its arrows without
 	LeftPosition: UDim2,
 	RightPosition: UDim2,
 	ArrowSize: UDim2,
@@ -63,7 +64,7 @@ return function(props: Properties): React.ReactNode
 		Position = props.NamePosition,
 		Size = props.NameSize,
 		Text = props.Text,
-		TextColor3 = style.Palette.Text,
+		TextColor3 = props.NameColor3 or style.Palette.Text,
 		TextScaled = true,
 		TextWrapped = true,
 		[React.Event.Activated] = onName,

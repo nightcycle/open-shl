@@ -112,6 +112,7 @@ for index, piece in SUIT_PIECES do
 		Source = {
 			Type = "Items",
 			Folder = `Costume/{piece}`,
+			IsPassingLocked = true,
 		},
 		Position = UDim2.fromScale(NESTED_ROW_X, NESTED_ROW_Y + index - 1),
 		Size = NESTED_ROW_SIZE,
@@ -331,6 +332,7 @@ local PAGES: { PageInfo } = {
 			},
 			IsCard = true,
 		},
+		IsGroupAsked = true,
 	},
 	{
 		Key = "Secret Identity",
@@ -552,6 +554,11 @@ return table.freeze({
 	-- what the button that isn't of use yet says + how much of it shows
 	RENT_TEXT = "Rent",
 	RENT_TRANSPARENCY = 0.5,
+	-- what a row reads in place of its name while what it has on is held back from the player: behind a pass, which
+	-- a press on it offers, or for the members of the group. the green is the one the old scripts ended up with
+	GATE_PASS_TEXT = "Purchase Here!",
+	GATE_GROUP_TEXT = "Group Members Only!",
+	GATE_COLOR = Color3.fromRGB(0, 255, 0),
 	-- how long a button says why it didn't do what it's for
 	NOTICE_DURATION = 5,
 	-- the bar the mannequin is turned with: it's under the screen until a page shows the booth, then it comes up

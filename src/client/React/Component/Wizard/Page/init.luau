@@ -8,6 +8,7 @@ local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxCompone
 local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
+local Gate = require("@self/Gate")
 -- Components
 local Names = require("@self/Names")
 local Stepper = require("@self/Stepper")
@@ -15,12 +16,14 @@ local Swatches = require("@self/Swatches")
 -- Hooks
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
+local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
 local CharacterEditorRefusalContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Refusal")
 local CharacterEditorStateContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/State")
+local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
 local StyleContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style")
 -- Types
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
@@ -44,6 +47,7 @@ export type Properties = RobloxComponents.FrameProperties & {
 	OnPeaceful: ((isPeaceful: boolean) -> ())?,
 	-- the way on, with the draft as it's left. left out, the page is only looked at: one that's sliding off
 	OnForward: ((draft: Character) -> ())?,
+	OnPurchase: ((id: string) -> ())?, -- asks for what opens an item or a power the game holds back, by its id
 }
 -- Constants
 local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/CONSTANTS")
@@ -130,6 +134,13 @@ return function(props: Properties): React.ReactNode
 	local state = React.useContext(CharacterEditorStateContext)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
 	local editRefusal = React.useContext(CharacterEditorRefusalContext)
+	local stored = React.useContext(CharacterContext)
+	local owned = React.useContext(SessionOwnedContext)
+	local edited: Character? = if state then state.Character else nil
+	-- what the draft is short of, as the server is going to ask it once the walk hands the draft in
+	local hold: Gate.Hold? = React.useMemo(function(): Gate.Hold?
+		return if edited then Gate.new(edited, stored, owned) else nil
+	end, { edited :: any, stored :: any, owned :: any })
 	-- why the page wasn't left, for as long as the button says it
 	local refusal: string?, setRefusal: (string?) -> () = useTimedState(CONSTANTS.NOTICE_DURATION)
 	local step = props.Step
@@ -141,9 +152,11 @@ return function(props: Properties): React.ReactNode
 	local palette = style.Palette
 	local border = style.Border
 	local isCover = page.Kind == "Cover"
+	-- a page with a row that has something on its player is short of isn't left ahead: the way back stays
+	local isHeld = hold ~= nil and Gate.getIfPageHeld(hold, state, page)
 
 	local function goOn()
-		if not onForward then
+		if not onForward or isHeld then
 			return
 		end
 		local requirement = getRequirement(state, page.Key)
@@ -191,9 +204,10 @@ return function(props: Properties): React.ReactNode
 	local forwardButton: React.ReactNode = nil
 	if forward then
 		forwardButton = e("TextButton", {
-			Active = onForward ~= nil,
-			-- a button that didn't do what it's for is red for as long as it says why
-			BackgroundColor3 = if notice
+			Active = onForward ~= nil and not isHeld,
+			-- a button that didn't do what it's for is red for as long as it says why, one that takes no press for
+			-- as long as it doesn't
+			BackgroundColor3 = if notice or isHeld
 				then palette.Negative
 				elseif forward.IsCard then CONSTANTS.CARD_COLOR
 				else palette.Field,
@@ -249,6 +263,8 @@ return function(props: Properties): React.ReactNode
 					IsLive = onForward ~= nil,
 					IsPeaceful = props.IsPeaceful,
 					OnPeaceful = props.OnPeaceful,
+					Hold = hold,
+					OnPurchase = props.OnPurchase,
 				} :: Stepper.Properties
 			)
 		end

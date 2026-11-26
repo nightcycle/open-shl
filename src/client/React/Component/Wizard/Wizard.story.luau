@@ -7,6 +7,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local ReactRoblox = require("@game/ReplicatedStorage/Packages/ReactRoblox")
 local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
+local AccessDefinition = require("@game/ReplicatedStorage/Shared/Definition/Access")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local RandomCharacter = require("@game/ReplicatedStorage/Shared/Random/Character")
 local StyleStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/Story")
@@ -15,13 +16,29 @@ local ParentComponent = require(".")
 -- Hooks
 -- Contexts
 local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
+local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
 local SessionPowerLimitContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/PowerLimit")
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
+local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
+type EntitlementKey = EconomyType.EntitlementKey
+type Owned = SessionOwnedContext.Owned
 -- Constants
 -- the word the filter of the story takes offense at
 local CENSORED_PATTERN = "[Dd]arn"
+-- what every pass the game holds something back behind hands out. none in a place whose lists have no lock: there
+-- no row is ever held, whatever the story is told the player has
+local PASS_KEYS: { EntitlementKey } = {}
+for _, listing in AccessDefinition.list() do
+	local lock = listing.Lock
+	if lock and lock.Type == "Entitlement" and not table.find(PASS_KEYS, lock.Key) then
+		table.insert(PASS_KEYS, lock.Key)
+	end
+end
+table.freeze(PASS_KEYS)
+local NO_KEYS: { EntitlementKey } = table.freeze({})
+local NO_IDS: { string } = table.freeze({})
 -- Variables
 -- References
 -- Private Functions
@@ -36,6 +53,10 @@ return UILabs.CreateReactStory({
 		Style = StyleStory.newControl("shl1"),
 		IsSaving = UILabs.Boolean(false),
 		IsSaveFailing = UILabs.Boolean(false),
+		-- what opens the locks of the game: with neither, a row that steps onto something held back says so + the
+		-- page isn't left ahead
+		HasPasses = UILabs.Boolean(false),
+		HasGroupPerk = UILabs.Boolean(false),
 	},
 }, function(props)
 	local character: CharacterType.Character, setCharacter: (CharacterType.Character) -> () = React.useState(
@@ -48,6 +69,18 @@ return UILabs.CreateReactStory({
 	local errorMessage: string?, setErrorMessage: (string?) -> () = React.useState(nil :: string?)
 	local filteredText: ParentComponent.FilteredText?, setFilteredText: (ParentComponent.FilteredText?) -> () =
 		React.useState(nil :: ParentComponent.FilteredText?)
+	-- a press on a row that's behind a pass stands in for the pass being bought: every one of them at once
+	local isPassBought, setIsPassBought = React.useState(false)
+	local hasPasses: boolean = props.controls.HasPasses or isPassBought
+	local hasGroupPerk: boolean = props.controls.HasGroupPerk
+	local owned = React.useMemo(function(): Owned
+		return table.freeze({
+			ItemIds = NO_IDS,
+			PowerIds = NO_IDS,
+			Entitlements = if hasPasses then PASS_KEYS else NO_KEYS,
+			HasGroupPerk = hasGroupPerk,
+		})
+	end, { hasPasses, hasGroupPerk })
 
 	local menus: { [string]: React.ReactNode } = {}
 	menus[`Menu-{openCount}`] = e(
@@ -73,9 +106,12 @@ return UILabs.CreateReactStory({
 						Filter = action.Filter,
 						Text = (string.gsub(action.Filter.Text, CENSORED_PATTERN, "####")),
 					})
+				elseif action.Type == "Purchase" then
+					setIsPassBought(true)
 				elseif action.Type == "Exit" then
 					-- stands in for the screen the walk is given up to, the same character is walked again
 					setErrorMessage(nil)
+					setIsPassBought(false)
 					setOpenCount(openCount + 1)
 				end
 			end,
@@ -89,7 +125,11 @@ return UILabs.CreateReactStory({
 			PowerLimit = e(SessionPowerLimitContext.Provider, {
 				value = PowerDefinition.DEFAULT_LIMIT,
 			}, {
-				Menus = e(React.Fragment, {}, menus),
+				Owned = e(SessionOwnedContext.Provider, {
+					value = owned,
+				}, {
+					Menus = e(React.Fragment, {}, menus),
+				}),
 			}),
 		}),
 	})

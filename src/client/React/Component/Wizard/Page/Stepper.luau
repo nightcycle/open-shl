@@ -7,6 +7,7 @@ local React = require("@game/ReplicatedStorage/Packages/React")
 local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
+local Gate = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Page/Gate")
 -- Components
 local Row = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/Row")
 -- Hooks
@@ -32,6 +33,7 @@ type Entry = {
 	Name: string,
 	Toggle: FieldDefinition,
 	WornCount: number,
+	DefinitionIds: { string },
 }
 export type Properties = {
 	Row: RowInfo,
@@ -39,6 +41,8 @@ export type Properties = {
 	IsLive: boolean?, -- left out, the row is only looked at
 	IsPeaceful: boolean?, -- what a row of the mode reads
 	OnPeaceful: ((isPeaceful: boolean) -> ())?,
+	Hold: Gate.Hold?, -- what the draft is short of. left out, nothing is held back
+	OnPurchase: ((id: string) -> ())?, -- asks for what opens an item or a power, by its id
 }
 -- Constants
 local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/CONSTANTS")
@@ -83,6 +87,7 @@ local function listEntries(state: EditorState, folderPath: string): { Entry }
 						else child.DefinitionId,
 					Toggle = toggle,
 					WornCount = if CharacterEditorUtil.getIfItemWorn(state, child.DefinitionId) then 1 else 0,
+					DefinitionIds = { child.DefinitionId },
 				})
 			end
 		elseif child.Type == "Set" then
@@ -99,6 +104,7 @@ local function listEntries(state: EditorState, folderPath: string): { Entry }
 					Name = child.Title or child.Key,
 					Toggle = toggle,
 					WornCount = wornCount,
+					DefinitionIds = child.DefinitionIds,
 				})
 			end
 		end
@@ -125,25 +131,6 @@ local function getNextIndex(index: number?, count: number, direction: number): n
 	return if index then (index - 1 + direction) % count + 1 elseif direction > 0 then 1 else count
 end
 
--- the field of a kind a row is about, by its place among the fields of that kind on the page
-local function findField(pageKey: string, fieldType: string, index: number): FieldDefinition?
-	local pageOpt = CharacterEditorDefinition.getPage(pageKey)
-	if pageOpt.IsNone or pageOpt.Value.Type ~= "Default" then
-		return nil
-	end
-	local count = 0
-	local fields: { FieldDefinition } = pageOpt.Value.Fields or NO_FIELDS
-	for _, field in fields do
-		if field.Type == fieldType then
-			count += 1
-			if count == index then
-				return field
-			end
-		end
-	end
-	return nil
-end
-
 local function getChoiceText(choice: ChoiceDefinition): string
 	return if choice.Type == "Icon" then tostring(choice.Value) else choice.Text
 end
@@ -162,6 +149,7 @@ local function stepper(props: Properties): React.ReactNode
 		return nil
 	end
 	local palette = style.Palette
+	local hold = props.Hold
 
 	local text = row.Text
 	local onStep: ((direction: number) -> ())? = nil
@@ -169,6 +157,18 @@ local function stepper(props: Properties): React.ReactNode
 	if source.Type == "Items" or source.Type == "Sets" then
 		local entries = listEntries(state, source.Folder)
 		local hasNone = source.Type == "Items" and source.HasNone == true
+		local isPassingLocked = source.Type == "Items" and source.IsPassingLocked == true
+		-- an entry the arrows of the row don't stop on: something of it is held back from the player
+		local function getIfPassed(entry: Entry): boolean
+			if hold and isPassingLocked then
+				for _, definitionId in entry.DefinitionIds do
+					if Gate.getIfShort(hold, state, definitionId) then
+						return true
+					end
+				end
+			end
+			return false
+		end
 		onStep = function(direction: number)
 			if #entries == 0 then
 				return
@@ -177,8 +177,19 @@ local function stepper(props: Properties): React.ReactNode
 			-- a list with a stop for nothing has it between its last item + its first: stepped to, what's worn of the
 			-- list comes off. with nothing worn the row stands on that stop
 			local isLeaving = hasNone and wornIndex == (if direction > 0 then #entries else 1)
-			local entry =
-				entries[if isLeaving and wornIndex then wornIndex else getNextIndex(wornIndex, #entries, direction)]
+			local index = if isLeaving and wornIndex then wornIndex else getNextIndex(wornIndex, #entries, direction)
+			if not isLeaving then
+				-- on to the next the row stops on. where it stops on none of them the arrow does nothing
+				local passedCount = 0
+				while getIfPassed(entries[index]) do
+					passedCount += 1
+					if passedCount == #entries then
+						return
+					end
+					index = getNextIndex(index, #entries, direction)
+				end
+			end
+			local entry = entries[index]
 			-- a field of an item or a set is written through its page
 			setPath(entry.Path)
 			fieldCallback(entry.Toggle, {
@@ -242,7 +253,7 @@ local function stepper(props: Properties): React.ReactNode
 			}),
 		})
 	elseif source.Type == "Glow" then
-		local field = findField(props.PageKey, "Pattern", source.Field)
+		local field = Gate.findField(props.PageKey, "Pattern", source.Field)
 		local choices: { PatternChoice } = CharacterEditorDefinition.PATTERN_CHOICES or NO_PATTERN_CHOICES
 		if field and #choices > 0 then
 			local value = CharacterEditorUtil.read(state, field)
@@ -267,7 +278,7 @@ local function stepper(props: Properties): React.ReactNode
 			end
 		end
 	elseif source.Type == "Power" then
-		local field = findField(props.PageKey, "ChoiceList", source.Field)
+		local field = Gate.findField(props.PageKey, "ChoiceList", source.Field)
 		local pickedText: string? = nil
 		if field and field.Type == "ChoiceList" then
 			local choices = field.Choices
@@ -301,7 +312,7 @@ local function stepper(props: Properties): React.ReactNode
 			TextWrapped = true,
 		})
 	elseif source.Type == "Choice" then
-		local field = findField(props.PageKey, "Choose", source.Field)
+		local field = Gate.findField(props.PageKey, "Choose", source.Field)
 		if field and field.Type == "Choose" then
 			local choices = field.Choices
 			local value = CharacterEditorUtil.read(state, field)
@@ -340,7 +351,28 @@ local function stepper(props: Properties): React.ReactNode
 			Row = nestedRow,
 			PageKey = props.PageKey,
 			IsLive = props.IsLive,
+			Hold = hold,
+			OnPurchase = props.OnPurchase,
 		})
+	end
+
+	-- while what the row has on is held back it says so in place of its name. behind a pass a press on that is how
+	-- the pass is asked for, what's for the group has nothing to press
+	local heldId: string?, heldListing: Gate.Listing? = nil, nil
+	if hold then
+		heldId, heldListing = Gate.getHeld(hold, state, props.PageKey, row)
+	end
+	local lock = if heldListing then heldListing.Lock else nil
+	local onPurchase = props.OnPurchase
+	local onName: (() -> ())? = nil
+	if lock then
+		text = if lock.Type == "GroupPerk" then CONSTANTS.GATE_GROUP_TEXT else CONSTANTS.GATE_PASS_TEXT
+		if lock.Type == "Entitlement" and heldId and onPurchase and props.IsLive then
+			local id: string = heldId
+			onName = function()
+				onPurchase(id)
+			end
+		end
 	end
 
 	return e(
@@ -351,12 +383,14 @@ local function stepper(props: Properties): React.ReactNode
 			Position = row.Position,
 			Size = row.Size,
 			Text = text,
+			NameColor3 = if lock then CONSTANTS.GATE_COLOR else nil,
 			LeftPosition = CONSTANTS.ROW_LEFT_POSITION,
 			RightPosition = CONSTANTS.ROW_RIGHT_POSITION,
 			ArrowSize = CONSTANTS.ROW_ARROW_SIZE,
 			NamePosition = CONSTANTS.ROW_NAME_POSITION,
 			NameSize = CONSTANTS.ROW_NAME_SIZE,
 			OnStep = if props.IsLive then onStep else nil,
+			OnName = onName,
 			Under = under,
 		} :: Row.Properties
 	)

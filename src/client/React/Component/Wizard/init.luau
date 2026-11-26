@@ -87,6 +87,7 @@ local function strip(props: {
 	IsPeaceful: boolean,
 	OnPeaceful: (isPeaceful: boolean) -> (),
 	OnForward: (draft: Character) -> (),
+	OnPurchase: (id: string) -> (),
 })
 	local style = React.useContext(StyleContext)
 	local frameRef: { current: Frame? } = React.useRef(nil :: Frame?)
@@ -115,6 +116,7 @@ local function strip(props: {
 				IsPeaceful = props.IsPeaceful,
 				OnPeaceful = props.OnPeaceful,
 				OnForward = props.OnForward,
+				OnPurchase = props.OnPurchase,
 			} :: Page.Properties
 		),
 	})
@@ -192,6 +194,12 @@ local function walker(props: Properties)
 			})
 			return
 		end
+		-- the walk goes on without the answer: what it opens shows up on its row whenever it's in
+		if step.Page.IsGroupAsked then
+			props.OnAction({
+				Type = "CheckGroupPerk",
+			})
+		end
 		setWalk({
 			StepIndex = stepIndex + 1,
 			SlidFrom = if step.Page.IsSlidingOut and STEPS[stepIndex + 1].Page ~= step.Page then stepIndex else nil,
@@ -225,6 +233,12 @@ local function walker(props: Properties)
 		IsPeaceful = isPeaceful,
 		OnPeaceful = setIsPeaceful,
 		OnForward = goOn,
+		OnPurchase = function(id: string)
+			props.OnAction({
+				Type = "Purchase",
+				Id = id,
+			})
+		end,
 	})
 
 	return e(React.Fragment, {}, {
