@@ -39,11 +39,11 @@ local DEFINITIONS: { PropDefinition } = {
 	{ Id = "ice-cream", Name = "Ice Cream", Use = { Duration = 0.5 } },
 	-- held + nothing more to the server: its holder has its screen up
 	{ Id = "tablet", Name = "Tablet" },
+	-- a click casts the line, the next reels it in
+	{ Id = "fishing-pole", Name = "Fishing Pole", Use = { Duration = 0.5 } },
 }
--- a row moves up into the list above once both halves of its prop are in the game's set
-local UPCOMING: { PropDefinition } = {
-	{ Id = "fishing-pole", Name = "Fishing Pole" },
-}
+-- none is left. a row waits here until both halves of its prop are in the game's set: nobody is handed one
+local UPCOMING: { PropDefinition } = {}
 -- the five that didn't come back: their pads are still on the map
 local RETIRED: { string } = { "Hand Console", "Hot Dog", "Binoculars", "Hoverboard", "Boombox" }
 local CATALOGUE: PropCatalogue = {
