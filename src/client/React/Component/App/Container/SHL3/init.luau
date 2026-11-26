@@ -4,6 +4,7 @@
 -- Modules
 -- Components
 local AlertStrip = require("@self/AlertStrip")
+local ApartmentSale = require("@self/ApartmentSale")
 local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
 local CharacterSelect =
@@ -47,6 +48,8 @@ local REGISTRY: Registry = {
 		Shop = Shop,
 		-- only reached from a button its hud has where there are sides to change
 		TeamChange = TeamChange,
+		-- the salesman of the apartment tower opens it, no button of the hud does
+		ApartmentSale = ApartmentSale,
 	},
 	OVERLAYS = {
 		CurrencyPopup = CurrencyPopup,
