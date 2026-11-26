@@ -18,6 +18,7 @@ local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Comb
 local EconomyService = require("@game/ServerScriptService/Server/Service/Economy")
 local FightingUtil = require("@game/ServerScriptService/Server/Util/Fighting")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local PaletteUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor/Palette")
@@ -59,6 +60,9 @@ type Profiles = {
 type CharacterServiceImpl = {
 	__index: CharacterServiceImpl,
 	Sanitise: (self: CharacterService, player: Player, edited: Character) -> Result<Character, string>,
+	RefuseFighting: (self: CharacterService, player: Player) -> string?,
+	GetUnlistedError: (self: CharacterService, character: Character, kept: AccessDefinition.Kept) -> string?,
+	Enter: (self: CharacterService, player: Player) -> Result<true, string>,
 }
 export type CharacterService = typeof(setmetatable(
 	{} :: {
@@ -85,6 +89,19 @@ local SCALE_EPSILON = CharacterEditorDefinition.SCALE_EPSILON
 local HAS_LISTINGS = #AccessDefinition.list() > 0
 -- the order a character is gone through in
 local IDENTITY_KEYS: { IdentityKey } = table.freeze({ "Main" :: IdentityKey, "Secret" })
+-- what a game ends on a save as its player walks off as somebody else, ahead of the write that says who. only one
+-- game has anything that lasts as long as a character is played: what was rented for it
+local LEAVE: ((save: PlayerSave) -> ())? = GameDefinition.pick({
+	shl1 = function(): ((save: PlayerSave) -> ())?
+		return require("@game/ServerScriptService/Server/Service/Rent/Rule").expireSave
+	end,
+	shl2 = function(): ((save: PlayerSave) -> ())?
+		return nil
+	end,
+	shl3 = function(): ((save: PlayerSave) -> ())?
+		return nil
+	end,
+})
 -- Variables
 -- References
 -- Private Functions
@@ -488,6 +505,18 @@ local function rollCharacter(player: Player, characterId: string): Result<Charac
 	end))
 end
 
+-- a character that was just picked is always worn as the identity the game has one come in as (its super identity,
+-- unless the game says another), the one that's worn already included. whoever the server put in a costume stays who
+-- it says
+local function enter(player: Player): Result<true, string>
+	assert(SessionService.IsInitialized, `the session service isn't initialized`)
+	local costumeOpt = if AvatarService.IsInitialized then AvatarService:GetCostume(player) else Option.none()
+	local identityKey: IdentityKey = if costumeOpt.IsSome
+		then costumeOpt.Value.IdentityKey
+		else SpawnDefinition.START_IDENTITY_KEY
+	return SessionService:SetActiveIdentity(player, identityKey)
+end
+
 local function selectCharacter(player: Player, characterId: string): Result<true, string>
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	local sessionOpt = SessionService:Get(player)
@@ -506,20 +535,16 @@ local function selectCharacter(player: Player, characterId: string): Result<true
 		if t.ActiveCharacterId == characterId then
 			return nil
 		end
+		if LEAVE then
+			LEAVE(t)
+		end
 		t.ActiveCharacterId = characterId
 		return t
 	end)
 	if saveRes.IsErr then
 		return saveRes
 	end
-	-- a selected character is always worn as the identity the game has one come in as (its super identity, unless
-	-- the game says another), the one that's worn already included. whoever the server put in a costume stays who it
-	-- says
-	local costumeOpt = if AvatarService.IsInitialized then AvatarService:GetCostume(player) else Option.none()
-	local identityKey: IdentityKey = if costumeOpt.IsSome
-		then costumeOpt.Value.IdentityKey
-		else SpawnDefinition.START_IDENTITY_KEY
-	return SessionService:SetActiveIdentity(player, identityKey)
+	return enter(player)
 end
 
 -- the client plays the animation of the transformation + asks once, the server picks the moment the costume
@@ -617,6 +642,24 @@ function CharacterService:Sanitise(player: Player, edited: Character): Result<Ch
 		return Result.err(`no slot holds the character`)
 	end
 	return newSanitised(player, edited, profilesRes.Value)
+end
+
+-- the three below are what a save + a pick of a character are held to, for whoever stores one another way: a
+-- service of one game that takes a character for a fee
+-- the line whoever is in a fight is turned down with, nil for anybody else. their client hears why
+function CharacterService:RefuseFighting(player: Player): string?
+	return refuseFighting(player)
+end
+
+-- the line a character is turned down with for wearing what's on no list of the game, unless its slot kept it. a
+-- game that holds nothing back turns nobody down for it
+function CharacterService:GetUnlistedError(character: Character, kept: AccessDefinition.Kept): string?
+	return if HAS_LISTINGS then getUnlistedError(character, kept) else nil
+end
+
+-- has whoever was just made the played character be worn the way a picked one is
+function CharacterService:Enter(player: Player): Result<true, string>
+	return enter(player)
 end
 
 return ServiceLocker(function(): CharacterService
