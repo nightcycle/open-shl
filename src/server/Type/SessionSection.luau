@@ -31,7 +31,7 @@ Types.Sessions = Type.strictInterface({
 
 -- the part of a session that's one game's own: what only it keeps of a player is only its to bring over, to hand to
 -- a client + to take requests for. the session service does what every game shares + hands the rest to the one of
--- its game. a game names the last five only where it has something of its own to say
+-- its game. a game names the last six only where it has something of its own to say
 export type SessionSection = {
 	-- what the importer of the game may hand over: a patch that isn't one is turned down before any of it is in a save
 	Patch: (value: unknown) -> (boolean, string?),
@@ -49,6 +49,10 @@ export type SessionSection = {
 	-- what a save says its player has of what the game holds back. the lists are the save's own: what's put into
 	-- one of them while the save is open for an update is kept. only in a game that keeps any
 	GetOwned: ((save: PlayerSave) -> Owned)?,
+	-- runs on a save as it's loaded, after the importer + before anybody hears of the session: what the game has end
+	-- with a visit is ended here, so nobody is ever dressed in what ran out. the save is open for a write, it can't
+	-- yield
+	Open: ((save: PlayerSave) -> ())?,
 }
 Types.SessionSection = Type.strictInterface({
 	Patch = Type.callback,
@@ -58,6 +62,7 @@ Types.SessionSection = Type.strictInterface({
 	Replicate = Type.optional(Type.callback),
 	Start = Type.optional(Type.callback),
 	GetOwned = Type.optional(Type.callback),
+	Open = Type.optional(Type.callback),
 })
 
 return Types

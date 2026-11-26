@@ -279,6 +279,35 @@ local function load(userId: number, getIfCanceled: () -> boolean): Result<Player
 	return Result.err(`legacy import err: {problem}`)
 end
 
+-- yields. a save as a session starts out with it: loaded, + with what its game has end with a visit ended. that's
+-- with the data service before anybody hears of the session, so nobody is ever dressed in what ran out
+local function loadOpened(userId: number, getIfCanceled: () -> boolean): Result<PlayerSave, string>
+	local saveRes = load(userId, getIfCanceled)
+	local open = SECTION.Open
+	-- whoever left meanwhile has no save here to write to
+	if saveRes.IsErr or not open or getIfCanceled() then
+		return saveRes
+	end
+	local save = FreezeUtil.delta(saveRes.Value, function(t: PlayerSave): PlayerSave
+		open(t)
+		return t
+	end)
+	if getIfEqual(save, saveRes.Value) then
+		return saveRes
+	end
+	local openRes = if DataService.IsInitialized
+		then DataService:Save(StoreDefinition.Player, userId, save)
+		else Result.err(`the data service isn't initialized`)
+	if openRes.IsErr then
+		-- played on as it was loaded, the player would wear for another visit what they paid one for
+		if DataService.IsInitialized then
+			DataService:Release(StoreDefinition.Player, userId)
+		end
+		return Result.err(`open err: {openRes.Value}`)
+	end
+	return Result.ok(save)
+end
+
 -- yields. a player whose save can't be read doesn't get to play, a blank one would be written over what they have
 local function add(self: SessionService, player: Player)
 	-- held on to, the service lets go of them the moment it's destroyed
@@ -292,7 +321,7 @@ local function add(self: SessionService, player: Player)
 		return not self.IsInitialized or not isLoading[player]
 	end
 	-- a load that threw is a load that failed, the player is kicked for it like for any other
-	local isDone, saveRes = pcall(load, player.UserId, getIfCanceled)
+	local isDone, saveRes = pcall(loadOpened, player.UserId, getIfCanceled)
 	if getIfCanceled() then
 		return
 	end
