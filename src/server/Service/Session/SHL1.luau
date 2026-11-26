@@ -3,6 +3,8 @@
 -- Packages
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local RentDefinition = require("@game/ReplicatedStorage/Shared/Definition/Rent")
+local RentRule = require("@game/ServerScriptService/Server/Service/Rent/Rule")
 -- Types
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
 local LegacyImportType = require("@game/ServerScriptService/Server/Type/LegacyImport")
@@ -53,6 +55,8 @@ local function setAttributes(player: Player, save: PlayerSave)
 	local section = save.SHL1
 	assert(section, `a save of this game has its section`)
 	AttributeDefinition.set(player, AttributeDefinition.HasGroupPerk, section.IsGroupPerkGranted)
+	-- an editor asks ahead of the server what a draft is short of, which isn't what its slot only has on for the visit
+	AttributeDefinition.set(player, AttributeDefinition.RentedIds, RentDefinition.toAttribute(section.RentedItemIds))
 end
 -- Class
 local Section: SessionSection = table.freeze({
@@ -60,6 +64,8 @@ local Section: SessionSection = table.freeze({
 	Import = import,
 	SetAttributes = setAttributes,
 	GetOwned = getOwned,
+	-- a rented thing lasts until its player leaves: whoever comes back comes back without it
+	Open = RentRule.expireSave,
 })
 
 return Section

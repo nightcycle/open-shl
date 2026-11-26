@@ -196,10 +196,18 @@ local function walk(destroyCallbacks: { () -> () })
 	assert(closed.Data.SHL1.IsPeaceful == true, `the section wasn't written as the server closed`)
 	assert(closed.Data.LegacyImportVersion == 0, `the save was written as imported`)
 
-	-- the second visit: the save comes back the way it was left
+	-- the second visit: the save comes back the way it was left, but for what ended with the first one: nothing is
+	-- rented any more
 	start(destroyCallbacks, fake)
 	session = awaitSession(player)
-	assert(SpecUtil.getIfEqual(session.Save, save), `the save didn't come back the way it was left`)
+	local left = TableUtil.deepCopy(save)
+	assert(left.SHL1, `a save of the game has no section`)
+	left.SHL1.RentedItemIds = {}
+	assert(SpecUtil.getIfEqual(session.Save, left), `the save didn't come back the way it was left`)
+	assert(
+		AttributeDefinition.get(player, AttributeDefinition.RentedIds) == "",
+		`the player is told of something rented on a visit that rented nothing`
+	)
 	assert(session.Save.LegacyImportVersion == 0, `the second visit marked the save as imported`)
 	assertOwnStoreOnly(fake)
 end
