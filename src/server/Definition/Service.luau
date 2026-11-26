@@ -241,6 +241,17 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- what the villains of a town do to it for money + what follows: it asks the sides, pays through the economy, tells
+	-- the heroes through the alerts + reads the clock of the day
+	{
+		Name = "Crime",
+		IsFeatured = FEATURES.Crime,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Crime")
+			assert(not service.IsInitialized, `the crime service is already initialized`)
+			return service
+		end,
+	},
 	{
 		Name = "Beacon",
 		IsFeatured = FEATURES.Fixtures,
@@ -283,6 +294,16 @@ local ENTRIES: { Entry } = {
 		Load = function(): Service
 			local service = require("@game/ServerScriptService/Server/Service/Hazard")
 			assert(not service.IsInitialized, `the hazard service is already initialized`)
+			return service
+		end,
+	},
+	-- a grid of beams that's lethal while it's lit: the town's guard against its villains, the hazards do the killing
+	{
+		Name = "LaserGate",
+		IsFeatured = FEATURES.Crime,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/LaserGate")
+			assert(not service.IsInitialized, `the laser gate service is already initialized`)
 			return service
 		end,
 	},

@@ -84,6 +84,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- what's seen of the crimes of a town that its server doesn't put in the world itself: the bar over a target
+	{
+		Name = "Crime",
+		IsFeatured = FEATURES.Crime,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Crime")
+			assert(not service.IsInitialized, `the crime service is already initialized`)
+			return service
+		end,
+	},
 	{
 		Name = "Music",
 		IsFeatured = FEATURES.Music,
