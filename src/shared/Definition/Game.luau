@@ -132,7 +132,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Chat = true,
 		-- the first button of its roleplay bar
 		Mask = true,
-		Movement = false,
+		-- shift runs, a second jump lifts + whoever is down lies limp
+		Movement = true,
 		-- its flow has the action, its hud has no button for it
 		CameraMode = false,
 	}),

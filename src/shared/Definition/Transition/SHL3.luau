@@ -9,7 +9,6 @@ local TransitionType = require("@game/ReplicatedStorage/Shared/Type/Transition")
 type TransitionCatalogue = TransitionType.TransitionCatalogue
 -- Constants
 local SPIN_ANIMATION_ID = Animation["shl-3"].transition["spin.rbxm"]
-local FALL_FORWARD_ANIMATION_ID = Animation.core.transition["fall-forward.rbxm"]
 local SWAP_COOLDOWN = 1
 -- its editor has no page for either style, so there's the one of each every character starts out with
 local CATALOGUE: TransitionCatalogue = {
@@ -26,10 +25,12 @@ local CATALOGUE: TransitionCatalogue = {
 		},
 	},
 	Deaths = {
+		-- nothing is acted out: the body hangs loose from its joints + lies where it comes down, until its player
+		-- has the next one
 		FallForward = {
 			Style = PseudoEnum.DeathStyle.FallForward,
-			Name = "Fall Forwards",
-			AnimationId = FALL_FORWARD_ANIMATION_ID,
+			Name = "Go Limp",
+			Motion = "Limp",
 			AnimationLength = 3,
 			RespawnDelay = 3,
 			FreezeDuration = 3,

@@ -151,6 +151,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- what a body does by itself where it's more than the engine gives it: a run, a second jump, a limp death
+	{
+		Name = "Movement",
+		IsFeatured = FEATURES.Movement,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Movement")
+			assert(not service.IsInitialized, `the movement service is already initialized`)
+			return service
+		end,
+	},
 	-- the emotes of the actions menu + the arms of whoever is cuffed: a game without either has nobody to pose, one
 	-- that holds its villains has their arms to
 	{
