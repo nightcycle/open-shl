@@ -52,6 +52,8 @@ local ALLOWANCE = if CATALOGUE.Allowance
 		INTERVAL = CATALOGUE.Allowance.Interval,
 	})
 	else nil
+-- nil in a game that hands nothing out for being in a group
+local GROUP_ID = CATALOGUE.GroupId
 -- Variables
 -- References
 -- Private Functions
@@ -79,6 +81,7 @@ end
 Module.STARTING_BALANCES = STARTING_BALANCES
 Module.DAILY_REWARD = DAILY_REWARD
 Module.ALLOWANCE = ALLOWANCE
+Module.GROUP_ID = GROUP_ID
 
 Module.getCurrencyName = function(currency: PseudoEnum.Currency): string
 	return CURRENCY_NAMES[currency]
@@ -101,6 +104,39 @@ end
 
 Module.getIfGamePass = function(definition: ProductDefinition): boolean
 	return definition.Grant.Type == "Entitlement"
+end
+
+-- how a pass is asked about + sold: by an id, + whether that's the asset it was before there were game passes. one
+-- of those that has an id of today goes by it, as the game pass it is now
+Module.getPassPrompt = function(definition: ProductDefinition): (number, boolean)
+	if definition.PassId then
+		return definition.PassId, false
+	end
+	return definition.LegacyId, definition.IsAsset == true
+end
+
+-- the pass a prompt of the engine was for, by what it was prompted as
+Module.getFromPassPrompt = function(id: number, isAsset: boolean): Result<ProductDefinition, string>
+	for _, definition in DEFINITIONS do
+		if Module.getIfGamePass(definition) then
+			local promptId, isPromptAsset = Module.getPassPrompt(definition)
+			if promptId == id and isPromptAsset == isAsset then
+				return Result.ok(definition)
+			end
+		end
+	end
+	return Result.err(`no {if isAsset then "asset" else "game"} pass {id}`)
+end
+
+-- the pass that hands an entitlement out
+Module.getFromEntitlement = function(key: EntitlementKey): Result<ProductDefinition, string>
+	for _, definition in DEFINITIONS do
+		local grant = definition.Grant
+		if grant.Type == "Entitlement" and grant.Key == key then
+			return Result.ok(definition)
+		end
+	end
+	return Result.err(`no pass hands out "{key}"`)
 end
 
 -- what the game's passes hand out, in the order they're sold in

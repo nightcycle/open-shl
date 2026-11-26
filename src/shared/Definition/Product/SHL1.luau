@@ -29,6 +29,8 @@ local LEGACY_PASS_ASSET_IDS = table.freeze({
 	SUITS_OLD_1 = 243650331,
 	SUITS_OLD_2 = 243923177,
 })
+-- the group of its old place, whoever was seen in it once has three emblems more for good
+local LEGACY_GROUP_ID = 2610137
 -- every currency goes by a name, nothing here hands out or shows a gem
 local CURRENCY_NAMES: { [PseudoEnum.Currency]: string } = table.freeze({
 	Credits = "C$",
@@ -159,6 +161,7 @@ local CATALOGUE: ProductCatalogue = {
 	ExtraCharacterSlotCount = EXTRA_CHARACTER_SLOT_COUNT,
 	StartingBalances = STARTING_BALANCES,
 	Allowance = ALLOWANCE,
+	GroupId = LEGACY_GROUP_ID,
 }
 -- Variables
 -- References
