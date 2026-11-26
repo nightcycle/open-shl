@@ -20,22 +20,30 @@ local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Se
 -- Hooks
 local useIsMounted = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsMounted")
 local usePeaceful = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/usePeaceful")
+local usePlayerAttribute = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/usePlayerAttribute")
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
 local AppScreenContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/Screen")
 local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
 local SessionCharactersContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Characters")
+local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
 -- Types
 local EditorTypes = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor/Types")
 type Character = SessionService.Character
 type FilteredText = EditorTypes.FilteredText
+type EntitlementKey = ProductDefinition.EntitlementKey
 type Layout = EditorTypes.Component
+type Owned = SessionOwnedContext.Owned
 type ProductDefinition = ProductDefinition.ProductDefinition
 export type Properties = {}
 -- Constants
 local ERROR_DURATION = 4
 local IS_STUDIO = RunService:IsStudio()
+-- what the passes of the game hand out. the list is the game's + never changes, so each is read by a hook of its own
+local ENTITLEMENT_KEYS: { EntitlementKey } = ProductDefinition.listEntitlements()
+-- only a game with a group to be in has anybody to ask about it
+local HAS_PROMO = GameDefinition.FEATURES.Promo
 -- only one game ever dealt a character: its editor rolls the draft anew at a press
 local IS_RANDOMIZABLE = GameDefinition.tune(false, { shl3 = true })
 -- how the editor is laid out is the game's own, the layout of another game is never required
@@ -87,6 +95,48 @@ local function promptProduct(definition: ProductDefinition): boolean
 		MarketplaceService:PromptProductPurchase(Players.LocalPlayer, definition.LegacyId)
 	end))
 end
+
+-- yields in studio, where a pass is handed over for free the way a lot is. anywhere else the engine asks the player,
+-- for the game pass or for the asset a pass from before there were game passes is sold as. the server hears how it
+-- went + the player wears what the pass hands out once it's theirs
+local function promptPass(definition: ProductDefinition): boolean
+	if IS_STUDIO then
+		return NetworkService.IsInitialized
+			and NetworkService:Invoke(RemoteDefinition.PurchaseProduct, definition.Id).IsOk
+	end
+	local id, isAsset = ProductDefinition.getPassPrompt(definition)
+	return (
+		pcall(function()
+			if isAsset then
+				MarketplaceService:PromptPurchase(Players.LocalPlayer, id)
+			else
+				MarketplaceService:PromptGamePassPurchase(Players.LocalPlayer, id)
+			end
+		end)
+	)
+end
+
+-- everything the player has of what the game holds back: what the session says was bought + what opens a lock, which
+-- the server writes onto the player
+local function useOwned(): Owned
+	local owned = React.useContext(SessionOwnedContext)
+	local entitlements: { EntitlementKey } = {}
+	for _, key: EntitlementKey in ENTITLEMENT_KEYS do
+		if usePlayerAttribute(AttributeDefinition.fromEntitlement(key)) then
+			table.insert(entitlements, key)
+		end
+	end
+	local hasGroupPerk = usePlayerAttribute(AttributeDefinition.HasGroupPerk)
+	local entitlementText = table.concat(entitlements, ",")
+	return React.useMemo(function(): Owned
+		return table.freeze({
+			ItemIds = owned.ItemIds,
+			PowerIds = owned.PowerIds,
+			Entitlements = table.freeze(entitlements),
+			HasGroupPerk = hasGroupPerk,
+		})
+	end, { owned :: any, entitlementText :: any, hasGroupPerk :: any })
+end
 -- Class
 return function(): React.ReactNode
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
@@ -113,6 +163,7 @@ return function(): React.ReactNode
 	-- whether the layout last asked for its player to sit fights out, nil for one that never asks
 	local isPeacefulRef = React.useRef(nil :: boolean?)
 	local isPeaceful, setPeaceful = usePeaceful()
+	local owned = useOwned()
 
 	-- back to where the edit was asked for, the draft is dropped
 	local function leave()
@@ -136,7 +187,7 @@ return function(): React.ReactNode
 		return nil
 	end
 
-	return e(CharacterContext.Provider, {
+	local editor = e(CharacterContext.Provider, {
 		value = character,
 	}, {
 		CharacterEditor = e(
@@ -222,6 +273,24 @@ return function(): React.ReactNode
 						end)
 					elseif action.Type == "Purchase" then
 						local access = AccessDefinition.getAccess(action.Id)
+						-- what's behind a pass is got by getting the pass
+						if access.Type == "Entitlement" then
+							local passRes = ProductDefinition.getFromEntitlement(access.Key)
+							if isBusyRef.current or passRes.IsErr then
+								return
+							end
+							isBusyRef.current = true
+							setErrorMessage(nil)
+							local pass = passRes.Value
+							task.spawn(function()
+								local isPrompted = promptPass(pass)
+								isBusyRef.current = false
+								if isMountedRef.current and not isPrompted then
+									setErrorMessage(`"{pass.Name}" can't be bought right now`)
+								end
+							end)
+							return
+						end
 						if isBusyRef.current or access.Type ~= "Price" then
 							return
 						end
@@ -250,6 +319,13 @@ return function(): React.ReactNode
 								setErrorMessage(errorLine)
 							end
 						end)
+					elseif action.Type == "CheckGroupPerk" then
+						-- nobody waits for the answer: what it opens is written onto the player once the server knows
+						if HAS_PROMO and NetworkService.IsInitialized then
+							task.spawn(function()
+								NetworkService:Invoke(RemoteDefinition.CheckGroupPerk, nil)
+							end)
+						end
 					elseif action.Type == "SetPeaceful" then
 						isPeacefulRef.current = action.IsPeaceful
 					elseif action.Type == "Back" then
@@ -262,5 +338,11 @@ return function(): React.ReactNode
 				end,
 			} :: EditorTypes.Properties
 		),
+	})
+	-- the editor reads what's the player's off one place, the locks that are open to them among it
+	return e(SessionOwnedContext.Provider, {
+		value = owned,
+	}, {
+		Editor = editor,
 	})
 end
