@@ -41,6 +41,12 @@ Module.new = function(ability: ToggleFactory.Ability): AbilityBuilder.ClientBuil
 				return finishTime == nil or os.clock() - finishTime >= cooldown
 			end)
 	end
+	-- one that's locked on isn't turned off by a click
+	if ability.Config.IsLocked then
+		builder = builder:Guard(bindings.Cancel, function(): boolean
+			return false
+		end)
+	end
 	return builder:Guard(bindings.Cast, function(context: ClientContext): boolean
 		local energy = AttributeDefinition.get(context.Character, AttributeDefinition.Energy)
 		if ModeDefinition.getIfEnergyEnabled() and energy < energyCost then

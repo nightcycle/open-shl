@@ -42,6 +42,12 @@ Module.new = function(ability: ToggleFactory.Ability): AbilityBuilder.ServerBuil
 				return finishTime == nil or os.clock() - finishTime >= cooldown - COOLDOWN_TOLERANCE
 			end)
 	end
+	-- one that's locked on isn't turned off by a click, whatever a client says of it
+	if ability.Config.IsLocked then
+		builder = builder:Guard(bindings.Cancel, function(): boolean
+			return false
+		end)
+	end
 	return builder:Guard(bindings.Cast, function(context: ServerContext): boolean
 		return context.VFX.fire(SpendEnergy, { Amount = energyCost })
 	end)

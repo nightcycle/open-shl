@@ -22,6 +22,7 @@ export type Bindings = {
 export type Config = {
 	Duration: number, -- seconds it stays on at most
 	Cooldown: number?, -- seconds from when it's off until it can be turned on again, right away without
+	IsLocked: boolean?, -- it's on for as long as it lasts: both halves turn the second click down
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
