@@ -14,6 +14,7 @@ local DEFINITIONS: { ClientDefinition } = table.freeze({
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/FireHand"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/LaserRay"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/LaserVision"),
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/MachineGun"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Flight"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/SuperSpeed"),
 })

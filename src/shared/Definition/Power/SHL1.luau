@@ -79,6 +79,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "ranged_machine-gun",
+		Group = "ranged",
+		Name = "Machine Gun",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 15,
+		ColorGroups = {},
+	},
+	{
 		Id = "transportation_flight",
 		Group = "transportation",
 		Name = "Fly",
@@ -162,15 +171,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 34,
-		ColorGroups = {},
-	},
-	{
-		Id = "ranged_machine-gun",
-		Group = "ranged",
-		Name = "Machine Gun",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 15,
 		ColorGroups = {},
 	},
 	{
