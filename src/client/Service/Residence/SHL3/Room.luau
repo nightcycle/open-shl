@@ -1,5 +1,6 @@
 --!strict
 -- Services
+local Players = game:GetService("Players")
 -- Packages
 local IndexUtil = require("@game/ReplicatedStorage/Packages/IndexUtil")
 local Signal = require("@game/ReplicatedStorage/Packages/Signal")
@@ -45,7 +46,15 @@ export type Room = typeof(setmetatable(
 local INSTANCE_NAME = "Apartment"
 local ENTRANCE_PATH = "Gate/Teleport"
 local EXIT_PATH = "Gate/Telepad"
+-- what the engine names the weld of whoever sits + how it turns both of its ends
+local SEAT_WELD_NAME = "SeatWeld"
+local SEAT_TURN = CFrame.Angles(-math.pi / 2, 0, 0)
+-- the hip of an avatar without a lower torso sits this far under its root
+local SEAT_HIP = 0.5
+-- seconds a seat isn't sat on again by the leg that just got up from one
+local SEAT_COOLDOWN = 2
 -- Variables
+local LastSeatTime = 0
 -- in the space of the anchor a room is built at. it's read off the rooms of the library once
 local BoundsCache: Bounds? = nil
 -- References
@@ -111,6 +120,52 @@ local function newSpot(name: string, parent: Instance): BasePart
 	return part
 end
 
+-- the engine seats nobody on a seat only this client has: a touch does nothing + neither does Seat:Sit. the avatar is
+-- this client's own to move, so it's welded on the way the engine welds it + let go as it gets up. gone with the seat
+local function bindSeat(seat: Seat)
+	seat.Touched:Connect(function(hit: BasePart)
+		local avatar = Players.LocalPlayer.Character
+		local humanoid = avatar and avatar:FindFirstChildOfClass("Humanoid")
+		local root = humanoid and humanoid.RootPart
+		if not avatar or not humanoid or not root or not hit:IsDescendantOf(avatar) then
+			return
+		end
+		if
+			seat.Disabled
+			or seat:FindFirstChild(SEAT_WELD_NAME)
+			or humanoid.Sit
+			or humanoid.Health <= 0
+			or os.clock() - LastSeatTime < SEAT_COOLDOWN
+		then
+			return
+		end
+		local lowerTorso = avatar:FindFirstChild("LowerTorso")
+		local hip = if lowerTorso and lowerTorso:IsA("BasePart") then lowerTorso.Size.Y else SEAT_HIP
+		local weld = Instance.new("Weld")
+		weld.Name = SEAT_WELD_NAME
+		weld.Part0 = seat
+		weld.Part1 = root
+		weld.C0 = CFrame.new(0, seat.Size.Y / 2, 0) * SEAT_TURN
+		weld.C1 = CFrame.new(0, -(root.Size.Y / 2 + hip), 0) * SEAT_TURN
+		weld.Parent = seat
+		humanoid.Sit = true
+		local connection: RBXScriptConnection
+		connection = humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
+			if humanoid.Sit then
+				return
+			end
+			connection:Disconnect()
+			LastSeatTime = os.clock()
+			weld:Destroy()
+		end)
+		-- the room may go with its owner sat in it
+		weld.Destroying:Connect(function()
+			connection:Disconnect()
+			humanoid.Sit = false
+		end)
+	end)
+end
+
 -- the room of a tier stands where the anchor of the flat is: the pane of the tower its own anchor part lies on
 local function build(self: Room, tier: number): Result<true, string>
 	if not self.IsAlive then
@@ -140,6 +195,11 @@ local function build(self: Room, tier: number): Result<true, string>
 		priorModel:Destroy()
 	end
 	self._Model = model
+	for _, descendant in model:GetDescendants() do
+		if descendant:IsA("Seat") then
+			bindSeat(descendant)
+		end
+	end
 	model.Parent = self.Instance
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
