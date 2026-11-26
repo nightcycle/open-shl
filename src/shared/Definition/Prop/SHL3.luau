@@ -31,10 +31,11 @@ local DEFINITIONS: { PropDefinition } = {
 	-- a sip, then a minute before the next
 	{ Id = "latte", Name = "Latte", Use = { Duration = 3, Lockout = 63 } },
 	{ Id = "bloxiade", Name = "Bloxiade", Use = { Duration = 3, Lockout = 63 } },
+	-- a flick + a second before the next: it turns on long after
+	{ Id = "fidget-spinner", Name = "Fidget Spinner", Use = { Duration = 1 } },
 }
 -- a row moves up into the list above once both halves of its prop are in the game's set
 local UPCOMING: { PropDefinition } = {
-	{ Id = "fidget-spinner", Name = "Fidget Spinner", Use = { Duration = 1 } },
 	{ Id = "moneybag", Name = "Moneybag", Use = { Duration = 0.8 } },
 	{ Id = "ice-cream", Name = "Ice Cream", Use = { Duration = 0.5 } },
 	{ Id = "tablet", Name = "Tablet" },
