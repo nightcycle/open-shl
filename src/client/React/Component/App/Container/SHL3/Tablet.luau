@@ -52,10 +52,15 @@ return function(): React.ReactNode
 		task.spawn(function()
 			local loaded: { string } = {}
 			for _, image in SLIDE_IMAGES do
+				-- asked for by its id alone an upload of the old place answers as a failure: the id is a decal's,
+				-- only something that draws it finds the picture behind it
+				local probe = Instance.new("ImageLabel")
+				probe.Image = image
 				local isLoaded = false
-				ContentProvider:PreloadAsync({ image }, function(_: string, status: Enum.AssetFetchStatus)
+				ContentProvider:PreloadAsync({ probe }, function(_: string, status: Enum.AssetFetchStatus)
 					isLoaded = status == Enum.AssetFetchStatus.Success
 				end)
+				probe:Destroy()
 				if isLoaded then
 					table.insert(loaded, image)
 				end
