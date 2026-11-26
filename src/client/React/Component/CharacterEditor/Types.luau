@@ -52,6 +52,9 @@ export type ActionInfo =
 		Type: "SetPeaceful", -- asks for the player to sit fights out or not, in a game where that's a player's pick
 		IsPeaceful: boolean,
 	}
+	| {
+		Type: "ToggleShop", -- asks for the shop of the game to be put up over the editor, or away again
+	}
 -- what the app hands the editor of every game, however that game lays it out
 export type Properties = RobloxComponents.FrameProperties & {
 	ErrorMessage: string?,
@@ -59,6 +62,7 @@ export type Properties = RobloxComponents.FrameProperties & {
 	IsRandomizable: boolean?, -- a layout with a button for it only shows it when there's something to roll the draft
 	Draft: Character?, -- what the layout is to go on editing in place of its draft, each time it's handed another
 	IsPeaceful: boolean?, -- set while the player sits fights out, for a layout that asks whether they do
+	IsShopOpen: boolean?, -- set while the shop is up over the editor, for a layout with a button that asks for it
 	FilteredText: FilteredText?,
 	OnAction: (ActionInfo) -> (),
 }
