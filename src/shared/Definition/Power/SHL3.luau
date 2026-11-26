@@ -122,6 +122,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "transportation_super-jump",
+		Group = "transportation",
+		Name = "Super Jump",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["super-jump.png"]),
+		EnergyCost = 0,
+		Damage = 0,
+		ColorGroups = {},
+	},
+	{
 		Id = "transportation_super-speed",
 		Group = "transportation",
 		Name = "Super Speed",
@@ -203,15 +212,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["sword.png"]),
 		EnergyCost = 0,
 		Damage = 20,
-		ColorGroups = {},
-	},
-	{
-		Id = "transportation_super-jump",
-		Group = "transportation",
-		Name = "Super Jump",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["super-jump.png"]),
-		EnergyCost = 0,
-		Damage = 0,
 		ColorGroups = {},
 	},
 }

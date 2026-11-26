@@ -23,6 +23,7 @@ local DEFINITIONS: { ServerDefinition } = table.freeze({
 	require("@game/ServerScriptService/Server/Ability/Library/Special/XRayVision"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Flight"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Grapple"),
+	require("@game/ServerScriptService/Server/Ability/Library/Transportation/SuperJump"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/SuperSpeed"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Teleport"),
 })
