@@ -169,7 +169,7 @@ Client:
 
 | command | what it does |
 | --- | --- |
-| `shell.get` | boot phase, open screen + panel, hud visible / has shown, what the app has mounted (read off its instances), the game's registry, stops and menu rows |
+| `shell.get` | boot phase, open screen + panel, hud visible / has shown, `IsHudHidden` + `AreNamesHidden` (what the player took off their own screen: shl3's roleplay bar), what the app has mounted (read off its instances), the game's registry, stops and menu rows |
 | `shell.press` | presses a HUD button by its menu id through `ShellService:PressMenuButton` |
 | `shell.close` | closes the open panel or screen |
 | `boot.play` | "get me into play" with no click: finishes every boot phase of this game, then the character select through the real `SelectCharacter` request; answers where it ended and the steps it took |
@@ -178,6 +178,8 @@ Client:
 | `acrobatics.get`, `acrobatics.play`, `acrobatics.fix` | where the game has the flips (shl1): a move by its id through the service the panel's buttons call (an error says why it was turned down), and what Fix Character does |
 | `chat.get`, `chat.mute` | where the game has the chat service (shl1, shl3): the lines of the game's own log, the newest last (shl1; always none in shl3, which reads its chat off the engine's window) + whether this player mutes the other mode, and what the Mute button does (`IsMuting`) |
 | `environment.get`, `environment.grade`, `environment.override`, `environment.clear` | where the game has a day (shl3): what this screen shows of it, one of the six grades, a season / weather / time of this screen's own, and back to the server's |
+| `emote.get`, `emote.play`, `emote.stop`, `emote.mask` | where the emote service runs (shl2, shl3): the emote that's held, every track that plays on the avatar with its `Length` (0 = the clip didn't load: the animation doesn't play in this universe), the walk speed (0 while a pose roots) + `IsMasked`; an emote by its id; the gesture of a hand at the mask alone (the mask itself is the bar's button or `SetMasked`) |
+| `movement.get`, `movement.sprint`, `movement.lift` | where the game has its own movement (shl3): walk speed + whether that's the run, the humanoid's state, jump power, the root's height + vertical speed, and `LimpJoints` by player (who hangs loose on this screen); what a press of shift does; the second jump (an error says why not: on the ground, a power jumps, under a second) |
 | `event.read`, `event.wait` | the client's event log |
 
 ### Getting into play without a mouse
