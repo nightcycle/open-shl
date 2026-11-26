@@ -89,7 +89,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 	}),
 	-- what it boots with so far, the rest goes on as each of them is built for it
 	shl3 = table.freeze({
-		Residences = false,
+		-- a flat of the apartment tower, bought from its salesman. nothing is built in one
+		Residences = true,
 		Furniture = false,
 		Quests = false,
 		Tutorial = false,
