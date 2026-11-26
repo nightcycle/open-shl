@@ -4,12 +4,17 @@
 -- Packages
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
+local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
+local NetworkService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Network")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
+local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
 local MenuDrawer = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/MenuDrawer")
 -- Hooks
+local useCharacterAttribute =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useCharacterAttribute")
 local useIsFighting = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsFighting")
 local useLocalCharacter = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useLocalCharacter")
 local usePeaceful = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/usePeaceful")
@@ -44,11 +49,22 @@ local function getNewCharacterId(characters: { Character }, activeCharacterId: s
 	end
 	return activeCharacterId
 end
+
+-- if the hero of the character that's played wears anything to take off
+local function getIfMaskable(characters: { Character }, activeCharacterId: string): boolean
+	for _, character in characters do
+		if character.Id == activeCharacterId then
+			return AppearanceUtil.getIfMaskable(character.Identities.Main.Appearance)
+		end
+	end
+	return false
+end
 -- Class
 -- the app tells every hud the same things, this one only has a use for where it's put + what's pressed. what the
 -- old place kept on its buttons is kept here: whether the drawer is out
 return function(props: Properties): React.ReactNode
 	assert(ShellService.IsInitialized, `the shell service isn't initialized`)
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	local isOpen: boolean, setIsOpen: (boolean) -> () = React.useState(false)
 	local panel: PanelId? = React.useContext(AppPanelContext) :: PanelId?
 	local characters = React.useContext(SessionCharactersContext)
@@ -57,11 +73,18 @@ return function(props: Properties): React.ReactNode
 	local avatar = useLocalCharacter()
 	local isPeaceful, setPeaceful = usePeaceful()
 	local isFighting = useIsFighting()
+	-- what the server wrote onto the avatar: the mask is only ever asked for, never taken off here
+	local isMasked = useCharacterAttribute(AttributeDefinition.IsMasked)
+	local isHero = avatar ~= nil and identityKey == HERO_KEY
+	local isMaskable = React.useMemo(function(): boolean
+		return getIfMaskable(characters, activeCharacterId)
+	end, { characters :: any, activeCharacterId })
 
 	local dead = React.useMemo(function(): { [MenuDrawer.ActionType]: boolean }
 		local out: { [MenuDrawer.ActionType]: boolean } = {
-			-- nothing takes a mask off in this game yet
-			ToggleMask = true,
+			-- only the hero has a mask, + only one that wears something on their head has it to take off: the old
+			-- button did nothing without a hat
+			ToggleMask = not isHero or not isMaskable,
 			-- whoever is in a fight doesn't get to walk off as somebody else: the saves + the creator are menus the
 			-- server keeps them out of until it's over
 			Saves = isFighting,
@@ -69,7 +92,7 @@ return function(props: Properties): React.ReactNode
 		}
 		table.freeze(out)
 		return out
-	end, { isFighting })
+	end, { isFighting, isHero, isMaskable })
 
 	return e(
 		MenuDrawer,
@@ -88,6 +111,9 @@ return function(props: Properties): React.ReactNode
 					props.OnClick(PseudoEnum.MenuId.Swap)
 				elseif action.Type == "ToggleMode" then
 					setPeaceful(not isPeaceful)
+				elseif action.Type == "ToggleMask" then
+					-- the words on the button never say which way it goes, as they never did
+					NetworkService:Fire(RemoteDefinition.SetMasked, not isMasked)
 				elseif action.Type == "Reset" then
 					-- what the reset of the engine's own menu does: the avatar is the player's to give up, the
 					-- server brings the next one in
