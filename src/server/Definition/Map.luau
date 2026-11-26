@@ -67,6 +67,7 @@ Module.PlayArea = MapDefinition.PlayArea
 Module.Water = MapDefinition.Water
 Module.IntroCamera = MapDefinition.IntroCamera
 Module.NightWindows = MapDefinition.NightWindows
+Module.DisasterTarget = MapDefinition.DisasterTarget
 
 Module.UniformId = newAttribute("UniformId", Type.string) :: Attribute<string>
 Module.GateId = newAttribute("GateId", Type.string) :: Attribute<string>
@@ -93,6 +94,7 @@ Module.ImageFace =
 -- seconds a picture is up for + seconds the whole run takes
 Module.ImageInterval = newAttribute("ImageInterval", Type.numberPositive) :: Attribute<number>
 Module.ImageDuration = newAttribute("ImageDuration", Type.numberPositive) :: Attribute<number>
+Module.DisasterId = MapDefinition.DisasterId
 
 Module.list = MapDefinition.list
 Module.observe = MapDefinition.observe
