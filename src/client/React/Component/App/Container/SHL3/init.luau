@@ -9,6 +9,7 @@ local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
 local CharacterSelect =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterSelect")
+local CodeBox = require("@self/CodeBox")
 local CombatFeedback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CombatFeedback")
 local CurrencyPopup =
@@ -72,6 +73,8 @@ local REGISTRY: Registry = {
 		RoleplayBar = RoleplayBar,
 		-- a line for this player alone: what a prop does to whoever holds it
 		Notice = Notice,
+		-- where a code is typed in, with the hud
+		CodeBox = CodeBox,
 		-- the screen of the tablet, for as long as it's in the hand
 		Tablet = Tablet,
 	},
