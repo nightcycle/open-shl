@@ -57,6 +57,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "ranged_freeze-ray",
+		Group = "ranged",
+		Name = "Freeze Ray",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["freeze-ray.png"]),
+		EnergyCost = 0,
+		Damage = 20,
+		ColorGroups = {},
+	},
+	{
 		Id = "ranged_laser-ray",
 		Group = "ranged",
 		Name = "Laser Ray",
@@ -167,15 +176,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["fire-ray.png"]),
 		EnergyCost = 0,
 		Damage = 35,
-		ColorGroups = {},
-	},
-	{
-		Id = "ranged_freeze-ray",
-		Group = "ranged",
-		Name = "Freeze Ray",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["freeze-ray.png"]),
-		EnergyCost = 0,
-		Damage = 20,
 		ColorGroups = {},
 	},
 	{
