@@ -13,6 +13,7 @@ type EventBinding = AbilityType.EventBinding
 type StateBinding = AbilityType.StateBinding
 type ServerSignal<T> = AbilityType.ServerSignal<T>
 type Layout<B> = AbilityType.Layout<B>
+type SoundKey = VFXAssetDefinition.SoundKey
 -- where a portal lets out whoever walked into the other one
 export type Travel = {
 	Position: Vector3,
@@ -26,8 +27,11 @@ export type Bindings = {
 }
 -- what both halves of the portals have to agree on
 export type Config = {
-	OpenSound: VFXAssetDefinition.SoundKey,
-	TravelSound: VFXAssetDefinition.SoundKey,
+	OpenSound: SoundKey,
+	TravelSound: SoundKey,
+	Cooldown: number, -- seconds from a click until the next one counts
+	Lifetime: number?, -- seconds a portal stands for at most, for as long as the tool is out without
+	TravelCooldown: number, -- seconds whoever walked into a portal isn't taken by one again
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -37,8 +41,14 @@ export type Ability = {
 local ID = "transportation_portals"
 -- seconds from the click until the portal stands
 local OPEN_DELAY = 0.6
--- seconds from the click until the next one counts
-local COOLDOWN = 2
+local CONFIG: Config = {
+	OpenSound = "PortalShot",
+	TravelSound = "Transwarp",
+	Cooldown = 2,
+	Lifetime = 60,
+	-- they come out inside of the other one
+	TravelCooldown = 0.75,
+}
 -- a portal is walked into whatever the machine is up to
 local STATE_IDS = table.freeze({ "Idle", "Casting" })
 local isTravel = Type.strictInterface({
@@ -63,14 +73,11 @@ local bindings: Bindings = {
 	),
 	Open = VFXBinding.event({ "Casting" }, AbilityTrigger.after(OPEN_DELAY)),
 	Travel = VFXBinding.signal(STATE_IDS, "Server", isTravel) :: ServerSignal<Travel>,
-	Recover = VFXBinding.event({ "Casting" }, AbilityTrigger.after(COOLDOWN), { To = "Idle" }),
+	Recover = VFXBinding.event({ "Casting" }, AbilityTrigger.after(CONFIG.Cooldown), { To = "Idle" }),
 }
 local ability: Ability = table.freeze({
 	Layout = VFXBinding.layout(ID, "Idle", true, bindings),
-	Config = table.freeze({
-		OpenSound = "PortalShot" :: VFXAssetDefinition.SoundKey,
-		TravelSound = "Transwarp" :: VFXAssetDefinition.SoundKey,
-	}),
+	Config = table.freeze(CONFIG),
 })
 
 return ability

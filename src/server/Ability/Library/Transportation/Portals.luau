@@ -30,10 +30,6 @@ local MAX_RANGE = 1200
 local PORTAL_OFFSET = Vector3.new(0, 3, 0)
 local PORTAL_DIAMETER = 6
 local PORTAL_CORE_SIZE = 2
--- seconds a portal stands for at most
-local PORTAL_LIFETIME = 60
--- seconds a character that walked into a portal isn't taken by one again: they come out inside of the other
-local TRAVEL_COOLDOWN = 0.75
 -- the portals of the character that stand, by their slot
 local PORTALS_KEY = "Portals"
 -- the slot the next portal takes once both or neither of them are filled
@@ -126,7 +122,7 @@ return AbilityBuilder
 			OnEntered = function(character: Model)
 				local now = os.clock()
 				local enterTime = record[ENTER_TIME_KEY] :: number?
-				if character ~= context.Character or (enterTime and now - enterTime < TRAVEL_COOLDOWN) then
+				if character ~= context.Character or (enterTime and now - enterTime < config.TravelCooldown) then
 					return
 				end
 				record[ENTER_TIME_KEY] = now
@@ -141,11 +137,14 @@ return AbilityBuilder
 			Close = handle.Stop,
 		}
 		getPortals(record)[slot] = portal
-		task.delay(PORTAL_LIFETIME, function()
-			if getPortals(record)[slot] == portal then
-				close(record, slot)
-			end
-		end)
+		local lifetime = config.Lifetime
+		if lifetime then
+			task.delay(lifetime, function()
+				if getPortals(record)[slot] == portal then
+					close(record, slot)
+				end
+			end)
+		end
 	end)
 	-- the player's own machine lets them hear both right away, this is for everybody else
 	:FireClient(
