@@ -5,6 +5,7 @@
 local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local Grapple = require("@game/ReplicatedStorage/Shared/Ability/Library/Transportation/Grapple")
 local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
@@ -18,7 +19,10 @@ local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ClientContext = AbilityType.ClientContext
 type Cleanup = VFXType.Cleanup
 type SoundKey = VFXAssetDefinition.SoundKey
+type AnimationKey = VFXAssetDefinition.AnimationKey
 -- Constants
+-- what the avatar does as a hook leaves, nothing in a game without
+local CAST_ANIMATION = GameDefinition.tune(nil :: AnimationKey?, { shl3 = "GunShooting" :: AnimationKey? })
 -- seconds between two looks at how far the avatar has left to go
 local REEL_INTERVAL = 1 / 30
 -- studs the spot pointed at has to be off the limb for the hook to be headed there
@@ -146,7 +150,13 @@ local builder: AbilityBuilder.ClientBuilder = AbilityBuilder.newClient(layout)
 		end))
 	end)
 
--- not every game has a hook heard at each step of its way
+-- not every game has the avatar let a hook go with a move of its own
+if CAST_ANIMATION then
+	builder = builder:Fire(bindings.Launch, ClientVFXDefinition.AnimationOnce, function(): ClientVFXType.AnimationOnce
+		return { Animation = CAST_ANIMATION :: AnimationKey }
+	end)
+end
+-- nor a hook heard at each step of its way
 local fireSound = config.FireSound
 if fireSound then
 	builder = builder:Fire(bindings.Launch, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound

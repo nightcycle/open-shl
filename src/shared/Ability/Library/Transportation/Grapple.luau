@@ -5,6 +5,8 @@ local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/AbilityCondition")
 local AbilityTrigger = require("@game/ReplicatedStorage/Shared/Constructor/AbilityTrigger")
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 local VFXBinding = require("@game/ReplicatedStorage/Shared/Constructor/VFXBinding")
 -- Types
@@ -63,7 +65,7 @@ export type Ability = {
 }
 -- Constants
 local ID = "transportation_grapple"
-local CONFIG: Config = table.freeze({
+local DEFAULT_CONFIG: Config = {
 	Limb = "RightHand",
 	Speed = 250,
 	Range = 500,
@@ -73,7 +75,27 @@ local CONFIG: Config = table.freeze({
 	-- it's what gets the avatar all the way there
 	ReleaseDelay = 0.2,
 	TightenDelay = 0.2,
-	LatchSound = "Impact" :: SoundKey,
+	LatchSound = "Impact",
+}
+-- the hook is the same in every game, how it flies, pulls + sounds isn't
+local CONFIG: Config = GameDefinition.tune(table.freeze(DEFAULT_CONFIG), {
+	shl3 = FreezeUtil.delta(DEFAULT_CONFIG, function(config: Config): Config
+		-- its rope used to be there the moment it was let go: a hook this fast is as near as one that flies gets
+		config.Speed = 2000
+		config.Thickness = 0.15
+		config.ReelSpeed = 40
+		-- two studs of rope were left, from a spot 2.85 off the middle of the avatar
+		config.ArrivalDistance = 4.85
+		-- the avatar hangs at the hook until a click, the tool put away or ten seconds
+		config.ReleaseDelay = 10
+		config.Cooldown = 1
+		config.FireSound = "Bow"
+		config.LatchSound = nil
+		-- black on a character whose suit has no second color
+		config.Color = Color3.new(0, 0, 0)
+		config.IsSecondary = true
+		return config
+	end),
 })
 -- seconds a hook that ran out of rope is still waited on: word of what it ran into last takes a while to get here
 local LOSE_DELAY = 0.5

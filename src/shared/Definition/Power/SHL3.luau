@@ -113,6 +113,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "transportation_grapple",
+		Group = "transportation",
+		Name = "Grapple Hook",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["grapple-hook.png"]),
+		EnergyCost = 0,
+		Damage = 0,
+		ColorGroups = {},
+	},
+	{
 		Id = "transportation_super-speed",
 		Group = "transportation",
 		Name = "Super Speed",
@@ -176,15 +185,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["sword.png"]),
 		EnergyCost = 0,
 		Damage = 20,
-		ColorGroups = {},
-	},
-	{
-		Id = "transportation_grapple",
-		Group = "transportation",
-		Name = "Grapple Hook",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["grapple-hook.png"]),
-		EnergyCost = 0,
-		Damage = 0,
 		ColorGroups = {},
 	},
 	{
