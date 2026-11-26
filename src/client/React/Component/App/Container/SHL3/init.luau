@@ -17,6 +17,7 @@ local EdgeHUD = require("@self/EdgeHUD")
 local FlyIn = require("@self/FlyIn")
 local JobMenu = require("@self/JobMenu")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
+local ModeChanger = require("@self/ModeChanger")
 local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
 local Notice = require("@self/Notice")
@@ -55,6 +56,8 @@ local REGISTRY: Registry = {
 		TeamChange = TeamChange,
 		-- the salesman of the apartment tower opens it, no button of the hud does
 		ApartmentSale = ApartmentSale,
+		-- only reached from a button its hud has where there's another place of the game to go to
+		ModeChanger = ModeChanger,
 	},
 	OVERLAYS = {
 		CurrencyPopup = CurrencyPopup,
