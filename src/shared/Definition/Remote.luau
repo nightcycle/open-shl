@@ -201,6 +201,14 @@ Module.SwapIdentity =
 -- the filter yields in the middle of a save, a second one would work on the slot the first is about to replace
 Module.SaveCharacter =
 	newClientFunction("SaveCharacter", isEditedCharacter, isCharacter, REQUEST_LIMIT, true) :: ClientFunction<Character, Character>
+-- a save that also pays for what the character has on without its pass + has it played, all or nothing. the filter
+-- yields in the middle of it the way it does in any save
+Module.RentCharacter =
+	newClientFunction("RentCharacter", isEditedCharacter, isCharacter, REQUEST_LIMIT, true) :: ClientFunction<Character, Character>
+-- whoever is played is kept in the slot whose id it's asked with, what they rented paid for there for good. no
+-- character crosses: the copy is the server's own
+Module.KeepCharacter =
+	newClientFunction("KeepCharacter", Type.string, isCharacter, REQUEST_LIMIT, true) :: ClientFunction<Character, string>
 -- a character dealt anew for the slot whose id it's asked with. nothing is stored: it's a draft, what becomes of it
 -- is up to a save
 Module.RollCharacter =
