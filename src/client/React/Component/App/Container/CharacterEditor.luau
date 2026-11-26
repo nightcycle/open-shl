@@ -44,6 +44,12 @@ local IS_STUDIO = RunService:IsStudio()
 local ENTITLEMENT_KEYS: { EntitlementKey } = ProductDefinition.listEntitlements()
 -- only a game with a group to be in has anybody to ask about it
 local HAS_PROMO = GameDefinition.FEATURES.Promo
+-- where what's behind a pass is had for a fee, a draft is handed in to be stored, paid for + played in one. cash is
+-- what that's paid in, so the shop of the game can be put up over its editor
+local HAS_RENT = GameDefinition.FEATURES.Rent
+local Shop: (() -> React.ReactNode)? = if HAS_RENT
+	then require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
+	else nil
 -- only one game ever dealt a character: its editor rolls the draft anew at a press
 local IS_RANDOMIZABLE = GameDefinition.tune(false, { shl3 = true })
 -- how the editor is laid out is the game's own, the layout of another game is never required
@@ -155,6 +161,7 @@ return function(): React.ReactNode
 
 	local errorMessage: string?, setErrorMessage: (string?) -> () = useTimedState(ERROR_DURATION)
 	local isSaving, setIsSaving = React.useState(false)
+	local isShopOpen, setIsShopOpen = React.useState(false)
 	local filteredText: FilteredText?, setFilteredText: (FilteredText?) -> () = React.useState(nil :: FilteredText?)
 	-- what the server dealt at the last press of randomize, as the draft it was dealt into
 	local rolled: Character?, setRolled: (Character?) -> () = React.useState(nil :: Character?)
@@ -198,6 +205,7 @@ return function(): React.ReactNode
 				IsSaving = isSaving,
 				-- left out for one who fights, which is everybody in a game where that's no pick
 				IsPeaceful = if isPeaceful then true else nil,
+				IsShopOpen = if isShopOpen then true else nil,
 				FilteredText = filteredText,
 				IsRandomizable = if IS_RANDOMIZABLE then true else nil,
 				-- a roll is for the slot it was asked for, the editor of another one starts from what's stored
@@ -213,10 +221,18 @@ return function(): React.ReactNode
 						local draft = action.Character
 						local isPeacefulAsked = isPeacefulRef.current
 						task.spawn(function()
-							local saveRes = SessionService:SaveCharacter(draft)
+							local saveRes = if HAS_RENT
+								then SessionService:RentCharacter(draft)
+								else SessionService:SaveCharacter(draft)
 							local errorLine: string? = if saveRes.IsErr then saveRes.Value else nil
-							-- the player leaves the editor as the character they saved
-							if saveRes.IsOk and isMountedRef.current and SessionService.IsInitialized then
+							-- the player leaves the editor as the character they saved, which a draft that's rented for is
+							-- already
+							if
+								not HAS_RENT
+								and saveRes.IsOk
+								and isMountedRef.current
+								and SessionService.IsInitialized
+							then
 								local selectRes = SessionService:SelectCharacter(draft.Id)
 								errorLine = if selectRes.IsErr then selectRes.Value else nil
 							end
@@ -326,6 +342,8 @@ return function(): React.ReactNode
 								NetworkService:Invoke(RemoteDefinition.CheckGroupPerk, nil)
 							end)
 						end
+					elseif action.Type == "ToggleShop" then
+						setIsShopOpen(not isShopOpen)
 					elseif action.Type == "SetPeaceful" then
 						isPeacefulRef.current = action.IsPeaceful
 					elseif action.Type == "Back" then
@@ -344,5 +362,13 @@ return function(): React.ReactNode
 		value = owned,
 	}, {
 		Editor = editor,
+		-- the shell puts a panel up over the game alone, so over the editor the shop is the editor's own to put up
+		Shop = isShopOpen and Shop and e("Frame", {
+			BackgroundTransparency = 1,
+			Size = UDim2.fromScale(1, 1),
+			ZIndex = 2,
+		}, {
+			Shop = e(Shop, {}),
+		}),
 	})
 end
