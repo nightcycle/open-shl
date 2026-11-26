@@ -115,7 +115,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		-- the clock, the weather + the seasons of valor city: its server says them, every client draws them
 		Environment = true,
 		Crime = false,
-		Npcs = false,
+		Npcs = true,
 		Telepads = true,
 		Codes = false,
 		Allowance = true,
