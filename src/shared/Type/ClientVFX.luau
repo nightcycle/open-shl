@@ -93,6 +93,21 @@ Types.SoundLoop = Type.strictInterface({
 	Sound = VFXAssetDefinition.SoundKey,
 })
 
+-- what turns a part about itself, slower all the time until it's still. it's told as how fast it went + when, so
+-- whoever is shown it late finds it turned as far as everybody else has it
+export type Spin = {
+	Axis: Vector3, -- of the part itself, the one it turns about
+	Speed: number, -- degrees a second it went at
+	Decay: number, -- degrees a second it loses every second
+	At: number, -- when it went that fast, on the clock of the server
+}
+Types.Spin = Type.strictInterface({
+	Axis = isDirection,
+	Speed = Type.numberConstrained(0, 10000),
+	Decay = Type.numberConstrained(1, 10000),
+	At = Type.numberMin(0),
+})
+
 -- a part held by a limb of the avatar
 export type Prop = {
 	Limb: string, -- the name of the part of the avatar it's welded to
@@ -109,6 +124,7 @@ export type Prop = {
 	SlideDuration: number?, -- seconds it takes either way
 	Delay: number?, -- seconds until it's there, the time a hand takes to reach for it
 	Linger: number?, -- seconds it stays once it's put away, the time a hand takes to let go of it
+	Spin: Spin?, -- it turns in the hand, it sits still without. one that slides isn't turned
 }
 Types.Prop = Type.strictInterface({
 	Limb = Type.string,
@@ -124,6 +140,7 @@ Types.Prop = Type.strictInterface({
 	SlideDuration = Type.optional(Type.numberConstrained(0, 2)),
 	Delay = Type.optional(Type.numberConstrained(0, 2)),
 	Linger = Type.optional(Type.numberConstrained(0, 2)),
+	Spin = Type.optional(Types.Spin),
 })
 
 -- a ribbon a limb of the avatar leaves behind as it moves
@@ -187,6 +204,8 @@ export type Bolt = {
 	Turn: CFrame?,
 	Gravity: number?, -- studs a second it picks up downwards every second, it flies straight without
 	IsSticking: boolean?, -- it's left where it ran into something for as long as it had left to fly
+	-- the part of its character it flies back to once its way out is over, it ends where that ends without
+	ReturnLimb: string?,
 	LandSound: SoundKey?, -- heard from where it ran into something, one that runs into nothing is never heard
 	OnHit: ((result: RaycastResult) -> ())?, -- only ever set by the machine that shot it
 }
@@ -208,6 +227,7 @@ Types.Bolt = Type.strictInterface({
 	Turn = Type.optional(Type.CFrame),
 	Gravity = Type.optional(Type.numberMin(0)),
 	IsSticking = Type.optional(Type.boolean),
+	ReturnLimb = Type.optional(Type.string),
 	LandSound = Type.optional(VFXAssetDefinition.SoundKey),
 	OnHit = Type.optional(Type.callback),
 })

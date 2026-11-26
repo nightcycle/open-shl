@@ -1,6 +1,7 @@
 --!strict
 -- Services
 local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 -- Packages
 -- Modules
 local ClientVFX = require("@game/StarterPlayer/StarterPlayerScripts/Client/VFX")
@@ -34,6 +35,30 @@ local function slide(weld: Weld, offset: CFrame, duration: number, onDone: (() -
 	end)
 	return function()
 		connection:Disconnect()
+	end
+end
+
+-- turns what a weld holds about itself, from how fast it went + when: it's as far round on every screen, whenever
+-- that screen was told. what it hands back stops it where it is
+local function spin(weld: Weld, offset: CFrame, props: ClientVFXType.Spin): () -> ()
+	local axis = props.Axis.Unit
+	-- seconds it takes to lose all of its speed
+	local span = props.Speed / props.Decay
+	local connection: RBXScriptConnection? = nil
+	local function update()
+		local age = math.clamp(Workspace:GetServerTimeNow() - props.At, 0, span)
+		local angle = props.Speed * age - props.Decay * age * age / 2
+		weld.C0 = CFrame.fromAxisAngle(axis, -math.rad(angle)) * offset
+		if age >= span and connection then
+			connection:Disconnect()
+		end
+	end
+	update()
+	connection = RunService.Heartbeat:Connect(update)
+	return function()
+		if connection then
+			connection:Disconnect()
+		end
 	end
 end
 -- Class
@@ -76,6 +101,7 @@ return ClientVFX.state(ClientVFXDefinition.Prop, function(props: Properties, sco
 	weld.Parent = part
 	local isShown = false
 	local stopSlide: (() -> ())? = nil
+	local stopSpin: (() -> ())? = if props.Spin and not slideOffset then spin(weld, offset, props.Spin) else nil
 	local function show()
 		isShown = true
 		part.Parent = character
@@ -104,6 +130,9 @@ return ClientVFX.state(ClientVFXDefinition.Prop, function(props: Properties, sco
 		show()
 	end
 	return function()
+		if stopSpin then
+			stopSpin()
+		end
 		-- one that's put away before it was out never shows
 		if not isShown then
 			if showThread then
