@@ -5,7 +5,6 @@ local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
 local AccessDefinition = require("@game/ReplicatedStorage/Shared/Definition/Access")
-local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Types
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 type Result<V, E> = TypeUnionLib.Result<V, E>
@@ -17,8 +16,6 @@ export type Owned = AccessDefinition.Owned
 -- Constants
 -- what one rented thing costs to keep for good in a slot, whatever it cost to rent
 local KEEP_PRICE = 100
--- what a fee is paid in
-local CURRENCY: PseudoEnum.Currency = PseudoEnum.Currency.Credits
 -- an attribute holds no list: the ids a client is told of are one text, none of them has this in it
 local SEPARATOR = ","
 -- the order a character is gone through in
@@ -52,7 +49,6 @@ end
 local Module = {}
 
 Module.KEEP_PRICE = KEEP_PRICE
-Module.CURRENCY = CURRENCY
 
 -- the locks a list of ids is behind, each once, in the order they're met. the limbs of a suit are one thing
 Module.getThings = function(ids: { string }): { Lock }

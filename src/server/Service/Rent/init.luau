@@ -9,6 +9,7 @@ local CharacterService = require("@game/ServerScriptService/Server/Service/Chara
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
 local NetworkService = require("@game/ServerScriptService/Server/Service/Network")
 local ProductDefinition = require("@game/ReplicatedStorage/Shared/Definition/Product")
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local RemoteDefinition = require("@game/ReplicatedStorage/Shared/Definition/Remote")
 local RentDefinition = require("@game/ReplicatedStorage/Shared/Definition/Rent")
 local Rule = require("@self/Rule")
@@ -31,7 +32,8 @@ export type RentService = typeof(setmetatable(
 	{} :: RentServiceImpl
 ))
 -- Constants
-local CURRENCY = RentDefinition.CURRENCY
+-- what a fee is paid in
+local CURRENCY: PseudoEnum.Currency = PseudoEnum.Currency.Credits
 -- Variables
 -- References
 -- Private Functions
