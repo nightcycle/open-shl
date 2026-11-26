@@ -16,7 +16,6 @@ local Swatches = require("@self/Swatches")
 -- Hooks
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
-local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
 local CharacterEditorFieldCallback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/FieldCallback")
 local CharacterEditorRefusalContext =
@@ -134,12 +133,13 @@ return function(props: Properties): React.ReactNode
 	local state = React.useContext(CharacterEditorStateContext)
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
 	local editRefusal = React.useContext(CharacterEditorRefusalContext)
-	local stored = React.useContext(CharacterContext)
 	local owned = React.useContext(SessionOwnedContext)
 	local edited: Character? = if state then state.Character else nil
+	-- the slot as it's stored: in here the character of the context is the draft
+	local stored: Character? = if state then state.SavedCharacter else nil
 	-- what the draft is short of, as the server is going to ask it once the walk hands the draft in
 	local hold: Gate.Hold? = React.useMemo(function(): Gate.Hold?
-		return if edited then Gate.new(edited, stored, owned) else nil
+		return if edited and stored then Gate.new(edited, stored, owned) else nil
 	end, { edited :: any, stored :: any, owned :: any })
 	-- why the page wasn't left, for as long as the button says it
 	local refusal: string?, setRefusal: (string?) -> () = useTimedState(CONSTANTS.NOTICE_DURATION)
