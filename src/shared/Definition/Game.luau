@@ -36,7 +36,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		-- its map marks none of them
 		Fixtures = false,
 		PlayerMode = true,
-		Leaderstats = false,
+		-- the side, the hero + the pick of every player, in the list its old place never turned off
+		Leaderstats = true,
 		-- what m9 builds, each goes on with the last commit of what runs it
 		Environment = false,
 		Crime = false,

@@ -33,6 +33,8 @@ local FLOW: Flow = {
 	},
 	-- it drew no health of its own, the bar of the engine was all there was to read it off
 	CoreGuis = { Enum.CoreGuiType.Chat, Enum.CoreGuiType.Health },
+	-- the list of players is where its columns are read, up with the hud
+	HudCoreGuis = { Enum.CoreGuiType.PlayerList },
 }
 -- Variables
 -- References
