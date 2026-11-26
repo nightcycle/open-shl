@@ -105,7 +105,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Jobs = true,
 		-- what its pads hand out: the two that are built so far, the rest of them lie there
 		Props = true,
-		PrivateServerToggle = false,
+		-- the owner of a server they bought off the engine says if its players fight
+		PrivateServerToggle = true,
 		-- its faces have no expressions yet
 		Roleplay = false,
 		ModeSelect = true,
