@@ -8,6 +8,7 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local EdgeHUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/EdgeHUD")
+local ServerModeToggle = require("@self/ServerModeToggle")
 -- Hooks
 local useCharacterAttribute =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useCharacterAttribute")
@@ -89,22 +90,30 @@ return function(props: Properties): React.ReactNode
 		return out
 	end, { isSwapCooling, isFighting })
 
-	return e(
-		EdgeHUD,
-		{
-			Size = props.Size,
-			ZIndex = props.ZIndex,
-			Buttons = buttons,
-			Fades = fades,
-			Away = if isJailed then JAILED_AWAY else nil,
-			OnAction = function(action: EdgeHUD.ActionInfo)
-				if action.Type == "Press" then
-					if action.MenuId == PseudoEnum.MenuId.Swap then
-						setIsSwapCooling(true)
+	return e("Frame", {
+		Active = false,
+		BackgroundTransparency = 1,
+		Size = props.Size,
+		ZIndex = props.ZIndex,
+	}, {
+		Buttons = e(
+			EdgeHUD,
+			{
+				Size = UDim2.fromScale(1, 1),
+				Buttons = buttons,
+				Fades = fades,
+				Away = if isJailed then JAILED_AWAY else nil,
+				OnAction = function(action: EdgeHUD.ActionInfo)
+					if action.Type == "Press" then
+						if action.MenuId == PseudoEnum.MenuId.Swap then
+							setIsSwapCooling(true)
+						end
+						props.OnClick(action.MenuId)
 					end
-					props.OnClick(action.MenuId)
-				end
-			end,
-		} :: EdgeHUD.Properties
-	)
+				end,
+			} :: EdgeHUD.Properties
+		),
+		-- it comes + goes with the hud, the way the old place had it: no menu has it
+		ServerModeToggle = e(ServerModeToggle, {}),
+	})
 end

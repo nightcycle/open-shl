@@ -11,6 +11,7 @@ local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Se
 local TeamChange = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/TeamChange")
 -- Hooks
 local useIsMounted = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsMounted")
+local useIsPVP = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsPVP")
 -- Contexts
 -- Types
 export type Properties = {}
@@ -31,6 +32,15 @@ return function(): React.ReactNode
 	local isLeaving, setIsLeaving = React.useState(false)
 	local isBusyRef = React.useRef(false)
 	local isMountedRef = useIsMounted()
+	-- the sides can go while the question is up, where the owner of a server has it drop fighting: there's nothing
+	-- left to ask then, + the button that leads here is gone with them
+	local hasSides = useIsPVP()
+	React.useEffect(function()
+		if not hasSides then
+			ShellService:ClosePanel("TeamChange")
+		end
+		return function() end
+	end, { hasSides })
 
 	local function ask()
 		-- the server answers one ask at a time, a second one would only be turned down
