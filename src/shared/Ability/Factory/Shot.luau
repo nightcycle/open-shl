@@ -24,11 +24,18 @@ export type Hit = {
 	ShotId: number,
 	Target: Model,
 }
+-- where the client saw one of its shots run into anything at all
+export type Land = {
+	ShotId: number,
+	Position: Vector3,
+}
 export type Bindings = {
 	Cast: EventBinding,
 	Release: EventBinding, -- the wind-up is over, the shot leaves
+	Abort: EventBinding?, -- one that's charged was let go of too soon, nothing leaves
 	Launch: ClientSignal<Launch>,
 	Hit: ClientSignal<Hit>,
+	Land: ClientSignal<Land>?, -- only one with a landing has it
 	Recover: EventBinding,
 }
 -- what both halves of a shot ability have to agree on
@@ -54,6 +61,10 @@ export type Config = {
 	Turn: CFrame?,
 	IsSticking: boolean?, -- it's left where it ran into something for as long as it had left to fly
 	IsHidden: boolean?, -- nobody gets to see it fly: it still runs into whoever is in its way
+	-- it leaves as the button is let go of, once that was held for as long as the release takes. by itself without
+	IsCharged: boolean?,
+	HasLanding: boolean?, -- where it ran into something is told + the server makes something of it
+	IsReturning: boolean?, -- at the end of its way it flies back to the limb it left
 	LaunchSound: VFXAssetDefinition.SoundKey?, -- heard as it leaves
 	LandSound: VFXAssetDefinition.SoundKey?, -- heard from wherever it runs into something
 }
@@ -86,6 +97,10 @@ local isHit = Type.strictInterface({
 	ShotId = Type.integer,
 	Target = Type.instanceIsA("Model"),
 })
+local isLand = Type.strictInterface({
+	ShotId = Type.integer,
+	Position = AbilityType.FiniteVector3,
+})
 -- Variables
 -- References
 -- Private Functions
@@ -95,9 +110,29 @@ local Module = {}
 -- every state the machine of a shot gets to, for a factory that puts bindings of its own next to the ones below
 Module.STATE_IDS = STATE_IDS
 
+-- what word of a shot has to be, for an ability that lets shots fly without the bindings below
+Module.Launch = isLaunch
+Module.Hit = isHit
+
 -- the bindings of an ability that lets something fly: a click with the tool out winds it up, the shot leaves once
 -- that's done + whoever it runs into first is hit. the tool can be put away mid-cast, the shot still leaves
 Module.newBindings = function(id: string, config: Config): Bindings
+	-- the landing of one that's pulled down would have to be held to its arc, nothing asks for that yet
+	assert(not (config.HasLanding and config.Gravity), `"{id}" has a landing, it can't be pulled down as well`)
+	assert(not (config.IsReturning and config.IsHidden), `"{id}" comes back, it can't be hidden as well`)
+	local release = AbilityTrigger.after(config.ReleaseDelay)
+	local abort: EventBinding? = nil
+	if config.IsCharged then
+		-- held for long enough it leaves as the button is let go of, let go of any sooner it never does
+		local wound = AbilityCondition.elapsed(config.ReleaseDelay)
+		local letGo = AbilityTrigger.stopped(AbilityCondition.PRIMARY)
+		release = AbilityTrigger.during(letGo, AbilityTrigger.active(wound))
+		abort = VFXBinding.event(
+			{ "Casting" },
+			AbilityTrigger.during(letGo, AbilityTrigger.inactive(wound)),
+			{ To = "Idle" }
+		)
+	end
 	return {
 		Cast = VFXBinding.event(
 			{ "Idle" },
@@ -107,9 +142,11 @@ Module.newBindings = function(id: string, config: Config): Bindings
 			),
 			{ To = "Casting" }
 		),
-		Release = VFXBinding.event({ "Casting" }, AbilityTrigger.after(config.ReleaseDelay), { To = "Recovering" }),
+		Release = VFXBinding.event({ "Casting" }, release, { To = "Recovering" }),
+		Abort = abort,
 		Launch = VFXBinding.signal(STATE_IDS, "Client", isLaunch) :: ClientSignal<Launch>,
 		Hit = VFXBinding.signal(STATE_IDS, "Client", isHit) :: ClientSignal<Hit>,
+		Land = if config.HasLanding then VFXBinding.signal(STATE_IDS, "Client", isLand) :: ClientSignal<Land> else nil,
 		Recover = VFXBinding.event(
 			{ "Recovering" },
 			AbilityTrigger.after(config.Duration - config.ReleaseDelay),
@@ -145,6 +182,7 @@ Module.getBolt = function(config: Config, launch: Launch, color: Color3?): Clien
 		Turn = config.Turn,
 		Gravity = config.Gravity,
 		IsSticking = config.IsSticking,
+		ReturnLimb = if config.IsReturning then config.Limb else nil,
 		LandSound = config.LandSound,
 	}
 end

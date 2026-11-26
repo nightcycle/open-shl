@@ -1,5 +1,6 @@
 --!strict
 -- Services
+local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 -- Packages
 -- Modules
@@ -23,9 +24,24 @@ local FADE_DURATION = 3
 local FLAME_TURN = CFrame.Angles(math.pi / 2, 0, 0)
 -- studs a shot has to have come since it was last moved for that to tell where it's headed
 local MIN_STEP = 0.01
+-- studs off the limb it flies back to that one on its way home is caught at
+local CATCH_RANGE = 4
+-- seconds one is given to get home: whoever let it go may be faster than it is
+local RETURN_LIMIT = 5
 -- Variables
 -- References
 -- Private Functions
+local function getCharacter(inst: Instance): Model?
+	local model = inst:FindFirstAncestorWhichIsA("Model")
+	while model do
+		if model:FindFirstChildWhichIsA("Humanoid") then
+			return model
+		end
+		model = model:FindFirstAncestorWhichIsA("Model")
+	end
+	return nil
+end
+
 local function newEmitter(key: ParticleKey): ParticleEmitter
 	local definition = VFXAssetDefinition.getParticle(key)
 	local emitter = Instance.new("ParticleEmitter")
@@ -112,6 +128,43 @@ return ClientVFX.event(ClientVFXDefinition.Bolt, function(props: Properties, sco
 			part:Destroy()
 		end)
 	end
+	-- one that comes back: from where its way out ended it heads for the limb it left, wherever that has got to by
+	-- then + through whatever stands between them. whoever it meets on the way is only word to whoever let it go if
+	-- it met nobody on its way out: one hit a shot, out or back
+	local function comeBack(from: Vector3, hasHit: boolean)
+		handle.Stop()
+		local character = scope.Character
+		local limb = if character and props.ReturnLimb then character:FindFirstChild(props.ReturnLimb) else nil
+		if not character or not limb or not limb:IsA("BasePart") then
+			part:Destroy()
+			return
+		end
+		local raycastParams = RaycastParams.new()
+		raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+		raycastParams.FilterDescendantsInstances = { character }
+		local position = from
+		local age = 0
+		local connection: RBXScriptConnection
+		connection = RunService.Heartbeat:Connect(function(deltaTime: number)
+			age += deltaTime
+			local offset = limb.Position - position
+			if age > RETURN_LIMIT or offset.Magnitude <= CATCH_RANGE or not limb:IsDescendantOf(Workspace) then
+				connection:Disconnect()
+				part:Destroy()
+				return
+			end
+			local step = offset.Unit * math.min(props.Speed * deltaTime, offset.Magnitude)
+			if not hasHit and props.OnHit then
+				local result = Workspace:Raycast(position, step, raycastParams)
+				if result and getCharacter(result.Instance) then
+					hasHit = true
+					props.OnHit(result)
+				end
+			end
+			position += step
+			part.CFrame = CFrame.lookAt(position, position + step) * turn
+		end)
+	end
 	handle = scope.start(Projectile, {
 		Origin = props.Origin,
 		Direction = direction,
@@ -128,7 +181,11 @@ return ClientVFX.event(ClientVFXDefinition.Bolt, function(props: Properties, sco
 			part.CFrame = CFrame.lookAt(position, position + heading) * turn
 		end,
 		OnHit = function(result: RaycastResult)
-			land()
+			if props.ReturnLimb then
+				comeBack(result.Position, getCharacter(result.Instance) ~= nil)
+			else
+				land()
+			end
 			-- what's left of it is where it landed, so that's where it's heard from
 			if props.LandSound then
 				Emitter.playFrom(part, props.LandSound, false)
@@ -137,6 +194,10 @@ return ClientVFX.event(ClientVFXDefinition.Bolt, function(props: Properties, sco
 				props.OnHit(result)
 			end
 		end,
-		OnExpired = land,
+		OnExpired = if props.ReturnLimb
+			then function()
+				comeBack(lastPosition, false)
+			end
+			else land,
 	})
 end)

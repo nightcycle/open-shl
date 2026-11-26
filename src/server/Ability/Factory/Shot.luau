@@ -6,6 +6,7 @@ local AbilityBuilder = require("@game/ReplicatedStorage/Shared/Ability/Builder")
 local Attack = require("@game/ServerScriptService/Server/VFX/Library/Attack")
 local BodyUtil = require("@game/ReplicatedStorage/Shared/Util/Body")
 local ClientVFXDefinition = require("@game/ReplicatedStorage/Shared/Definition/ClientVFX")
+local Hitscan = require("@game/ReplicatedStorage/Shared/VFX/Library/Hitscan")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local Reach = require("@game/ReplicatedStorage/Shared/VFX/Library/Reach")
 local ShotFactory = require("@game/ReplicatedStorage/Shared/Ability/Factory/Shot")
@@ -16,10 +17,17 @@ local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
 type ServerContext = AbilityType.ServerContext
 -- what the server knows of a shot that's out
-type Shot = {
+export type Shot = {
 	Origin: Vector3,
 	Direction: Vector3,
 	LaunchTime: number,
+	HasHit: boolean?, -- it ran into somebody already + is only kept for word of where it landed
+}
+-- what of a shot its path is made of
+type Flight = {
+	Speed: number,
+	Lifetime: number,
+	Gravity: number?,
 }
 -- Constants
 -- studs from the middle of the avatar a shot may leave from: it starts out at the end of a limb + the two sides never
@@ -108,15 +116,48 @@ local function getPathDistance(shot: Shot, position: Vector3, speed: number, age
 	end
 	return distance
 end
+
+-- how old the server takes a shot to be at most: as old as it makes it + what word of its launch may have been late by
+local function getAge(shot: Shot, flight: Flight): number
+	return math.min(os.clock() - shot.LaunchTime + FLIGHT_TOLERANCE, flight.Lifetime)
+end
+
+-- whether a shot can have run into that character by now
+local function getIfReached(shot: Shot, target: Model, flight: Flight): boolean
+	local flightTime = os.clock() - shot.LaunchTime
+	-- a body nobody plays is held to the closest of it to where the server has the shot by now, not to a middle
+	-- that's far off
+	local flightPosition = getFlightPosition(shot, flight.Speed, math.min(flightTime, flight.Lifetime), flight.Gravity)
+	local aimPosition = BodyUtil.getAimPosition(target, flightPosition)
+	return getPathDistance(shot, aimPosition, flight.Speed, getAge(shot, flight), flight.Gravity) <= PATH_TOLERANCE
+end
 -- Class
 local Module = {}
 
+-- what a shot is held to, for an ability that lets shots fly without the factory below
+Module.ORIGIN_RANGE = ORIGIN_RANGE
+Module.RELEASE_TOLERANCE = RELEASE_TOLERANCE
+Module.getShots = getShots
+Module.getIfReached = getIfReached
+
+-- for an ability that calls a cast off: there's no shot to it any more
+Module.cancel = function(context: ServerContext)
+	context.Record[CAST_TIME_KEY] = nil
+	context.Record[IS_SPENT_KEY] = nil
+end
+
 -- the server half of a shot ability: a cast costs energy, everybody else gets to see the shot + a hit the client
--- claims only lands if the server finds the target on the way that shot can have come by then
-Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilder
+-- claims only lands if the server finds the target on the way that shot can have come by then. what one with a
+-- landing sets off where it landed is the ability's to say
+Module.new = function(
+	ability: ShotFactory.Ability,
+	onLanded: ((context: ServerContext, position: Vector3) -> ())?
+): AbilityBuilder.ServerBuilder
 	local layout = ability.Layout
 	local bindings = layout.Bindings
 	local shared = ability.Config
+	local land = bindings.Land
+	assert((land ~= nil) == (onLanded ~= nil), `only a shot of "{layout.Id}" with a landing sets something off there`)
 	local powerRes = PowerDefinition.get(layout.Id)
 	assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 	local power = powerRes.Value
@@ -131,6 +172,10 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 		end)
 		:On(bindings.Cast, function(context: ServerContext)
 			context.Record[CAST_TIME_KEY] = os.clock()
+			-- a charge the server took for full + its client didn't never let its shot go: the next one starts over
+			if shared.IsCharged then
+				context.Record[IS_LOADED_KEY] = nil
+			end
 		end)
 		:On(bindings.Release, function(context: ServerContext)
 			local record = context.Record
@@ -181,26 +226,72 @@ Module.new = function(ability: ShotFactory.Ability): AbilityBuilder.ServerBuilde
 				return false
 			end
 			local target = hit.Target
-			if target == context.Character or not target:FindFirstChildWhichIsA("Humanoid") then
+			if shot.HasHit or target == context.Character or not target:FindFirstChildWhichIsA("Humanoid") then
 				return false
 			end
-			local flightTime = os.clock() - shot.LaunchTime
-			local age = math.min(flightTime + FLIGHT_TOLERANCE, shared.Lifetime)
-			-- a body nobody plays is held to the closest of it to where the server has the shot by now, not to a middle
-			-- that's far off
-			local flightPosition =
-				getFlightPosition(shot, shared.Speed, math.min(flightTime, shared.Lifetime), shared.Gravity)
-			local aimPosition = BodyUtil.getAimPosition(target, flightPosition)
-			return getPathDistance(shot, aimPosition, shared.Speed, age, shared.Gravity) <= PATH_TOLERANCE
+			return getIfReached(shot, target, shared)
 		end)
-		-- a shot is spent on whoever it ran into first
-		:On(bindings.Hit, function(context: ServerContext)
-			local hit = context.read(bindings.Hit)
-			if hit then
-				getShots(context, shared.Lifetime)[hit.ShotId] = nil
-				context.VFX.fire(Attack, { Target = hit.Target, Amount = power.Damage })
+		-- a shot is spent on whoever it ran into first. one with a landing is kept: word of where is right behind
+		:On(
+			bindings.Hit,
+			function(context: ServerContext)
+				local hit = context.read(bindings.Hit)
+				if hit then
+					local shots = getShots(context, shared.Lifetime)
+					local shot = shots[hit.ShotId]
+					if land and shot then
+						shot.HasHit = true
+					else
+						shots[hit.ShotId] = nil
+					end
+					context.VFX.fire(Attack, { Target = hit.Target, Amount = power.Damage })
+				end
 			end
-		end)
+		)
+
+	local abort = bindings.Abort
+	if abort then
+		-- a charge that's let go of too soon has no shot to it
+		builder = builder:On(abort, Module.cancel)
+	end
+	if land and onLanded then
+		-- a landing counts where the shot can have got to by now, wherever on the way its client saw it end
+		builder = builder
+			:Guard(land, function(context: ServerContext): boolean
+				local landing = context.read(land)
+				local shot = if landing then getShots(context, shared.Lifetime)[landing.ShotId] else nil
+				if not landing or not shot then
+					return false
+				end
+				local distance = getPathDistance(shot, landing.Position, shared.Speed, getAge(shot, shared), nil)
+				return distance <= PATH_TOLERANCE
+			end)
+			:On(land, function(context: ServerContext)
+				local landing = context.read(land)
+				local shots = getShots(context, shared.Lifetime)
+				local shot = if landing then shots[landing.ShotId] else nil
+				if not landing or not shot then
+					return
+				end
+				shots[landing.ShotId] = nil
+				local reach = shared.Speed * getAge(shot, shared)
+				local along = math.clamp((landing.Position - shot.Origin):Dot(shot.Direction), 0, reach)
+				-- the world as the server has it: what's in the way of the shot any sooner is where it ends
+				local sightRange = along - PATH_TOLERANCE
+				local sight = if sightRange > 0
+					then context.VFX.fire(Hitscan, {
+						Origin = shot.Origin,
+						Direction = shot.Direction,
+						Range = sightRange,
+						IsPassingCharacters = true,
+					})
+					else nil
+				onLanded(
+					context,
+					if sight and sight.Instance then sight.Position else shot.Origin + shot.Direction * along
+				)
+			end)
+	end
 
 	-- the player's own machine shows them their shot right away, this is for everybody else. whoever it can get to
 	-- has to see it coming, unless there's nothing of it to see

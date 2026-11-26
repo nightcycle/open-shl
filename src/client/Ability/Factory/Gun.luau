@@ -15,7 +15,7 @@ type AnimationKey = VFXAssetDefinition.AnimationKey
 -- what only the player who shoots needs to know
 export type Config = {
 	HoldAnimation: AnimationKey, -- for as long as the weapon is out
-	CastAnimation: AnimationKey, -- from the click on, the shot leaves part-way through it
+	CastAnimation: AnimationKey?, -- from the click on, the shot leaves part-way through it. none without
 }
 -- Constants
 -- Variables

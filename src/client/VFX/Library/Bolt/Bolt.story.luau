@@ -19,7 +19,8 @@ local LIGHTNING: { VFXAssetDefinition.ParticleKey } = { "LightningLeft", "Lightn
 -- Class
 -- shot from the right hand of the user at the target, what it runs into is printed. with nothing for it to give off
 -- it's the part itself that's seen, or its mesh. a roll of 0 leaves it turned the way it is by itself. it's heard
--- landing by the one sound every game has a row for
+-- landing by the one sound every game has a row for. one that's returning comes back to the hand from wherever its
+-- way out ended
 return VFXStory.newEventStory({
 	Distance = UILabs.Slider(30, 4, 60, 1),
 	Speed = UILabs.Slider(80, 5, 300, 5),
@@ -39,6 +40,7 @@ return VFXStory.newEventStory({
 	MeshScale = UILabs.Slider(3, 0.5, 6, 0.5),
 	Roll = UILabs.Slider(0, 0, 180, 5),
 	IsSticking = UILabs.Boolean(false),
+	IsReturning = UILabs.Boolean(false),
 	HasLandSound = UILabs.Boolean(false),
 }, function(stage: VFXStory.Stage, controls)
 	local hand = stage.User:FindFirstChild("RightHand")
@@ -65,6 +67,7 @@ return VFXStory.newEventStory({
 		MeshScale = Vector3.one * controls.MeshScale,
 		Turn = if controls.Roll > 0 then CFrame.Angles(0, 0, math.rad(controls.Roll)) else nil,
 		IsSticking = controls.IsSticking,
+		ReturnLimb = if controls.IsReturning then "RightHand" else nil,
 		LandSound = if controls.HasLandSound then "Slash" :: VFXAssetDefinition.SoundKey else nil,
 		OnHit = function(result: RaycastResult)
 			print(`hit: {result.Instance:GetFullName()}`)

@@ -17,7 +17,9 @@ local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ClientContext = AbilityType.ClientContext
 -- what only the player who shoots needs to know
 export type Config = {
-	CastAnimation: VFXAssetDefinition.AnimationKey, -- from the click on, the shot leaves part-way through it
+	-- from the click on, the shot leaves part-way through it. one that's charged leaves with it instead: how long the
+	-- button is held for is anybody's guess. the avatar does nothing special without
+	CastAnimation: VFXAssetDefinition.AnimationKey?,
 }
 -- Constants
 -- how many shots the character let fly so far, the next one goes by it
@@ -63,38 +65,49 @@ Module.new = function(ability: ShotFactory.Ability, config: Config): AbilityBuil
 				return true
 			end
 		)
-		:Fire(bindings.Cast, ClientVFXDefinition.AnimationOnce, function(): ClientVFXType.AnimationOnce
-			return { Animation = config.CastAnimation }
-		end)
-		:On(bindings.Release, function(context: ClientContext)
-			local limb = context.Character:FindFirstChild(shared.Limb)
-			if not limb or not limb:IsA("BasePart") then
-				return
+	local castAnimation = config.CastAnimation
+	if castAnimation then
+		builder = builder:Fire(
+			if shared.IsCharged then bindings.Release else bindings.Cast,
+			ClientVFXDefinition.AnimationOnce,
+			function(): ClientVFXType.AnimationOnce
+				return { Animation = castAnimation :: VFXAssetDefinition.AnimationKey }
 			end
-			local from = if shared.Offset then limb.CFrame:PointToWorldSpace(shared.Offset) else limb.Position
-			-- the shot goes where the player pointed as they clicked, wherever they point by the time it leaves
-			local aim = context.Aim or context.getAim()
-			local offset = aim.Position - from
-			-- pointed right at the limb there's no telling where to, the shot goes where the avatar looks
-			local direction = if offset.Magnitude > MIN_AIM_DISTANCE
-				then offset.Unit
-				else context.Character:GetPivot().LookVector
-			local id = ((context.Record[COUNT_KEY] or 0) :: number) + 1
-			context.Record[COUNT_KEY] = id
-			context.raise(bindings.Launch, {
-				Id = id,
-				-- half its length ahead of the limb, so none of it starts out behind it
-				Origin = from + direction * shared.Size.Z / 2,
-				Direction = direction,
-			})
-		end)
+		)
+	end
+	builder = builder:On(bindings.Release, function(context: ClientContext)
+		local limb = context.Character:FindFirstChild(shared.Limb)
+		if not limb or not limb:IsA("BasePart") then
+			return
+		end
+		local from = if shared.Offset then limb.CFrame:PointToWorldSpace(shared.Offset) else limb.Position
+		-- the shot goes where the player pointed as they clicked, wherever they point by the time it leaves
+		local aim = context.Aim or context.getAim()
+		local offset = aim.Position - from
+		-- pointed right at the limb there's no telling where to, the shot goes where the avatar looks
+		local direction = if offset.Magnitude > MIN_AIM_DISTANCE
+			then offset.Unit
+			else context.Character:GetPivot().LookVector
+		local id = ((context.Record[COUNT_KEY] or 0) :: number) + 1
+		context.Record[COUNT_KEY] = id
+		context.raise(bindings.Launch, {
+			Id = id,
+			-- half its length ahead of the limb, so none of it starts out behind it
+			Origin = from + direction * shared.Size.Z / 2,
+			Direction = direction,
+		})
+	end)
 
-	-- only somebody a shot runs into is worth a word to the server
+	-- only somebody a shot runs into is worth a word to the server, unless it makes something of wherever it lands
+	local land = bindings.Land
 	local function getOnHit(context: ClientContext, launch: ShotFactory.Launch): (result: RaycastResult) -> ()
 		return function(result: RaycastResult)
 			local target = getCharacter(result.Instance)
 			if target then
 				context.raise(bindings.Hit, { ShotId = launch.Id, Target = target })
+			end
+			if land then
+				context.raise(land, { ShotId = launch.Id, Position = result.Position })
 			end
 		end
 	end
