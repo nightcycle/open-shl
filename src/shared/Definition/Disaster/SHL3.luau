@@ -15,7 +15,8 @@ type Catalogue = DisasterType.Catalogue
 -- at its full amount, on a target that was down as well: here a point is paid for once, while it's there to take
 local Catalogue: Catalogue = {
 	Disasters = {
-		-- nothing walks out of its graves yet: it's armed once the bodies that do have been seen to walk
+		-- a body walks out of every grave the map marks, all over the city: one wave of them, gone before the
+		-- graveyard stands again
 		ZombieApocalypse = {
 			MaxHealth = 2000,
 			PoolScale = 3,
@@ -29,7 +30,7 @@ local Catalogue: Catalogue = {
 				Lifetime = 90,
 				ResetDelay = 600,
 			},
-			IsArmed = false,
+			IsArmed = true,
 		},
 		RefineryExplosion = {
 			MaxHealth = 1000,
