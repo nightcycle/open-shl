@@ -94,6 +94,13 @@ local AREAS: { Area } = table.freeze({
 		end,
 	},
 	{
+		Name = "VipServer",
+		IsFeatured = FEATURES.PrivateServerToggle,
+		Load = function()
+			return require("@self/Command/VipServer")
+		end,
+	},
+	{
 		Name = "PlayerMode",
 		IsFeatured = FEATURES.PlayerMode,
 		Load = function()
