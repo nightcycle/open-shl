@@ -8,6 +8,7 @@ local BloxyCola = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/
 local Cheeseburger = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Cheeseburger")
 local ElectricGuitar = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/ElectricGuitar")
 local FidgetSpinner = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/FidgetSpinner")
+local IceCream = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/IceCream")
 local Keycard = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Keycard")
 local Latte = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Latte")
 local Moneybag = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Moneybag")
@@ -36,6 +37,7 @@ local DEFINITIONS: { ClientDefinition } = {
 	Bloxiade,
 	FidgetSpinner,
 	Moneybag,
+	IceCream,
 }
 
 return table.freeze(DEFINITIONS)

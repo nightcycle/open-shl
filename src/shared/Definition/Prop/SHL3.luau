@@ -35,10 +35,11 @@ local DEFINITIONS: { PropDefinition } = {
 	{ Id = "fidget-spinner", Name = "Fidget Spinner", Use = { Duration = 1 } },
 	-- a handful of bills thrown about, for show: it pays nothing
 	{ Id = "moneybag", Name = "Moneybag", Use = { Duration = 0.8 } },
+	-- a lick of half a second: one that comes within 2 s of the last hurts
+	{ Id = "ice-cream", Name = "Ice Cream", Use = { Duration = 0.5 } },
 }
 -- a row moves up into the list above once both halves of its prop are in the game's set
 local UPCOMING: { PropDefinition } = {
-	{ Id = "ice-cream", Name = "Ice Cream", Use = { Duration = 0.5 } },
 	{ Id = "tablet", Name = "Tablet" },
 	{ Id = "fishing-pole", Name = "Fishing Pole" },
 }
