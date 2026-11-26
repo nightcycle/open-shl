@@ -6,6 +6,7 @@ local Workspace = game:GetService("Workspace")
 local Type = require("@game/ReplicatedStorage/Packages/Type")
 -- Modules
 local ServerVFX = require("@game/ServerScriptService/Server/VFX")
+local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 export type Properties = {
@@ -13,6 +14,8 @@ export type Properties = {
 	Diameter: number, -- studs across, as it's seen
 	CoreSize: number, -- studs across the box at the heart of it a character has to get into
 	Color: Color3,
+	Mesh: VFXAssetDefinition.MeshKey?, -- what it's drawn as, a ball of light without
+	MeshScale: Vector3?,
 	OnEntered: (character: Model) -> (), -- every time one of them gets in from outside
 }
 -- Constants
@@ -21,6 +24,8 @@ local isProperties = Type.strictInterface({
 	Diameter = Type.numberPositive,
 	CoreSize = Type.numberPositive,
 	Color = Type.Color3,
+	Mesh = Type.optional(VFXAssetDefinition.MeshKey),
+	MeshScale = Type.optional(AbilityType.FiniteVector3),
 	OnEntered = Type.callback,
 })
 local ORB_NAME = "Orb"
@@ -53,6 +58,15 @@ return ServerVFX.newState("Orb", isProperties, function(props: Properties)
 	part.CanQuery = false
 	part.CanTouch = false
 	part.Position = props.Position
+	if props.Mesh then
+		local definition = VFXAssetDefinition.getMesh(props.Mesh)
+		local mesh = Instance.new("SpecialMesh")
+		mesh.MeshType = Enum.MeshType.FileMesh
+		mesh.MeshId = definition.MeshUrl
+		mesh.TextureId = definition.TextureUrl
+		mesh.Scale = props.MeshScale or Vector3.one
+		mesh.Parent = part
+	end
 	part.Parent = Workspace
 
 	local core = CFrame.new(props.Position)

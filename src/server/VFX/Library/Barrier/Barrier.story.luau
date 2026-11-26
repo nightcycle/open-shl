@@ -24,6 +24,8 @@ return VFXStory.newEventStory({
 	Color = UILabs.Datatype.Color3(BrickColor.new("Cyan").Color),
 	Lifetime = UILabs.Slider(2, 0, 20, 0.5),
 	FadeDuration = UILabs.Slider(3.2, 0, 10, 0.1),
+	Transparency = UILabs.Slider(0.2, 0, 1, 0.05),
+	EndTransparency = UILabs.Slider(1, 0, 1, 0.05),
 }, function(stage: VFXStory.Stage, controls)
 	local userRoot = stage.User.PrimaryPart
 	local targetRoot = stage.Target.PrimaryPart
@@ -36,5 +38,7 @@ return VFXStory.newEventStory({
 		Color = controls.Color,
 		Lifetime = controls.Lifetime,
 		FadeDuration = controls.FadeDuration,
+		Transparency = controls.Transparency,
+		EndTransparency = controls.EndTransparency,
 	})
 end)
