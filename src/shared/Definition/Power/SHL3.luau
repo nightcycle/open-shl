@@ -21,6 +21,15 @@ local GROUPS: { PowerGroup } = table.freeze({ "basic-melee" :: PowerGroup, "rang
 -- the damage is what a hit takes off before the game's own rule for a hit on a player
 local DEFINITIONS: { PowerDefinition } = {
 	{
+		Id = "basic-melee_bo-staff",
+		Group = "basic-melee",
+		Name = "Bo Staff",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["bo-staff.png"]),
+		EnergyCost = 0,
+		Damage = 20,
+		ColorGroups = {},
+	},
+	{
 		Id = "basic-melee_martial-arts",
 		Group = "basic-melee",
 		Name = "Martial Arts",
@@ -196,15 +205,6 @@ local DEFINITIONS: { PowerDefinition } = {
 }
 -- a row moves up into the list above once both halves of its ability are in the game's set
 local UPCOMING: { PowerDefinition } = {
-	{
-		Id = "basic-melee_bo-staff",
-		Group = "basic-melee",
-		Name = "Bo Staff",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["bo-staff.png"]),
-		EnergyCost = 0,
-		Damage = 20,
-		ColorGroups = {},
-	},
 	{
 		Id = "basic-melee_hammer",
 		Group = "basic-melee",
