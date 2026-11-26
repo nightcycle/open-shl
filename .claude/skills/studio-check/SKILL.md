@@ -162,6 +162,7 @@ Server:
 | `npc.raise`, `npc.list`, `npc.clear` | where the game has bodies nobody plays (shl3): a wave of 18 zombies (or `Count`) through `NpcService:Spawn`, in a ring `Distance` studs around a player or at the graves the map marks (`IsAtSpawns`), for `Lifetime` seconds; where each is, its health, what its humanoid does + where it's sent; all of them away. `npc.list` names each `walker-<n>`: that name is a body wherever a command asks for one (`combat.hit { To = "walker-3" }`, `status.freeze`, `status.burn`, `avatar.get`) |
 | `crime.get`, `crime.hit`, `crime.alert` | where the game has crime (shl3): every disaster target (health, down, armed) + every laser grid (lit or dark); a body hits a target by its `DisasterId` through the real `Attack` effect (a puppet's hit is counted for nobody); a line on the alert strip of one player (`To`) or of every hero |
 | `playermode.get`, `playermode.set` | where RP / PVP is each player's pick (shl1) |
+| `server.get`, `server.pvp`, `server.owner` | where the owner of a private server flips RP / PVP (shl3): no Studio session is a private server, so `server.pvp { IsPVP }` flips through the service the owner's button goes to (sides made / dissolved, the held let go, an alert to everybody) and `server.owner { Player, IsOwner }` gives a hud the button; a press on it is still refused, the server asks the engine who the owner is |
 | `event.read`, `event.wait` | the server's event log (below) |
 
 Client:
