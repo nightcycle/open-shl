@@ -97,6 +97,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "ranged_returning-star",
+		Group = "ranged",
+		Name = "Throwing Star",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 15,
+		ColorGroups = {},
+	},
+	{
 		Id = "transportation_flight",
 		Group = "transportation",
 		Name = "Fly",
@@ -162,15 +171,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 20,
-		ColorGroups = {},
-	},
-	{
-		Id = "ranged_returning-star",
-		Group = "ranged",
-		Name = "Throwing Star",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 15,
 		ColorGroups = {},
 	},
 	-- a throw is up to five of these
