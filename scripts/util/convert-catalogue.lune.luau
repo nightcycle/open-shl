@@ -633,7 +633,8 @@ local RULES: { [string]: GameRules } = {
 				TextureGroups = CHANNEL_TEXTURE_GROUPS,
 				PieceName = "Hat",
 				Place = { Limb = "Head", Part = "Head" },
-				Tags = {},
+				-- every one of them is what its hero takes off to be seen
+				Tags = { "Hood" },
 			},
 			Hair = {
 				Kind = "MeshBorrow",

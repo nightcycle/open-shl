@@ -113,6 +113,9 @@
           "String": "shl1/costume/hats/hat-8/root"
         }
       }
-    }
+    },
+    "Tags": [
+      "Hood"
+    ]
   }
 }
