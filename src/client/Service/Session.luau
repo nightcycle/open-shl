@@ -47,6 +47,8 @@ type SessionServiceImpl = {
 	SelectCharacter: (self: SessionService, id: string) -> Result<true, string>,
 	SwapIdentity: (self: SessionService) -> Result<IdentityKey, string>,
 	SaveCharacter: (self: SessionService, character: Character) -> Result<Character, string>,
+	RentCharacter: (self: SessionService, character: Character) -> Result<Character, string>,
+	KeepCharacter: (self: SessionService, id: string) -> Result<Character, string>,
 	RollCharacter: (self: SessionService, id: string) -> Result<Character, string>,
 	PurchaseItem: (self: SessionService, id: string) -> Result<true, string>,
 	FilterText: (self: SessionService, text: string) -> Result<string, string>,
@@ -231,6 +233,29 @@ end
 function SessionService:SaveCharacter(character: Character): Result<Character, string>
 	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
 	local res = NetworkService:Invoke(RemoteDefinition.SaveCharacter, character)
+	if res.IsOk and self.IsInitialized then
+		setCharacter(self, res.Value)
+	end
+	return res
+end
+
+-- a save, the fee for what the character has on without its pass + the pick of it in one, in a game that rents.
+-- answers with the character as the server stored it, who's played from there
+function SessionService:RentCharacter(character: Character): Result<Character, string>
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	local res = NetworkService:Invoke(RemoteDefinition.RentCharacter, character)
+	if res.IsOk and self.IsInitialized then
+		setCharacter(self, res.Value)
+		setActive(self, res.Value.Id, START_IDENTITY_KEY)
+	end
+	return res
+end
+
+-- asks for whoever is played to be kept in a slot, what was rented for them paid for there for good. answers with
+-- what the slot holds from there
+function SessionService:KeepCharacter(id: string): Result<Character, string>
+	assert(NetworkService.IsInitialized, `the network service isn't initialized`)
+	local res = NetworkService:Invoke(RemoteDefinition.KeepCharacter, id)
 	if res.IsOk and self.IsInitialized then
 		setCharacter(self, res.Value)
 	end
