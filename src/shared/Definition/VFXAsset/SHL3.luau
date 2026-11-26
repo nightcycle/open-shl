@@ -144,7 +144,10 @@ local PARTICLES: { [ParticleKey]: ParticleDefinition } = {
 		RotationSpeed = 500,
 	},
 }
-local DECALS: { [DecalKey]: DecalDefinition } = {}
+local DECALS: { [DecalKey]: DecalDefinition } = {
+	-- what the moneybag throws about
+	Bill = { TextureUrl = Image["shl-3"].prop.moneybag["bill.png"] },
+}
 local CATALOGUE: VFXAssetCatalogue = {
 	Sounds = SOUNDS,
 	Animations = ANIMATIONS,

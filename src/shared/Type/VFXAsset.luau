@@ -269,8 +269,8 @@ Types.ParticleDefinition = Type.strictInterface({
 	Transparency = Type.optional(Type.NumberSequence),
 	VelocityInheritance = Type.optional(Type.number),
 })
-export type DecalKey = "PsychicWave" | "Shockwave" | "CursorBow" | "CursorGun" | "CursorReload"
-Types.DecalKey = Type.literal("PsychicWave", "Shockwave", "CursorBow", "CursorGun", "CursorReload")
+export type DecalKey = "PsychicWave" | "Shockwave" | "CursorBow" | "CursorGun" | "CursorReload" | "Bill"
+Types.DecalKey = Type.literal("PsychicWave", "Shockwave", "CursorBow", "CursorGun", "CursorReload", "Bill")
 export type DecalDefinition = {
 	TextureUrl: string,
 }
