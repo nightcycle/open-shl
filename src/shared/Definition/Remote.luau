@@ -12,6 +12,7 @@ local BaseType = require("@game/ReplicatedStorage/Shared/Type/Base")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
 local CombatType = require("@game/ReplicatedStorage/Shared/Type/Combat")
 local EconomyType = require("@game/ReplicatedStorage/Shared/Type/Economy")
+local JobType = require("@game/ReplicatedStorage/Shared/Type/Job")
 local ProfileType = require("@game/ReplicatedStorage/Shared/Type/Profile")
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
 local QuestType = require("@game/ReplicatedStorage/Shared/Type/Quest")
@@ -21,6 +22,7 @@ local SessionType = require("@game/ReplicatedStorage/Shared/Type/Session")
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type Character = CharacterType.Character
 type IdentityKey = CharacterType.IdentityKey
+type JobShift = JobType.JobShift
 type MenuRefusal = CombatType.MenuRefusal
 type TeamId = CombatType.TeamId
 type BaseInventory = BaseType.BaseInventory
@@ -342,6 +344,14 @@ Module.SetServerPVP =
 -- alerts
 -- a line the town has for the player: whoever is sent one is shown it, who that is was the server's to pick
 Module.Alert = newServerEvent("Alert", Type.string) :: ServerEvent<string>
+
+-- jobs
+-- the shift of the player the way the server has it, nil once there's none. it's sent unasked as well: a job ends by
+-- itself. what the two below are answered with is the next one of these
+Module.JobChanged = newServerEvent("JobChanged", Type.optional(JobType.JobShift)) :: ServerEvent<JobShift?>
+-- a yes or a no to the card that's up
+Module.AnswerJob = newClientEvent("AnswerJob", Type.boolean, INPUT_LIMIT) :: ClientEvent<boolean>
+Module.RetireJob = newClientEvent("RetireJob", Type.none, INPUT_LIMIT) :: ClientEvent<nil>
 
 Module.list = function(): { Remote }
 	return table.freeze(table.clone(Remotes))
