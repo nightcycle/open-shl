@@ -31,7 +31,8 @@ local function getState(): { [string]: any }
 		end
 		local joints: { string } = {}
 		for _, inst in character:GetDescendants() do
-			if inst:IsA("Motor6D") and not inst.Enabled then
+			-- an avatar the engine builds with its newer joints holds no motor: its own joints go off as it dies
+			if (inst:IsA("Motor6D") and not inst.Enabled) or (inst:IsA("AnimationConstraint") and not inst.Enabled) then
 				table.insert(joints, inst.Name)
 			end
 		end
