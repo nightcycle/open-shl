@@ -152,6 +152,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 0,
 		ColorGroups = {},
 	},
+	{
+		Id = "transportation_super-jump",
+		Group = "transportation",
+		Name = "Super Jump",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 0,
+		ColorGroups = {},
+	},
 	-- it takes nothing off, what it hits gets 20 back
 	{
 		Id = "special_healing-ray",
@@ -205,15 +214,6 @@ local UPCOMING: { PowerDefinition } = {
 		Id = "special_energy-field",
 		Group = "special",
 		Name = "Energy Field",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 0,
-		ColorGroups = {},
-	},
-	{
-		Id = "transportation_super-jump",
-		Group = "transportation",
-		Name = "Super Jump",
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 0,
