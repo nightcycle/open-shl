@@ -177,6 +177,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- what's behind a pass for a fee. it stores a character the way the character service has one stored
+	{
+		Name = "Rent",
+		IsFeatured = FEATURES.Rent,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Rent")
+			assert(not service.IsInitialized, `the rent service is already initialized`)
+			return service
+		end,
+	},
 	-- who's on which side, where players take one, + the jail the avatars of one of them come in at. downing somebody
 	-- pays, so the sides start once there's something to pay with
 	{
