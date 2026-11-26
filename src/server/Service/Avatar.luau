@@ -92,6 +92,8 @@ local HEALTH_DISPLAY_DISTANCE: number? = SpawnDefinition.HEALTH_DISPLAY_DISTANCE
 local IS_UNMASKED_RENAMED: boolean = GameDefinition.tune(true, {
 	-- its hero kept their name whatever they showed of their head
 	shl1 = false,
+	-- the name over a hero would give away who's under the mask to everybody who reads it
+	shl3 = false,
 })
 -- Variables
 -- References
