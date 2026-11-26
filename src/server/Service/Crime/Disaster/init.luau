@@ -109,7 +109,6 @@ return {
 				warn(`{model:GetFullName()} has a primary part, a hit could move it`)
 			end
 
-			-- kept before anything is written on it, the way it comes back is the way the map has it
 			local building: Model? = nil
 			if disaster.IsArmed and consequence.Type == "Blast" then
 				local parent = model.Parent
@@ -118,9 +117,6 @@ return {
 					return nil
 				end
 				building = parent
-				if not sites[id] then
-					sites[id] = BlastSite.new(parent, consequence, wreckFolder, startedAt)
-				end
 			end
 
 			-- it stands for a side, so the rule that has a side leave its own alone keeps that side off it
@@ -132,6 +128,11 @@ return {
 				-- the bar over it stays full + nothing comes off
 				AttributeDefinition.set(model, AttributeDefinition.IsInvulnerable, true)
 				return nil
+			end
+			-- kept as the first of them stands whole, with what a target wears on it: the one that comes back is
+			-- told apart from an avatar + has its health from the moment a client has it
+			if building and consequence.Type == "Blast" and not sites[id] then
+				sites[id] = BlastSite.new(building, consequence, wreckFolder, startedAt)
 			end
 
 			local target: Target = {

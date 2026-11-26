@@ -1,6 +1,7 @@
 --!strict
 -- Services
 local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 -- Packages
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
@@ -84,7 +85,8 @@ return {
 		-- it comes in under its place + is moved up to it in steps. a target of it is found as it's put in the world,
 		-- so it can be worn down on its way up, as in the old place
 		local function rise()
-			if not parent or not parent:IsDescendantOf(game) then
+			-- a map whose folder of them is gone has nowhere to put one
+			if not parent or not parent:IsDescendantOf(Workspace) then
 				return
 			end
 			stopRise()
