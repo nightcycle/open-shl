@@ -162,6 +162,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 0,
 		ColorGroups = {},
 	},
+	{
+		Id = "special_invisibility",
+		Group = "special",
+		Name = "Invisibility",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 0,
+		ColorGroups = {},
+	},
 }
 -- a row moves up into the list above once both halves of its ability are in the game's set
 local UPCOMING: { PowerDefinition } = {
@@ -196,15 +205,6 @@ local UPCOMING: { PowerDefinition } = {
 		Id = "special_energy-field",
 		Group = "special",
 		Name = "Energy Field",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 0,
-		ColorGroups = {},
-	},
-	{
-		Id = "special_invisibility",
-		Group = "special",
-		Name = "Invisibility",
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 0,
