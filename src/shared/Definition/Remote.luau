@@ -241,6 +241,10 @@ Module.InventoryChanged = newServerEvent("InventoryChanged", BaseType.BaseInvent
 Module.PurchaseItem =
 	newClientFunction("PurchaseItem", Type.string, Type.literal(true), REQUEST_LIMIT, true) :: ClientFunction<true, string>
 Module.OwnedChanged = newServerEvent("OwnedChanged", EconomyType.Owned) :: ServerEvent<Owned>
+-- asks the server to look anew whether the player is in the group of the game, the answer is whether they have what
+-- its members are handed. the look is a web call: one at a time
+Module.CheckGroupPerk =
+	newClientFunction("CheckGroupPerk", Type.none, Type.boolean, REQUEST_LIMIT, true) :: ClientFunction<boolean, nil>
 Module.DailyRewardGranted = newServerEvent("DailyRewardGranted", SessionType.DailyReward) :: ServerEvent<DailyReward>
 
 -- residences
