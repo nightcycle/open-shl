@@ -59,6 +59,16 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 34,
 		ColorGroups = {},
 	},
+	-- whoever its ice reaches is held for a while as well
+	{
+		Id = "ranged_ice-charge",
+		Group = "ranged",
+		Name = "Ice",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 20,
+		ColorGroups = {},
+	},
 	-- a throw is up to five of these
 	{
 		Id = "ranged_kunai",
@@ -171,16 +181,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 25,
-		ColorGroups = {},
-	},
-	-- whoever it hits is frozen for a while as well
-	{
-		Id = "ranged_ice-charge",
-		Group = "ranged",
-		Name = "Ice",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 20,
 		ColorGroups = {},
 	},
 	{
