@@ -5,13 +5,13 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local TransitionDefinition = require("@game/ReplicatedStorage/Shared/Definition/Transition")
 local WalkLock = require("@game/StarterPlayer/StarterPlayerScripts/Client/Class/WalkLock")
 -- Components
 local CombatFeedback = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CombatFeedback")
 -- Hooks
 local useAttributeValue = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useAttributeValue")
+local useIsPVP = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsPVP")
 local useLocalCharacter = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useLocalCharacter")
 -- Contexts
 local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
@@ -139,7 +139,9 @@ local function feedback(): React.ReactNode
 end
 -- Class
 return function(): React.ReactNode
-	if not ModeDefinition.getIfPVPEnabled() then
+	-- nobody is hurt where nobody fights, + a server may change its mind about that while it's played
+	local isPVP = useIsPVP()
+	if not isPVP then
 		return nil
 	end
 	return e(feedback, {})

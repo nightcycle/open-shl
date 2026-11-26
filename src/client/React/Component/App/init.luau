@@ -10,6 +10,7 @@ local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local Boundary = require("@self/Boundary")
 -- Hooks
+local useIsPVP = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsPVP")
 -- Contexts
 local AppBootPhaseContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/App/BootPhase")
 local AppIsCameraModeAvailableContext =
@@ -71,6 +72,8 @@ return function(props: Properties)
 	local isCameraModeAvailable = React.useContext(AppIsCameraModeAvailableContext)
 	local isInResidence = React.useContext(AppIsInResidenceContext)
 	local isGameplayHudVisible = React.useContext(AppIsGameplayHudVisibleContext)
+	-- the server of a place may change its mind about it while the hud is up
+	local isPVP = useIsPVP()
 
 	local registry = props.Registry
 	local function contain(layerId: Layer, id: string, container: Container, resetKey: any?): React.ReactNode
@@ -130,7 +133,7 @@ return function(props: Properties)
 					IsBuildVisible = isInResidence,
 					IsCameraMode = isCameraMode,
 					IsCameraHidden = not isCameraModeAvailable,
-					IsHealthVisible = ModeDefinition.getIfPVPEnabled(),
+					IsHealthVisible = isPVP,
 					IsEnergyVisible = ModeDefinition.getIfEnergyEnabled(),
 					OnClick = function(menuId: PseudoEnum.MenuId)
 						props.OnAction({

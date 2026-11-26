@@ -5,7 +5,6 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 -- Modules
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
-local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
 local EdgeHUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/EdgeHUD")
@@ -13,6 +12,7 @@ local EdgeHUD = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/C
 local useCharacterAttribute =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useCharacterAttribute")
 local useIsFighting = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsFighting")
+local useIsPVP = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useIsPVP")
 local useTimedState = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTimedState")
 -- Contexts
 -- Types
@@ -69,8 +69,9 @@ return function(props: Properties): React.ReactNode
 	local isFighting = useIsFighting()
 	-- only a villain is ever held, + only where there are sides: the old place took its switch away the same way
 	local isJailed = useCharacterAttribute(AttributeDefinition.IsJailed) == true
-	-- a place where nobody fights has no sides, the hud of the old one went without the button there
-	local hasSides = ModeDefinition.getIfPVPEnabled()
+	-- a place where nobody fights has no sides, the hud of the old one went without the button there. the button
+	-- goes + comes back with them where the owner of a server changes its mind
+	local hasSides = useIsPVP()
 	local buttons = React.useMemo(function(): EdgeHUD.Buttons
 		return getButtons(hasSides)
 	end, { hasSides })
