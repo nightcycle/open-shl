@@ -56,6 +56,16 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 28,
 		ColorGroups = {},
 	},
+	-- what it deals is a burn, not a hit
+	{
+		Id = "ranged_fire-ray",
+		Group = "ranged",
+		Name = "Fire Ray",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["fire-ray.png"]),
+		EnergyCost = 0,
+		Damage = 35,
+		ColorGroups = {},
+	},
 	{
 		Id = "ranged_freeze-ray",
 		Group = "ranged",
@@ -166,16 +176,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["sword.png"]),
 		EnergyCost = 0,
 		Damage = 20,
-		ColorGroups = {},
-	},
-	-- what it deals is a burn, not a hit
-	{
-		Id = "ranged_fire-ray",
-		Group = "ranged",
-		Name = "Fire Ray",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["fire-ray.png"]),
-		EnergyCost = 0,
-		Damage = 35,
 		ColorGroups = {},
 	},
 	{
