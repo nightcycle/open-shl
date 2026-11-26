@@ -84,6 +84,21 @@ local AREAS: { Area } = table.freeze({
 			return require("@self/Command/Chat")
 		end,
 	},
+	-- where the emote service runs, which is also where a game only poses the arms of whoever it holds
+	{
+		Name = "Emote",
+		IsFeatured = FEATURES.Roleplay or FEATURES.Teams,
+		Load = function()
+			return require("@self/Command/Emote")
+		end,
+	},
+	{
+		Name = "Movement",
+		IsFeatured = FEATURES.Movement,
+		Load = function()
+			return require("@self/Command/Movement")
+		end,
+	},
 })
 -- Variables
 -- References
