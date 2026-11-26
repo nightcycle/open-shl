@@ -33,6 +33,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- a server of a game whose private ones have a toggle is told what it plays by in here, before anything asks
+	{
+		Name = "VipServer",
+		IsFeatured = FEATURES.PrivateServerToggle,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/VipServer")
+			assert(not service.IsInitialized, `the vip server service is already initialized`)
+			return service
+		end,
+	},
 	-- a client makes up its mind about the mode screen as soon as it's in, so this is on before the saves are
 	{
 		Name = "ModeSelect",
