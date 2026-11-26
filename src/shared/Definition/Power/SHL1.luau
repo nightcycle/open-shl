@@ -42,6 +42,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "basic-melee_hammer",
+		Group = "basic-melee",
+		Name = "Hammer",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 25,
+		ColorGroups = {},
+	},
+	{
 		Id = "ranged_bow",
 		Group = "ranged",
 		Name = "Bow",
@@ -199,15 +208,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 15,
-		ColorGroups = {},
-	},
-	{
-		Id = "basic-melee_hammer",
-		Group = "basic-melee",
-		Name = "Hammer",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 25,
 		ColorGroups = {},
 	},
 	{

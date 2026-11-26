@@ -9,6 +9,7 @@ type ClientDefinition = AbilityType.ClientDefinition
 -- the client half of every ability the game has. the server keeps a list of its own, an ability is added to both
 local DEFINITIONS: { ClientDefinition } = table.freeze({
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/BoStaff"),
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/Hammer"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/BasicMelee/MartialArts"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/Bow"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/FireHand"),
