@@ -13,11 +13,13 @@ local SHIELD_DURATION = 10
 -- Class
 -- an avatar comes in on one of the four sides of the garden, wherever the engine picks, + always as the secret
 -- identity: the hero is only ever somebody a player turns into. nobody is hurt under the force field of their spot.
--- whoever makes a character does it behind a menu for longer than that lasts, so they get it again as they're let out
+-- whoever makes a character does it behind a menu for longer than that lasts, so they get it again as they're let out.
+-- it drew no health of its own: the bar of the engine stood over whoever was hurt, read from as far off as its
+-- humanoids had it set
 return table.freeze({
 	Tag = MapDefinition.Spawn,
 	ShieldDuration = SHIELD_DURATION,
 	EntryShieldDuration = SHIELD_DURATION,
 	IdentityKey = "Secret" :: "Secret",
-	HealthDisplayDistance = nil,
+	HealthDisplayDistance = 100,
 })

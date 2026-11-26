@@ -6,6 +6,7 @@ local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 local TypeUnionLib = require("@game/ReplicatedStorage/Packages/TypeUnionLib")
 local Result = TypeUnionLib.Result
 -- Modules
+local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local AvatarService = require("@game/ServerScriptService/Server/Service/Avatar")
 local CombatDefinition = require("@game/ReplicatedStorage/Shared/Definition/Combat")
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
@@ -63,6 +64,11 @@ local FIELD: Field = GameDefinition.pick({
 -- Variables
 -- References
 -- Private Functions
+-- what an avatar is given is told on its player as well, for whoever hears them from where it isn't in range
+local function apply(player: Player, character: Model, isPeaceful: boolean)
+	PlayerModeUtil.apply(character, isPeaceful)
+	AttributeDefinition.set(player, AttributeDefinition.IsPlayerPeaceful, isPeaceful)
+end
 -- Class
 local PlayerModeService = {} :: PlayerModeServiceImpl
 PlayerModeService.__index = PlayerModeService
@@ -92,7 +98,12 @@ function PlayerModeService:SetPeaceful(player: Player, isPeaceful: boolean): Res
 	if saveRes.IsErr then
 		return saveRes
 	end
-	PlayerModeUtil.change(player.Character, AvatarService:GetIfHeld(player), isPeaceful)
+	local character, isHeld = player.Character, AvatarService:GetIfHeld(player)
+	PlayerModeUtil.change(character, isHeld, isPeaceful)
+	-- a held avatar took the pick as it stands, so its player says it too. anybody else says it with their next one
+	if character and isHeld then
+		AttributeDefinition.set(player, AttributeDefinition.IsPlayerPeaceful, isPeaceful)
+	end
 	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
 
@@ -120,7 +131,7 @@ return ServiceLocker(function(): PlayerModeService
 	)
 
 	local spawnedConnection = AvatarService.Spawned:Connect(function(player: Player, character: Model)
-		PlayerModeUtil.apply(character, self:GetIfPeaceful(player))
+		apply(player, character, self:GetIfPeaceful(player))
 	end)
 	table.insert(self._CleanUpCallbacks, function()
 		spawnedConnection:Disconnect()
@@ -129,7 +140,7 @@ return ServiceLocker(function(): PlayerModeService
 	for _, player in Players:GetPlayers() do
 		local character = player.Character
 		if character and SessionService:Get(player).IsSome then
-			PlayerModeUtil.apply(character, self:GetIfPeaceful(player))
+			apply(player, character, self:GetIfPeaceful(player))
 		end
 	end
 

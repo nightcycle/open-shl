@@ -31,8 +31,8 @@ local FLOW: Flow = {
 			PanelId = "Shop",
 		},
 	},
-	-- the tag over an avatar says its mode + its side, a hit is a flash: neither the list nor the bar of the engine
-	CoreGuis = { Enum.CoreGuiType.Chat },
+	-- it drew no health of its own, the bar of the engine was all there was to read it off
+	CoreGuis = { Enum.CoreGuiType.Chat, Enum.CoreGuiType.Health },
 }
 -- Variables
 -- References
