@@ -14,6 +14,7 @@ type EventBinding = AbilityType.EventBinding
 type StateBinding = AbilityType.StateBinding
 type ClientSignal<T> = AbilityType.ClientSignal<T>
 type Layout<B> = AbilityType.Layout<B>
+type SoundKey = VFXAssetDefinition.SoundKey
 -- where the client let its hook fly, so it takes the same path on every machine
 export type Launch = {
 	Origin: Vector3,
@@ -43,7 +44,17 @@ export type Config = {
 	Speed: number, -- studs a second the hook flies at
 	Range: number, -- studs from the avatar a hook holds at most
 	Thickness: number, -- of the rope
-	LatchSound: VFXAssetDefinition.SoundKey,
+	ReelSpeed: number, -- studs a second the avatar is pulled to the hook at
+	ArrivalDistance: number, -- studs from the hook the avatar has arrived within
+	ReleaseDelay: number, -- seconds the rope goes on holding once the avatar has arrived
+	TightenDelay: number, -- seconds from the hook going in until the rope pulls
+	Cooldown: number?, -- seconds from a click until the next one lets a hook fly, right away without
+	IsDroppedEarly: boolean?, -- a click that's too early for another hook lets go of the one that's in
+	Color: Color3?, -- what the rope wears where neither the character nor the power has a color for it
+	IsSecondary: boolean?, -- it wears the second color of the character
+	FireSound: SoundKey?, -- heard as the hook leaves
+	LatchSound: SoundKey?, -- heard as it goes in
+	TightenSound: SoundKey?, -- heard as the rope goes taut
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
@@ -57,12 +68,15 @@ local CONFIG: Config = table.freeze({
 	Speed = 250,
 	Range = 500,
 	Thickness = 0.1,
-	LatchSound = "Impact" :: VFXAssetDefinition.SoundKey,
+	ReelSpeed = 75,
+	ArrivalDistance = 3.5,
+	-- it's what gets the avatar all the way there
+	ReleaseDelay = 0.2,
+	TightenDelay = 0.2,
+	LatchSound = "Impact" :: SoundKey,
 })
 -- seconds a hook that ran out of rope is still waited on: word of what it ran into last takes a while to get here
 local LOSE_DELAY = 0.5
--- seconds from the hook going in until the rope pulls
-local TIGHTEN_DELAY = 0.2
 -- seconds the rope has to have pulled for before another click counts, so the click that's one too many doesn't
 -- throw away a hook that only just went in
 local REFIRE_DELAY = 0.3
@@ -117,7 +131,7 @@ local bindings: Bindings = {
 		{ To = "Idle" }
 	),
 	Tether = VFXBinding.state({ "Latched", "Reeling" }, AbilityTrigger.always()),
-	Tighten = VFXBinding.event({ "Latched" }, AbilityTrigger.after(TIGHTEN_DELAY), { To = "Reeling" }),
+	Tighten = VFXBinding.event({ "Latched" }, AbilityTrigger.after(CONFIG.TightenDelay), { To = "Reeling" }),
 	Reel = VFXBinding.state({ "Reeling" }, AbilityTrigger.always()),
 	Release = release,
 	Sheathe = VFXBinding.event(

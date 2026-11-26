@@ -10,27 +10,25 @@ local ModeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Mode")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
 local Projectile = require("@game/ReplicatedStorage/Shared/VFX/Library/Projectile")
 local Reach = require("@game/ReplicatedStorage/Shared/VFX/Library/Reach")
+local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 -- Types
 local AbilityType = require("@game/ReplicatedStorage/Shared/Type/Ability")
 local ClientVFXType = require("@game/ReplicatedStorage/Shared/Type/ClientVFX")
 local VFXType = require("@game/ReplicatedStorage/Shared/Type/VFX")
 type ClientContext = AbilityType.ClientContext
 type Cleanup = VFXType.Cleanup
+type SoundKey = VFXAssetDefinition.SoundKey
 -- Constants
--- studs a second the avatar is pulled to the hook at
-local REEL_SPEED = 75
 -- seconds between two looks at how far the avatar has left to go
 local REEL_INTERVAL = 1 / 30
--- studs from the hook the avatar has arrived within
-local ARRIVAL_DISTANCE = 3.5
--- seconds the rope goes on pulling for once the avatar has arrived, which is what gets it all the way there
-local RELEASE_DELAY = 0.2
 -- studs the spot pointed at has to be off the limb for the hook to be headed there
 local MIN_AIM_DISTANCE = 0.01
 -- where the hook that's out was let fly from
 local LAUNCH_KEY = "Launch"
 -- where the hook is in
 local ANCHOR_KEY = "Anchor"
+-- when the last hook was let fly
+local FIRE_TIME_KEY = "FireTime"
 -- Variables
 -- References
 -- Private Functions
@@ -71,8 +69,12 @@ local powerRes = PowerDefinition.get(layout.Id)
 assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 local power = powerRes.Value
 local colorOpt = PowerDefinition.getColor(power, nil)
-assert(colorOpt.IsSome, `"{layout.Id}" has no color to fall back on`)
-local defaultColor = colorOpt.Value
+assert(config.Color or colorOpt.IsSome, `"{layout.Id}" has no color to fall back on`)
+local defaultColor = (config.Color or colorOpt.Value) :: Color3
+-- the rope is worn in what the character wears the power in, a character that wears none leaves it as it comes
+local function getColor(context: ClientContext): Color3
+	return (if config.IsSecondary then context.SecondaryColor else context.Color) or defaultColor
+end
 -- the client half of the grapple: the player sees their own hook fly the moment they click, their machine is the one
 -- to notice what it runs into + the avatar is theirs to move, so what pulls it along is all here
 local builder: AbilityBuilder.ClientBuilder = AbilityBuilder.newClient(layout)
@@ -87,10 +89,9 @@ local builder: AbilityBuilder.ClientBuilder = AbilityBuilder.newClient(layout)
 		if not launch then
 			return function() end
 		end
-		local color = context.Color or defaultColor
 		local rope = context.VFX.start(
 			ClientVFXDefinition.Rope,
-			Grapple.getRope(color, launch.Origin + launch.Direction * config.Range, launch.Origin)
+			Grapple.getRope(getColor(context), launch.Origin + launch.Direction * config.Range, launch.Origin)
 		)
 		local hook = context.VFX.start(Projectile, {
 			Origin = launch.Origin,
@@ -121,14 +122,11 @@ local builder: AbilityBuilder.ClientBuilder = AbilityBuilder.newClient(layout)
 			context.Record[ANCHOR_KEY] = latch.Position
 		end
 	end)
-	:Fire(bindings.Latch, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
-		return { Sound = config.LatchSound }
-	end)
 	:Run(bindings.Tether, ClientVFXDefinition.Rope, function(context: ClientContext): ClientVFXType.Rope
-		return Grapple.getRope(context.Color or defaultColor, getAnchor(context))
+		return Grapple.getRope(getColor(context), getAnchor(context))
 	end)
 	:Run(bindings.Reel, ClientVFXDefinition.Reel, function(context: ClientContext): ClientVFXType.Reel
-		return { Position = getAnchor(context), Speed = REEL_SPEED }
+		return { Position = getAnchor(context), Speed = config.ReelSpeed }
 	end)
 	:While(bindings.Reel, function(context: ClientContext)
 		local anchor = getAnchor(context)
@@ -138,8 +136,8 @@ local builder: AbilityBuilder.ClientBuilder = AbilityBuilder.newClient(layout)
 				if distance > config.Range then
 					context.raise(bindings.Release, nil)
 					return
-				elseif distance < ARRIVAL_DISTANCE then
-					task.wait(RELEASE_DELAY)
+				elseif distance < config.ArrivalDistance then
+					task.wait(config.ReleaseDelay)
 					context.raise(bindings.Release, nil)
 					return
 				end
@@ -148,8 +146,45 @@ local builder: AbilityBuilder.ClientBuilder = AbilityBuilder.newClient(layout)
 		end))
 	end)
 
+-- not every game has a hook heard at each step of its way
+local fireSound = config.FireSound
+if fireSound then
+	builder = builder:Fire(bindings.Launch, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+		return { Sound = fireSound :: SoundKey }
+	end)
+end
+local latchSound = config.LatchSound
+if latchSound then
+	builder = builder:Fire(bindings.Latch, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+		return { Sound = latchSound :: SoundKey }
+	end)
+end
+local tightenSound = config.TightenSound
+if tightenSound then
+	builder = builder:Fire(bindings.Tighten, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
+		return { Sound = tightenSound :: SoundKey }
+	end)
+end
 -- a click lets a hook fly the same way whether or not one is in
 for _, binding in { bindings.Fire, bindings.Refire } do
+	-- one that has to wait before the next hook isn't let fly early, the server would only turn it down
+	local cooldown = config.Cooldown
+	if cooldown then
+		builder = builder
+			:Guard(binding, function(context: ClientContext): boolean
+				local fireTime = context.Record[FIRE_TIME_KEY] :: number?
+				if fireTime == nil or os.clock() - fireTime >= cooldown then
+					return true
+				end
+				if config.IsDroppedEarly and binding == bindings.Refire then
+					context.raise(bindings.Release, nil)
+				end
+				return false
+			end)
+			:On(binding, function(context: ClientContext)
+				context.Record[FIRE_TIME_KEY] = os.clock()
+			end)
+	end
 	builder = builder
 		-- the server has the last word on the energy, a hook it's sure to turn down isn't let fly
 		:Guard(
