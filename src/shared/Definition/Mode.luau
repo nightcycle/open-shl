@@ -21,13 +21,24 @@ local IS_PVP_SET_BY_SERVER = IS_SET_BY_SERVER or GameDefinition.FEATURES.Private
 local function getIfCombat(): boolean
 	return AttributeDefinition.get(Workspace, AttributeDefinition.IsPVP) == true
 end
+
+-- a place with a toggle plays by what it was built for until its server says otherwise. that's also the first thing
+-- its server says, so whatever asks before it has is told the same: a spec that runs before any service starts, a
+-- client the word hasn't reached yet
+local function getIfFighting(): boolean
+	local isPVP = AttributeDefinition.get(Workspace, AttributeDefinition.IsPVP)
+	if isPVP == nil and not IS_SET_BY_SERVER then
+		return BUILD_CONFIG.PVP_ENABLED
+	end
+	return isPVP == true
+end
 -- Class
 local Module = {}
 
 Module.IS_PVP_SET_BY_SERVER = IS_PVP_SET_BY_SERVER
 
 Module.getIfPVPEnabled = function(): boolean
-	return if IS_PVP_SET_BY_SERVER then getIfCombat() else BUILD_CONFIG.PVP_ENABLED
+	return if IS_PVP_SET_BY_SERVER then getIfFighting() else BUILD_CONFIG.PVP_ENABLED
 end
 
 Module.getIfEnergyEnabled = function(): boolean
