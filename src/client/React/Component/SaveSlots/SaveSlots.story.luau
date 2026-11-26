@@ -9,6 +9,8 @@ local UILabs = require("@game/ReplicatedStorage/DevPackages/UILabs")
 -- Modules
 local CharacterConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
+local ItemConstructor = require("@game/ReplicatedStorage/Shared/Constructor/Character/Identity/Appearance/Item")
 local StyleStory = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style/Story")
 -- Components
 local ParentComponent = require(".")
@@ -19,11 +21,19 @@ local SessionActiveCharacterIdContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ActiveCharacterId")
 local SessionCharactersContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Characters")
+local SessionCreditsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Credits")
+local SessionRentedIdsContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/RentedIds")
 -- Types
 type Character = ParentComponent.Character
 -- Constants
 -- as many rows as the old place had
 local SLOT_COUNT = 5
+-- something the game holds back behind a lock, for whoever is played to have rented. none in a place whose lists
+-- have no lock: there the line under the rows never has a fee to say
+local LOCKED_ITEM = ItemAppearanceDefinition.listLocked()[1]
+local RENTED_IDS: { string } = table.freeze(if LOCKED_ITEM then { LOCKED_ITEM.Id } else {})
+local NO_IDS: { string } = table.freeze({})
 -- Variables
 -- References
 -- Private Functions
@@ -58,6 +68,9 @@ return UILabs.CreateReactStory({
 		-- suit asks which one it replaces
 		SavedCount = UILabs.Slider(2, 0, SLOT_COUNT, 1),
 		IsSelectFailing = UILabs.Boolean(false),
+		-- whoever is played has something on that was rented for them: keeping them costs + their own row takes them
+		IsRenting = UILabs.Boolean(false),
+		Credits = UILabs.Slider(100, 0, 300, 50),
 	},
 }, function(props)
 	local savedCount: number = props.controls.SavedCount
@@ -70,58 +83,86 @@ return UILabs.CreateReactStory({
 	end, { savedCount })
 	local activeCharacterId, setActiveCharacterId = React.useState("slot-1")
 	local errorMessage: string?, setErrorMessage: (string?) -> () = React.useState(nil :: string?)
+	local isRenting: boolean = props.controls.IsRenting
+	local shown = React.useMemo(function(): { Character }
+		if not isRenting or not LOCKED_ITEM then
+			return characters
+		end
+		local out: { Character } = {}
+		for _, character in characters do
+			table.insert(
+				out,
+				if character.Id == activeCharacterId
+					then FreezeUtil.delta(character, function(t: Character): Character
+						table.insert(t.Identities.Main.Appearance.Items, ItemConstructor.new(LOCKED_ITEM.Id))
+						return t
+					end)
+					else character
+			)
+		end
+		table.freeze(out)
+		return out
+	end, { characters :: any, activeCharacterId, isRenting })
 
 	return StyleStory.provide(props.controls.Style, {
-		HasHudShown = e(AppHasHudShownContext.Provider, {
-			value = props.controls.HasHudShown,
+		Credits = e(SessionCreditsContext.Provider, {
+			value = props.controls.Credits,
 		}, {
-			Characters = e(SessionCharactersContext.Provider, {
-				value = characters,
+			RentedIds = e(SessionRentedIdsContext.Provider, {
+				value = if isRenting then RENTED_IDS else NO_IDS,
 			}, {
-				ActiveCharacterId = e(SessionActiveCharacterIdContext.Provider, {
-					value = activeCharacterId,
+				HasHudShown = e(AppHasHudShownContext.Provider, {
+					value = props.controls.HasHudShown,
 				}, {
-					SaveSlots = e(
-						ParentComponent,
-						{
-							AnchorPoint = Vector2.new(0.5, 0.5),
-							Position = UDim2.fromScale(0.5, 0.5),
-							Size = UDim2.fromScale(1, 1),
-							ErrorMessage = errorMessage,
-							OnAction = function(action: ParentComponent.ActionInfo)
-								print(`action`, action)
-								if action.Type == "Select" then
-									if props.controls.IsSelectFailing then
-										setErrorMessage(`the story was told to turn the load down`)
-										return
-									end
-									setErrorMessage(nil)
-									setActiveCharacterId(action.CharacterId)
-								elseif action.Type == "Copy" then
-									-- stands in for the server: the row takes the name of whoever is played
-									local name = ""
-									for _, character in characters do
-										if character.Id == activeCharacterId then
-											name = character.Identities.Main.Profile.Name
+					Characters = e(SessionCharactersContext.Provider, {
+						value = shown,
+					}, {
+						ActiveCharacterId = e(SessionActiveCharacterIdContext.Provider, {
+							value = activeCharacterId,
+						}, {
+							SaveSlots = e(
+								ParentComponent,
+								{
+									AnchorPoint = Vector2.new(0.5, 0.5),
+									Position = UDim2.fromScale(0.5, 0.5),
+									Size = UDim2.fromScale(1, 1),
+									ErrorMessage = errorMessage,
+									OnAction = function(action: ParentComponent.ActionInfo)
+										print(`action`, action)
+										if action.Type == "Select" then
+											if props.controls.IsSelectFailing then
+												setErrorMessage(`the story was told to turn the load down`)
+												return
+											end
+											setErrorMessage(nil)
+											setActiveCharacterId(action.CharacterId)
+										elseif action.Type == "Copy" then
+											-- stands in for the server: the row takes the name of whoever is played
+											local name = ""
+											for _, character in characters do
+												if character.Id == activeCharacterId then
+													name = character.Identities.Main.Profile.Name
+												end
+											end
+											local out: { Character } = {}
+											for slot, character in characters do
+												table.insert(
+													out,
+													if character.Id == action.CharacterId
+														then newCharacter(slot, name)
+														else character
+												)
+											end
+											table.freeze(out)
+											setErrorMessage(nil)
+											setCharacters(out)
 										end
-									end
-									local out: { Character } = {}
-									for slot, character in characters do
-										table.insert(
-											out,
-											if character.Id == action.CharacterId
-												then newCharacter(slot, name)
-												else character
-										)
-									end
-									table.freeze(out)
-									setErrorMessage(nil)
-									setCharacters(out)
-								end
-							end,
-							SizeConstraint = Enum.SizeConstraint.RelativeXY,
-						} :: ParentComponent.Properties
-					),
+									end,
+									SizeConstraint = Enum.SizeConstraint.RelativeXY,
+								} :: ParentComponent.Properties
+							),
+						}),
+					}),
 				}),
 			}),
 		}),

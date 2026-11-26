@@ -30,6 +30,9 @@ export type Properties = {}
 local ERROR_DURATION = 4
 -- a pass is free in studio, the server hands it over. anywhere else it's paid for through the prompt of the engine
 local IS_STUDIO = RunService:IsStudio()
+-- where what's behind a pass is had for a fee, keeping whoever is played in a slot is the server's to do: it's where
+-- what was rented for them is paid for
+local HAS_RENT = GameDefinition.FEATURES.Rent
 -- how the screen is laid out is the game's own, the layout of another game is never required
 local Layout: Layout = GameDefinition.pick({
 	shl1 = function(): Layout
@@ -147,6 +150,20 @@ return function(): React.ReactNode
 						return
 					end
 					local characterId = action.CharacterId
+					if HAS_RENT then
+						-- nothing of the character crosses, the server copies what it holds. their own slot is asked for
+						-- as well: that's how what they rented becomes theirs
+						isBusyRef.current = true
+						setErrorMessage(nil)
+						task.spawn(function()
+							local keepRes = SessionService:KeepCharacter(characterId)
+							isBusyRef.current = false
+							if isMountedRef.current and keepRes.IsErr then
+								setErrorMessage(keepRes.Value)
+							end
+						end)
+						return
+					end
 					-- whoever is played is kept in their own slot already
 					if activeOpt.Value.Id == characterId then
 						return

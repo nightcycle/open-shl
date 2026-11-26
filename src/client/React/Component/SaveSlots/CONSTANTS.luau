@@ -53,6 +53,9 @@ return table.freeze({
 	LOAD_TEXT = "LOAD",
 	SAVE_TEXT = "SAVE",
 	SAVING_TEXT = "Saving...",
+	-- what the line under the rows reads while whoever is played has something rented on: what a save costs + how
+	-- many things that's for. the sentence is the old place's
+	KEEP_NOTE_TEXT = "Saving your current outfit would cost %d C$ due to it containing %d rented items!",
 	BACK_TEXT = "BACK",
 	EXIT_TEXT = "EXIT",
 	-- the old place never had to ask: a new suit of it was nobody's until it was saved over a row

@@ -5,6 +5,7 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
+local RentDefinition = require("@game/ReplicatedStorage/Shared/Definition/Rent")
 -- Components
 -- Hooks
 local useTween = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTween")
@@ -14,6 +15,9 @@ local SessionActiveCharacterIdContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ActiveCharacterId")
 local SessionCharactersContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Characters")
+local SessionCreditsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Credits")
+local SessionRentedIdsContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/RentedIds")
 local StyleContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style")
 -- Types
 local CharacterSelectTypes =
@@ -352,6 +356,8 @@ local function saves(props: {
 	OnAction: (ActionInfo) -> (),
 })
 	local style = React.useContext(StyleContext)
+	local credits = React.useContext(SessionCreditsContext)
+	local rentedIds = React.useContext(SessionRentedIdsContext)
 	local characters = props.Characters
 	local errorMessage = props.ErrorMessage
 	-- the row that was told to keep whoever is played, until the rows say it did or the line under them why it didn't
@@ -359,13 +365,23 @@ local function saves(props: {
 	React.useEffect(function()
 		setSavingId(nil)
 		return function() end
-	end, { characters })
+	end, { characters :: any, rentedIds })
 	React.useEffect(function()
 		if errorMessage then
 			setSavingId(nil)
 		end
 		return function() end
 	end, { errorMessage })
+
+	-- what a row asks to keep whoever is played: the fee for each thing they still have on of what was rented for
+	-- them. the server asks the same of what it holds
+	local keepPrice = 0
+	for _, character in characters do
+		if character.Id == props.ActiveCharacterId then
+			keepPrice = RentDefinition.getKeepPrice(rentedIds, character)
+		end
+	end
+	local isAffordable = credits >= keepPrice
 
 	local rows: { [string]: React.ReactNode } = {}
 	for index, character in characters do
@@ -383,8 +399,9 @@ local function saves(props: {
 				Position = CONSTANTS.SAVE_POSITION,
 				Size = CONSTANTS.BUTTON_SIZE,
 				Text = CONSTANTS.SAVE_TEXT,
-				-- whoever is played is kept in their own row as it is
-				OnClick = if not isPlayed
+				-- whoever is played is in their own row as they are: there's only something to keep there while they
+				-- have something rented on. no row takes them while that can't be paid for
+				OnClick = if isAffordable and (not isPlayed or keepPrice > 0)
 					then function()
 						setSavingId(character.Id)
 						props.OnAction({
@@ -418,6 +435,9 @@ local function saves(props: {
 	}, {
 		Rows = e(React.Fragment, {}, rows),
 		Note = e(note, {
+			Text = if keepPrice > 0
+				then string.format(CONSTANTS.KEEP_NOTE_TEXT, keepPrice, keepPrice / RentDefinition.KEEP_PRICE)
+				else nil,
 			ErrorMessage = errorMessage,
 		}),
 		Exit = e(button, {
