@@ -68,6 +68,16 @@ local DEFINITIONS: { PowerDefinition } = {
 		Damage = 20,
 		ColorGroups = {},
 	},
+	-- a ray from each eye, for as long as it's held
+	{
+		Id = "ranged_laser-vision",
+		Group = "ranged",
+		Name = "Laser Vision",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 3,
+		ColorGroups = {},
+	},
 	{
 		Id = "transportation_flight",
 		Group = "transportation",
@@ -124,16 +134,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 20,
-		ColorGroups = {},
-	},
-	-- a ray from each eye, for as long as it's held
-	{
-		Id = "ranged_laser-vision",
-		Group = "ranged",
-		Name = "Laser Vision",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 3,
 		ColorGroups = {},
 	},
 	{
