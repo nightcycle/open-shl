@@ -15,6 +15,7 @@ local CurrencyPopup =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CurrencyPopup")
 local EdgeHUD = require("@self/EdgeHUD")
 local FlyIn = require("@self/FlyIn")
+local JobMenu = require("@self/JobMenu")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
 local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
@@ -43,6 +44,8 @@ local REGISTRY: Registry = {
 	SCREENS = {
 		CharacterSelect = CharacterSelect,
 		CharacterEditor = CharacterEditor,
+		-- a pad of the map opens it, no button of the hud does
+		JobMenu = JobMenu,
 	},
 	PANELS = {
 		-- the list of who's in the game is what the shell calls a database, its hud has the button for it

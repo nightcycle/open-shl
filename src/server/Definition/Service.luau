@@ -237,6 +237,17 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the pads of the map that take whoever steps on one on for a shift. it pays through the economy + turns down
+	-- whoever the jail holds
+	{
+		Name = "Job",
+		IsFeatured = FEATURES.Jobs,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Job")
+			assert(not service.IsInitialized, `the job service is already initialized`)
+			return service
+		end,
+	},
 	-- the bodies nobody plays. it puts none into the world by itself, so it's up before whatever asks it for a wave
 	{
 		Name = "Npc",

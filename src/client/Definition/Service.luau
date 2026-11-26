@@ -84,6 +84,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the shift a pad of the map took this player on for: its screen is the shell's to put up
+	{
+		Name = "Job",
+		IsFeatured = FEATURES.Jobs,
+		Load = function(): Service
+			local service = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Job")
+			assert(not service.IsInitialized, `the job service is already initialized`)
+			return service
+		end,
+	},
 	-- the parts of a map that only turn, each client turns the ones it has
 	{
 		Name = "Scenery",
