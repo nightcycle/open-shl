@@ -42,8 +42,8 @@ export type RoleplayService = typeof(setmetatable(
 	{} :: RoleplayServiceImpl
 ))
 -- Constants
--- if what a player does to their own avatar is taken: an expression, the mask, their own cuffs. a game that only has
--- the server cuff somebody runs this for that alone, no client of it is listened to
+-- if what a player does to their own avatar is taken: an expression, their own cuffs. a game that only has the server
+-- cuff somebody runs this for that alone, no client of it is listened to. a mask is the mask service's
 local IS_PLAYER_LED = GameDefinition.FEATURES.Roleplay
 -- Variables
 -- References
@@ -154,13 +154,6 @@ return ServiceLocker(function(): RoleplayService
 				if player.Character then
 					applyExpression(player, player.Character, roleplay)
 				end
-			end)
-		)
-		table.insert(
-			self._Connections,
-			NetworkService:Connect(RemoteDefinition.SetMasked, function(player: Player, isMasked: boolean)
-				-- the avatar service renders the look without the mask, a dress is the only thing that changes items
-				AvatarService:SetMasked(player, isMasked)
 			end)
 		)
 		table.insert(
