@@ -657,6 +657,38 @@ Types.Notice = Type.strictInterface({
 	Duration = Type.numberConstrained(0.1, 10),
 })
 
+-- a thin line from a spot on a limb of the avatar to something small on its far end, which hangs off it or lies
+-- somewhere in the world
+export type Line = {
+	Limb: string, -- the name of the part of the avatar it's tied to
+	Offset: Vector3, -- of where it's tied from the middle of the limb, the way the limb is turned
+	Position: Vector3?, -- where its far end lies, it hangs straight down from where it's tied without
+	-- studs of line there are: how far it hangs down, + how far off its end may lie before it's dragged along
+	Length: number,
+	Thickness: number,
+	Color: Color3,
+	EndSize: Vector3, -- of what's on its far end
+	EndColor: Color3,
+	EndMaterial: Enum.Material?,
+	EndMesh: MeshKey?,
+	EndMeshScale: Vector3?,
+	EndTurn: CFrame?, -- how that's turned, the way the world is without
+}
+Types.Line = Type.strictInterface({
+	Limb = Type.string,
+	Offset = isReach,
+	Position = Type.optional(isFiniteVector3),
+	Length = Type.numberConstrained(0.1, MAX_LENGTH),
+	Thickness = Type.numberConstrained(0.01, 1),
+	Color = Type.Color3,
+	EndSize = isSize,
+	EndColor = Type.Color3,
+	EndMaterial = Type.optional(Type.enum(Enum.Material)),
+	EndMesh = Type.optional(VFXAssetDefinition.MeshKey),
+	EndMeshScale = Type.optional(isSize),
+	EndTurn = Type.optional(Type.CFrame),
+})
+
 -- the pointer of whoever shows it, for as long as it's on. only the machine of the avatar shows one
 export type Cursor = {
 	Image: VFXAssetDefinition.DecalKey,

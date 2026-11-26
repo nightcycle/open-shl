@@ -24,6 +24,7 @@ local IMPLEMENTATIONS: { Implementation } = {
 	require("@self/Gauge"),
 	require("@self/Hover"),
 	require("@self/Lift"),
+	require("@self/Line"),
 	require("@self/Notice"),
 	require("@self/Plume"),
 	require("@self/Prop"),
