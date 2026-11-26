@@ -49,7 +49,7 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Promo = true,
 		Scenery = true,
 		Acrobatics = true,
-		Chat = false,
+		Chat = true,
 		Mask = true,
 		Movement = false,
 		CameraMode = false,
@@ -125,7 +125,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Promo = false,
 		Scenery = false,
 		Acrobatics = false,
-		Chat = false,
+		-- the alias as the speaker in the window of the engine, in the color of its side
+		Chat = true,
 		Mask = false,
 		Movement = false,
 		-- its flow has the action, its hud has no button for it

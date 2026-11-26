@@ -8,6 +8,7 @@ local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
 local CharacterSelect =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterSelect")
+local ChatLog = require("@self/ChatLog")
 local CombatFeedback =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CombatFeedback")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
@@ -42,7 +43,10 @@ local REGISTRY: Registry = {
 	OVERLAYS = {
 		-- the panel of flips, up with the hud while the hero is out
 		Acrobatics = Acrobatics,
-		-- it has no bar for its health: the flash of a hit is how a player sees one land
+		-- what's said, by who everybody plays: its own log under the ticker, in the place of the engine's window
+		ChatLog = ChatLog,
+		-- it has no bar of its own for its health: the flash of a hit is how a player sees one land, beside what
+		-- the bar of the engine says
 		CombatFeedback = CombatFeedback,
 		NameTag = NameTag,
 		Ticker = Ticker,
