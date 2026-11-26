@@ -102,6 +102,9 @@ local function getState(): { [string]: any }
 		IsCameraModeAvailable = ShellService:GetIsCameraModeAvailable(),
 		IsInResidence = ShellService:GetIsInResidence(),
 		IsGameplayHudVisible = ShellService:GetIsGameplayHudVisible(),
+		-- what the player took off their own screen
+		IsHudHidden = ShellService:GetIsHudHidden(),
+		AreNamesHidden = ShellService:GetAreNamesHidden(),
 		-- the hud was up at least once since the client started
 		HasHudShown = ShellService._HasHudShown,
 		-- nil until the app drew for the first time

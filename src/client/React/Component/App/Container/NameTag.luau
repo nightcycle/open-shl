@@ -10,6 +10,7 @@ local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/A
 local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 local SessionService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Session")
+local ShellService = require("@game/StarterPlayer/StarterPlayerScripts/Client/Service/Shell")
 -- Components
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/NameTag")
 -- Hooks
@@ -215,10 +216,15 @@ local function tags(props: {
 	Bios: { [number]: string },
 	Alignments: { [number]: PseudoEnum.Alignment },
 }): React.ReactNode
+	assert(ShellService.IsInitialized, `the shell service isn't initialized`)
 	local players = usePlayers()
+	-- a player may take the names off their own screen, whoever comes in meanwhile has none either
+	local areNamesHidden = useSignalState(ShellService.NamesHiddenChanged, function(): boolean
+		return ShellService:GetAreNamesHidden()
+	end)
 	local localPlayer = Players.LocalPlayer
 	local playerGui = localPlayer:FindFirstChildOfClass("PlayerGui")
-	if not playerGui then
+	if not playerGui or areNamesHidden then
 		return nil
 	end
 

@@ -39,6 +39,10 @@ type State = {
 	IsInResidence: boolean,
 	IsBackpackLocked: boolean,
 	IsGameplayHudVisible: boolean,
+	-- the player put the hud away themselves: the game goes on under it, with nothing drawn over the picture
+	IsHudHidden: boolean,
+	-- nobody else has a name over their head on this screen
+	AreNamesHidden: boolean,
 }
 type ShellServiceImpl = {
 	__index: ShellServiceImpl,
@@ -49,6 +53,8 @@ type ShellServiceImpl = {
 	GetIsCameraModeAvailable: (self: ShellService) -> boolean,
 	GetIsInResidence: (self: ShellService) -> boolean,
 	GetIsGameplayHudVisible: (self: ShellService) -> boolean,
+	GetIsHudHidden: (self: ShellService) -> boolean,
+	GetAreNamesHidden: (self: ShellService) -> boolean,
 	FinishBootPhase: (self: ShellService, bootPhase: BootPhase) -> (),
 	SetServerBrowserOpen: (self: ShellService, isOpen: boolean) -> (),
 	OpenScreen: (self: ShellService, screen: Screen) -> Result<true, string>,
@@ -59,6 +65,9 @@ type ShellServiceImpl = {
 	SetCameraMode: (self: ShellService, isCameraMode: boolean) -> Result<true, string>,
 	SetIsInResidence: (self: ShellService, isInResidence: boolean) -> (),
 	SetBackpackLocked: (self: ShellService, isLocked: boolean) -> (),
+	-- only a hud that's up can be put away. it's back once it goes for any other reason
+	SetHudHidden: (self: ShellService, isHudHidden: boolean) -> Result<true, string>,
+	SetNamesHidden: (self: ShellService, areNamesHidden: boolean) -> (),
 	PressMenuButton: (self: ShellService, menuId: PseudoEnum.MenuId) -> (),
 	FireTutorialTrigger: (self: ShellService, trigger: Trigger) -> (),
 }
@@ -71,6 +80,8 @@ export type ShellService = typeof(setmetatable(
 		CameraModeChanged: Signal<boolean>,
 		ResidenceChanged: Signal<boolean>,
 		GameplayHudVisibleChanged: Signal<boolean>,
+		HudHiddenChanged: Signal<boolean>,
+		NamesHiddenChanged: Signal<boolean>,
 		SwapRequested: Signal<>, -- the hud's swap button was pressed, the swap is up to whoever listens
 		TutorialTriggered: Signal<Trigger>,
 		_State: State,
@@ -141,8 +152,10 @@ local function setState(self: ShellService, state: State)
 	state.IsGameplayHudVisible = state.BootPhase == "Playing" and state.Screen.Type == "None"
 	if not state.IsGameplayHudVisible then
 		state.IsCameraMode = false
+		-- a hud that went for a menu isn't one the player put away: it's all there once the menu is closed
+		state.IsHudHidden = false
 	end
-	if not state.IsGameplayHudVisible or state.IsCameraMode then
+	if not state.IsGameplayHudVisible or state.IsCameraMode or state.IsHudHidden then
 		state.Panel = nil
 	end
 	if state.Panel == "Build" and not state.IsInResidence then
@@ -151,12 +164,21 @@ local function setState(self: ShellService, state: State)
 	TableUtil.deepFreeze(state)
 	self._State = state
 
-	local isBackpackEnabled = state.IsGameplayHudVisible and not state.IsCameraMode and not state.IsBackpackLocked
+	-- whoever puts their hud away wants nothing of the engine's over the picture either
+	if previous.IsHudHidden ~= state.IsHudHidden then
+		for _, coreGuiType in CORE_GUIS do
+			StarterGui:SetCoreGuiEnabled(coreGuiType, not state.IsHudHidden)
+		end
+	end
+	local isBackpackEnabled = state.IsGameplayHudVisible
+		and not state.IsCameraMode
+		and not state.IsBackpackLocked
+		and not state.IsHudHidden
 	if self._IsBackpackEnabled ~= isBackpackEnabled then
 		self._IsBackpackEnabled = isBackpackEnabled
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, isBackpackEnabled)
 	end
-	local isHudCoreGuiEnabled = state.IsGameplayHudVisible and not state.IsCameraMode
+	local isHudCoreGuiEnabled = state.IsGameplayHudVisible and not state.IsCameraMode and not state.IsHudHidden
 	if self._IsHudCoreGuiEnabled ~= isHudCoreGuiEnabled then
 		self._IsHudCoreGuiEnabled = isHudCoreGuiEnabled
 		for _, coreGuiType in HUD_CORE_GUIS do
@@ -186,6 +208,12 @@ local function setState(self: ShellService, state: State)
 	end
 	if previous.IsGameplayHudVisible ~= state.IsGameplayHudVisible then
 		self.GameplayHudVisibleChanged:Fire(self._State.IsGameplayHudVisible)
+	end
+	if previous.IsHudHidden ~= state.IsHudHidden then
+		self.HudHiddenChanged:Fire(self._State.IsHudHidden)
+	end
+	if previous.AreNamesHidden ~= state.AreNamesHidden then
+		self.NamesHiddenChanged:Fire(self._State.AreNamesHidden)
 	end
 
 	if previous.BootPhase ~= state.BootPhase and state.BootPhase == "ModeSelect" then
@@ -233,6 +261,14 @@ end
 
 function ShellService:GetIsGameplayHudVisible(): boolean
 	return self._State.IsGameplayHudVisible
+end
+
+function ShellService:GetIsHudHidden(): boolean
+	return self._State.IsHudHidden
+end
+
+function ShellService:GetAreNamesHidden(): boolean
+	return self._State.AreNamesHidden
 end
 
 function ShellService:FinishBootPhase(bootPhase: BootPhase)
@@ -284,7 +320,7 @@ function ShellService:CloseScreen()
 end
 
 function ShellService:OpenPanel(panelId: PanelId): Result<true, string>
-	if not self._State.IsGameplayHudVisible or self._State.IsCameraMode then
+	if not self._State.IsGameplayHudVisible or self._State.IsCameraMode or self._State.IsHudHidden then
 		return Result.err(`can't open "{panelId}" without the hud`)
 	end
 	if panelId == "Build" and not self._State.IsInResidence then
@@ -350,8 +386,30 @@ function ShellService:SetBackpackLocked(isLocked: boolean)
 	setState(self, state)
 end
 
+function ShellService:SetHudHidden(isHudHidden: boolean): Result<true, string>
+	if isHudHidden and not self._State.IsGameplayHudVisible then
+		return Result.err(`can't put the hud away while it isn't up`)
+	end
+	if self._State.IsHudHidden ~= isHudHidden then
+		local state = table.clone(self._State)
+		state.IsHudHidden = isHudHidden
+		setState(self, state)
+	end
+	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
+end
+
+function ShellService:SetNamesHidden(areNamesHidden: boolean)
+	if self._State.AreNamesHidden == areNamesHidden then
+		return
+	end
+	local state = table.clone(self._State)
+	state.AreNamesHidden = areNamesHidden
+	setState(self, state)
+end
+
 function ShellService:PressMenuButton(menuId: PseudoEnum.MenuId)
-	if not self._State.IsGameplayHudVisible then
+	-- a hud that's put away has no button to press
+	if not self._State.IsGameplayHudVisible or self._State.IsHudHidden then
 		return
 	end
 	local action: MenuAction? = MENU[menuId]
@@ -409,6 +467,8 @@ return ServiceLocker(function(): ShellService
 		IsInResidence = false,
 		IsBackpackLocked = false,
 		IsGameplayHudVisible = false,
+		IsHudHidden = false,
+		AreNamesHidden = false,
 	}
 	TableUtil.deepFreeze(state)
 
@@ -420,6 +480,8 @@ return ServiceLocker(function(): ShellService
 		CameraModeChanged = Signal.new(),
 		ResidenceChanged = Signal.new(),
 		GameplayHudVisibleChanged = Signal.new(),
+		HudHiddenChanged = Signal.new(),
+		NamesHiddenChanged = Signal.new(),
 		SwapRequested = Signal.new(),
 		TutorialTriggered = Signal.new(),
 		_State = state,
@@ -482,6 +544,8 @@ end, function(self: ShellService)
 	self.CameraModeChanged:Destroy()
 	self.ResidenceChanged:Destroy()
 	self.GameplayHudVisibleChanged:Destroy()
+	self.HudHiddenChanged:Destroy()
+	self.NamesHiddenChanged:Destroy()
 	self.SwapRequested:Destroy()
 	self.TutorialTriggered:Destroy()
 	table.clear(self :: any)

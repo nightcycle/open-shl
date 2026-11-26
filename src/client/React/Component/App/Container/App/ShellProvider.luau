@@ -74,6 +74,10 @@ return function(props: Properties): React.ReactNode
 	local isGameplayHudVisible = useSignalState(ShellService.GameplayHudVisibleChanged, function(): boolean
 		return ShellService:GetIsGameplayHudVisible()
 	end)
+	-- a hud its player put away is one nothing is drawn with, the game it's the hud of goes on
+	local isHudHidden = useSignalState(ShellService.HudHiddenChanged, function(): boolean
+		return ShellService:GetIsHudHidden()
+	end)
 	-- a screen that's drawn another way before the player was ever let into the game can't ask the shell: it's
 	-- remembered from the first time the hud is up
 	local hasHudShownRef = React.useRef(false)
@@ -101,7 +105,7 @@ return function(props: Properties): React.ReactNode
 							value = isInResidence,
 						}, {
 							IsGameplayHudVisible = e(AppIsGameplayHudVisibleContext.Provider, {
-								value = isGameplayHudVisible,
+								value = isGameplayHudVisible and not isHudHidden,
 							}, {
 								TopInset = e(AppTopInsetContext.Provider, {
 									value = topInset,
