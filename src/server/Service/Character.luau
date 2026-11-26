@@ -83,6 +83,8 @@ local SCALE = CharacterEditorDefinition.SCALE
 local SCALE_EPSILON = CharacterEditorDefinition.SCALE_EPSILON
 -- a game that holds nothing back has nothing to ask about what a character wears
 local HAS_LISTINGS = #AccessDefinition.list() > 0
+-- the order a character is gone through in
+local IDENTITY_KEYS: { IdentityKey } = table.freeze({ "Main" :: IdentityKey, "Secret" })
 -- Variables
 -- References
 -- Private Functions
@@ -345,18 +347,52 @@ local function newSanitised(player: Player, edited: Character, profiles: Profile
 	}, "Main"))
 end
 
+-- an item the list of its category leaves out is nobody's: nothing opens it + no row of an editor steps to it. what a
+-- slot held of those may stay, like anything else it held
+local function getUnlistedError(character: Character, kept: AccessDefinition.Kept): string?
+	for _, identityKey: IdentityKey in IDENTITY_KEYS do
+		local identity = character.Identities[identityKey]
+		local keptIds = kept.ItemIds[identityKey]
+		if not identity then
+			continue
+		end
+		for _, item in identity.Appearance.Items do
+			local definitionRes = ItemAppearanceDefinition.get(item.DefinitionId)
+			if
+				definitionRes.IsOk
+				and definitionRes.Value.Order == nil
+				and definitionRes.Value.IsStarter == false
+				and not (keptIds and keptIds[item.DefinitionId])
+			then
+				return `"{definitionRes.Value.Name or item.DefinitionId}" isn't on offer`
+			end
+		end
+	end
+	return nil
+end
+
 -- what a character holds that its player doesn't have, as the line they're turned down with. whatever the slot held
 -- before may stay where it was: what a pad dressed it in, what came over from the old game + what was saved before
--- anything was held back. once it's off it has to be got the way everybody gets it to go back on
+-- anything was held back. once it's off it has to be got the way everybody gets it to go back on. nothing is taken
+-- off silently: an editor never sends such a character, so only a client that was tampered with reads the line
 local function getAccessError(player: Player, character: Character, prior: Character): string?
 	assert(SessionService.IsInitialized, `the session service isn't initialized`)
 	if not HAS_LISTINGS then
 		return nil
 	end
-	local unowned =
-		AccessDefinition.getUnowned(character, SessionService:GetOwned(player), AccessDefinition.getKept(prior))
-	local listing = unowned[1]
-	return if listing then `"{listing.Name}" isn't owned` else nil
+	local kept = AccessDefinition.getKept(prior)
+	local listing = AccessDefinition.getUnowned(character, SessionService:GetOwned(player), kept)[1]
+	if not listing then
+		return getUnlistedError(character, kept)
+	end
+	local lock = listing.Lock
+	if not lock then
+		return `"{listing.Name}" isn't owned`
+	elseif lock.Type == "GroupPerk" then
+		return `"{listing.Name}" is for members of the group`
+	end
+	local passRes = ProductDefinition.getFromEntitlement(lock.Key)
+	return `"{listing.Name}" needs the {if passRes.IsOk then passRes.Value.Name else lock.Key} pass`
 end
 
 -- yields. nothing a client hands in is stored as it came, the slot keeps its id + takes what's left of the rest
