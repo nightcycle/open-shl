@@ -369,6 +369,14 @@ Types.Float = Type.strictInterface({
 	Share = Type.numberConstrained(0, 1),
 })
 
+-- lets the limbs of a body hang loose from their joints, the way one lies that's down
+export type Ragdoll = {
+	Shove: number, -- studs a second it's knocked about by at most as it goes limp, any way
+}
+Types.Ragdoll = Type.strictInterface({
+	Shove = Type.numberConstrained(0, 100),
+})
+
 -- a part of the world nobody stands on carries the avatar for as long as it keeps moving
 export type Skim = {
 	Part: BasePart,

@@ -30,6 +30,7 @@ local IMPLEMENTATIONS: { Implementation } = {
 	require("@self/Notice"),
 	require("@self/Plume"),
 	require("@self/Prop"),
+	require("@self/Ragdoll"),
 	require("@self/Reel"),
 	require("@self/Ripple"),
 	require("@self/Root"),

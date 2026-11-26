@@ -64,6 +64,7 @@ Module.Warp = newEvent("Warp", ClientVFXType.Warp) :: ClientEvent<ClientVFXType.
 Module.WalkSpeed = newState("WalkSpeed", ClientVFXType.WalkSpeed) :: ClientState<ClientVFXType.WalkSpeed>
 Module.JumpPower = newState("JumpPower", ClientVFXType.JumpPower) :: ClientState<ClientVFXType.JumpPower>
 Module.Float = newState("Float", ClientVFXType.Float) :: ClientState<ClientVFXType.Float>
+Module.Ragdoll = newState("Ragdoll", ClientVFXType.Ragdoll) :: ClientState<ClientVFXType.Ragdoll>
 Module.Skim = newState("Skim", ClientVFXType.Skim) :: ClientState<ClientVFXType.Skim>
 Module.Lift = newState("Lift", ClientVFXType.Lift) :: ClientState<ClientVFXType.Lift>
 Module.Reel = newState("Reel", ClientVFXType.Reel) :: ClientState<ClientVFXType.Reel>
