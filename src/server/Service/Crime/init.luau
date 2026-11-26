@@ -4,6 +4,7 @@
 local ServiceLocker = require("@game/ReplicatedStorage/Packages/ServiceLocker")
 -- Modules
 local AlertService = require("@game/ServerScriptService/Server/Service/Alert")
+local BankRunner = require("@self/Bank")
 local DisasterRunner = require("@self/Disaster")
 local EconomyService = require("@game/ServerScriptService/Server/Service/Economy")
 local SessionService = require("@game/ServerScriptService/Server/Service/Session")
@@ -15,6 +16,7 @@ export type CrimeService = typeof(setmetatable(
 	{} :: {
 		IsInitialized: true,
 		_Disasters: DisasterRunner.Runner,
+		_Bank: BankRunner.Runner,
 		_Connections: { RBXScriptConnection },
 		_CleanUpCallbacks: { () -> () },
 	},
@@ -29,7 +31,7 @@ local CrimeService = {} :: CrimeServiceImpl
 CrimeService.__index = CrimeService
 
 -- what the villains of a town do to it for money, + what the town has against them. each kind of crime is a child
--- that runs by itself from when it's made until it's destroyed: the disasters are the first, the bank is the next.
+-- that runs by itself from when it's made until it's destroyed: the disasters are one, the bank is the other.
 -- all of it pays through the economy, tells the heroes through the alert service + lands nothing where nobody fights
 return ServiceLocker(function(): CrimeService
 	assert(AlertService.IsInitialized, `the alert service isn't initialized`)
@@ -38,11 +40,13 @@ return ServiceLocker(function(): CrimeService
 	local self = setmetatable({
 		IsInitialized = true :: true,
 		_Disasters = DisasterRunner.new(),
+		_Bank = BankRunner.new(),
 		_CleanUpCallbacks = {},
 		_Connections = {},
 	}, CrimeService)
 
 	table.insert(self._CleanUpCallbacks, self._Disasters.Destroy)
+	table.insert(self._CleanUpCallbacks, self._Bank.Destroy)
 
 	return self
 end, function(self: CrimeService)
