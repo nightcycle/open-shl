@@ -48,6 +48,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "basic-melee_sword",
+		Group = "basic-melee",
+		Name = "Sword",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["sword.png"]),
+		EnergyCost = 0,
+		Damage = 20,
+		ColorGroups = {},
+	},
+	{
 		Id = "ranged_hitscan-bow",
 		Group = "ranged",
 		Name = "Bow",
@@ -203,15 +212,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["hammer.png"]),
 		EnergyCost = 0,
 		Damage = 30,
-		ColorGroups = {},
-	},
-	{
-		Id = "basic-melee_sword",
-		Group = "basic-melee",
-		Name = "Sword",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["sword.png"]),
-		EnergyCost = 0,
-		Damage = 20,
 		ColorGroups = {},
 	},
 }
