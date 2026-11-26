@@ -77,6 +77,13 @@ local AREAS: { Area } = table.freeze({
 			return require("@self/Command/Environment")
 		end,
 	},
+	{
+		Name = "Chat",
+		IsFeatured = FEATURES.Chat,
+		Load = function()
+			return require("@self/Command/Chat")
+		end,
+	},
 })
 -- Variables
 -- References
