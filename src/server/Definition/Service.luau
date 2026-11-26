@@ -197,6 +197,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the bodies nobody plays. it puts none into the world by itself, so it's up before whatever asks it for a wave
+	{
+		Name = "Npc",
+		IsFeatured = FEATURES.Npcs,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Npc")
+			assert(not service.IsInitialized, `the npc service is already initialized`)
+			return service
+		end,
+	},
 	{
 		Name = "Residence",
 		IsFeatured = FEATURES.Residences,
