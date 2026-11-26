@@ -39,6 +39,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "basic-melee_hammer",
+		Group = "basic-melee",
+		Name = "Hammer",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["hammer.png"]),
+		EnergyCost = 0,
+		Damage = 30,
+		ColorGroups = {},
+	},
+	{
 		Id = "basic-melee_dual-katana",
 		Group = "basic-melee",
 		Name = "Katanas",
@@ -204,17 +213,7 @@ local DEFINITIONS: { PowerDefinition } = {
 	},
 }
 -- a row moves up into the list above once both halves of its ability are in the game's set
-local UPCOMING: { PowerDefinition } = {
-	{
-		Id = "basic-melee_hammer",
-		Group = "basic-melee",
-		Name = "Hammer",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["hammer.png"]),
-		EnergyCost = 0,
-		Damage = 30,
-		ColorGroups = {},
-	},
-}
+local UPCOMING: { PowerDefinition } = {}
 local CATALOGUE: PowerCatalogue = {
 	Groups = GROUPS,
 	Definitions = DEFINITIONS,
