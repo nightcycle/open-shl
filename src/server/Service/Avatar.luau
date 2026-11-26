@@ -112,12 +112,15 @@ local function getSourceColors(character: Character, source: PowerColorSource): 
 	return nil, nil
 end
 
--- an ability comes in the color the identity wears it in, or in the colors of what the game takes them from
+-- an ability comes in the color the identity wears it in, or in the colors of what the game takes them from. a game
+-- that only takes them for some of its powers has the others come the way a game without a source has all of them
 local function getGrants(character: Character, identity: IdentityType.Identity): { Grant }
 	local grants: { Grant } = {}
 	local sourceColor: Color3?, sourceSecondaryColor: Color3? = nil, nil
+	local sourcePowerIds: { string }? = nil
 	if POWER_COLOR_SOURCE then
 		sourceColor, sourceSecondaryColor = getSourceColors(character, POWER_COLOR_SOURCE)
+		sourcePowerIds = POWER_COLOR_SOURCE.PowerIds
 	end
 	for _, power in character.Powers do
 		local definitionRes = PowerDefinition.get(power.Id)
@@ -125,8 +128,10 @@ local function getGrants(character: Character, identity: IdentityType.Identity):
 			warn(`power err: {definitionRes.Value}`)
 			continue
 		end
-		local color: Color3? = sourceColor
-		if not POWER_COLOR_SOURCE then
+		local isSourced = POWER_COLOR_SOURCE ~= nil
+			and (sourcePowerIds == nil or table.find(sourcePowerIds, power.Id) ~= nil)
+		local color: Color3? = if isSourced then sourceColor else nil
+		if not isSourced then
 			local powerSkin = identity.PowerSkins[power.Id]
 			local colorOpt =
 				PowerDefinition.getColor(definitionRes.Value, if powerSkin then powerSkin.ColorGroups.Primary else nil)
@@ -137,7 +142,7 @@ local function getGrants(character: Character, identity: IdentityType.Identity):
 			table.freeze({
 				Id = power.Id,
 				Color = color,
-				SecondaryColor = sourceSecondaryColor,
+				SecondaryColor = if isSourced then sourceSecondaryColor else nil,
 			})
 		)
 	end

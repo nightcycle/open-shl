@@ -459,6 +459,7 @@ export type PowerColorSource = {
 	Category: string,
 	Primary: AppearanceType.TextureGroupKey,
 	Secondary: AppearanceType.TextureGroupKey,
+	PowerIds: { string }?, -- the only powers that wear them, every power of the game does without
 }
 Types.PowerColorSource = Type.strictInterface({
 	IdentityKey = CharacterType.IdentityKey,
@@ -466,6 +467,7 @@ Types.PowerColorSource = Type.strictInterface({
 	Category = Type.string,
 	Primary = AppearanceType.TextureGroupKey,
 	Secondary = AppearanceType.TextureGroupKey,
+	PowerIds = Type.optional(Type.array(Type.string)),
 })
 
 -- what a game's editor is: how much of a name + a backstory it keeps + its pages, from the root down. a game without

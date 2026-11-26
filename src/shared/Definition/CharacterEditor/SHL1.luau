@@ -17,6 +17,7 @@ local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/Charact
 type EditorDefinition = CharacterEditorType.EditorDefinition
 type PageDefinition = CharacterEditorType.PageDefinition
 type PatternChoice = CharacterEditorType.PatternChoice
+type PowerColorSource = CharacterEditorType.PowerColorSource
 type WearRule = CharacterEditorType.WearRule
 type WornTextureBinding = CharacterEditorType.WornTextureBinding
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
@@ -109,6 +110,15 @@ local PALETTE: { Color3 } = table.freeze({
 	BrickColor.new(28).Color, -- Dark green
 	BrickColor.new(141).Color, -- Earth green
 })
+-- two tools were drawn in the colors of the chest piece, whoever held them. every other came in its own
+local POWER_COLOR_SOURCE: PowerColorSource = {
+	IdentityKey = "Main",
+	Group = SUIT_GROUP,
+	Category = SUIT_TORSO_CATEGORY,
+	Primary = "Primary",
+	Secondary = "Secondary",
+	PowerIds = { "ranged_laser-ray", "special_energy-field" },
+}
 -- what the old creator wore a costume + a head of hair in until a color was picked: two greys, a white + black
 local CHANNEL_DEFAULTS: { [TextureGroupKey]: Color3 } = table.freeze({
 	Primary = BrickColor.new(194).Color,
@@ -287,6 +297,7 @@ local EDITOR: EditorDefinition = {
 	MaxNameLength = MAX_NAME_LENGTH,
 	MaxBackstoryLength = MAX_BACKSTORY_LENGTH,
 	PatternChoices = PATTERN_CHOICES,
+	PowerColorSource = POWER_COLOR_SOURCE,
 	Palette = PALETTE,
 	ChannelDefaults = CHANNEL_DEFAULTS,
 	NameDefaults = NAME_DEFAULTS,
