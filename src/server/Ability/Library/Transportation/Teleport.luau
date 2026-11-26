@@ -39,11 +39,16 @@ return AbilityBuilder
 		function(context: ServerContext): boolean
 			local aim = context.Aim
 			local humanoid = context.Character:FindFirstChildWhichIsA("Humanoid")
-			return aim ~= nil
-				and humanoid ~= nil
-				and humanoid.SeatPart == nil
-				and PlayAreaDefinition.getIfInside(aim.Position)
-				and context.VFX.fire(Reach, { Position = aim.Position, Range = config.Range + RANGE_TOLERANCE })
+			if aim == nil or humanoid == nil or humanoid.SeatPart ~= nil then
+				return false
+			end
+			local origin = context.Character:GetPivot().Position
+			local position = Teleport.getPosition(origin, aim.Position)
+			-- a spot that was brought back is one the server can't make out anew once the avatar is there: from
+			-- there the same click points further on. such a jump is only held to have begun on the map
+			local isOnMap = PlayAreaDefinition.getIfInside(position)
+				or (position ~= aim.Position and PlayAreaDefinition.getIfInside(origin))
+			return isOnMap and context.VFX.fire(Reach, { Position = position, Range = config.Range + RANGE_TOLERANCE })
 		end
 	)
 	:Guard(bindings.Cast, function(context: ServerContext): boolean

@@ -18,15 +18,22 @@ export type Bindings = {
 export type Config = {
 	Range: number, -- studs from the avatar a spot may be to be gone to
 	Sound: VFXAssetDefinition.SoundKey, -- what the avatar is heard arriving with
+	Cooldown: number, -- seconds from the click until the next one counts
+	IsClamped: boolean?, -- a spot past the range is brought back to it, it's turned down without
+	IsHeadingKept: boolean?, -- the avatar arrives turned the way it was, the way the world faces without
 }
 export type Ability = {
 	Layout: Layout<Bindings>,
 	Config: Config,
+	getPosition: (origin: Vector3, aim: Vector3) -> Vector3,
 }
 -- Constants
 local ID = "transportation_teleport"
--- seconds from the click until the next one counts
-local COOLDOWN = 0.2
+local CONFIG: Config = table.freeze({
+	Range = 250,
+	Sound = "Transwarp" :: VFXAssetDefinition.SoundKey,
+	Cooldown = 0.2,
+})
 -- Variables
 -- References
 -- Private Functions
@@ -42,14 +49,19 @@ local bindings: Bindings = {
 		),
 		{ To = "Recovering", Authority = "Client" }
 	),
-	Recover = VFXBinding.event({ "Recovering" }, AbilityTrigger.after(COOLDOWN), { To = "Idle" }),
+	Recover = VFXBinding.event({ "Recovering" }, AbilityTrigger.after(CONFIG.Cooldown), { To = "Idle" }),
 }
 local ability: Ability = table.freeze({
 	Layout = VFXBinding.layout(ID, "Idle", true, bindings),
-	Config = table.freeze({
-		Range = 250,
-		Sound = "Transwarp" :: VFXAssetDefinition.SoundKey,
-	}),
+	Config = CONFIG,
+	-- where a jump from one spot at another is headed. both halves ask, each from where it has the avatar
+	getPosition = function(origin: Vector3, aim: Vector3): Vector3
+		local offset = aim - origin
+		if CONFIG.IsClamped and offset.Magnitude > CONFIG.Range then
+			return origin + offset.Unit * CONFIG.Range
+		end
+		return aim
+	end,
 })
 
 return ability

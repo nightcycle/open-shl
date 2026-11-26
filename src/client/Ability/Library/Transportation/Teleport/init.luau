@@ -26,6 +26,10 @@ local ORIGIN_KEY = "Origin"
 local layout = Teleport.Layout
 local bindings = layout.Bindings
 local config = Teleport.Config
+-- where the click sends the avatar from where it stands
+local function getPosition(context: ClientContext): Vector3
+	return Teleport.getPosition(context.Character:GetPivot().Position, (context.Aim or context.getAim()).Position)
+end
 local powerRes = PowerDefinition.get(layout.Id)
 assert(powerRes.IsOk, `no power is registered as "{layout.Id}"`)
 local energyCost = powerRes.Value.EnergyCost
@@ -44,23 +48,24 @@ return AbilityBuilder
 			return true
 		end
 	)
-	-- neither out of a seat nor to a spot that's out of range or off the map
+	-- neither out of a seat nor to a spot that's out of range or off the map. one that was brought back to the range
+	-- is within it, but for what's lost in the sum
 	:Guard(
 		bindings.Cast,
 		function(context: ClientContext): boolean
-			local position = (context.Aim or context.getAim()).Position
+			local position = getPosition(context)
 			local humanoid = context.Character:FindFirstChildWhichIsA("Humanoid")
 			return humanoid ~= nil
 				and humanoid.SeatPart == nil
 				and PlayAreaDefinition.getIfInside(position)
-				and context.VFX.fire(Reach, { Position = position, Range = config.Range })
+				and (config.IsClamped or context.VFX.fire(Reach, { Position = position, Range = config.Range }))
 		end
 	)
 	:On(bindings.Cast, function(context: ClientContext)
 		context.Record[ORIGIN_KEY] = context.Character:GetPivot().Position
 	end)
 	:Fire(bindings.Cast, ClientVFXDefinition.Warp, function(context: ClientContext): ClientVFXType.Warp
-		return { Position = (context.Aim or context.getAim()).Position + STANDING_OFFSET }
+		return { Position = getPosition(context) + STANDING_OFFSET, IsHeadingKept = config.IsHeadingKept }
 	end)
 	:Fire(bindings.Cast, ClientVFXDefinition.Sound, function(): ClientVFXType.Sound
 		return { Sound = config.Sound }
@@ -68,7 +73,7 @@ return AbilityBuilder
 	:Undo(bindings.Cast, function(context: ClientContext)
 		local origin = context.Record[ORIGIN_KEY]
 		if typeof(origin) == "Vector3" then
-			context.VFX.fire(ClientVFXDefinition.Warp, { Position = origin })
+			context.VFX.fire(ClientVFXDefinition.Warp, { Position = origin, IsHeadingKept = config.IsHeadingKept })
 		end
 	end)
 	:Build()
