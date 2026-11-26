@@ -17,6 +17,9 @@ local IMAGE_GROUPS: { ImageGroup } = {
 	Image["shl-2"].mesh,
 	Image["shl-2"].tools,
 	Image["shl-2"].ui,
+	-- what the effects + the weapons of its powers wear went over to core as another game came to draw them
+	Image.core.fx,
+	Image.core.mesh,
 	Image.core.ui,
 }
 table.freeze(IMAGE_GROUPS)
