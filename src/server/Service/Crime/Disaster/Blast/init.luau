@@ -155,6 +155,10 @@ return {
 					part.Anchored = false
 					part.Material = Enum.Material.CorrodedMetal
 					part.Parent = folder
+					-- the engine hands a loose part to the client that's nearest: what's deadly to a side stays the server's
+					if part:CanSetNetworkOwnership() then
+						part:SetNetworkOwner(nil)
+					end
 					-- gone with the part
 					part.Touched:Connect(function(hit: BasePart)
 						onDebrisTouched(part, hit, blast)
