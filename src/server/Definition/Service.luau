@@ -120,6 +120,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- a hero's mask off + on, for a game that has that with or without the rest of roleplay
+	{
+		Name = "Mask",
+		IsFeatured = FEATURES.Mask,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Mask")
+			assert(not service.IsInitialized, `the mask service is already initialized`)
+			return service
+		end,
+	},
 	-- what an avatar holds that isn't a power, + the pads of the map that hand it out
 	{
 		Name = "Prop",
