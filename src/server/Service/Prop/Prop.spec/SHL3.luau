@@ -28,6 +28,8 @@ local START_HEALTH = 50
 local BITE_HEALTH = 1.6
 -- seconds a wait is given on top of what it waits for
 local MARGIN = 0.1
+-- where the clicks of a walk point: a spot a few studs off an avatar that stands where the world starts
+local AIM = table.freeze({ Origin = Vector3.new(0, 5, 10), Position = Vector3.new(0, 0, -10) })
 -- Variables
 -- References
 -- Private Functions
@@ -115,18 +117,20 @@ local Tests: TestMap = {
 			half:Draw()
 			assert(half.IsHeld, `"{id}" isn't held once it's got out`)
 			assert(count(asks, "startClient", "Prop") >= 1, `"{id}" is out + nobody is shown it`)
-			-- the client of whoever holds it shows them their own, the moment they get it out
+			-- the client of whoever holds it shows them their own, the moment they get it out. what only the
+			-- server can say of it (where a line lies) is everybody's to be told
 			for _, ask in asks do
 				local to = ask.Replication
 				assert(
-					(ask.Verb ~= "fireClient" and ask.Verb ~= "startClient") or (to ~= nil and to.Audience == "Others"),
-					`"{id}" has its own holder told of "{ask.Name}" by the server`
+					ask.Name ~= "Prop" or (to ~= nil and to.Audience == "Others"),
+					`"{id}" has its own holder shown it by the server`
 				)
 			end
-			local isUsed = half:Use(nil)
+			-- a click that points somewhere: one prop asks where
+			local isUsed = half:Use(AIM)
 			assert(isUsed == (prop.Use ~= nil), `a click with "{id}": a use started is {isUsed}`)
 			assert(half.IsUsing == isUsed, `"{id}" doesn't say if it's being used`)
-			assert(not half:Use(nil), `a second use of "{id}" starts in the middle of the first`)
+			assert(not half:Use(AIM), `a second use of "{id}" starts in the middle of the first`)
 			half:Stow()
 			assert(not half.IsHeld and not half.IsUsing, `"{id}" is still out once it's put away`)
 			assert(
@@ -134,7 +138,11 @@ local Tests: TestMap = {
 				`something of "{id}" is still on once it's put away`
 			)
 			-- what's cut short gives nothing: all a use makes true comes at its end
-			assert(count(asks, "fire") == 0, `"{id}" made something true without a use that ran its length`)
+			-- a look along a ray makes nothing true
+			assert(
+				count(asks, "fire") == count(asks, "fire", "Hitscan"),
+				`"{id}" made something true without a use that ran its length`
+			)
 			assert(getHealth(avatar) == START_HEALTH, `"{id}" gave health for a use that was cut short`)
 			half:Destroy()
 			half:Draw()
