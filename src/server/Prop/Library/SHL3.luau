@@ -14,6 +14,7 @@ local Latte = require("@game/ServerScriptService/Server/Prop/Library/Latte")
 local Moneybag = require("@game/ServerScriptService/Server/Prop/Library/Moneybag")
 local Pizza = require("@game/ServerScriptService/Server/Prop/Library/Pizza")
 local PizzaBox = require("@game/ServerScriptService/Server/Prop/Library/PizzaBox")
+local Tablet = require("@game/ServerScriptService/Server/Prop/Library/Tablet")
 local Watermelon = require("@game/ServerScriptService/Server/Prop/Library/Watermelon")
 -- Types
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
@@ -38,6 +39,7 @@ local DEFINITIONS: { ServerDefinition } = {
 	FidgetSpinner,
 	Moneybag,
 	IceCream,
+	Tablet,
 }
 
 return table.freeze(DEFINITIONS)

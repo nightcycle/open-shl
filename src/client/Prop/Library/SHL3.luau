@@ -14,6 +14,7 @@ local Latte = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Libr
 local Moneybag = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Moneybag")
 local Pizza = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Pizza")
 local PizzaBox = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/PizzaBox")
+local Tablet = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Tablet")
 local Watermelon = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Watermelon")
 -- Types
 local PropType = require("@game/ReplicatedStorage/Shared/Type/Prop")
@@ -38,6 +39,7 @@ local DEFINITIONS: { ClientDefinition } = {
 	FidgetSpinner,
 	Moneybag,
 	IceCream,
+	Tablet,
 }
 
 return table.freeze(DEFINITIONS)

@@ -37,10 +37,11 @@ local DEFINITIONS: { PropDefinition } = {
 	{ Id = "moneybag", Name = "Moneybag", Use = { Duration = 0.8 } },
 	-- a lick of half a second: one that comes within 2 s of the last hurts
 	{ Id = "ice-cream", Name = "Ice Cream", Use = { Duration = 0.5 } },
+	-- held + nothing more to the server: its holder has its screen up
+	{ Id = "tablet", Name = "Tablet" },
 }
 -- a row moves up into the list above once both halves of its prop are in the game's set
 local UPCOMING: { PropDefinition } = {
-	{ Id = "tablet", Name = "Tablet" },
 	{ Id = "fishing-pole", Name = "Fishing Pole" },
 }
 -- the five that didn't come back: their pads are still on the map
