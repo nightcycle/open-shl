@@ -30,6 +30,7 @@ local IMPLEMENTATIONS: { Implementation } = {
 	require("@self/Ripple"),
 	require("@self/Root"),
 	require("@self/Rope"),
+	require("@self/Scatter"),
 	require("@self/ScreenFilter"),
 	require("@self/SeeThrough"),
 	require("@self/Shaft"),
