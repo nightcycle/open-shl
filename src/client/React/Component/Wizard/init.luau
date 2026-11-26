@@ -5,7 +5,10 @@
 local React = require("@game/ReplicatedStorage/Packages/React")
 local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxComponents")
 -- Modules
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
+local PseudoEnum = require("@game/ReplicatedStorage/Generated/PseudoEnum")
 -- Components
+local BalanceCounter = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/BalanceCounter")
 local EditableCharacterProvider =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/CharacterEditor/EditableCharacterProvider")
 local Page = require("@self/Page")
@@ -15,6 +18,7 @@ local Stage = require("@self/Stage")
 local useTween = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Hook/useTween")
 -- Contexts
 local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
+local SessionCreditsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Credits")
 local SetIsHeroFocusContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetIsHeroFocus")
 local SetPathContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/SetPath")
@@ -52,6 +56,17 @@ for _, page in CONSTANTS.PAGES do
 	end
 end
 table.freeze(STEPS)
+-- the stop the balance + the way to more of it come up after, where the old place turned both on: its promo. only
+-- in a build that rents: that's what cash is bought for in the middle of a walk
+local IS_RENTING = GameDefinition.FEATURES.Rent
+local WALLET_STEP_INDEX = 0
+for index, step in STEPS do
+	if step.Page.IsGroupAsked then
+		WALLET_STEP_INDEX = index
+	end
+end
+-- what no page was left for by its rent button
+local NO_RENTS: { [string]: number } = table.freeze({})
 -- Variables
 -- References
 -- Private Functions
@@ -88,6 +103,8 @@ local function strip(props: {
 	OnPeaceful: (isPeaceful: boolean) -> (),
 	OnForward: (draft: Character) -> (),
 	OnPurchase: (id: string) -> (),
+	OnRent: (draft: Character, price: number) -> (),
+	RentSpent: number,
 })
 	local style = React.useContext(StyleContext)
 	local frameRef: { current: Frame? } = React.useRef(nil :: Frame?)
@@ -117,6 +134,8 @@ local function strip(props: {
 				OnPeaceful = props.OnPeaceful,
 				OnForward = props.OnForward,
 				OnPurchase = props.OnPurchase,
+				OnRent = props.OnRent,
+				RentSpent = props.RentSpent,
 			} :: Page.Properties
 		),
 	})
@@ -163,6 +182,7 @@ end
 
 local function walker(props: Properties)
 	local style = React.useContext(StyleContext)
+	local credits = React.useContext(SessionCreditsContext)
 	local walk: Walk, setWalk: (Walk) -> () = React.useState(function(): Walk
 		return {
 			StepIndex = 1,
@@ -173,13 +193,24 @@ local function walker(props: Properties)
 	-- whether the player sits fights out once the walk is through. it's nothing of the draft: the walk starts out
 	-- the way the player is
 	local isPeaceful, setIsPeaceful = React.useState(props.IsPeaceful == true)
+	-- what each page was left for by its rent button, by the key of the page. it's where the walk is + nothing of the
+	-- character: all it's for is what the buttons of the other pages have left to count with. the fee itself is taken
+	-- once, as the walk ends, + what it comes to is the server's to say
+	local rents: { [string]: number }, setRents: ({ [string]: number }) -> () = React.useState(NO_RENTS)
 	local stepIndex = walk.StepIndex
 	local step = STEPS[stepIndex]
 	local isRestart = stepIndex <= CONSTANTS.RESTART_STEP_COUNT
 
-	local function goOn(draft: Character)
+	local function goOn(draft: Character, rentPrice: number?)
 		if props.IsSaving then
 			return
+		end
+		-- however the page was left before, this is how it's left now
+		local price = rentPrice or 0
+		if (rents[step.Page.Key] or 0) ~= price then
+			local out = table.clone(rents)
+			out[step.Page.Key] = price
+			setRents(table.freeze(out))
 		end
 		-- the last stop is left into the game, as what was made. the mode is the player's + not the character's, so
 		-- it's asked for by itself, ahead of the character it's first played in
@@ -223,6 +254,14 @@ local function walker(props: Properties)
 		})
 	end
 
+	local rentSpent = 0
+	for key, price in rents do
+		if key ~= step.Page.Key then
+			rentSpent += price
+		end
+	end
+	local isWalletUp = IS_RENTING and stepIndex > WALLET_STEP_INDEX
+
 	local strips: { [string]: React.ReactNode } = {}
 	-- keyed by the stop, so every stop starts out where a strip is put + none of them is carried over
 	strips[`Strip-{stepIndex}`] = e(strip, {
@@ -239,6 +278,8 @@ local function walker(props: Properties)
 				Id = id,
 			})
 		end,
+		OnRent = goOn,
+		RentSpent = rentSpent,
 	})
 
 	return e(React.Fragment, {}, {
@@ -268,6 +309,42 @@ local function walker(props: Properties)
 			OnReset = function()
 				setTurn(0)
 			end,
+		}),
+		-- what there is to rent with + the way to more of it, where both are over the game
+		Balance = isWalletUp and e(
+			BalanceCounter,
+			{
+				Position = CONSTANTS.BALANCE_POSITION,
+				Size = CONSTANTS.BALANCE_SIZE,
+				TextWrapped = true,
+				ZIndex = 2,
+				Currency = PseudoEnum.Currency.Credits,
+				Balance = credits,
+			} :: BalanceCounter.Properties
+		),
+		-- the box the panel of the shop opens in, all this draws of it is the button that hangs off its top
+		Shop = isWalletUp and e("Frame", {
+			BackgroundTransparency = 1,
+			Position = CONSTANTS.SHOP_POSITION,
+			Size = CONSTANTS.SHOP_SIZE,
+			ZIndex = 2,
+		}, {
+			Button = e("TextButton", {
+				BackgroundColor3 = style.Palette.Accent,
+				BorderSizePixel = 0,
+				FontFace = style.Fonts.Body,
+				Position = CONSTANTS.SHOP_BUTTON_POSITION,
+				Size = CONSTANTS.SHOP_BUTTON_SIZE,
+				Text = if props.IsShopOpen then CONSTANTS.SHOP_OPEN_TEXT else CONSTANTS.SHOP_TEXT,
+				TextColor3 = CONSTANTS.SHOP_TEXT_COLOR,
+				TextScaled = true,
+				TextWrapped = true,
+				[React.Event.Activated] = function()
+					props.OnAction({
+						Type = "ToggleShop",
+					})
+				end,
+			}),
 		}),
 		Back = e("TextButton", {
 			BackgroundColor3 = style.Palette.Accent,

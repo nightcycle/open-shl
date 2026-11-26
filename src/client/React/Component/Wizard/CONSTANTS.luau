@@ -551,9 +551,24 @@ return table.freeze({
 	GRID_SIZE = UDim2.fromScale(0.9, 0.8),
 	GRID_COLUMN_COUNT = 8,
 	SWATCH_COLORS = SWATCH_COLORS,
-	-- what the button that isn't of use yet says + how much of it shows
+	-- what the button a page is left by for a fee says: with nothing to pay for, with a price (the old place wrote no
+	-- space ahead of the currency) + while something the page is held by is had for no fee. how much of it shows
+	-- while it's of no use
 	RENT_TEXT = "Rent",
+	RENT_PRICE_TEXT = "Rent: %dC$",
+	RENT_REFUSAL_TEXT = "No renting Emblems",
 	RENT_TRANSPARENCY = 0.5,
+	-- the balance + the way to more of it are up over the walk where they are over the game: the box under the
+	-- ticker, + the box the shop opens in with its button hanging off the top
+	BALANCE_POSITION = UDim2.fromScale(0.4, 0.065),
+	BALANCE_SIZE = UDim2.fromScale(0.2, 0.07),
+	SHOP_POSITION = UDim2.fromScale(0.3, 0.2),
+	SHOP_SIZE = UDim2.fromScale(0.4, 0.6),
+	SHOP_BUTTON_POSITION = UDim2.fromScale(0.35, -0.1),
+	SHOP_BUTTON_SIZE = UDim2.fromScale(0.3, 0.1),
+	SHOP_TEXT = "BUY MORE",
+	SHOP_OPEN_TEXT = "EXIT",
+	SHOP_TEXT_COLOR = Color3.new(0, 0, 0),
 	-- what a row reads in place of its name while what it has on is held back from the player: behind a pass, which
 	-- a press on it offers, or for the members of the group. the green is the one the old scripts ended up with
 	GATE_PASS_TEXT = "Purchase Here!",

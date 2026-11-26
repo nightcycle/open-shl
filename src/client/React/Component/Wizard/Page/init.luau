@@ -8,6 +8,7 @@ local RobloxComponents = require("@game/ReplicatedStorage/Packages/RobloxCompone
 local AppearanceItemDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local Gate = require("@self/Gate")
 -- Components
 local Names = require("@self/Names")
@@ -22,7 +23,12 @@ local CharacterEditorRefusalContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/Refusal")
 local CharacterEditorStateContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/CharacterEditor/State")
+local SessionActiveCharacterIdContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/ActiveCharacterId")
+local SessionCreditsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Credits")
 local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
+local SessionRentedIdsContext =
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/RentedIds")
 local StyleContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Style")
 -- Types
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
@@ -47,10 +53,16 @@ export type Properties = RobloxComponents.FrameProperties & {
 	-- the way on, with the draft as it's left. left out, the page is only looked at: one that's sliding off
 	OnForward: ((draft: Character) -> ())?,
 	OnPurchase: ((id: string) -> ())?, -- asks for what opens an item or a power the game holds back, by its id
+	-- the way on for a fee, past rows that hold the page: with the draft as it's left + what the button said the visit
+	-- with it costs. nothing is paid by it, the walk only counts with it from there
+	OnRent: ((draft: Character, price: number) -> ())?,
+	RentSpent: number?, -- what the pages before this one were left for that way, it comes off what's there to spend
 }
 -- Constants
 local CONSTANTS = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/Wizard/CONSTANTS")
 local NO_FIELDS: { FieldDefinition } = table.freeze({})
+-- a build that rents nothing has its button for it there the way the old place drew one it had no use for
+local IS_RENTING = GameDefinition.FEATURES.Rent
 -- Variables
 -- References
 -- Private Functions
@@ -134,15 +146,24 @@ return function(props: Properties): React.ReactNode
 	local fieldCallback = React.useContext(CharacterEditorFieldCallback)
 	local editRefusal = React.useContext(CharacterEditorRefusalContext)
 	local owned = React.useContext(SessionOwnedContext)
+	local credits = React.useContext(SessionCreditsContext)
+	local rentedIds = React.useContext(SessionRentedIdsContext)
+	local activeCharacterId = React.useContext(SessionActiveCharacterIdContext)
 	local edited: Character? = if state then state.Character else nil
 	-- the slot as it's stored: in here the character of the context is the draft
 	local stored: Character? = if state then state.SavedCharacter else nil
-	-- what the draft is short of, as the server is going to ask it once the walk hands the draft in
+	-- what the draft is short of, as the server is going to ask it once the walk hands the draft in. what was rented is
+	-- whoever is played's alone, it's due again for a draft of them that still has it on
 	local hold: Gate.Hold? = React.useMemo(function(): Gate.Hold?
-		return if edited and stored then Gate.new(edited, stored, owned) else nil
-	end, { edited :: any, stored :: any, owned :: any })
+		if not edited or not stored then
+			return nil
+		end
+		return Gate.new(edited, stored, owned, if stored.Id == activeCharacterId then rentedIds else nil)
+	end, { edited :: any, stored :: any, owned :: any, rentedIds :: any, activeCharacterId :: any })
 	-- why the page wasn't left, for as long as the button says it
 	local refusal: string?, setRefusal: (string?) -> () = useTimedState(CONSTANTS.NOTICE_DURATION)
+	-- why no fee got the page left, for as long as the button for that says it
+	local rentRefusal: string?, setRentRefusal: (string?) -> () = useTimedState(CONSTANTS.NOTICE_DURATION)
 	local step = props.Step
 	local page = step.Page
 	local onForward = props.OnForward
@@ -165,6 +186,25 @@ return function(props: Properties): React.ReactNode
 			return
 		end
 		onForward(state.Character)
+	end
+
+	-- the way on a held page has left: what holds it is paid for by the visit, which turns the page the way the
+	-- button beside it does. something that's had for no fee holds the page all the same
+	local onRent = if IS_RENTING then props.OnRent else nil
+	local function goRent(rent: Gate.Rent)
+		if not onRent then
+			return
+		end
+		if rent.IsRefused then
+			setRentRefusal(CONSTANTS.RENT_REFUSAL_TEXT)
+			return
+		end
+		local requirement = getRequirement(state, page.Key)
+		if requirement then
+			setRefusal(requirement.Text)
+			return
+		end
+		onRent(state.Character, rent.Price)
 	end
 
 	-- a press on a swatch is the pick + the way on at once, whether or not there's anything to paint
@@ -290,20 +330,35 @@ return function(props: Properties): React.ReactNode
 			)
 		end
 		controls.Forward = forwardButton
-		-- nothing is rented yet: the button is there the way it was whenever it couldn't be used
-		if page.Rent then
-			controls.Rent = e("TextLabel", {
+		-- it says what a visit with what holds the page costs + is there to press while the player has that much left.
+		-- any other time it's the way the old place drew it whenever it couldn't be used
+		local rentBox = page.Rent
+		if rentBox then
+			local rent: Gate.Rent? = if hold and onRent then Gate.getRent(hold, state, page) else nil
+			local price = if rent then rent.Price else 0
+			local isLive = price > 0 and credits - (props.RentSpent or 0) >= price
+			local transparency = if isLive then 0 else CONSTANTS.RENT_TRANSPARENCY
+			controls.Rent = e("TextButton", {
+				-- one that can't be paid still says why while what holds the page is had for no fee
+				Active = isLive or (rent ~= nil and rent.IsRefused),
+				AutoButtonColor = isLive,
 				BackgroundColor3 = palette.Positive,
-				BackgroundTransparency = CONSTANTS.RENT_TRANSPARENCY,
+				BackgroundTransparency = transparency,
 				BorderSizePixel = 0,
 				FontFace = style.Fonts.Heading,
-				Position = page.Rent.Position,
-				Size = page.Rent.Size,
-				Text = CONSTANTS.RENT_TEXT,
+				Position = rentBox.Position,
+				Size = rentBox.Size,
+				Text = rentRefusal
+					or (if price > 0 then string.format(CONSTANTS.RENT_PRICE_TEXT, price) else CONSTANTS.RENT_TEXT),
 				TextColor3 = palette.Text,
 				TextScaled = true,
-				TextTransparency = CONSTANTS.RENT_TRANSPARENCY,
+				TextTransparency = transparency,
 				TextWrapped = true,
+				[React.Event.Activated] = function()
+					if rent and (isLive or rent.IsRefused) then
+						goRent(rent)
+					end
+				end,
 			})
 		end
 		children.Panel = e("Frame", {

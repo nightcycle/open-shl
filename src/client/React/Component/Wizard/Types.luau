@@ -83,7 +83,7 @@ export type PageInfo = {
 	PanelSize: UDim2?, -- how much of the screen the panel at the left takes, a cover has none
 	Help: string?, -- what the panel at the right says
 	Forward: ForwardInfo?, -- a palette has none
-	Rent: Box?, -- where the button that isn't of use yet is drawn
+	Rent: Box?, -- where the button is that leaves the page for a fee, on a page with rows a pass opens
 	Rows: { RowInfo }?,
 	Names: { NameInfo }?,
 	Test: ForwardInfo?, -- the button that shows what the names read like to everybody else

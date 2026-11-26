@@ -5,6 +5,7 @@
 local AccessDefinition = require("@game/ReplicatedStorage/Shared/Definition/Access")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local CharacterEditorUtil = require("@game/ReplicatedStorage/Shared/Util/CharacterEditor")
+local RentDefinition = require("@game/ReplicatedStorage/Shared/Definition/Rent")
 -- Types
 local CharacterEditorType = require("@game/ReplicatedStorage/Shared/Type/CharacterEditor")
 local CharacterType = require("@game/ReplicatedStorage/Shared/Type/Character")
@@ -22,6 +23,12 @@ export type Hold = {
 	Kept: AccessDefinition.Kept,
 	Needed: { Listing },
 }
+-- what a visit costs with everything a page is held by that can be had for a fee. something that can't be is no part
+-- of the price + says so: no fee gets a page with that on left
+export type Rent = {
+	Price: number,
+	IsRefused: boolean,
+}
 -- Constants
 local NO_FIELDS: { FieldDefinition } = table.freeze({})
 -- Variables
@@ -32,9 +39,10 @@ local NO_FIELDS: { FieldDefinition } = table.freeze({})
 -- it's handed in, asked ahead of it: a page that'd be turned down isn't left
 local Module = {}
 
--- what the draft wears + wields that isn't its player's. whatever the slot holds as it's stored may stay where it is
-Module.new = function(draft: Character, stored: Character, owned: Owned): Hold
-	local kept = AccessDefinition.getKept(stored)
+-- what the draft wears + wields that isn't its player's. whatever the slot holds as it's stored may stay where it is,
+-- but for what it only has on for the visit: the ids of that are handed in for the slot that's played
+Module.new = function(draft: Character, stored: Character, owned: Owned, rentedIds: { string }?): Hold
+	local kept = RentDefinition.getKept(stored, rentedIds)
 	return table.freeze({
 		Owned = owned,
 		Kept = kept,
@@ -125,6 +133,52 @@ Module.getIfPageHeld = function(hold: Hold, state: EditorState, page: PageInfo):
 		return false
 	end
 	return getIfAnyHeld(page.Rows)
+end
+
+-- everything the rows of a page have on that the draft is short of, by its ids, each once. a row whose arrows pass
+-- over what's held back has none of its own: that's on through the row it hangs under
+Module.listNeededIds = function(hold: Hold, state: EditorState, page: PageInfo): { string }
+	local out: { string } = {}
+	local function collect(rows: { RowInfo }?)
+		if not rows then
+			return
+		end
+		for _, row in rows do
+			local source = row.Source
+			if not (source.Type == "Items" and source.IsPassingLocked) then
+				for _, id in Module.listHeldIds(state, page.Key, row) do
+					local listing = AccessDefinition.getOf(id)
+					if listing and table.find(hold.Needed, listing) and not table.find(out, id) then
+						table.insert(out, id)
+					end
+				end
+			end
+			collect(row.Rows)
+		end
+	end
+	if #hold.Needed > 0 then
+		collect(page.Rows)
+	end
+	return out
+end
+
+-- what the button of a page that rents is going to ask: the fee of a visit with what its rows are held by. it's the
+-- sum the server works out for the same things once the draft is handed in
+Module.getRent = function(hold: Hold, state: EditorState, page: PageInfo): Rent
+	local rentableIds: { string } = {}
+	local isRefused = false
+	for _, id in Module.listNeededIds(hold, state, page) do
+		if RentDefinition.getRentPrice({ id }).IsOk then
+			table.insert(rentableIds, id)
+		else
+			isRefused = true
+		end
+	end
+	local priceRes = RentDefinition.getRentPrice(rentableIds)
+	return table.freeze({
+		Price = if priceRes.IsOk then priceRes.Value else 0,
+		IsRefused = isRefused,
+	})
 end
 
 -- whether an item is one the draft would be short of on the identity in focus: neither its player's nor the slot's

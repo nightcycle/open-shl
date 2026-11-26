@@ -16,6 +16,7 @@ local ParentComponent = require(".")
 -- Hooks
 -- Contexts
 local CharacterContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Character")
+local SessionCreditsContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Credits")
 local SessionOwnedContext = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/Owned")
 local SessionPowerLimitContext =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Context/Session/PowerLimit")
@@ -57,6 +58,8 @@ return UILabs.CreateReactStory({
 		-- page isn't left ahead
 		HasPasses = UILabs.Boolean(false),
 		HasGroupPerk = UILabs.Boolean(false),
+		-- what there is to rent with, in a place that rents: a page that's held is left for a fee while this covers it
+		Credits = UILabs.Slider(50, 0, 200, 5),
 	},
 }, function(props)
 	local character: CharacterType.Character, setCharacter: (CharacterType.Character) -> () = React.useState(
@@ -71,6 +74,8 @@ return UILabs.CreateReactStory({
 		React.useState(nil :: ParentComponent.FilteredText?)
 	-- a press on a row that's behind a pass stands in for the pass being bought: every one of them at once
 	local isPassBought, setIsPassBought = React.useState(false)
+	-- stands in for the shop over the walk: the button only says whether it's up
+	local isShopOpen, setIsShopOpen = React.useState(false)
 	local hasPasses: boolean = props.controls.HasPasses or isPassBought
 	local hasGroupPerk: boolean = props.controls.HasGroupPerk
 	local owned = React.useMemo(function(): Owned
@@ -91,6 +96,7 @@ return UILabs.CreateReactStory({
 			Size = UDim2.fromScale(1, 1),
 			ErrorMessage = errorMessage,
 			IsSaving = props.controls.IsSaving,
+			IsShopOpen = isShopOpen,
 			FilteredText = filteredText,
 			OnAction = function(action: ParentComponent.ActionInfo)
 				if action.Type == "Save" then
@@ -108,6 +114,8 @@ return UILabs.CreateReactStory({
 					})
 				elseif action.Type == "Purchase" then
 					setIsPassBought(true)
+				elseif action.Type == "ToggleShop" then
+					setIsShopOpen(not isShopOpen)
 				elseif action.Type == "Exit" then
 					-- stands in for the screen the walk is given up to, the same character is walked again
 					setErrorMessage(nil)
@@ -119,16 +127,20 @@ return UILabs.CreateReactStory({
 	)
 
 	return StyleStory.provide(props.controls.Style, {
-		Character = e(CharacterContext.Provider, {
-			value = character,
+		Credits = e(SessionCreditsContext.Provider, {
+			value = props.controls.Credits,
 		}, {
-			PowerLimit = e(SessionPowerLimitContext.Provider, {
-				value = PowerDefinition.DEFAULT_LIMIT,
+			Character = e(CharacterContext.Provider, {
+				value = character,
 			}, {
-				Owned = e(SessionOwnedContext.Provider, {
-					value = owned,
+				PowerLimit = e(SessionPowerLimitContext.Provider, {
+					value = PowerDefinition.DEFAULT_LIMIT,
 				}, {
-					Menus = e(React.Fragment, {}, menus),
+					Owned = e(SessionOwnedContext.Provider, {
+						value = owned,
+					}, {
+						Menus = e(React.Fragment, {}, menus),
+					}),
 				}),
 			}),
 		}),
