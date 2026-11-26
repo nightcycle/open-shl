@@ -18,6 +18,7 @@ local FlyIn = require("@self/FlyIn")
 local Loading = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Loading")
 local ModeSelect = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/ModeSelect")
 local NameTag = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/NameTag")
+local Notice = require("@self/Notice")
 local PlayerBoard = require("@self/PlayerBoard")
 local Shop = require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/Shop")
 local StockHealth = require("@self/StockHealth")
@@ -59,6 +60,8 @@ local REGISTRY: Registry = {
 		StockHealth = StockHealth,
 		-- a line from the town, up over whatever else is
 		AlertStrip = AlertStrip,
+		-- a line for this player alone: what a prop does to whoever holds it
+		Notice = Notice,
 	},
 	TOP_OVERLAYS = {},
 }

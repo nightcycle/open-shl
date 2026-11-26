@@ -88,6 +88,7 @@ Module.Frost = newEvent("Frost", ClientVFXType.Frost) :: ClientEvent<ClientVFXTy
 Module.Flare = newEvent("Flare", ClientVFXType.Flare) :: ClientEvent<ClientVFXType.Flare>
 Module.Shaft = newEvent("Shaft", ClientVFXType.Shaft) :: ClientEvent<ClientVFXType.Shaft>
 Module.Scatter = newEvent("Scatter", ClientVFXType.Scatter) :: ClientEvent<ClientVFXType.Scatter>
+Module.Notice = newEvent("Notice", ClientVFXType.Notice) :: ClientEvent<ClientVFXType.Notice>
 Module.Cursor = newState("Cursor", ClientVFXType.Cursor) :: ClientState<ClientVFXType.Cursor>
 Module.Gauge = newState("Gauge", ClientVFXType.Gauge) :: ClientState<ClientVFXType.Gauge>
 

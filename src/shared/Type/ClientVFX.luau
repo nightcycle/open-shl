@@ -640,6 +640,23 @@ Types.Scatter = Type.strictInterface({
 	Lifetime = Type.numberConstrained(0.05, 60),
 })
 
+-- a line on the screen of whoever is shown it, up for a moment + gone. whose screen is the server's to pick
+export type Notice = {
+	Text: string,
+	Color: Color3,
+	Duration: number, -- seconds it's up for
+}
+Types.Notice = Type.strictInterface({
+	Text = Type.intersection(Type.string, function(value: string): (boolean, string?)
+		if #value < 1 or #value > 60 then
+			return false, `a line of 1 to 60 letters expected, got {#value}`
+		end
+		return true
+	end),
+	Color = Type.Color3,
+	Duration = Type.numberConstrained(0.1, 10),
+})
+
 -- the pointer of whoever shows it, for as long as it's on. only the machine of the avatar shows one
 export type Cursor = {
 	Image: VFXAssetDefinition.DecalKey,
