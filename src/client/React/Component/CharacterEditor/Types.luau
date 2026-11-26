@@ -40,8 +40,13 @@ export type ActionInfo =
 		Character: Character, -- the draft as it is, what a roll leaves alone is taken from it
 	}
 	| {
-		Type: "Purchase", -- asks to buy what an item or a power of the game is sold as
+		-- asks for what stands between the player + an item or a power of the game: to buy what it's sold as, or
+		-- the pass it's behind
+		Type: "Purchase",
 		Id: string,
+	}
+	| {
+		Type: "CheckGroupPerk", -- asks for the server to look anew whether the player is in the group of the game
 	}
 	| {
 		Type: "SetPeaceful", -- asks for the player to sit fights out or not, in a game where that's a player's pick
