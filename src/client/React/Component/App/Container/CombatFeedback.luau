@@ -82,7 +82,8 @@ local function feedback(): React.ReactNode
 
 	React.useEffect(function()
 		local humanoid = avatar and avatar:FindFirstChildOfClass("Humanoid")
-		if not isDead or not humanoid then
+		-- a death that has nothing to act out leaves the body to whatever else becomes of it
+		if not isDead or not humanoid or not deathAnimationId then
 			return function() end
 		end
 		local track = playAnimation(humanoid, deathAnimationId)

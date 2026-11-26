@@ -82,7 +82,9 @@ Types.TransformationDefinition = Type.strictInterface({
 export type DeathDefinition = {
 	Style: PseudoEnum.DeathStyle,
 	Name: string,
-	AnimationId: string,
+	AnimationId: string?, -- left out, nothing is played
+	-- what becomes of the body beside that. limp, it hangs loose from its joints. left out, it's held as it is
+	Motion: "Limp"?,
 	AnimationLength: number,
 	RespawnDelay: number, -- seconds after the animation starts that the server moves the character to a spawn
 	FreezeDuration: number, -- seconds the character can't walk or jump for
@@ -90,7 +92,8 @@ export type DeathDefinition = {
 Types.DeathDefinition = Type.strictInterface({
 	Style = Type.literal(table.unpack(PseudoEnum.getEnumItems("DeathStyle"))),
 	Name = Type.string,
-	AnimationId = Type.string,
+	AnimationId = Type.optional(Type.string),
+	Motion = Type.optional(Type.literal("Limp")),
 	AnimationLength = Type.number,
 	RespawnDelay = Type.number,
 	FreezeDuration = Type.number,
