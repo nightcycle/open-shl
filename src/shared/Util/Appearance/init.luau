@@ -200,6 +200,18 @@ function Util.applyFace(rig: Model, appearance: Appearance): Result<true, string
 	return FaceUtil.apply(rig, appearance)
 end
 
+-- if the look wears anything a hero takes off to be seen: without it there's no mask to speak of
+function Util.getIfMaskable(appearance: Appearance): boolean
+	for _, item in appearance.Items do
+		for _, tag: HiddenTag in UNMASKED_HIDDEN_TAGS do
+			if getIfTagged(item, tag) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 -- the look of a hero with the mask off: it's only ever worn, never saved
 function Util.unmask(appearance: Appearance, secretAppearance: Appearance?): Appearance
 	return FreezeUtil.delta(appearance, function(t: Appearance): Appearance
