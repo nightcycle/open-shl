@@ -51,6 +51,8 @@ local BUILD_CONFIG_PATH = "ReplicatedStorage/Generated/BUILD_CONFIG"
 local GAME_PATTERN = '%f[%w_]GAME%s*=%s*"([^"]*)"'
 local MAP_DEFINITION_PATHS = { "ReplicatedStorage/Shared/Definition/Map", "ServerScriptService/Server/Definition/Map" }
 local TAG_PATTERN = 'newTag%(%s*"([^"]+)"%s*,%s*"([^"]+)"%s*%)'
+-- a hit shoves a body by its primary part: a model that's hit + stands for good mustn't have one
+local UNMOVED_TAGS: { [string]: true } = { DisasterTarget = true }
 -- the tags the map of a game can't go without. one that lost them all still builds + boots, whatever they ran is just
 -- not there
 local NEEDED_TAGS: { [game.GameId]: { string } } = {
@@ -262,6 +264,10 @@ local function getTagFailures(place: roblox.DataModel): { string }
 			end
 			if desc:IsA(className) then
 				isWorn[tag] = true
+				if UNMOVED_TAGS[tag] and (desc :: any).PrimaryPart ~= nil then
+					local fullName = getFullName(place, desc)
+					table.insert(failures, `{desc.ClassName} "{fullName}" is tagged "{tag}" + has a primary part`)
+				end
 			else
 				local fullName = getFullName(place, desc)
 				table.insert(failures, `{desc.ClassName} "{fullName}" is tagged "{tag}" but isn't a {className}`)
