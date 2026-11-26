@@ -79,6 +79,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "ranged_lightning-hand",
+		Group = "ranged",
+		Name = "Lightning",
+		Icon = NO_ICON,
+		EnergyCost = 0,
+		Damage = 34,
+		ColorGroups = {},
+	},
+	{
 		Id = "ranged_machine-gun",
 		Group = "ranged",
 		Name = "Machine Gun",
@@ -172,15 +181,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = NO_ICON,
 		EnergyCost = 0,
 		Damage = 25,
-		ColorGroups = {},
-	},
-	{
-		Id = "ranged_lightning-hand",
-		Group = "ranged",
-		Name = "Lightning",
-		Icon = NO_ICON,
-		EnergyCost = 0,
-		Damage = 34,
 		ColorGroups = {},
 	},
 	{
