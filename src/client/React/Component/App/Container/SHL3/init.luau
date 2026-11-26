@@ -3,6 +3,7 @@
 -- Packages
 -- Modules
 -- Components
+local AlertStrip = require("@self/AlertStrip")
 local CharacterEditor =
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/React/Component/App/Container/CharacterEditor")
 local CharacterSelect =
@@ -53,6 +54,8 @@ local REGISTRY: Registry = {
 		CombatFeedback = CombatFeedback,
 		-- it draws nothing: the health bar is the engine's, this keeps it on what the game says is left
 		StockHealth = StockHealth,
+		-- a line from the town, up over whatever else is
+		AlertStrip = AlertStrip,
 	},
 	TOP_OVERLAYS = {},
 }
