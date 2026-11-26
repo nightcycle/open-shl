@@ -353,6 +353,22 @@ Types.WalkSpeed = Type.strictInterface({
 	WalkSpeed = Type.numberConstrained(0, 200),
 })
 
+-- has the avatar jump with another power
+export type JumpPower = {
+	JumpPower: number, -- studs a second it leaves the ground at
+}
+Types.JumpPower = Type.strictInterface({
+	JumpPower = Type.numberConstrained(0, 500),
+})
+
+-- takes a share of its weight off the avatar: it jumps higher + comes down slower
+export type Float = {
+	Share: number, -- of what it weighs, all of it at 1
+}
+Types.Float = Type.strictInterface({
+	Share = Type.numberConstrained(0, 1),
+})
+
 -- a part of the world nobody stands on carries the avatar for as long as it keeps moving
 export type Skim = {
 	Part: BasePart,
