@@ -159,6 +159,7 @@ Server:
 | `prop.get`, `prop.give`, `prop.take` | where the game has props (shl3) |
 | `team.get`, `team.set` | where the game has sides (shl3): through `TeamService:ChangeTeam`, balance may refuse, the avatar goes down |
 | `jail.get`, `jail.release` | where the game has a jail (shl3): release carries the avatar onto a road and waits for the jail's own check |
+| `npc.raise`, `npc.list`, `npc.clear` | where the game has bodies nobody plays (shl3): a wave of 18 zombies (or `Count`) through `NpcService:Spawn`, in a ring `Distance` studs around a player or at the graves the map marks (`IsAtSpawns`), for `Lifetime` seconds; where each is, its health, what its humanoid does + where it's sent; all of them away |
 | `playermode.get`, `playermode.set` | where RP / PVP is each player's pick (shl1) |
 | `event.read`, `event.wait` | the server's event log (below) |
 

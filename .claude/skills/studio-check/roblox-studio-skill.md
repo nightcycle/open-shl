@@ -42,7 +42,7 @@ return game:GetService("HttpService"):JSONEncode(answer)
 
 ## Server commands
 
-`game.get`, `session.get`, `avatar.get`, `character.select`, `character.swap`, `economy.grant`, `combat.hit`, `status.cover`, `status.freeze`, `status.burn`, `puppet.spawn`, `puppet.list`, `puppet.set`, `puppet.remove`, `remote.list`, `remote.invoke`, `event.read`, `event.wait`; shl3 adds `prop.get`, `prop.give`, `prop.take`, `team.get`, `team.set`, `jail.get`, `jail.release`; shl1 adds `playermode.get`, `playermode.set`. A `Player` / `Body` argument may be left out while one player is in.
+`game.get`, `session.get`, `avatar.get`, `character.select`, `character.swap`, `economy.grant`, `combat.hit`, `status.cover`, `status.freeze`, `status.burn`, `puppet.spawn`, `puppet.list`, `puppet.set`, `puppet.remove`, `remote.list`, `remote.invoke`, `event.read`, `event.wait`; shl3 adds `prop.get`, `prop.give`, `prop.take`, `team.get`, `team.set`, `jail.get`, `jail.release`, `npc.raise`, `npc.list`, `npc.clear`; shl1 adds `playermode.get`, `playermode.set`. A `Player` / `Body` argument may be left out while one player is in.
 
 ## Client commands
 
