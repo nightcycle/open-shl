@@ -19,6 +19,7 @@ local DEFINITIONS: { ServerDefinition } = table.freeze({
 	require("@game/ServerScriptService/Server/Ability/Library/Ranged/Minigun"),
 	require("@game/ServerScriptService/Server/Ability/Library/Special/ForceShield"),
 	require("@game/ServerScriptService/Server/Ability/Library/Special/Invisibility"),
+	require("@game/ServerScriptService/Server/Ability/Library/Special/MindReading"),
 	require("@game/ServerScriptService/Server/Ability/Library/Special/XRayVision"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Flight"),
 	require("@game/ServerScriptService/Server/Ability/Library/Transportation/Grapple"),

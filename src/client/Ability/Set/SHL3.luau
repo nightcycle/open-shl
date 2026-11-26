@@ -19,6 +19,7 @@ local DEFINITIONS: { ClientDefinition } = table.freeze({
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Ranged/Minigun"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Special/ForceShield"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Special/Invisibility"),
+	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Special/MindReading"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Special/XRayVision"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Flight"),
 	require("@game/StarterPlayer/StarterPlayerScripts/Client/Ability/Library/Transportation/Grapple"),
