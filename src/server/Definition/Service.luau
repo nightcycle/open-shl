@@ -168,6 +168,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- the line the town puts on the screens of its heroes, or of whoever a service has a word for
+	{
+		Name = "Alert",
+		IsFeatured = FEATURES.Teams,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Alert")
+			assert(not service.IsInitialized, `the alert service is already initialized`)
+			return service
+		end,
+	},
 	{
 		Name = "Jail",
 		IsFeatured = FEATURES.Teams,

@@ -312,6 +312,10 @@ Module.GetServers =
 -- a teleport that was let through can still fall over on its way, this is why it did
 Module.TeleportFailed = newServerEvent("TeleportFailed", Type.string) :: ServerEvent<string>
 
+-- alerts
+-- a line the town has for the player: whoever is sent one is shown it, who that is was the server's to pick
+Module.Alert = newServerEvent("Alert", Type.string) :: ServerEvent<string>
+
 Module.list = function(): { Remote }
 	return table.freeze(table.clone(Remotes))
 end
