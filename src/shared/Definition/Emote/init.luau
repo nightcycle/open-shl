@@ -31,6 +31,7 @@ assert(RoleplayType.EmoteCatalogue(CATALOGUE))
 TableUtil.deepFreeze(CATALOGUE)
 local DEFINITIONS = CATALOGUE.Definitions
 local HANDCUFFS = CATALOGUE.Handcuffs
+local MASK: PoseDefinition? = CATALOGUE.Mask
 -- Variables
 -- References
 -- Private Functions
@@ -38,6 +39,8 @@ local HANDCUFFS = CATALOGUE.Handcuffs
 local Module = {}
 
 Module.HANDCUFFS = HANDCUFFS
+-- nil in a game whose heroes have no gesture for their mask
+Module.MASK = MASK
 
 Module.get = function(id: string): Result<EmoteDefinition, string>
 	for _, definition in DEFINITIONS do

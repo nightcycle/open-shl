@@ -93,8 +93,8 @@ Types.PoseDefinition = Type.strictInterface({
 	IsRooting = Type.boolean,
 })
 
-export type EmoteId = "HandsBehindBack" | "HeroicPose" | "Kneel" | "Laugh" | "Point"
-Types.EmoteId = Type.literal("HandsBehindBack", "HeroicPose", "Kneel", "Laugh", "Point")
+export type EmoteId = "HandsBehindBack" | "HeroicPose" | "Kneel" | "Laugh" | "Point" | "AtEase" | "Dab"
+Types.EmoteId = Type.literal("HandsBehindBack", "HeroicPose", "Kneel", "Laugh", "Point", "AtEase", "Dab")
 
 export type EmoteDefinition = {
 	Id: EmoteId,
@@ -115,10 +115,13 @@ Types.EmoteDefinition = Type.strictInterface({
 export type EmoteCatalogue = {
 	Definitions: { EmoteDefinition },
 	Handcuffs: PoseDefinition,
+	-- the hand a hero puts to their mask before it comes off or goes back on, a game without it has them do nothing
+	Mask: PoseDefinition?,
 }
 Types.EmoteCatalogue = Type.strictInterface({
 	Definitions = Type.array(Types.EmoteDefinition),
 	Handcuffs = Types.PoseDefinition,
+	Mask = Type.optional(Types.PoseDefinition),
 })
 
 return Types

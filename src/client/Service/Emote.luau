@@ -23,6 +23,8 @@ type EmoteServiceImpl = {
 	GetEmoteId: (self: EmoteService) -> EmoteId?,
 	Play: (self: EmoteService, emoteId: EmoteId) -> Result<true, string>,
 	Stop: (self: EmoteService) -> (),
+	-- the hand a hero puts to their mask. it's no emote: nothing is held, whatever is being acted out goes on
+	PlayMask: (self: EmoteService) -> Result<true, string>,
 }
 export type EmoteService = typeof(setmetatable(
 	{} :: {
@@ -306,6 +308,22 @@ function EmoteService:Stop()
 	unroot(self)
 	updatePose(self)
 	self.EmoteChanged:Fire(nil)
+end
+
+function EmoteService:PlayMask(): Result<true, string>
+	local mask = EmoteDefinition.MASK
+	if not mask then
+		return Result.err(`the game has no gesture for a mask`)
+	end
+	local humanoid = getHumanoid(self)
+	if not humanoid or humanoid.Health <= 0 or AttributeDefinition.get(self._Character, AttributeDefinition.IsDead) then
+		return Result.err(`there's no avatar to emote with`)
+	end
+	local trackRes = play(self, mask)
+	if trackRes.IsErr then
+		return Result.err(trackRes.Value)
+	end
+	return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
 end
 
 return ServiceLocker(function(): EmoteService
