@@ -50,6 +50,11 @@ export type ModeSelectService = typeof(setmetatable(
 local IS_STUDIO = RunService:IsStudio()
 -- a server somebody bought for themselves has an owner the engine knows, a custom one doesn't
 local IS_RESERVED = game.PrivateServerId ~= "" and game.PrivateServerOwnerId == 0
+-- where the owner of a server they bought says what it plays by, nobody on it is asked + nobody is sent off it to
+-- play by something else: they came to be on that server
+local IS_TOGGLED = GameDefinition.FEATURES.PrivateServerToggle
+	and game.PrivateServerId ~= ""
+	and game.PrivateServerOwnerId ~= 0
 local TELEPORT_ATTEMPTS = 3
 local TELEPORT_RETRY_DELAY = 1
 -- a crowd pressing refresh is answered out of one read
@@ -59,6 +64,7 @@ local BOOT_EXPIRY = 120
 local FILTER_TIMEOUT = 5
 -- every text below ends up in front of a player as it is
 local DISABLED_TEXT = `not available on this server`
+local TOGGLED_TEXT = `not available on a private server`
 local REGISTRY_TEXT = `can't reach the server list, try again`
 local TELEPORT_TEXT = if IS_STUDIO then `can't teleport from studio` else `the teleport failed, try again`
 local SAME_SERVER_TEXT = `you're already on that server`
@@ -81,9 +87,10 @@ local function getPlaceId(mode: Mode): number
 	return if mode == "roleplay" then BUILD_CONFIG.ROLEPLAY_PLACE_ID else 0
 end
 
--- whoever the game sent here picked their mode on the way: into a custom server, or over from another of its places
+-- whoever the game sent here picked their mode on the way: into a custom server, or over from another of its places.
+-- whoever is on a server its owner sets the mode of has none to pick
 local function getIfModeChosen(player: Player): boolean
-	if IS_RESERVED then
+	if IS_RESERVED or IS_TOGGLED then
 		return true
 	end
 	-- a place that isn't published has no game anybody could come from
@@ -141,6 +148,9 @@ end
 local function selectMode(player: Player, mode: Mode): Result<true, string>
 	if mode == BUILD_CONFIG.MODE then
 		return Result.ok(true :: any) :: TypeUnionLib.Ok<true>
+	end
+	if IS_TOGGLED then
+		return Result.err(TOGGLED_TEXT)
 	end
 	local placeId = getPlaceId(mode)
 	if placeId == 0 then
