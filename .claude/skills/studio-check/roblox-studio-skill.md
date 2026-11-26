@@ -42,12 +42,13 @@ return game:GetService("HttpService"):JSONEncode(answer)
 
 ## Server commands
 
-`game.get`, `session.get`, `avatar.get`, `character.select`, `character.swap`, `economy.grant`, `combat.hit`, `puppet.spawn`, `puppet.list`, `puppet.set`, `puppet.remove`, `remote.list`, `remote.invoke`, `event.read`, `event.wait`; shl3 adds `prop.get`, `prop.give`, `prop.take`, `team.get`, `team.set`, `jail.get`, `jail.release`; shl1 adds `playermode.get`, `playermode.set`. A `Player` / `Body` argument may be left out while one player is in.
+`game.get`, `session.get`, `avatar.get`, `character.select`, `character.swap`, `economy.grant`, `combat.hit`, `status.cover`, `status.freeze`, `status.burn`, `puppet.spawn`, `puppet.list`, `puppet.set`, `puppet.remove`, `remote.list`, `remote.invoke`, `event.read`, `event.wait`; shl3 adds `prop.get`, `prop.give`, `prop.take`, `team.get`, `team.set`, `jail.get`, `jail.release`; shl1 adds `playermode.get`, `playermode.set`. A `Player` / `Body` argument may be left out while one player is in.
 
 ## Client commands
 
 `shell.get`, `shell.press { MenuId }`, `shell.close`, `boot.play`, `player.get`, `remote.fire`, `remote.invoke`, `event.read`, `event.wait`.
 In shl1 also `acrobatics.get`, `acrobatics.play { MoveId }`, `acrobatics.fix`.
+In shl3 also `environment.get`, `environment.grade { Grade }`, `environment.override { Override }`, `environment.clear`.
 
 ## Recipes
 

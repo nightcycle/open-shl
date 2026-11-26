@@ -153,6 +153,7 @@ Server:
 | `character.select`, `character.swap` | another slot / the other identity, through the handler the real remote lands in |
 | `economy.grant` | currency through `EconomyService:Grant` |
 | `combat.hit` | `From` hits `To` for `Amount` through the real `Attack` effect; answers landed, hostile, taken, health, dead, both fight timers |
+| `status.cover`, `status.freeze`, `status.burn` | what a power sets off besides its hit, on any body: Force Field's shield ahead of one for a while, one body freezing another (`IsBlocked` for the ice around them), one setting another alight. Each through the real effect, so the rule of the game may turn it down |
 | `puppet.spawn`, `puppet.list`, `puppet.set`, `puppet.remove` | stand-ins for a second player's avatar (below) |
 | `remote.list`, `remote.invoke` | every remote + whether this game answers it; any client function answered as if a player invoked it |
 | `prop.get`, `prop.give`, `prop.take` | where the game has props (shl3) |
@@ -172,6 +173,7 @@ Client:
 | `player.get` | the local player's attributes, its avatar's, the workspace's, and the client's copy of the session |
 | `remote.fire`, `remote.invoke` | any client event / function through the client's real network service |
 | `acrobatics.get`, `acrobatics.play`, `acrobatics.fix` | where the game has the flips (shl1): a move by its id through the service the panel's buttons call (an error says why it was turned down), and what Fix Character does |
+| `environment.get`, `environment.grade`, `environment.override`, `environment.clear` | where the game has a day (shl3): what this screen shows of it, one of the six grades, a season / weather / time of this screen's own, and back to the server's |
 | `event.read`, `event.wait` | the client's event log |
 
 ### Getting into play without a mouse

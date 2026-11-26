@@ -76,6 +76,12 @@ local AREAS: { Area } = table.freeze({
 		end,
 	},
 	{
+		Name = "Status",
+		Load = function()
+			return require("@self/Command/Status")
+		end,
+	},
+	{
 		Name = "Puppet",
 		Load = function()
 			return require("@self/Command/Puppet")

@@ -70,6 +70,13 @@ local AREAS: { Area } = table.freeze({
 			return require("@self/Command/Acrobatics")
 		end,
 	},
+	{
+		Name = "Environment",
+		IsFeatured = FEATURES.Environment,
+		Load = function()
+			return require("@self/Command/Environment")
+		end,
+	},
 })
 -- Variables
 -- References
