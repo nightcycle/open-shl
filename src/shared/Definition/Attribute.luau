@@ -134,6 +134,8 @@ Module.HasPremiumPowers = new("Player", "HasPremiumPowers", Type.boolean, false)
 Module.HasPremiumSuits = new("Player", "HasPremiumSuits", Type.boolean, false) :: Attribute<boolean>
 -- they were seen in the group of the game once, which is for good
 Module.HasGroupPerk = new("Player", "HasGroupPerk", Type.boolean, false) :: Attribute<boolean>
+-- what whoever they play only has on for the visit, by its ids with a "," between them: an attribute holds no list
+Module.RentedIds = new("Player", "RentedIds", Type.string, "") :: Attribute<string>
 -- "" until the server picked one
 Module.ActiveCharacterId = new("Player", "ActiveCharacterId", Type.string, "") :: Attribute<string>
 -- who their avatar was last dressed as: an avatar that's out of range isn't on a client, its player is. "" until the
