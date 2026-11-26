@@ -157,6 +157,16 @@ local ENTRIES: { Entry } = {
 			return service
 		end,
 	},
+	-- what being in the group of the game gives. it writes into the save of a session
+	{
+		Name = "Promo",
+		IsFeatured = FEATURES.Promo,
+		Load = function(): Service
+			local service = require("@game/ServerScriptService/Server/Service/Promo")
+			assert(not service.IsInitialized, `the promo service is already initialized`)
+			return service
+		end,
+	},
 	-- who's on which side, where players take one, + the jail the avatars of one of them come in at. downing somebody
 	-- pays, so the sides start once there's something to pay with
 	{
