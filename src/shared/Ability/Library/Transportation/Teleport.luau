@@ -4,6 +4,8 @@
 -- Modules
 local AbilityCondition = require("@game/ReplicatedStorage/Shared/Constructor/AbilityCondition")
 local AbilityTrigger = require("@game/ReplicatedStorage/Shared/Constructor/AbilityTrigger")
+local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local VFXAssetDefinition = require("@game/ReplicatedStorage/Shared/Definition/VFXAsset")
 local VFXBinding = require("@game/ReplicatedStorage/Shared/Constructor/VFXBinding")
 -- Types
@@ -29,10 +31,23 @@ export type Ability = {
 }
 -- Constants
 local ID = "transportation_teleport"
-local CONFIG: Config = table.freeze({
+local DEFAULT_CONFIG: Config = {
 	Range = 250,
-	Sound = "Transwarp" :: VFXAssetDefinition.SoundKey,
+	Sound = "Transwarp",
 	Cooldown = 0.2,
+}
+-- the jump is the same in every game, how far it goes, how soon the next one + what's heard of it isn't
+local CONFIG: Config = GameDefinition.tune(table.freeze(DEFAULT_CONFIG), {
+	shl3 = FreezeUtil.delta(DEFAULT_CONFIG, function(config: Config): Config
+		-- four times as far, to the swish of a blade
+		config.Range = 1000
+		config.Sound = "Slash"
+		config.Cooldown = 0.4
+		-- a click at the sky still goes somewhere
+		config.IsClamped = true
+		config.IsHeadingKept = true
+		return config
+	end),
 })
 -- Variables
 -- References
