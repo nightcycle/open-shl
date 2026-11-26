@@ -10,6 +10,7 @@ local ElectricGuitar = require("@game/StarterPlayer/StarterPlayerScripts/Client/
 local FidgetSpinner = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/FidgetSpinner")
 local Keycard = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Keycard")
 local Latte = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Latte")
+local Moneybag = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Moneybag")
 local Pizza = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Pizza")
 local PizzaBox = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/PizzaBox")
 local Watermelon = require("@game/StarterPlayer/StarterPlayerScripts/Client/Prop/Library/Watermelon")
@@ -34,6 +35,7 @@ local DEFINITIONS: { ClientDefinition } = {
 	Latte,
 	Bloxiade,
 	FidgetSpinner,
+	Moneybag,
 }
 
 return table.freeze(DEFINITIONS)
