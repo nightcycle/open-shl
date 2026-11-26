@@ -114,7 +114,8 @@ local FEATURES: { shl1: Features, shl2: Features, shl3: Features } = table.freez
 		Leaderstats = true,
 		-- the clock, the weather + the seasons of valor city: its server says them, every client draws them
 		Environment = true,
-		Crime = false,
+		-- the refinery + the grid under the museum, where its players fight. the graveyard stands until its zombies are in
+		Crime = true,
 		Npcs = true,
 		Telepads = true,
 		Codes = false,
