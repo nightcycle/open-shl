@@ -48,6 +48,15 @@ local DEFINITIONS: { PowerDefinition } = {
 		ColorGroups = {},
 	},
 	{
+		Id = "ranged_hitscan-bow",
+		Group = "ranged",
+		Name = "Bow",
+		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["bow.png"]),
+		EnergyCost = 0,
+		Damage = 28,
+		ColorGroups = {},
+	},
+	{
 		Id = "ranged_laser-ray",
 		Group = "ranged",
 		Name = "Laser Ray",
@@ -129,15 +138,6 @@ local UPCOMING: { PowerDefinition } = {
 		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["sword.png"]),
 		EnergyCost = 0,
 		Damage = 20,
-		ColorGroups = {},
-	},
-	{
-		Id = "ranged_hitscan-bow",
-		Group = "ranged",
-		Name = "Bow",
-		Icon = IconDefinitionConstructor.decal(Image["shl-3"].tools["bow.png"]),
-		EnergyCost = 0,
-		Damage = 28,
 		ColorGroups = {},
 	},
 	-- what it deals is a burn, not a hit
