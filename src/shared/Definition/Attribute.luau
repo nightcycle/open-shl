@@ -126,6 +126,13 @@ Module.HasExtraCharacterSlots = new("Player", "HasExtraCharacterSlots", Type.boo
 Module.HasMultiHair = new("Player", "HasMultiHair", Type.boolean, false) :: Attribute<boolean>
 Module.HasExtraPowers = new("Player", "HasExtraPowers", Type.boolean, false) :: Attribute<boolean>
 Module.HasAdvancedRoleplay = new("Player", "HasAdvancedRoleplay", Type.boolean, false) :: Attribute<boolean>
+Module.HasPremiumMasks = new("Player", "HasPremiumMasks", Type.boolean, false) :: Attribute<boolean>
+Module.HasPremiumHair = new("Player", "HasPremiumHair", Type.boolean, false) :: Attribute<boolean>
+Module.HasPremiumFaces = new("Player", "HasPremiumFaces", Type.boolean, false) :: Attribute<boolean>
+Module.HasPremiumPowers = new("Player", "HasPremiumPowers", Type.boolean, false) :: Attribute<boolean>
+Module.HasPremiumSuits = new("Player", "HasPremiumSuits", Type.boolean, false) :: Attribute<boolean>
+-- they were seen in the group of the game once, which is for good
+Module.HasGroupPerk = new("Player", "HasGroupPerk", Type.boolean, false) :: Attribute<boolean>
 -- "" until the server picked one
 Module.ActiveCharacterId = new("Player", "ActiveCharacterId", Type.string, "") :: Attribute<string>
 -- who their avatar was last dressed as: an avatar that's out of range isn't on a client, its player is. "" until the
@@ -190,6 +197,16 @@ Module.fromEntitlement = function(key: EntitlementKey): Attribute<boolean>
 		return Module.HasExtraPowers
 	elseif key == "AdvancedRoleplay" then
 		return Module.HasAdvancedRoleplay
+	elseif key == "PremiumMasks" then
+		return Module.HasPremiumMasks
+	elseif key == "PremiumHair" then
+		return Module.HasPremiumHair
+	elseif key == "PremiumFaces" then
+		return Module.HasPremiumFaces
+	elseif key == "PremiumPowers" then
+		return Module.HasPremiumPowers
+	elseif key == "PremiumSuits" then
+		return Module.HasPremiumSuits
 	end
 	-- a key that's added without an attribute is one the checker lets through
 	error(`no attribute for the "{key}" entitlement`)
