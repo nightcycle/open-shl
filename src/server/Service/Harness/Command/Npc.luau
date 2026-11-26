@@ -59,13 +59,27 @@ local DEFAULT_DISTANCE = 40
 -- what a wave of its old place was given, + how far over the spot it's asked for each of it came in
 local DEFAULT_LIFETIME = 90
 local RISE = Vector3.new(0, 4, 0)
+-- every walker of a kind has the name of its kind: the harness counts them as it first sees them
+local WALKER_NAME = "walker-%d"
 -- Variables
+local names: { [Model]: string } = setmetatable({} :: any, { __mode = "k" })
+local nameCount = 0
 -- References
 -- Private Functions
+local function getName(model: Model): string
+	local name = names[model]
+	if not name then
+		nameCount += 1
+		name = string.format(WALKER_NAME, nameCount)
+		names[model] = name
+	end
+	return name
+end
+
 local function describe(model: Model): { [string]: any }
 	local humanoid = model:FindFirstChildOfClass("Humanoid")
 	return {
-		Name = model.Name,
+		Name = getName(model),
 		Position = model:GetPivot().Position,
 		Health = AttributeDefinition.get(model, AttributeDefinition.Health),
 		IsDead = AttributeDefinition.get(model, AttributeDefinition.IsDead),
@@ -79,6 +93,18 @@ local Module = {}
 
 -- the bodies nobody plays, set on the town by hand: nothing of the game raises a wave before one was seen to walk
 Module.list = function(context: Context): { Command }
+	-- a walker goes by the name npc.list gives it wherever a command asks for a body: combat.hit, status.freeze ..
+	context.Bodies:Lend(function(name: string): Model?
+		if not NpcService.IsInitialized then
+			return nil
+		end
+		for _, model in NpcService:List() do
+			if getName(model) == name then
+				return model
+			end
+		end
+		return nil
+	end)
 	return {
 		Harness.newCommand(
 			"npc.raise",
@@ -132,7 +158,7 @@ Module.list = function(context: Context): { Command }
 		),
 		Harness.newCommand(
 			"npc.list",
-			"every body nobody plays that walks the map: where it is, its health, what its humanoid is doing + where it's sent",
+			"every body nobody plays that walks the map: the name it goes by as a body of any other command (walker-<n>), where it is, its health, what its humanoid is doing + where it's sent",
 			{},
 			function(): Result<any, string>
 				assert(NpcService.IsInitialized, `the npc service isn't initialized`)

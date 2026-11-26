@@ -14,8 +14,10 @@ type Log = Log.Log
 export type Body = {
 	Name: string, -- of the player, or the one the puppet was given
 	Character: Model,
-	Player: Player?, -- nil for a puppet
+	Player: Player?, -- nil for a puppet + for a body somebody lent
 }
+-- answers the body of the game's own that goes by a name, nil for a name that isn't one of its
+export type Finder = (name: string) -> Model?
 type Puppet = {
 	Body: Body,
 	Connections: { RBXScriptConnection },
@@ -24,8 +26,12 @@ type BodiesImpl = {
 	__index: BodiesImpl,
 	-- the player of that name. without one it's whoever is alone on the server
 	GetPlayer: (self: Bodies, name: string?) -> Result<Player, string>,
-	-- the avatar of a player or a puppet, by its name. without one it's the avatar of whoever is alone on the server
+	-- the avatar of a player, a puppet or a body somebody lent, by its name. without one it's the avatar of whoever is
+	-- alone on the server
 	Get: (self: Bodies, name: string?) -> Result<Body, string>,
+	-- a body nobody plays is the game's own (a walker of the npc service): the area that knows them lends them by the
+	-- names it lists them under, so a hit or a status can be asked for one. nothing of it is kept or watched here
+	Lend: (self: Bodies, find: Finder) -> (),
 	ListPuppets: (self: Bodies) -> { Body },
 	-- takes a rig in as a puppet: it gets its name + the log hears of it the way it hears of an avatar
 	Add: (self: Bodies, rig: Model) -> Body,
@@ -38,6 +44,7 @@ export type Bodies = typeof(setmetatable(
 		_Log: Log,
 		_Count: number, -- how many puppets were ever taken in, a name is never handed out twice
 		_Puppets: { Puppet }, -- in the order they came in
+		_Finders: { Finder },
 	},
 	{} :: BodiesImpl
 ))
@@ -86,6 +93,17 @@ function Bodies:Get(name: string?): Result<Body, string>
 			return Result.ok(puppet.Body)
 		end
 	end
+	if name then
+		for _, find in self._Finders do
+			local character = find(name)
+			if character then
+				return Result.ok(table.freeze({
+					Name = name,
+					Character = character,
+				}))
+			end
+		end
+	end
 	local playerRes = self:GetPlayer(name)
 	if playerRes.IsErr then
 		return Result.err(`{playerRes.Value}, + no puppet of that name`)
@@ -100,6 +118,10 @@ function Bodies:Get(name: string?): Result<Body, string>
 		Character = character,
 		Player = player,
 	}))
+end
+
+function Bodies:Lend(find: Finder)
+	table.insert(self._Finders, find)
 end
 
 function Bodies:ListPuppets(): { Body }
@@ -152,6 +174,7 @@ return {
 			_Log = log,
 			_Count = 0,
 			_Puppets = {},
+			_Finders = {},
 		}, Bodies)
 	end,
 }

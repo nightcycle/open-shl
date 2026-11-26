@@ -150,7 +150,7 @@ Server:
 | `game.get` | game, mode, BUILD_CONFIG, features, the services started (in order), players, puppets, server time |
 | `session.get` | a player's session: active slot + identity, every slot, balances, entitlements, quest, the game's own save section; `IsWhole = true` for the whole save |
 | `avatar.get` | an avatar's or a puppet's state: every character attribute, fighting + seconds left, humanoid, tools in hand / Backpack, team, in-menu, held, costume |
-| `character.select`, `character.swap` | another slot / the other identity, through the handler the real remote lands in |
+| `character.select`, `character.swap`, `character.powers` | another slot / the other identity / a slot saved with other powers in it (`PowerIds`, the save's own check may turn one down: `"Lightning" isn't owned`), each through the handler the real remote lands in |
 | `economy.grant` | currency through `EconomyService:Grant` |
 | `combat.hit` | `From` hits `To` for `Amount` through the real `Attack` effect; answers landed, hostile, taken, health, dead, both fight timers |
 | `status.cover`, `status.freeze`, `status.burn` | what a power sets off besides its hit, on any body: Force Field's shield ahead of one for a while, one body freezing another (`IsBlocked` for the ice around them), one setting another alight. Each through the real effect, so the rule of the game may turn it down |
@@ -159,7 +159,7 @@ Server:
 | `prop.get`, `prop.give`, `prop.take` | where the game has props (shl3) |
 | `team.get`, `team.set` | where the game has sides (shl3): through `TeamService:ChangeTeam`, balance may refuse, the avatar goes down |
 | `jail.get`, `jail.release` | where the game has a jail (shl3): release carries the avatar onto a road and waits for the jail's own check |
-| `npc.raise`, `npc.list`, `npc.clear` | where the game has bodies nobody plays (shl3): a wave of 18 zombies (or `Count`) through `NpcService:Spawn`, in a ring `Distance` studs around a player or at the graves the map marks (`IsAtSpawns`), for `Lifetime` seconds; where each is, its health, what its humanoid does + where it's sent; all of them away |
+| `npc.raise`, `npc.list`, `npc.clear` | where the game has bodies nobody plays (shl3): a wave of 18 zombies (or `Count`) through `NpcService:Spawn`, in a ring `Distance` studs around a player or at the graves the map marks (`IsAtSpawns`), for `Lifetime` seconds; where each is, its health, what its humanoid does + where it's sent; all of them away. `npc.list` names each `walker-<n>`: that name is a body wherever a command asks for one (`combat.hit { To = "walker-3" }`, `status.freeze`, `status.burn`, `avatar.get`) |
 | `crime.get`, `crime.hit`, `crime.alert` | where the game has crime (shl3): every disaster target (health, down, armed) + every laser grid (lit or dark); a body hits a target by its `DisasterId` through the real `Attack` effect (a puppet's hit is counted for nobody); a line on the alert strip of one player (`To`) or of every hero |
 | `playermode.get`, `playermode.set` | where RP / PVP is each player's pick (shl1) |
 | `event.read`, `event.wait` | the server's event log (below) |
