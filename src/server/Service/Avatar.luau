@@ -15,6 +15,7 @@ local AppearanceUtil = require("@game/ReplicatedStorage/Shared/Util/Appearance")
 local AttributeDefinition = require("@game/ReplicatedStorage/Shared/Definition/Attribute")
 local CharacterEditorDefinition = require("@game/ReplicatedStorage/Shared/Definition/CharacterEditor")
 local FreezeUtil = require("@game/ReplicatedStorage/Shared/Util/Freeze")
+local GameDefinition = require("@game/ReplicatedStorage/Shared/Definition/Game")
 local ItemAppearanceDefinition = require("@game/ReplicatedStorage/Shared/Definition/Appearance/Item")
 local MapDefinition = require("@game/ServerScriptService/Server/Definition/Map")
 local PowerDefinition = require("@game/ReplicatedStorage/Shared/Definition/Power")
@@ -87,6 +88,11 @@ local SPAWN_IDENTITY_KEY: IdentityKey? = SpawnDefinition.IDENTITY_KEY
 local ENTRY_SHIELD_DURATION: number? = SpawnDefinition.ENTRY_SHIELD_DURATION
 -- nil in a game that draws the health of an avatar itself
 local HEALTH_DISPLAY_DISTANCE: number? = SpawnDefinition.HEALTH_DISPLAY_DISTANCE
+-- if a hero with the mask off answers to their civilian name
+local IS_UNMASKED_RENAMED: boolean = GameDefinition.tune(true, {
+	-- its hero kept their name whatever they showed of their head
+	shl1 = false,
+})
 -- Variables
 -- References
 -- Private Functions
@@ -201,8 +207,9 @@ local function getLook(self: AvatarService, player: Player): Option<Look>
 	}
 	local secret = character.Identities.Secret
 	if identityKey == "Main" and self._IsUnmasked[player] and secret then
-		-- a hero with the mask off answers to their civilian name
-		look.PersonaName = secret.Profile.Name
+		if IS_UNMASKED_RENAMED then
+			look.PersonaName = secret.Profile.Name
+		end
 		look.Appearance = AppearanceUtil.unmask(identity.Appearance, secret.Appearance)
 	end
 	if costume then
@@ -379,6 +386,7 @@ function AvatarService:Dress(player: Player)
 	AttributeDefinition.set(character, AttributeDefinition.PersonaName, look.PersonaName)
 	-- the name is told on the player as well, for whoever lists everybody from where the avatar isn't in range
 	AttributeDefinition.set(player, AttributeDefinition.ActivePersonaName, look.PersonaName)
+	AttributeDefinition.set(player, AttributeDefinition.ActiveIdentityKey, look.IdentityKey)
 	AttributeDefinition.set(character, AttributeDefinition.IdentityKey, look.IdentityKey)
 	AttributeDefinition.set(character, AttributeDefinition.IsMasked, self:GetIfMasked(player))
 	if AbilityService.IsInitialized then
